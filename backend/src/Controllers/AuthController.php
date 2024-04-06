@@ -23,15 +23,15 @@ class AuthController
 
             $now = strtotime("now");
             $privateKey = $_ENV["JWT_SECRET_KEY"];
-            $payload = [
-                'exp' => $now + $_ENV["TIME_EXP_TOKEN"],
-                'data' => [
-                    "dni" => 1104661598,
+            // $payload = [
+            //     'exp' => $now + $_ENV["TIME_EXP_TOKEN"],
+            //     'data' => [
+            //         "dni" => 1104661598,
 
-                ],
+            //     ],
 
-            ];
-            $token = AuthService::createToken($payload, $privateKey);
+            // ];
+            // $token = AuthService::createToken($payload, $privateKey);
             Flight::json(["token" => $token]);
         } catch (Exception $e) {
             Flight::res()->unauthorized();

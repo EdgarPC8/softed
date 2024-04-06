@@ -14,14 +14,66 @@ $DB_NAME = $_ENV["DB_NAME"];
 $DB_HOST = $_ENV["DB_HOST"];
 $DB_USER = $_ENV["DB_USER"];
 
+Flight::path('src/Models');
 Flight::path('src/Model');
-Flight::path('src/Middlewares');
 Flight::path('src/Controllers');
+Flight::path('src/Middlewares');
 Flight::path('src/Services');
 Flight::register('db', 'PDO', ["mysql:host=$DB_HOST;dbname=$DB_NAME", "$DB_USER", '']);
+Flight::register('res', 'HTTPResponse');
+
+
+
 // Flight::register('res', 'HTTPResponse');
 
 // header('Content-Type: application/json');
+Flight::route('GET /dataBase', function () {
+    Tables::delete();
+    Tables::create();
+    Tables::importFromJson('./src/BD/backup.json');
+});
+Flight::route('GET /getSession', function () {
+    // AuthMiddleware::isAuthorized();
+    Sesiones::getAuthorizedUserData();
+});
+Flight::route('POST /login', function () {
+    Sesiones::setSession();
+});
+Flight::route('POST /createCuenta', function () {
+    CuentaController::createCuenta();
+});
+
+
+Flight::route('GET /exportBD', function () {
+    Tables::export();
+});
+Flight::route('GET /closeSession', function () {
+    Sesiones::closeSession();
+});
+
+Flight::route('GET /getAllNadadores', function () {
+    // AuthMiddleware::isAuthorized();
+    NadadoresController::getAllNadadores();
+});
+Flight::route('GET /getTiemposByCI/@data', function ($data) {
+    TiemposController::getTiemposByCI($data);
+});
+Flight::route('GET /getTiemposByMetrosPrueba/@cedula/@metros/@prueba', function ($cedula,$metros,$prueba) {
+    TiemposController::getTiemposByMetrosPrueba($cedula,$metros,$prueba);
+});
+Flight::route('GET /getAllTiemposRecordsById/@cedula', function ($cedula) {
+    TiemposController::getAllTiemposRecordsById($cedula);
+});
+Flight::route('GET /getPruebas', function () {
+    MetrosPruebaController::getPruebas();
+});
+Flight::route('GET /getMetros', function () {
+    MetrosPruebaController::getMetros();
+});
+
+
+
+
 
 Flight::route('POST /getSelects', function () {
     GetSelects::getSelects();
@@ -41,7 +93,7 @@ Flight::route('POST /deleteData', function () {
 Flight::route('POST /ejecutar', function () {
     Comands::ejecutar();
 });
-Flight::route('POST /createBD', function () {
+Flight::route('GET /createBD', function () {
     Comands::createBD();
 });
 Flight::route('POST /getEntidadCompetencia', function () {
@@ -60,14 +112,9 @@ Flight::route('POST /getRecords', function () {
     Info::getRecords();
 });
 
-Flight::route('POST /login', function () {
-    Sesiones::setSession();
-});
-Flight::route('GET /getSession', function () {
-    Sesiones::getSession();
-});
-Flight::route('GET /closeSession', function () {
-    Sesiones::closeSession();
-});
+// Flight::route('GET /getSession', function () {
+//     Sesiones::getSession();
+// });
+
 
 Flight::start();

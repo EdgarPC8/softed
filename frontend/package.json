@@ -1,5 +1,5 @@
 {
-  "name": "natacion",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,17 +7,33 @@
     "dev": "vite",
     "host": "vite --host 192.168.100.250",
     "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "devDependencies": {
-    "vite": "^4.4.5"
-  },
   "dependencies": {
-    "axios": "^1.4.0",
-    "bootstrap": "^5.3.1",
-    "bootstrap-icons": "^1.10.5",
-    "datatables.net-bs5": "^1.13.6",
-    "datatables.net-dt": "^1.13.6",
-    "sweetalert2": "^11.7.27"
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/inter": "^5.0.17",
+    "@mui/icons-material": "^5.15.14",
+    "@mui/material": "^5.15.11",
+    "@mui/x-charts": "^7.0.0",
+    "@mui/x-data-grid": "^7.0.0-beta.7",
+    "axios": "^1.6.8",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.2",
+    "sort-by": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "vite": "^5.1.4"
   }
 }

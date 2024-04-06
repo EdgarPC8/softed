@@ -1,53 +1,93 @@
 <?php
 
-class Sesiones{
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
-    public static function setSession(){
-        $respuesta=false;
-        $data = json_decode(Flight::request()->getBody());
-        $respuesta=$data;
-        if($data->password==12){
-            session_start();
-            $_SESSION["session"] = [
-                "Admin" => 1104661598,
-            ];
-            // Session::setSession(1104661598);
-            $success=[
-                "icon"=>"success",
-                "title"=>"Éxito",
-                "text"=>"Registrado correctamente",
-            ];
-            $respuesta=$success;
+class Sesiones
+{
 
-        }else{
-            
-            $respuesta=null;
+    /*
+        Esta funcion logea y atentica el usario en el servidor
+    */
+
+
+    public static function setSession()
+    {
+        $username = Flight::request()->data->username;
+        $password = Flight::request()->data->password;
+
+        if($username==""||$password==""){
+            Flight::json(["message" => "Complete los campos","status"=>"warning"]);
+            return;
         }
-
         
-        
-        Flight::json($respuesta);
+        $statement = Flight::db()->prepare(
+            "SELECT *
+        FROM ".Cuenta::$tableName." INNER JOIN
+        ".Roles::$tableName."  ON ".Roles::$tableName.".".Roles::$id."  = ".Cuenta::$tableName.".".Cuenta::$rol." 
+         INNER JOIN ".Usuario::$tableName." ON ".Usuario::$tableName.".".Usuario::$id." = ".Cuenta::$tableName.".".Cuenta::$idUsuario." 
+         WHERE ".Cuenta::$username."  = :username      
+        "
+        );
+
+        $statement->execute([":username" => $username]);
+        $user = $statement->fetch(PDO::FETCH_OBJ);
+
+        try {
+            $passwordHashed = $user->password;
+            $isCorrectPassword = EncryptPassword::isCorrectPassword($password, $passwordHashed);
+            if (!$isCorrectPassword || empty($user)) {
+                // Flight::res()->unauthorized();
+                Flight::json(["message" => "Usuario o Contraseña invalida","status"=>"error"]);
+                return;
+            }else{
+                $token=$isCorrectPassword;
+            $now = strtotime("now");
+            $privateKey = $_ENV["JWT_SECRET_KEY"];
+            $payload = [
+                'exp' => $now + $_ENV["TIME_EXP_TOKEN"],
+                'data' => [
+                    "username" => $user->username,
+                    "rol" => $user->rol,
+                    "nameRol" => $user->name,
+                    "firstName" => $user->primer_nombre,
+                    "secondName" => $user->segundo_nombre,
+                    "firstLastName" => $user->primer_apellido,
+                    "secondLastName" => $user->segundo_apellido,
+                    "genero" => $user->genero,
+                ]
+            ];
+            $token = AuthService::createToken($payload, $privateKey);
+            Flight::json(["token" => $token]);
+
+            }
+            
+        } catch (Exception $e) {
+            // Flight::res()->unauthorized();
+            Flight::json(["message" => "Usuario o Contraseña invalida","status"=>"error"]);
+
+
+        }
+        // Flight::json($user);
+
 
     }
-    public static function getSession(){
-        $respuesta=Session::getSession();
-
-        // session_start();
-        // if(isset($_SESSION["session"])
-        // // &&$_SESSION["session"]->Admin=1104661598
-        // ){
-        //     $respuesta=true;
-        // }
-        Flight::json($respuesta);
-
+  
+    public static function getAuthorizedUserData()
+    {
+        $headers = getallheaders();
+        $authorization = $headers["Authorization"];
+        $authorizationKey = explode(" ", $authorization);
+        $token = $authorizationKey[1];
+        $user = JWT::decode($token, new Key($_ENV["JWT_SECRET_KEY"], 'HS256'));
+        Flight::json($user);
     }
-    public static function closeSession(){
-        $respuesta=false;
-        session_unset();
-        session_destroy();
-        // $respuesta=true;
-        Flight::json($respuesta);
-
+    /**
+     * Registra un evento de salida en el registro de logs.
+     */
+    public static function logout()
+    {
+        $isSaved = Log::initLogger("EXIT");
+        Flight::json($isSaved);
     }
-   
 }

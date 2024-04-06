@@ -4,7 +4,7 @@ class Comands{
     public static function createBD(){
 
         $mensaje = "No hay mensaje";
-        $archivo = '/Applications/XAMPP/htdocs/natacion/BD/crono_swim.db';
+        $archivo = '/Applications/XAMPP/htdocs/natacion/backend/src/BD/crono_swim.db';
         
     
         // Borrar el archivo de la base de datos si existe
