@@ -1,0 +1,42 @@
+<div class="card mx-3 mt-3 shadow rounded">
+    <form id="formComparacion">
+        <div class="row g-3">
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text">Nadador</span>
+                    <div class="form-floating w-50">
+                        <input type="text" class="form-control" id="nadador" name="nadador"
+                            maxlength="50" autocomplete="off" />
+                        <ul id="list_institution" class="dropdown-menu mt-1"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text">Cedula</span>
+                    <div class="form-floating w-50">
+                        <input type="text" class="form-control" id="nadadorCedula" name="cedula"
+                            maxlength="50" autocomplete="off" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text">Metros</span>
+                    <div class="form-floating w-50">
+                        <select class="form-select" id="selectMetros" name="metros">
+                            <option selected>Seleccione los Metros</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3 d-flex justify-content-center">
+                <button class="btn btn-lg btn-primary fs-6" id="btnGuardar" type="submit" value="Save">Observar</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="card mx-3 mt-3 shadow rounded">
+    <textarea name="" id="tiemposCompetencia" cols="30" rows="10"></textarea>
+    
+</div>

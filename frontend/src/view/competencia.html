@@ -1,0 +1,68 @@
+
+
+
+<style>
+
+
+    /* Estilo para eventos impares */
+.odd-event {
+  float: left;
+  width: 50%; /* O el ancho que desees */
+}
+
+/* Estilo para eventos pares */
+.even-event {
+  float: right;
+  width: 50%; /* O el ancho que desees */
+}
+
+/* Limpia el float para evitar problemas de alineación */
+.clear {
+  clear: both;
+}
+
+</style>
+<div class="card mx-3 mt-3 shadow rounded">
+    <div class="mx-2 mt-2">
+        <div class="card border-0">
+            <div class="card-header border-0 shadow" id="container_add">
+
+            </div>
+            
+            <div class="row">
+                <div class="col-3 my-3">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <p class="m-2">Crear Competencia</p>
+                            <input class="form-check-input" type="checkbox" id="createCompetencia" />
+                        </span>
+                    </div>
+                </div>
+                <div class="col-6 my-3">
+                    <div class="input-group">
+                        <span class="input-group-text">Competencia</span>
+                        <div class="form-floating">
+                            <select class="form-select w-100" id="selectCompetencia" name="id_competencia">
+                                <option selected>Seleccione la Competencia</option>
+                            </select>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="containerPruebas">
+
+            </div>
+
+
+
+            
+        </div>
+    </div> 
+
+<div class="card mx-3 mt-3 shadow rounded" id="container_competencias">
+
+</div>
