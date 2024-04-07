@@ -71,7 +71,7 @@ function ResponsiveAppBar() {
         icon: <AdbIcon />,
         menu: {
           items: [
-            { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
+            { name: "Ver", link: "/competencia", icon: <AdbIcon /> },
             { name: "Progreso", link: "/progreso", icon: <AdbIcon /> },
             { name: "Metros", link: "/metros", icon: <AdbIcon /> },
             { name: "Pruebas", link: "/pruebas", icon: <AdbIcon /> },
