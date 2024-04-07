@@ -109,7 +109,7 @@ Flight::route('GET /getMetros', function () {
 });
 
 
-
+// -----------------------------------------------------------
 
 
 Flight::route('POST /getSelects', function () {
@@ -133,7 +133,7 @@ Flight::route('POST /ejecutar', function () {
 Flight::route('GET /createBD', function () {
     Comands::createBD();
 });
-Flight::route('POST /getEntidadCompetencia', function () {
+Flight::route('GET /getEntidadCompetencia', function () {
     Competencia::getEntidadCompetencia();
 });
 Flight::route('POST /getCompetenciaTiempos', function () {
@@ -142,7 +142,7 @@ Flight::route('POST /getCompetenciaTiempos', function () {
 Flight::route('POST /getResultados', function () {
     Competencia::getResultados();
 });
-Flight::route('POST /administrarCompetencia', function () {
+Flight::route('GET /administrarCompetencia', function () {
     Competencia::administrarCompetencia();
 });
 Flight::route('POST /getRecords', function () {

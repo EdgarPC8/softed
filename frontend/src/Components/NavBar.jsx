@@ -61,7 +61,7 @@ function ResponsiveAppBar() {
       { name: "Institucion", link: "/institucion", icon: <AdbIcon/> },
       { name: "Competencia", icon: <AdbIcon/>, menu: { 
         items: [
-          { name: "Nadadores", link: "/nadadores", icon: <AdbIcon/> }, 
+          { name: "Ver", link: "/competencia", icon: <AdbIcon/> }, 
           { name: "Progreso", link: "/progreso", icon: <AdbIcon/> }
         ] } }
     ],

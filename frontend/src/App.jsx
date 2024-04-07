@@ -11,6 +11,7 @@ import Perfil from "./page/Perfil";
 import Tiempos from "./page/Tiempos";
 import Nadadores from "./page/Nadadores";
 import Progreso from "./page/Progreso";
+import Competencia from "./page/Competencia";
 import NavBar from "./Components/NavBar";
 
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -44,6 +45,7 @@ function App() {
             </Route>
 
             <Route element={<ProtectedRoute requiredRol={["Programador"]} />}>
+              <Route path="/competencia" element={<Competencia />} />
               <Route path="/nadadores" element={<Nadadores />} />
               <Route path="/añadir-nadador" element={<AddSwimmerForm />} />
               <Route path="/editar-nadador/:dni" element={<EditSwimmerForm />} />

@@ -1222,7 +1222,10 @@ class Competencia{
     // }
     public static function administrarCompetencia(){
         $respuesta=false;
-        $data = json_decode(Flight::request()->getBody());
+        $data = (object)[
+            "IdCompetencia"=>3,
+            "Create"=>false,
+    ];
 
         function getCategoria($stringDate){
             $Categorias=[
@@ -1444,11 +1447,6 @@ class Competencia{
         
             return $generoA - $generoB;
         }
-        
-        
-        
-        
-      
         function intercalarEntidades($array) {
             $entidades = array(); // Un array para mantener los objetos agrupados por entidad
             $resultado = array(); // El nuevo array resultante
@@ -1793,11 +1791,6 @@ class Competencia{
             });
             return $arrayDeObjetos;
         }
-        
-        
-        
-        
-
         
         $respuesta=["Competencia"=>$Competencia,"Resultados"=>ordenarPorOroPlataYBronce($resultados),"Nombre"=>$array[0]["nombreCompetencia"]];
         Flight::json($respuesta);
