@@ -59,7 +59,11 @@ function ResponsiveAppBar() {
       { name: "Tiempos", link: "/tiempos", icon: <AdbIcon/> }, 
       { name: "Progreso", link: "/progreso", icon: <AdbIcon/> },
       { name: "Institucion", link: "/institucion", icon: <AdbIcon/> },
-      { name: "Mas", icon: <AdbIcon/>, menu: { items: [{ name: "Nadadores", link: "/nadadores", icon: <AdbIcon/> }, { name: "Progreso", link: "/progreso", icon: <AdbIcon/> }] } }
+      { name: "Competencia", icon: <AdbIcon/>, menu: { 
+        items: [
+          { name: "Nadadores", link: "/nadadores", icon: <AdbIcon/> }, 
+          { name: "Progreso", link: "/progreso", icon: <AdbIcon/> }
+        ] } }
     ],
     Administrador: [{ name: "Nadadores", link: "/nadadores", icon: <AdbIcon/> }, { name: "Tiempos", link: "/tiempos", icon: <AdbIcon/> }],
     Usuario: [
