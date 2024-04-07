@@ -20,7 +20,8 @@ import Institution from "./page/Institution.jsx";
 import { Toaster } from "react-hot-toast";
 import AddSwimmerForm from "./Components/AddSwimmerForm.jsx";
 import EditSwimmerForm from "./Components/EditSwimmerForm.jsx";
-
+import Meters from "./page/Meters.jsx";
+import Tests from "./page/Tests.jsx";
 
 function App() {
   return (
@@ -48,8 +49,12 @@ function App() {
               <Route path="/competencia" element={<Competencia />} />
               <Route path="/nadadores" element={<Nadadores />} />
               <Route path="/añadir-nadador" element={<AddSwimmerForm />} />
-              <Route path="/editar-nadador/:dni" element={<EditSwimmerForm />} />
-
+              <Route
+                path="/editar-nadador/:dni"
+                element={<EditSwimmerForm />}
+              />
+              <Route path="/metros" element={<Meters />} />
+              <Route path="/pruebas" element={<Tests />} />
               <Route path="/institucion" element={<Institution />} />
             </Route>
           </Routes>
