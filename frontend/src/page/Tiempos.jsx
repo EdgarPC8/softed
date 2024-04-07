@@ -1,24 +1,14 @@
-import React from 'react';
-import {
-  Button,
-  Container,
-} from '@mui/material';
+import React from "react";
+import { Button, Container } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import { getTiemposByCI } from "../api/tiemposResquest.js";
 import { useEffect, useState } from "react";
-import DataTable from '../Components/DataTable';
+import DataTable from "../Components/DataTable";
 
-function  Tiempos() {
-
+function Tiempos() {
   const { user } = useAuth();
   const [Data, setData] = useState([]);
   const columns = [
-    {
-      field: "#",
-      headerName: "#",
-      width: 50,
-      sortable: false,
-    },
     {
       headerName: "Cedula",
       field: "cedula",
@@ -49,20 +39,19 @@ function  Tiempos() {
       width: 150,
       editable: true,
     },
-   
   ];
   // console.log(user)
   async function fetchData() {
     try {
-      const res = await getTiemposByCI(1150424552)
-      setData(res.data)
+      const res = await getTiemposByCI(1150424552);
+      setData(res.data);
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
   }
   useEffect(() => {
     fetchData();
-},[]);
+  }, []);
 
   return (
     <Container maxWidth="md">

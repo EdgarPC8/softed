@@ -16,7 +16,10 @@ import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 
 import DataTable from "../Components/DataTable";
-import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
+import {
+  deleteSwimmerRequest,
+  getAllNadadores,
+} from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
 
 function Nadadores() {
@@ -54,12 +57,6 @@ function Nadadores() {
 
   const columns = [
     {
-      field: "#",
-      headerName: "#",
-      width: 50,
-      sortable: false,
-    },
-    {
       headerName: "Cedula",
       field: "cedula",
       width: 150,
@@ -69,13 +66,13 @@ function Nadadores() {
       headerName: "Nadador",
       field: "nombres",
       width: 200,
-      editable: true,
+      
     },
     {
       headerName: "Genero",
       field: "genero",
       width: 100,
-      editable: true,
+      
     },
     {
       headerName: "Actions",

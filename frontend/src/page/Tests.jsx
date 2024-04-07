@@ -6,14 +6,18 @@ import toast from "react-hot-toast";
 
 import { useForm } from "react-hook-form";
 import {
-  addInstitutionRequest,
   deleteInstitutionRequest,
   getInstitutionsRequest,
-  updateInstitutionRequest,
 } from "../api/institutionRequest";
 import DataTable from "../Components/DataTable";
+import {
+  addTestsRequest,
+  deleteTestsRequest,
+  getTestRequest,
+  updateTestsRequest,
+} from "../api/testRequest";
 
-function Institution() {
+function Tests() {
   const {
     register,
     handleSubmit,
@@ -26,17 +30,16 @@ function Institution() {
   const [isEdit, setEdit] = useState(false);
   const [id, setId] = useState(0);
 
-  const [institutions, setInstitutions] = useState([]);
-  const deleteInstitution = async (id) => {
-    const response = await deleteInstitutionRequest(id);
-    setInstitutions(
-      institutions.filter((institution) => institution.id !== id)
-    );
+  const [tests, setTest] = useState([]);
+  
+  const deleteTest = async (id) => {
+    const response = await deleteTestsRequest(id);
+    setTest(tests.filter((test) => test.id !== id));
   };
 
   const columns = [
     {
-      headerName: "Institucion",
+      headerName: "Pruebas",
       field: "nombre",
       width: 500,
       editable: true,
@@ -53,12 +56,12 @@ function Institution() {
               onClick={() => {
                 setValue("nombre", params.row.nombre);
                 setEdit(true);
-                setId(params.row[0]);
+                setId(params.row.id);
               }}
             >
               <Edit />
             </IconButton>
-            <IconButton onClick={() => deleteInstitution(params.row[0])}>
+            <IconButton onClick={() => deleteTest(params.row.id)}>
               <Delete />
             </IconButton>
           </>
@@ -70,10 +73,10 @@ function Institution() {
   const onSubmit = async (values) => {
     if (isEdit) {
       toast.promise(
-        updateInstitutionRequest(id, values),
+        updateTestsRequest(id, values),
         {
           loading: "Editando...",
-          success: "Institución editado con éxito",
+          success: "Prueba editado con éxito",
           error: "Ocurrio un error",
         },
         {
@@ -83,17 +86,17 @@ function Institution() {
           },
         }
       );
-      fetchInstitutions();
+      fetchTest();
       setEdit(false);
       reset();
       return;
     }
 
     toast.promise(
-      addInstitutionRequest(values),
+      addTestsRequest(values),
       {
         loading: "Añadiendo...",
-        success: "Institución añadido con éxito",
+        success: "Prueba añadido con éxito",
         error: "Ocurrio un error",
       },
       {
@@ -103,17 +106,17 @@ function Institution() {
         },
       }
     );
-    fetchInstitutions();
+    fetchTest();
     reset();
   };
 
-  const fetchInstitutions = async () => {
-    const { data } = await getInstitutionsRequest();
-    setInstitutions(data);
+  const fetchTest = async () => {
+    const { data } = await getTestRequest();
+    setTest(data);
   };
 
   useEffect(() => {
-    fetchInstitutions();
+    fetchTest();
   }, []);
   return (
     <>
@@ -124,7 +127,7 @@ function Institution() {
               <TextField
                 fullWidth
                 InputLabelProps={{ shrink: true }}
-                label="Agregar institución"
+                label="Agregar Prueba"
                 variant="standard"
                 {...register("nombre", { required: true })}
                 InputProps={{
@@ -138,10 +141,10 @@ function Institution() {
             </Grid>
           </Grid>
         </Box>
-        <DataTable columns={columns} data={institutions} />
+        <DataTable columns={columns} data={tests} />
       </Container>
     </>
   );
 }
 
-export default Institution;
+export default Tests;

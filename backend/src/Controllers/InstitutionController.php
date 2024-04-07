@@ -19,7 +19,7 @@ class InstitutionController
 
         $body = json_decode(Flight::request()->getBody());
         SqlService::editData(Institution::$tableName, $body, (object) ["id" => $id]);
-        Flight::json(["message" => "Actualizado Agregado"]);
+        Flight::json(["message" => "Institución actualizada"]);
     }
 
     public static function getInstitutions()

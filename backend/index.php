@@ -62,11 +62,9 @@ Flight::route("DELETE /swimmer/@dni", function ($dni) {
 
 });
 
-
 Flight::route("GET /swimmer/@dni", function ($dni) {
     NadadoresController::getOneSwimmer($dni);
 });
-
 
 Flight::route("DELETE /institution/@id", function ($id) {
     InstitutionController::deleteInstitution($id);
@@ -78,6 +76,48 @@ Flight::route("PUT /institution/@id", function ($id) {
 
 Flight::route("POST /institution", function () {
     InstitutionController::addInstitution();
+});
+
+
+
+Flight::route("GET /tests", function () {
+    TestsController::getTests();
+
+});
+
+Flight::route("POST /tests", function () {
+    TestsController::addTest();
+
+});
+
+
+Flight::route("PUT /tests/@id", function ($id) {
+    TestsController::updateTest($id);
+});
+
+
+Flight::route("DELETE /tests/@id", function ($id) {
+    TestsController::deleteTest($id);
+});
+
+
+Flight::route("GET /meters", function () {
+    MetersController::getMeters();
+
+});
+
+Flight::route("POST /meters", function () {
+    MetersController::addMeters();
+});
+
+
+Flight::route("PUT /meters/@id", function ($id) {
+    MetersController::updateMeters($id);
+});
+
+
+Flight::route("DELETE /meters/@id", function ($id) {
+    MetersController::deleteMeters($id);
 });
 
 
