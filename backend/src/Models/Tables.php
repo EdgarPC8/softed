@@ -93,15 +93,17 @@ class Tables {
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 id_evento INTEGER, 
                 numero INTEGER, 
+                carril INTEGER, 
                 cedula INTEGER, 
                 nadador TEXT, 
-                institucion TEXT, 
+                id_institucion INTEGER, 
                 tiempo TEXT, 
                 descalificado INTEGER DEFAULT 0, 
                 puntos INTEGER, 
                 lugar INTEGER, 
                 premiado INTEGER DEFAULT 1
             )",
+
             "CREATE TABLE IF NOT EXISTS " . self::TABLA_EVENTO . " (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 id_competencia INTEGER, 
@@ -110,6 +112,7 @@ class Tables {
                 categoria TEXT, 
                 genero TEXT
             )",
+            
             "CREATE TABLE IF NOT EXISTS " . self::TABLA_COMPETENCIA . " (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 nombre TEXT, 
@@ -123,7 +126,7 @@ class Tables {
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 id_nadador INTEGER, 
                 id_institucion INTEGER, 
-                nivel TEXT, 
+                id_competencia INTEGER, 
                 categoria TEXT, 
                 configCheck TEXT
             )"
@@ -148,11 +151,11 @@ class Tables {
             "DROP TABLE IF EXISTS " . Tiempos::$tableName,
             "DROP TABLE IF EXISTS " . Metros::$tableName,
             "DROP TABLE IF EXISTS " . Pruebas::$tableName,
-            // "DROP TABLE IF EXISTS " . self::TABLA_SERIE,
-            // "DROP TABLE IF EXISTS " . self::TABLA_EVENTO,
-            // "DROP TABLE IF EXISTS " . self::TABLA_COMPETENCIA,
-            // "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION,
-            // "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION_NADADOR
+            "DROP TABLE IF EXISTS " . self::TABLA_SERIE,
+            "DROP TABLE IF EXISTS " . self::TABLA_EVENTO,
+            "DROP TABLE IF EXISTS " . self::TABLA_COMPETENCIA,
+            "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION,
+            "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION_NADADOR
         );
     
         // Ejecutar cada sentencia DELETE
@@ -218,11 +221,11 @@ class Tables {
             Tiempos::$tableName,
             Metros::$tableName,
             Pruebas::$tableName,
-            // self::TABLA_SERIE,
-            // self::TABLA_EVENTO,
-            // self::TABLA_COMPETENCIA,
-            // self::TABLA_INSTITUCION,
-            // self::TABLA_INSTITUCION_NADADOR
+            self::TABLA_SERIE,
+            self::TABLA_EVENTO,
+            self::TABLA_COMPETENCIA,
+            self::TABLA_INSTITUCION,
+            self::TABLA_INSTITUCION_NADADOR
         );
     
         // Leer el contenido del archivo JSON
