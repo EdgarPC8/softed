@@ -6,7 +6,7 @@ const objUrl = {
   edgar: "192.168.100.250:8888",
   alumni: "aplicaciones.marianosamaniego.edu.ec",
 };
-const url = objUrl.pato;
+const url = objUrl.edgar;
 
 const instance = axios.create({
   baseURL: `http://${url}/natacion/backend`,
@@ -17,6 +17,6 @@ export const jwt = () => {
 };
 // export const authorization = {
 //   Authorization: `Bearer ${localStorage.getItem("token")}`,
-// };
+// };deddedesded
 
 export default instance;
