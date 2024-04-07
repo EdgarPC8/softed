@@ -4,7 +4,7 @@ import Slider from '@mui/material/Slider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { inputsNumberToTime } from '../Helpers/functions.js';
+import { inputsNumberToTime } from '../helpers/functions.js';
 import React, { useEffect, useState } from 'react';
 
 

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { inputsNumberToTime } from '../Helpers/functions.js';
+import { inputsNumberToTime } from '../helpers/functions';
+
+
 
 
 const otherSetting = {

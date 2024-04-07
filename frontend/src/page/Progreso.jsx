@@ -5,7 +5,7 @@ import { Box, Container, Grid,Typography } from '@mui/material'; // Importa los 
 import { useAuth } from '../context/AuthContext';
 import ChartLinealTiempos from '../Components/ChartLinealTiempos';
 import SelectData from '../Components/SelectData';
-import { inputsNumberToTime } from '../Helpers/functions.js';
+import { inputsNumberToTime } from '../helpers/functions.js';
 import StarIcon from '@mui/icons-material/Star';
 import ChartBarAllTiempos from "../Components/ChartBarAllTiempos.jsx";
 import { getAllTiemposRecordsById } from '../api/tiemposResquest.js';

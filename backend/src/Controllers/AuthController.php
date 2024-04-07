@@ -32,7 +32,7 @@ class AuthController
 
             // ];
             // $token = AuthService::createToken($payload, $privateKey);
-            Flight::json(["token" => $token]);
+            // Flight::json(["token" => $token]);
         } catch (Exception $e) {
             Flight::res()->unauthorized();
         }

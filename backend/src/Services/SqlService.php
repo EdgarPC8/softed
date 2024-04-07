@@ -38,7 +38,7 @@ class SqlService
         $statement->execute();
         return Flight::db()->lastInsertId();
     } catch (PDOException $e) {
-        return null;
+        return $e;
     }
 }
 

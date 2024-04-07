@@ -5,6 +5,7 @@ ini_set('display_errors', 'On');
 
 
 require 'src/Middlewares/Cors.php';
+// require 'vendor/autoload.php';
 require 'vendor/autoload.php';
 
 # Se carga el fichero .env. Para obtener las variables de entorno
@@ -34,6 +35,7 @@ Flight::route('GET /dataBase', function () {
 });
 Flight::route('GET /getSession', function () {
     // AuthMiddleware::isAuthorized();
+
     Sesiones::getAuthorizedUserData();
 });
 Flight::route('POST /login', function () {
@@ -41,6 +43,41 @@ Flight::route('POST /login', function () {
 });
 Flight::route('POST /createCuenta', function () {
     CuentaController::createCuenta();
+});
+
+Flight::route("GET /institution", function () {
+    // AuthMiddleware::isAuthorized();
+    InstitutionController::getInstitutions();
+});
+Flight::route("POST /swimmer", function () {
+    NadadoresController::addSwimmer();
+});
+
+Flight::route("PUT /swimmer/@dni", function ($dni) {
+    NadadoresController::updateSwimmer($dni);
+});
+
+Flight::route("DELETE /swimmer/@dni", function ($dni) {
+    NadadoresController::deleteSwimmer($dni);
+
+});
+
+
+Flight::route("GET /swimmer/@dni", function ($dni) {
+    NadadoresController::getOneSwimmer($dni);
+});
+
+
+Flight::route("DELETE /institution/@id", function ($id) {
+    InstitutionController::deleteInstitution($id);
+});
+
+Flight::route("PUT /institution/@id", function ($id) {
+    InstitutionController::updateInstitution($id);
+});
+
+Flight::route("POST /institution", function () {
+    InstitutionController::addInstitution();
 });
 
 
@@ -58,8 +95,8 @@ Flight::route('GET /getAllNadadores', function () {
 Flight::route('GET /getTiemposByCI/@data', function ($data) {
     TiemposController::getTiemposByCI($data);
 });
-Flight::route('GET /getTiemposByMetrosPrueba/@cedula/@metros/@prueba', function ($cedula,$metros,$prueba) {
-    TiemposController::getTiemposByMetrosPrueba($cedula,$metros,$prueba);
+Flight::route('GET /getTiemposByMetrosPrueba/@cedula/@metros/@prueba', function ($cedula, $metros, $prueba) {
+    TiemposController::getTiemposByMetrosPrueba($cedula, $metros, $prueba);
 });
 Flight::route('GET /getAllTiemposRecordsById/@cedula', function ($cedula) {
     TiemposController::getAllTiemposRecordsById($cedula);
