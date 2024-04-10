@@ -102,7 +102,7 @@ function UserForm({ onSubmit }) {
 
   return (
     <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit(submitForm)}>
-      {dni && (
+      {/* {dni && (
         <Box
           sx={{
             display: "flex",
@@ -142,7 +142,7 @@ function UserForm({ onSubmit }) {
             </ButtonGroup>
           )}
 
-          {/* {!dni && (
+          {!dni && (
           <ButtonGroup sx={{ mt: 2 }}>
             <Button
               variant="text"
@@ -159,9 +159,9 @@ function UserForm({ onSubmit }) {
               />
             </Button>
           </ButtonGroup>
-        )} */}
+        )}
         </Box>
-      )}
+      )} */}
       <Grid spacing={2} container>
         <Grid item xs={12}>
           <TextField
