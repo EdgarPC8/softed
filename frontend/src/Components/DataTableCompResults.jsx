@@ -14,9 +14,11 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
 import TextField from '@mui/material/TextField';
-import Checkbox from '@mui/material/Checkbox'; // Import Checkbox
 import { inputsNumberToTime } from '../helpers/functions';
 import { updateTimeCompetencia } from '../api/competenciaResquest';
+
+
+
 
 function createData(name, metros, prueba, categoria, genero, history) {
   return {
@@ -33,18 +35,16 @@ function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
 
-  const handleTiempoChange = (index, newValue) => {
-    
-  };
+const handleTiempoChange = (index, newValue) => {
+  
+};
 
-  const putTime = async(id,time)=>{
-    const res = await updateTimeCompetencia(id,{tiempo:time})
-    // console.log(id)
-  }
-  const putDesc = async(id,desc)=>{
-    const res = await updateTimeCompetencia(id,{descalificado:desc})
-    // console.log(id)
-  }
+const putTime = async(id,time)=>{
+  const res = await updateTimeCompetencia(id,{tiempo:time})
+  // console.log(id)
+}
+
+
 
   return (
     <React.Fragment>
@@ -76,77 +76,35 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Carril</TableCell>
+                    <TableCell>Puesto</TableCell>
                     <TableCell>Cedula</TableCell>
                     <TableCell>Nadador</TableCell>
                     <TableCell>Entidad</TableCell>
                     <TableCell>Tiempo</TableCell>
-                    <TableCell>Desc</TableCell>
+                    <TableCell>Info</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.history.map((historyData, index) => (
                     <React.Fragment key={index}>
                       <TableRow>
-                        <TableCell colSpan={6} style={{ borderBottom: 'unset' }}>
-                          <Box sx={{ margin: 1 }}>
-                            <Table size="small" aria-label="purchases">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell colSpan={5} align={"center"}>Serie {index + 1}</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {historyData.Nadadores.map((nadadorData, nadIndex) => (
-                                  <TableRow key={"nad"+nadIndex}>
-                                    <TableCell component="th" scope="row">
-                                    {nadadorData.carril}
-                                    </TableCell>
-                                    <TableCell>{nadadorData.cedula}</TableCell>
-                                    <TableCell>{nadadorData.nadador}</TableCell>
-                                    <TableCell>{nadadorData.entidad}</TableCell>
-                                    <TableCell>
-                                    <TextField
-                                      type="text"
-                                      defaultValue={nadadorData.tiempo}
-                                      // onChange={(e) => handleTiempoChange(nadIndex, e.target.value)}
-                                      inputProps={{ maxLength: 8 }}
-                                      onKeyPress={(e) => {
-                                        const charCode = e.charCode;
-                                        if (charCode < 48 || charCode > 57) {
-                                          e.preventDefault();
-                                        }
-                                      }}
-                                      onBlur={(e) => {
-                                        const newValue=e.target.value 
-                                        e.target.value = inputsNumberToTime(newValue);
-                                        putTime(nadadorData.id,inputsNumberToTime(newValue))
-                                      }}
-                                    />
-                                    </TableCell>
-                                      
-                                      
-                                    <TableCell>
-                                      {nadadorData.descalificado !== undefined && nadadorData.descalificado !== null && (
-                                        <Checkbox
-                                          defaultChecked={nadadorData.descalificado === 1 ? true : false}
-                                          onChange={() => {
-                                            const newDescalificadoValue = nadadorData.descalificado === 1 ? 0 : 1;
-                                            nadadorData.descalificado = newDescalificadoValue;
-                                            putDesc(nadadorData.id, newDescalificadoValue);
-                                          }}
-                                        />
-                                      )}
-                                    </TableCell>
-
-
-
-
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </Box>
+                        <TableCell>
+                          {historyData.lugar}
+                        </TableCell>
+                        <TableCell>
+                          {historyData.cedula}
+                        </TableCell>
+                        <TableCell>
+                          {historyData.nadador}
+                        </TableCell>
+                        <TableCell>
+                          {historyData.entidad}
+                        </TableCell>
+                        <TableCell>
+                          {historyData.tiempo}
+                        </TableCell>
+                        <TableCell>
+                          {historyData.descalificado==1?'Descalificado':''}
                         </TableCell>
                       </TableRow>
                     </React.Fragment>
@@ -162,6 +120,7 @@ function Row(props) {
 }
 
 export default function CollapsibleTable({data=[]}) {
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -181,8 +140,8 @@ export default function CollapsibleTable({data=[]}) {
           <TableRow>
             <TableCell />
             <TableCell>Evento</TableCell>
-            <TableCell align="right">Series</TableCell>
             <TableCell align="right">Nadadores</TableCell>
+            <TableCell align="right">Series</TableCell>
             <TableCell align="right">Tiempos</TableCell>
             <TableCell align="right">Descalificados</TableCell>
           </TableRow>
@@ -195,11 +154,11 @@ export default function CollapsibleTable({data=[]}) {
             <Row key={row.Categoria+row.Genero+row.Prueba} 
               row={createData(
                 `#${index+1} ${row.Prueba} ${row.Categoria} ${row.Genero}`, 
-                row.Series.length, 
+                row.Nadadores.length, 
                 "Numero de Nadadores", 
                 "Tiempos Registrados", 
                 "Nadadores descalificados",
-                row.Series)} 
+                row.Nadadores)} 
             />
           ))}
         </TableBody>

@@ -9,5 +9,31 @@ export const getCompetencia = async () =>
       Authorization: jwt(),
     },
   });
+  export const getCompetenciaTiempos = async () =>
+  await axios.get("/getCompetenciaTiempos", {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+  export const getResultados = async () =>
+  await axios.get("/getResultados", {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+  export const getEntidadCompetencia = async () =>
+  await axios.get("/getEntidadCompetencia", {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+
+
+export const updateTimeCompetencia = async (id, data) =>
+await axios.put(`/updateTimeCompetencia/${id}`, data, {
+  headers: {
+    Authorization: jwt(),
+  },
+});
 
 

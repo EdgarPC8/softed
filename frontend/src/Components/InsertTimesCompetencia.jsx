@@ -19,19 +19,18 @@ import DataTable from "../Components/DataTable";
 import DataTableCompetencia from "../Components/DataTableCompetencia";
 import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
-import { getCompetencia,getCompetenciaTiempos,getResultados,getEntidadCompetencia } from "../api/competenciaResquest";
+import { getCompetencia,getCompetenciaTiempos,getResultados } from "../api/competenciaResquest";
 import DataTableCompResults from "../Components/DataTableCompResults";
-import DataTableEntidadesComp from "../Components/DataTableEntidadesComp";
 
 
-function Competencia() {
+function InsertTimesCompetencia() {
   const [data, setData] = useState([]);
 
   async function getData() {
     try {
-      const res = await getEntidadCompetencia();
-      console.log(res.data)
+      const res = await getCompetenciaTiempos();
       setData(res.data)
+      console.log(res.data)
 
     } catch (error) {
       console.error('Error al obtener datos:', error);
@@ -42,12 +41,9 @@ function Competencia() {
     }, []);
   return (
     <>  
-      {/* <DataTableCompetencia data={data}/> */}
-      <DataTableEntidadesComp data={data}/>
-      {/* <DataTableCompResults data={data.Competencia}/> */}
-
+      <DataTableCompetencia data={data}/>
     </>
   );
 }
 
-export default Competencia;
+export default InsertTimesCompetencia;
