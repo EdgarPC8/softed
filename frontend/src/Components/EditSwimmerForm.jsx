@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 import FormSwimmer from "./FormSwimmer";
 import { updateSwimmerRequest } from "../api/nadadoresResquest";
@@ -12,7 +12,7 @@ function EditSwimmerForm() {
       updateSwimmerRequest(dni, data),
       {
         loading: "Editando...",
-        success: "Usuario editado con éxito",
+        success: "Nadador editado con éxito",
         error: "Ocurrio un error",
       },
       {
@@ -26,7 +26,8 @@ function EditSwimmerForm() {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: "30px", p: 5 }}>
+    <Container maxWidth="xs" sx={{ mt: 1, }}>
+      <Typography variant="h6">Editar nadador</Typography>
       <FormSwimmer onSubmit={onSubmit} />
     </Container>
   );

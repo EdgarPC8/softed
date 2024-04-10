@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
@@ -19,7 +19,7 @@ function AddSwimmerForm() {
       }),
       {
         loading: "Guardando...",
-        success: "Usuario guardando con éxito",
+        success: "Nadador guardando con éxito",
         error: "Ocurrio un error",
       },
       {
@@ -32,7 +32,8 @@ function AddSwimmerForm() {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: "30px", p: 5 }}>
+    <Container maxWidth="xs" sx={{ mt: 2 }}>
+      <Typography variant="h6">Añadir nadador</Typography>
       <FormSwimmer onSubmit={onSubmit} />
     </Container>
   );
