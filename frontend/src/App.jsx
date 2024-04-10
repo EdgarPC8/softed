@@ -24,6 +24,9 @@ import InsertTimesCompetencia from "./Components/InsertTimesCompetencia.jsx";
 import ResultsCompetencia from "./Components/ResultsCompetencia.jsx";
 import Meters from "./page/Meters.jsx";
 import Tests from "./page/Tests.jsx";
+import AddUserForm from "./Components/AddUserForm.jsx";
+import EditUserForm from "./Components/EditUserForm.jsx";
+import Users from "./page/Users.jsx";
 
 function App() {
   return (
@@ -60,6 +63,9 @@ function App() {
               <Route path="/metros" element={<Meters />} />
               <Route path="/pruebas" element={<Tests />} />
               <Route path="/institucion" element={<Institution />} />
+              <Route path="/usuarios" element={<Users />} />
+              <Route path="/añadir-usuario" element={<AddUserForm />} />
+              <Route path="/editar-usuario/:dni" element={<EditUserForm />} />
             </Route>
           </Routes>
         </BrowserRouter>

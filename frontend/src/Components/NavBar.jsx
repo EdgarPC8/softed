@@ -79,6 +79,7 @@ function ResponsiveAppBar() {
           ],
         },
       },
+      { name: "Usuarios", link: "/usuarios", icon: <AdbIcon /> },
     ],
     Administrador: [
       { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
