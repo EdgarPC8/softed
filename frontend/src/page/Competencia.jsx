@@ -79,7 +79,7 @@ function Competencia() {
   return (
     <>  
       {/* <DataTable columns={columns} data={data} /> */}
-      <DataTableCompetencia/>
+      <DataTableCompetencia data={data}/>
 
     </>
   );
