@@ -16,11 +16,11 @@ import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 
 import DataTable from "../Components/DataTable";
-import DataTableCompetencia from "../Components/DataTableCompetencia";
+// import DataTableCompetencia from "../Components/DataTableCompetencia";
 import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
 import { getCompetencia,getCompetenciaTiempos,getResultados } from "../api/competenciaResquest";
-import DataTableCompResults from "../Components/DataTableCompResults";
+// import DataTableCompResults from "../Components/DataTableCompResults";
 
 
 function ResultsCompetencia() {
@@ -40,7 +40,7 @@ function ResultsCompetencia() {
     }, []);
   return (
     <>  
-      <DataTableCompResults data={data}/>
+      {/* <DataTableCompResults data={data}/> */}
     </>
   );
 }

@@ -20,8 +20,8 @@ import DataTable from "../Components/DataTable";
 import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
 import { getCompetencia,getCompetenciaTiempos,getResultados,getEntidadCompetencia } from "../api/competenciaResquest";
-import DataTableCompResults from "../Components/DataTableCompResults";
-import DataTableEntidadesComp from "../Components/DataTableEntidadesComp";
+// import DataTableCompResults from "../Components/DataTableCompResults";
+// import DataTableEntidadesComp from "../Components/DataTableEntidadesComp";
 
 
 function Competencia() {
@@ -42,9 +42,8 @@ function Competencia() {
     }, []);
   return (
     <>  
-      {/* <DataTableCompetencia data={data}/> */}
-      <DataTableEntidadesComp data={data}/>
-      {/* <DataTableCompResults data={data.Competencia}/> */}
+    hola
+      {/* <DataTableEntidadesComp data={data}/>*/}
 
     </>
   );
