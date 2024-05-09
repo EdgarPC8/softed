@@ -22,14 +22,15 @@ import Checkbox from '@mui/material/Checkbox'; // Import Checkbox
 
 
 
-function createData(name, metros, prueba, categoria, genero, history) {
+function createData(name, metros, prueba, categoria, genero, history,pruebasHeaders) {
   return {
     name,
     metros,
     prueba,
     categoria,
     genero,
-    history
+    history,
+    pruebasHeaders
   };
 }
 
@@ -39,7 +40,7 @@ function Row(props) {
   const handleChange = (event, key) => {
     const checked = event.target.checked;
     // Realizar cualquier acción necesaria cuando se cambie el estado del Checkbox
-    console.log(`Checkbox ${key} checked: ${checked}`);
+    // console.log(`Checkbox ${key} checked: ${checked}`);
   };
 
   const putTime = async (id, time) => {
@@ -83,7 +84,12 @@ function Row(props) {
                     <TableCell>Cedula</TableCell>
                     <TableCell>Nadador</TableCell>
                     <TableCell>Categoria</TableCell>
-                    <TableCell>25PR_L</TableCell>
+                    {row.pruebasHeaders.map((historyData, index) => (
+                      <TableCell key={index+"pruebasHeaders"}>
+                        {historyData.name}
+                      </TableCell>
+                    ))}
+                    {/* <TableCell>25PR_L</TableCell>
                     <TableCell>25PR_E</TableCell>
                     <TableCell>25Lib</TableCell>
                     <TableCell>25Esp</TableCell>
@@ -93,7 +99,7 @@ function Row(props) {
                     <TableCell>50Esp</TableCell>
                     <TableCell>50Pech</TableCell>
                     <TableCell>50Mari</TableCell>
-                    <TableCell>100CI</TableCell>
+                    <TableCell>100CI</TableCell> */}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -112,73 +118,14 @@ function Row(props) {
                         <TableCell>
                           {historyData.Categoria}
                         </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.PR_L === 'checked'}
-                            onChange={(event) => handleChange(event, 'PR_L')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.PR_E === 'checked'}
-                            onChange={(event) => handleChange(event, 'PR_E')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Libre25 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Libre25')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Espalda25 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Espalda25')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Pecho25 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Pecho25')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Mariposa25 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Mariposa25')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Libre50 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Libre50')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Espalda50 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Espalda50')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Pecho50 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Pecho50')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.Mariposa50 === 'checked'}
-                            onChange={(event) => handleChange(event, 'Mariposa50')}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Checkbox
-                            defaultChecked={historyData.ArrayChecks.CI100 === 'checked'}
-                            onChange={(event) => handleChange(event, 'CI100')}
-                          />
-                        </TableCell>
-
+                        {row.pruebasHeaders.map((pruebaData, index) => (
+                        <TableCell key={index+"pruebas"}>
+                        <Checkbox
+                          defaultChecked={historyData.ArrayChecks.includes(pruebaData)}
+                          onChange={(event) => handleChange(event, pruebaData)}
+                        />
+                      </TableCell>
+                      ))}
                       </TableRow>
                     </React.Fragment>
                   ))}
@@ -192,7 +139,11 @@ function Row(props) {
   );
 }
 
-export default function CollapsibleTable({ data = [] }) {
+export default function CollapsibleTable({ data = [
+  {Id:0,Nadadores:[
+    {Categoria:"2006-2007",Cedula:1104661598,Id:1,Nadador:"Edgar Torres",ArrayChecks:["25PR_E"]},
+    // {Categoria:"2006-2007",Cedula:1104661599,Id:2,Nadador:"Hola Torres",ArrayChecks:{CI100:"checked"}}
+  ],Nombre:"Prueba"}] }) {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -231,7 +182,20 @@ export default function CollapsibleTable({ data = [] }) {
                 "Numero de Nadadores",
                 "Tiempos Registrados",
                 "Nadadores descalificados",
-                row.Nadadores)}
+                row.Nadadores,
+                [
+                {name:"PR_L",metros:"25 Metros",prueba:"PR_L",},
+                {name:"PR_E",metros:"25 Metros",prueba:"PR_E",},
+                {name:"Libre25",metros:"25 Metros",prueba:"Libre",},
+                {name:"Espalda25",metros:"25 Metros",prueba:"Espalda",},
+                {name:"Pecho25",metros:"25 Metros",prueba:"Pecho",},
+                {name:"Mariposa25",metros:"25 Metros",prueba:"Mariposa",},
+                {name:"Libre50",metros:"50 Metros",prueba:"Libre",},
+                {name:"Espalda50",metros:"50 Metros",prueba:"Espalda",},
+                {name:"Pecho50",metros:"50 Metros",prueba:"Pecho",},
+                {name:"Mariposa50",metros:"50 Metros",prueba:"Mariposa",},
+                {name:"CI100",metros:"100 Metros",prueba:"CI",},
+              ])}
             />
           ))}
         </TableBody>

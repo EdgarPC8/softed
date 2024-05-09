@@ -4,13 +4,30 @@ class Competencia{
     
 
     public static function getEntidadCompetencia(){
+
+         //Pruebas: 25 Metros Espalda, Un acronimo.
+        //Categoria:2012-2013, 2012,2013
+        // [
+        //     {name:"PR_L",metros:"25 Metros",prueba:"PR_L",},
+        //     {name:"PR_E",metros:"25 Metros",prueba:"PR_E",},
+        //     {name:"Libre25",metros:"25 Metros",prueba:"Libre",},
+        //     {name:"Espalda25",metros:"25 Metros",prueba:"Espalda",},
+        //     {name:"Pecho25",metros:"25 Metros",prueba:"Pecho",},
+        //     {name:"Mariposa25",metros:"25 Metros",prueba:"Mariposa",},
+        //     {name:"Libre50",metros:"50 Metros",prueba:"Libre",},
+        //     {name:"Espalda50",metros:"50 Metros",prueba:"Espalda",},
+        //     {name:"Pecho50",metros:"50 Metros",prueba:"Pecho",},
+        //     {name:"Mariposa50",metros:"50 Metros",prueba:"Mariposa",},
+        //     {name:"CI100",metros:"100 Metros",prueba:"CI",},
+        //   ]
+
         $respuesta=false;
         // $data = json_decode(Flight::request()->getBody());
         $data = (object)[
             "IdCompetencia"=>3,
         ];
-
         function getCategorias($stringDate){
+
             $Categorias=[
                 "2004-2005"=>[2004,2005],
                 "2006-2007"=>[2006,2007],
@@ -20,6 +37,7 @@ class Competencia{
                 "2014-2015"=>[2014,2015],
                 "2016-2017"=>[2016,2017],
             ];
+            
             $div=explode("-",$stringDate);
             $CatAnio=intval($div[2]);
             foreach ($Categorias as $keyCat => $valueCat) {
@@ -52,7 +70,7 @@ class Competencia{
                     "Cedula"=>$nad["cedula"],
                     "Nadador"=>$nad["nadador"],
                     "Categoria"=>getCategorias($nad["fecha_nacimiento"]) ,
-                    "ArrayChecks"=>json_decode($nad["configCheck"]),
+                    "ArrayChecks"=>explode(",", $nad["configCheck"]),
                     
                 ];
             }
@@ -67,259 +85,114 @@ class Competencia{
         $respuesta=$arrayEntidad;
         Flight::json($respuesta);
     }
+    public static function administrarCompetencia(){
+        $respuesta=false;
+        $data = (object)[
+            "IdCompetencia"=>3,
+            "Create"=>false,
+        ];
+
+
+        $Competencia=[];
+        $array=SqlService::selectData("institucion_nadador 
+        INNER JOIN nadador ON nadador.cedula=institucion_nadador.id_nadador 
+        INNER JOIN competencia ON competencia.id=institucion_nadador.id_competencia 
+        INNER JOIN institucion ON institucion.id=institucion_nadador.id_institucion
+        ",
+        ["institucion.nombre AS entidad","nadador.cedula","nadador.genero","nadador.fecha_nacimiento",
+        "nadador.primer_nombre",
+        "nadador.segundo_nombre",
+        "nadador.primer_apellido",
+        "nadador.segundo_apellido"
+        ,"Concat(nadador.nombres,' ',nadador.apellidos) AS nadador","institucion_nadador.*"],
+        ["id_competencia"=>$data->IdCompetencia],null,"CAST(SUBSTRING_INDEX(institucion_nadador.categoria, '-', 1) AS SIGNED) DESC");
+        $contador=1;
+        $arrayEventosGenerales=null;
+        $eventos = [
+            [
+                "name" => "Espalda25",
+                "metros" => "25 Metros",
+                "prueba" => "PR_E",
+                "genero" => ["F", "M"],
+                "categoria" => [
+                    "name" => "2016-2017",
+                    "valor" => [2012, 2013]
+                ]
+            ],
+            [
+                "name" => "PR_L",
+                "metros" => "25 Metros",
+                "prueba" => "PR_L",
+                "genero" => ["F", "M"],
+                "categoria" => [
+                    "name" => "2016-2017",
+                    "valor" => [2016, 2017]
+                ]
+            ],
+        
+         
+        ];
+        
+  
+        $personas = [
+            ["primer_nombre"=>"Edgar","segundo_nombre"=>"Patricio","primer_apellido"=>"Torres","segundo_apellido"=>"Condolo","fecha_nacimiento" => "01-01-2016",
+            "genero" => "M","configCheck" => "PR_E","entidad"=>"Los Tiburones","cedula"=>1104661598,"id"=>1,"id_competencia"=>3,"id_institucion"=>5,"nadador"=>"Edgar Torres"],
+            ["primer_nombre"=>"Carlos","segundo_nombre"=>"Ivan","primer_apellido"=>"Cueva","segundo_apellido"=>"sarango","fecha_nacimiento" => "01-01-2016",
+            "genero" => "M","configCheck" => "PR_E","entidad"=>"Titanes","cedula"=>1104661599,"id"=>2,"id_competencia"=>3,"id_institucion"=>4,"nadador"=>"Carlos Cueva"],
+            ["primer_nombre" => "Ana", "segundo_nombre" => "Luisa", "primer_apellido" => "García", "segundo_apellido" => "Pérez", "fecha_nacimiento" => "01-01-2016",
+             "genero" => "F", "configCheck" => "PR_E", "entidad" => "Delfines", "cedula" => 2104661591, "id" => 3, "id_competencia" => 3, "id_institucion" => 6, "nadador" => "Ana García"],
+            ["primer_nombre" => "María", "segundo_nombre" => "Elena", "primer_apellido" => "Martínez", "segundo_apellido" => "Gómez", "fecha_nacimiento" => "01-01-2016",
+             "genero" => "F", "configCheck" => "PR_E", "entidad" => "Tiburones", "cedula" => 2104661592, "id" => 4, "id_competencia" => 3, "id_institucion" => 7, "nadador" => "María Martínez"],
+            ["primer_nombre" => "Laura", "segundo_nombre" => "Isabel", "primer_apellido" => "Fernández", "segundo_apellido" => "López", "fecha_nacimiento" => "01-01-2016",
+             "genero" => "M", "configCheck" => "PR_L", "entidad" => "Delfines", "cedula" => 2104661593, "id" => 5, "id_competencia" => 3, "id_institucion" => 8, "nadador" => "Laura Fernández"],
+            ["primer_nombre" => "Sofía", "segundo_nombre" => "Valentina", "primer_apellido" => "Sánchez", "segundo_apellido" => "Díaz", "fecha_nacimiento" => "01-01-2016",
+             "genero" => "F", "configCheck" => "PR_L", "entidad" => "Tiburones", "cedula" => 2104661594, "id" => 6, "id_competencia" => 3, "id_institucion" => 9, "nadador" => "Sofía Sánchez"],
+            ["primer_nombre" => "Lucía", "segundo_nombre" => "Camila", "primer_apellido" => "Rodríguez", "segundo_apellido" => "Martínez", "fecha_nacimiento" => "01-01-2016",
+             "genero" => "F", "configCheck" => "PR_L", "entidad" => "Delfines", "cedula" => 2104661595, "id" => 7, "id_competencia" => 3, "id_institucion" => 10, "nadador" => "Lucía Rodríguez"],
+        ];
+        
+        $eventosNadadores = allFunctions::getNadadoresByEvento($array, $eventos);
 
 
 
+
+        foreach ($eventosNadadores as &$evento) {
+            $evento["nadadores"] = allFunctions::organizarPorTiempoYVacios($evento["nadadores"]);
+            $entidadesEvento = []; // Inicializar arreglo de entidades
+        
+            // Recorrer cada nadador y agregar sus entidades al arreglo
+            foreach ($evento["nadadores"] as $nadador) {
+                $entidadesEvento[] = $nadador["entidad"];
+            }
+        
+            // Eliminar duplicados manteniendo el orden original
+            $entidadesEvento = array_values(array_unique($entidadesEvento));
+        
+            // Asignar el arreglo de entidades al evento
+            $evento["entidades"] = $entidadesEvento;
+        
+            // Obtener las series
+            $evento["series"] = allFunctions::getSeries($evento["nadadores"], 5);
+        }
+        
+        
+        
+        
+        
+        // $respuesta=[
+        //     "res"=>allFunctions::alternarPosicionesNadadores($eventosNadadores),
+        //     "datos"=>$array,
+        // ];
+        $respuesta=allFunctions::alternarPosicionesNadadores($eventosNadadores);
+        Flight::json($respuesta);
+    }
     // public static function administrarCompetencia(){
     //     $respuesta=false;
-    //     $data = json_decode(Flight::request()->getBody());
+    //     $data = (object)[
+    //         "IdCompetencia"=>3,
+    //         "Create"=>false,
+    //     ];
 
-    //     function getCategoria($stringDate){
-    //         $Categorias=[
-    //             "2004-2005"=>[2004,2005],
-    //             "2006-2007"=>[2006,2007],
-    //             "2008-2009"=>[2008,2009],
-    //             "2010-2011"=>[2010,2011],
-    //             "2012-2013"=>[2012,2013],
-    //             "2014-2015"=>[2014,2015],
-    //             "2016-2017"=>[2016,2017],
-    //         ];
-    //         $div=explode("-",$stringDate);
-    //         $CatAnio=intval($div[2]);
-    //         foreach ($Categorias as $keyCat => $valueCat) {
-    //             foreach ($valueCat as $keyAnio => $valueAnio) {
-    //                 if($CatAnio==$valueAnio){
-    //                     return $keyCat;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     function descomponerValor($valor, $limiteSuperior) {
-    //         $numeros = array();
-    //         if(ceil($valor / 2)<=$limiteSuperior){
-    //             $primerValor=ceil($valor / 2);
-    //             $segundoValor=$valor-$primerValor;
-    //             $numeros=[$segundoValor,$primerValor];
-    //             return $numeros;
-    //         }else if(ceil($valor / 3)-1<$limiteSuperior){
-    //             $segundoValor= ceil(($valor-$limiteSuperior )/ 2);
-    //             $primerValor=$valor-$segundoValor-$limiteSuperior;
-    //             $numeros=[$primerValor,$segundoValor,$limiteSuperior];
-    //             return $numeros;
-    //         }else if(ceil($valor / 4)-1<$limiteSuperior){
-    //             $vuelta=2;
-    //             $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-    //             $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-    //             $numeros=[$primerValor,$segundoValor];
-    //             for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-    //             return $numeros;
-    //         }else if(ceil($valor / 5)-1<$limiteSuperior){
-    //             $vuelta=3;
-    //             $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-    //             $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-    //             $numeros=[$primerValor,$segundoValor];
-    //             for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-    //             return $numeros;
-    //         }else if(ceil($valor / 6)-1<$limiteSuperior){
-    //             $vuelta=4;
-    //             $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-    //             $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-    //             $numeros=[$primerValor,$segundoValor];
-    //             for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-    //             return $numeros;
-    //         }else if(ceil($valor / 7)-1<$limiteSuperior){
-    //             $vuelta=5;
-    //             $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-    //             $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-    //             $numeros=[$primerValor,$segundoValor];
-    //             for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-    //             return $numeros;
-    //         }else if(ceil($valor / 8)-1<$limiteSuperior){
-    //             $vuelta=6;
-    //             $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-    //             $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-    //             $numeros=[$primerValor,$segundoValor];
-    //             for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-    //             return $numeros;
-    //         }
-    //         return $numeros;
-    //     }
-    //     function getSeries($array,$carriles){
-    //         $obj=[];
-    //         $sizeArray=count($array);
-    //         $series=descomponerValor($sizeArray,$carriles);
-    //         $serie=0;
-    //         $contadorSerie=0;
-    //         $contador=1;
-    //         foreach ($array as $key => $nad) {
-    //             if($sizeArray<=$carriles){    
-    //                 // $obj[$serie]=$array;
-    //                 $nad["carril"]=$contador;
-    //                 $obj[$serie]["Nadadores"][]=$nad;
-    //             }else{
-    //                 // return $series;
-    //                 if($contadorSerie<$series[$serie]){
-    //                     $nad["carril"]=$contador;
-    //                     $obj[$serie]["Nadadores"][]=$nad;
-    //                 }else{
-    //                     $serie++;
-    //                     $contadorSerie=0;
-    //                     $contador=1;
-    //                     $nad["carril"]=$contador;
-    //                     $obj[$serie]["Nadadores"][]=$nad;
-    //                 }
-    //                 $contadorSerie++;
-    //             }
-    //             $contador++;
-    //         }
-    //         return $obj;
-    //     }
-    //     function getMetrosPrueba($string){
-    //         $Pruebas=[
-    //             "Espalda25"=>"25Esp",
-    //             "Libre25"=>"25Lib",
-    //             "Pecho25"=>"25Pech",
-    //             "Mariposa25"=>"25Mari",
-    //             "Espalda50"=>"50Esp",
-    //             "Libre50"=>"50Lib",
-    //             "Pecho50"=>"50Pech",
-    //             "Mariposa50"=>"50Mari",
-    //             "CI100"=>"100CI",
-    //             "PR_L"=>"PR_L",
-    //             "PR_E"=>"PR_E",
-    //         ];
-    //         foreach ($Pruebas as $keyPr => $valueCat) {
-    //             if($string==$keyPr){
-    //                 return $valueCat;
-    //             }
-    //         }
-    //     }
-    //     function getObjetoMetrosPrueba($string){
-    //         $Pruebas=[
-    //             "Espalda25"=>["Prueba"=>"Espalda","Metros"=>"25 Metros"],
-    //             "Libre25"=>["Prueba"=>"Libre","Metros"=>"25 Metros"],
-    //             "Pecho25"=>["Prueba"=>"Pecho","Metros"=>"25 Metros"],
-    //             "Mariposa25"=>["Prueba"=>"Mariposa","Metros"=>"25 Metros"],
-    //             "Espalda50"=>["Prueba"=>"Espalda","Metros"=>"50 Metros"],
-    //             "Libre50"=>["Prueba"=>"Libre","Metros"=>"50 Metros"],
-    //             "Pecho50"=>["Prueba"=>"Pecho","Metros"=>"50 Metros"],
-    //             "Mariposa50"=>["Prueba"=>"Mariposa","Metros"=>"50 Metros"],
-    //             "CI100"=>["Prueba"=>"CI","Metros"=>"100 Metros"],
-    //             "PR_L"=>["Prueba"=>"PR_L","Metros"=>"25 Metros"],
-    //             "PR_E"=>["Prueba"=>"PR_E","Metros"=>"25 Metros"],
-    //         ];
-    //         foreach ($Pruebas as $keyPr => $valueCat) {
-    //             if($string==$keyPr){
-    //                 return $valueCat;
-    //             }
-    //         }
-    //     }
-    //     function getTiempo($nadador){
-    //         $array=SqlService::selectData("tiempos",
-    //         ["tiempos.*"],
-    //         ["cedula"=>$nadador["Cedula"],"metros"=>$nadador["Metros"],"prueba"=>$nadador["Prueba"]],null,"tiempo");
-    //         if(count($array)>0){
-    //             return $array[0]["tiempo"];
-    //         }else{
-    //             return "";
-    //         }
-    //     }
-    //     function cmp($a, $b) {
-    //         // Ordenar por prueba
-    //         $pruebaOrden = array(
-    //             'PR_E' => 1,
-    //             '25Esp' => 2,
-    //             '50Esp' => 3,
-    //             'PR_L' => 4,
-    //             '25Lib' => 5,
-    //             '50Lib' => 6,
-    //             '100CI' => 7,
-    //             '25Mari' => 8,
-    //             '50Mari' => 9,
-    //             '25Pech' => 10,
-    //             '50Pech' => 11,
-    //         );
-    //         $pruebaA = $pruebaOrden[$a['Prueba']];
-    //         $pruebaB = $pruebaOrden[$b['Prueba']];
-        
-    //         if ($pruebaA !== $pruebaB) {
-    //             return $pruebaA - $pruebaB;
-    //         }
-        
-    //         // Si las pruebas son iguales, ordenar por categoría
-    //         $categoriaOrden = array(
-    //             '2004-2005' => 7,
-    //             '2006-2007' => 6,
-    //             '2008-2009' => 5,
-    //             '2010-2011' => 4,
-    //             '2012-2013' => 3,
-    //             '2014-2015' => 2,
-    //             '2016-2017' => 1
-    //         );
-    //         $categoriaA = $categoriaOrden[$a['Categoria']];
-    //         $categoriaB = $categoriaOrden[$b['Categoria']];
-        
-    //         if ($categoriaA !== $categoriaB) {
-    //             return $categoriaA - $categoriaB;
-    //         }
-        
-    //         // Si las categorías son iguales, ordenar por género
-    //         $generoOrden = array(
-    //             'F' => 1,
-    //             'M' => 2
-    //         );
-    //         $generoA = $generoOrden[$a['Genero']];
-    //         $generoB = $generoOrden[$b['Genero']];
-        
-    //         if ($generoA !== $generoB) {
-    //             return $generoA - $generoB;
-    //         }
-        
-    //         // Si los géneros son iguales, ordenar por número
-    //         return $a['numero'] - $b['numero'];
-    //     }
-      
-    //     function intercalarEntidades($array) {
-    //         $entidades = array(); // Un array para mantener los objetos agrupados por entidad
-    //         $resultado = array(); // El nuevo array resultante
-        
-    //         // Agrupar los objetos por entidad
-    //         foreach ($array as $objeto) {
-    //             $entidad = $objeto['entidad'];
-    //             if (!isset($entidades[$entidad])) {
-    //                 $entidades[$entidad] = array();
-    //             }
-    //             $entidades[$entidad][] = $objeto;
-    //         }
-        
-    //         // Intercalar los objetos de cada entidad en el resultado
-    //         $maxCount = max(array_map('count', $entidades));
-    //         for ($i = 0; $i < $maxCount; $i++) {
-    //             foreach ($entidades as $entidad => $objetos) {
-    //                 if (isset($objetos[$i])) {
-    //                     $resultado[] = $objetos[$i];
-    //                     unset($entidades[$entidad][$i]);
-    //                 }
-    //             }
-    //         }
-        
-    //         return $resultado;
-    //     }
-    //     function organizarPorTiempoYVacios($array) {
-    //         usort($array, function($a, $b) {
-    //             // Si uno de los tiempos es vacío, colócalo primero
-    //             if ($a['tiempo'] === '') {
-    //                 return -1;
-    //             } elseif ($b['tiempo'] === '') {
-    //                 return 1;
-    //             }
-        
-    //             // Compara los tiempos como strings
-    //             return strcmp($b['tiempo'], $a['tiempo']);
-    //         });
-        
-    //         return $array;
-    //     }
 
     //     $Competencia=[];
     //     $array=SqlService::selectData("institucion_nadador 
@@ -335,15 +208,17 @@ class Competencia{
     //     //este foreach crea los eventos pero todo en ovbetos
 
     //     foreach ($array as $clave => $valor) {
-    //         $objPruebas = json_decode($valor["configCheck"]);
+    //         // $objPruebas = json_decode($valor["configCheck"]);
+    //         $objPruebas=explode(",", $valor["configCheck"]);
+
     //         foreach ($objPruebas as $key => $value) {
     //             if($value!=''){
     //                 $arrayTime=[];
-    //                 $arrayTime=getObjetoMetrosPrueba($key);
+    //                 $arrayTime=allFunctions::getObjetoMetrosPrueba($value);
     //                 $arrayTime["Cedula"]=$valor["cedula"];
-    //                 $valor["tiempo"]=getTiempo($arrayTime);
+    //                 $valor["tiempo"]=allFunctions::getTiempo($arrayTime);
                     
-    //                 $eventos[$key."||".getCategoria($valor["fecha_nacimiento"])."||".$valor["genero"]][]=$valor;
+    //                 $eventos[$value."||".allFunctions::getCategoria($valor["fecha_nacimiento"])."||".$valor["genero"]][]=$valor;
     //                 $arrayEventosGenerales=$eventos;
     //             }
     //         }
@@ -353,7 +228,7 @@ class Competencia{
     //      // Función de comparación para ordenar por tiempo
     //      $arrayDistribucion=[];
     //      foreach ($arrayEventosGenerales as $clave => $valor) {
-    //          $arrayDistribucion[$clave] = organizarPorTiempoYVacios($valor);
+    //          $arrayDistribucion[$clave] = allFunctions::organizarPorTiempoYVacios($valor);
     //      }
         
     //      //este foreach ya me organizar en arrays con objetos
@@ -363,17 +238,19 @@ class Competencia{
     //         // $respuesta= $opciones[0];
     //         $evento=[
     //             "Numero"=>$contador,
-    //             "Prueba"=>getMetrosPrueba($opciones[0]),
+    //             "Prueba"=>allFunctions::getMetrosPrueba($opciones[0]),
     //             "Genero"=>$opciones[2],
     //             "Categoria"=>$opciones[1],
-    //             "Series"=>getSeries($valor,5),
+    //             "Series"=>allFunctions::getSeries($valor,5),
     //         ];
     //         $Competencia[]=$evento;
     //         $contador++;
     //     }
 
     //     //funcion que me organizar por pruebas y categorias
-    //     usort($Competencia, 'cmp');
+    //     usort($Competencia, ['allFunctions', 'cmp']);
+
+    //     // allFunctions::cmp
 
     //     // este es para crear la competencia
     //     if($data->Create){
@@ -391,655 +268,21 @@ class Competencia{
     //             $contador++;
     //         }
     //     }
-    //     // // Este es para saber en que carril estuvo cada nadador
-    //     // function orgCarril($array,$camposOcupados,$limite) {
-    //     //     $result=0;
-    //     //     $inicio=0;
-    //     //     $fin=0;
 
-    //     //     if($limite==3){
-    //     //         $inicio=2;
-    //     //         $fin=4;
-    //     //     }else
-    //     //     if($limite==4){
-    //     //         $inicio=1;
-    //     //         $fin=4;
-    //     //     }else
-    //     //     if($limite==5){
-    //     //         $inicio=1;
-    //     //         $fin=5;
-    //     //     }
-        
-    //     //     return $result;
-    //     // }
-
-
-    //     // $respuesta=$Competencia;
-    //     function orgCarril($array, $camposOcupados, $limite) {
-    //         $inicio = 1;
-    //         $fin = $limite;
-
-    //         if ($limite <= 3) {
-    //             $inicio = 2;
-    //             $fin = 4;
-    //         } else if ($limite == 4) {
-    //             $inicio = 1;
-    //             $fin = $limite;
-    //         } else if ($limite == 5) {
-    //             $inicio = 1;
-    //             $fin = $limite;
-    //         }
-
-
-    //         $result = findUnusedNumberInRange($inicio, $fin, $array, $camposOcupados,$array[0]);
-    //         // if($result==null)$result=findUnusedNumberInRange(1, 5, $array, $camposOcupados,$array[0]);
-    //         return $result;
-    //     }
-
-    //     function findUnusedNumberInRange($inicio, $fin, $array, $camposOcupados,$posicion) {
-    //         if(count($array)>0){
-    //             if(count($camposOcupados)>0){
-    //                 if(count($array)<2){
-    //                     if (!in_array($array[count($array)-1]+1, $array)) {
-    //                         if($array[count($array)-1]+1>$fin){
-    //                             if(!in_array($inicio, $camposOcupados)){
-    //                                 // if (!in_array($inicio+1, $camposOcupados)) {
-    //                                 //     return $inicio+1;
-    //                                 // }
-    //                                 return $inicio;
-    //                             }
-    //                         }
-    //                         return $array[count($array)-1]+1;
-    //                     }
-    //                     // return 50;
-            
-            
-    //                     // for ($i = $inicio; $i <= $fin; $i++) {
-    //                     //     if(in_array($i, $camposOcupados)){
-                                
-    //                     //         return $i;
-    //                     //     }
-    //                     // }
-
-    //                 }
-                    
-    //             }else{
-
-    //             }
-    //             // if(count($array)==2){
-    //             //     if (!in_array($array[count($array)-1]+1, $array)) {
-    //             //         if($array[count($array)-1]+1>$fin){
-    //             //             if(!in_array($inicio, $camposOcupados)){
-    //             //                 if (!in_array($inicio+1, $camposOcupados)) {
-    //             //                     return $inicio+1;
-    //             //                 }
-    //             //                 return $inicio;
-    //             //             }
-    //             //         }
-    //             //         if(!in_array($array[count($array)-1]+1, $array)){
-    //             //             return 1000;
-    //             //         }
-    //             //     }
-    //             // }
-    //             return 10;
-    //         }else{
-    //             return 30;
-    //         }
-
-    //     }
-
-
-    //     $InfoCarriles=[];
-    //     $arrayCarrilesEnlosqueahestadoelnadador=[];
-    //     $respuesta=0;
+    //     $arraySeriesGlobal=[];
+    //     $arrayNadadoresGlobal=[];
 
     //     foreach ($Competencia as $clave => $evento) {
-    //         $contadorSerie=0;
     //         foreach ($evento["Series"] as $keySerie => $valueSerie) {
-    //             $carrilesOcupados=[];
-    //             $contNad=0;
-
-
-    //             foreach ($valueSerie["Nadadores"] as $keyNadador => $valueNad) {
-
-    //                 $condicionCarril=count($valueSerie["Nadadores"])<=3?$valueNad["carril"]+1:$valueNad["carril"];
-
-                    
-    //                 // $InfoCarriles[$valueNad["cedula"]]["Carriles"]=agregarNumeroSiNoExiste($carrilesOcupados, 5, $condicionCarril);
-    //                 // $InfoCarriles[$valueNad["cedula"]]["Carril"]=$condicionCarril;
-    //                 // array_push($carrilesOcupados,$condicionCarril)
-
-                    
-                  
-    //                 // $respuesta[$valueNad["cedula"]][]=1;
-
-                    
-    //                 !isset($InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"])?array_push($carrilesOcupados,$condicionCarril):array_push($carrilesOcupados,1);
-
-
-    //                isset($InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"])?
-    //                $InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"][]=$condicionCarril=orgCarril($InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"],$InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"] ,count($valueSerie["Nadadores"])):
-    //                $InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"][]=$condicionCarril;
-    //             //    isset($InfoCarriles[$valueNad["cedula"]]["CarrilesOcupados"])?
-    //             //    $InfoCarriles[$valueNad["cedula"]]["CarrilesOcupados"][]=$condicionCarril=orgCarril($InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"],$carrilesOcupados,count($valueSerie["Nadadores"])):
-    //             //    $InfoCarriles[$valueNad["cedula"]]["CarrilesOcupados"][]=$condicionCarril;
-    //                 $InfoCarriles[$valueNad["cedula"]]["Evento"]=$evento["Prueba"].$evento["Categoria"].$evento["Genero"];
-    //                 $InfoCarriles[$valueNad["cedula"]]["Serie"]=$contadorSerie;
-    //                 $InfoCarriles[$valueNad["cedula"]]["CantidadNadadores"]=count($valueSerie["Nadadores"]);
-    //                 $InfoCarriles[$valueNad["cedula"]]["NumeroEvento"]=$clave;
-    //                 $InfoCarriles[$valueNad["cedula"]]["Nadador"]=$contNad;
-    //                 $InfoCarriles[$valueNad["cedula"]]["Nombres"]=$valueNad["nadador"];
-    //                 $contNad++;
-
-    //             }
-    //             $contadorSerie++;
-
+    //             $arraySeriesGlobal[]["Evento".($clave+1)."Serie".($keySerie+1)]=$valueSerie["Nadadores"];
+    //                 shuffle($valueSerie["Nadadores"]);
+            
     //         }
     //     }
-    //     // $arrayFinal=[];
-
-    //     foreach ($Competencia as $clave => $evento) {
-    //         $contadorSerie=1;
-    //         foreach ($evento["Series"] as $keySerie => $valueSerie) {
-    //             $carrilesOcupados=[];
-
-    //             foreach ($valueSerie["Nadadores"] as $keyNadador => $valueNad) {
-
-    //                 $Competencia[$clave]["Series"][$keySerie]["Nadadores"][$keyNadador]["carril"]=$InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"][0];
-    //                 array_shift($InfoCarriles[$valueNad["cedula"]]["CarrilesRecorridos"]);
-    //             }
-    //             $contadorSerie++;
-
-    //         }
-    //     }
+    //     $Competencia = allFunctions::alternarPosicionesNadadores($Competencia);
     //     $respuesta=$Competencia;
-
-    //     function ordenarPorCarrilEnSeries($arrayDeObjetos) {
-    //         foreach ($arrayDeObjetos as $serie) {
-    //             if (isset($serie->Series[0]->Nadadores) && is_array($serie->Series[0]->Nadadores)) {
-    //                 usort($serie->Series[0]->Nadadores, function($a, $b) {
-    //                     return $a->carril - $b->carril;
-    //                 });
-    //             }
-    //         }
-        
-    //         usort($arrayDeObjetos, function($a, $b) {
-    //             $primerCarrilA = isset($a->Series[0]->Nadadores[0]) ? $a->Series[0]->Nadadores[0]->carril : PHP_INT_MAX;
-    //             $primerCarrilB = isset($b->Series[0]->Nadadores[0]) ? $b->Series[0]->Nadadores[0]->carril : PHP_INT_MAX;
-        
-    //             return $primerCarrilA - $primerCarrilB;
-    //         });
-        
-    //         return $arrayDeObjetos;
-    //     }
-
-
-    //     // $cambiar = ordenarPorCarrilEnSeries($Competencia);
-    //     // $Competencia=$cambiar;
-    //     $dede=[];
-
-    //     // for ($i=54; $i < count($Competencia); $i++) { 
-    //     //     $dede[]=$Competencia[$i];
-    //     //     foreach ($Competencia[0]["Series"] as $keySerie => $valueSerie) {
-    //     //         $dede[]["Series"][]=$valueSerie;
-    //     //         foreach ($valueSerie["Nadadores"] as $keyNadador => $valueNad) {
-    //     //             $dede[]["Series"][]["Nadadores"][]=$valueNad;
-    //     //         }
-    //     //     }
-    //     // }
-
-    //     // Ejemplo de uso:
-    //     $serie = array(
-    //         (object) array(
-    //             'Series' => array(
-    //                 (object) array(
-    //                     'Nadadores' => array(
-    //                         (object) array('cedula' =>1104661598,'tiempo' => 60.5, 'carril' => 1, 'prev_carriles' => array(1), 'eventos' => array(1)),
-    //                         (object) array('cedula' =>1104661599,'tiempo' => 59.8, 'carril' => 2, 'prev_carriles' => array(2), 'eventos' => array(1)),
-    //                         (object) array('cedula' =>1104661597,'tiempo' => 61.2, 'carril' => 3, 'prev_carriles' => array(3), 'eventos' => array(1)),
-    //                     ),
-    //                 ),
-    //             ),
-    //         ),
-        
-    //         (object) array(
-    //             'Series' => array(
-    //                 (object) array(
-    //                     'Nadadores' => array(
-    //                         (object) array('cedula' =>1104661598,'tiempo' => 60.5, 'carril' => 1, 'prev_carriles' => array(1), 'eventos' => array(1, 2)),
-    //                         (object) array('cedula' =>1104661599,'tiempo' => 59.8, 'carril' => 2, 'prev_carriles' => array(2), 'eventos' => array(1, 2)),
-    //                         (object) array('cedula' =>1104661597,'tiempo' => 61.2, 'carril' => 3, 'prev_carriles' => array(3), 'eventos' => array(1, 2)),
-    //                     ),
-    //                 ),
-    //             ),
-    //         ),
-    //         (object) array(
-    //             'Series' => array(
-    //                 (object) array(
-    //                     'Nadadores' => array(
-    //                         (object) array('cedula' =>1104661598,'tiempo' => 60.5, 'carril' => 1, 'prev_carriles' => array(1), 'eventos' => array(1, 2, 3)),
-    //                         (object) array('cedula' =>1104661599,'tiempo' => 59.8, 'carril' => 2, 'prev_carriles' => array(2), 'eventos' => array(1, 2, 3)),
-    //                         (object) array('cedula' =>1104661597,'tiempo' => 61.2, 'carril' => 3, 'prev_carriles' => array(3), 'eventos' => array(1, 2, 3)),
-    //                     ),
-    //                 ),
-    //             ),
-    //         ),
-    //     );
-        
-
     //     Flight::json($respuesta);
     // }
-    public static function administrarCompetencia(){
-        $respuesta=false;
-        $data = (object)[
-            "IdCompetencia"=>3,
-            "Create"=>false,
-        ];
-
-        function getCategoria($stringDate){
-            $Categorias=[
-                "2004-2005"=>[2004,2005],
-                "2006-2007"=>[2006,2007],
-                "2008-2009"=>[2008,2009],
-                "2010-2011"=>[2010,2011],
-                "2012-2013"=>[2012,2013],
-                "2014-2015"=>[2014,2015],
-                "2016-2017"=>[2016,2017],
-            ];
-            $div=explode("-",$stringDate);
-            $CatAnio=intval($div[2]);
-            foreach ($Categorias as $keyCat => $valueCat) {
-                foreach ($valueCat as $keyAnio => $valueAnio) {
-                    if($CatAnio==$valueAnio){
-                        return $keyCat;
-                    }
-                }
-            }
-        }
-        function descomponerValor($valor, $limiteSuperior) {
-            $numeros = array();
-            if(ceil($valor / 2)<=$limiteSuperior){
-                $primerValor=ceil($valor / 2);
-                $segundoValor=$valor-$primerValor;
-                $numeros=[$segundoValor,$primerValor];
-                return $numeros;
-            }else if(ceil($valor / 3)-1<$limiteSuperior){
-                $segundoValor= ceil(($valor-$limiteSuperior )/ 2);
-                $primerValor=$valor-$segundoValor-$limiteSuperior;
-                $numeros=[$primerValor,$segundoValor,$limiteSuperior];
-                return $numeros;
-            }else if(ceil($valor / 4)-1<$limiteSuperior){
-                $vuelta=2;
-                $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-                $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-                $numeros=[$primerValor,$segundoValor];
-                for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-                return $numeros;
-            }else if(ceil($valor / 5)-1<$limiteSuperior){
-                $vuelta=3;
-                $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-                $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-                $numeros=[$primerValor,$segundoValor];
-                for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-                return $numeros;
-            }else if(ceil($valor / 6)-1<$limiteSuperior){
-                $vuelta=4;
-                $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-                $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-                $numeros=[$primerValor,$segundoValor];
-                for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-                return $numeros;
-            }else if(ceil($valor / 7)-1<$limiteSuperior){
-                $vuelta=5;
-                $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-                $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-                $numeros=[$primerValor,$segundoValor];
-                for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-                return $numeros;
-            }else if(ceil($valor / 8)-1<$limiteSuperior){
-                $vuelta=6;
-                $segundoValor= ceil(($valor-$limiteSuperior*$vuelta)/ 2);
-                $primerValor=$valor-$segundoValor-$limiteSuperior*$vuelta;
-                $numeros=[$primerValor,$segundoValor];
-                for ($i=0; $i < $vuelta; $i++) { $numeros[]=$limiteSuperior;}
-                return $numeros;
-            }
-            return $numeros;
-        }
-        function getSeries($array,$carriles){
-            $obj=[];
-            $sizeArray=count($array);
-            $series=descomponerValor($sizeArray,$carriles);
-            $serie=0;
-            $contadorSerie=0;
-            $contador=1;
-            foreach ($array as $key => $nad) {
-                if($sizeArray<=$carriles){    
-                    // $obj[$serie]=$array;
-                    $nad["carril"]=$contador;
-                    $obj[$serie]["Nadadores"][]=$nad;
-                }else{
-                    // return $series;
-                    if($contadorSerie<$series[$serie]){
-                        $nad["carril"]=$contador;
-                        $obj[$serie]["Nadadores"][]=$nad;
-                    }else{
-                        $serie++;
-                        $contadorSerie=0;
-                        $contador=1;
-                        $nad["carril"]=$contador;
-                        $obj[$serie]["Nadadores"][]=$nad;
-                    }
-                    $contadorSerie++;
-                }
-                $contador++;
-            }
-            return $obj;
-        }
-        function getMetrosPrueba($string){
-            $Pruebas=[
-                "Espalda25"=>"25Esp",
-                "Libre25"=>"25Lib",
-                "Pecho25"=>"25Pech",
-                "Mariposa25"=>"25Mari",
-                "Espalda50"=>"50Esp",
-                "Libre50"=>"50Lib",
-                "Pecho50"=>"50Pech",
-                "Mariposa50"=>"50Mari",
-                "CI100"=>"100CI",
-                "PR_L"=>"PR_L",
-                "PR_E"=>"PR_E",
-            ];
-            foreach ($Pruebas as $keyPr => $valueCat) {
-                if($string==$keyPr){
-                    return $valueCat;
-                }
-            }
-        }
-        function getObjetoMetrosPrueba($string){
-            $Pruebas=[
-                "Espalda25"=>["Prueba"=>"Espalda","Metros"=>"25 Metros"],
-                "Libre25"=>["Prueba"=>"Libre","Metros"=>"25 Metros"],
-                "Pecho25"=>["Prueba"=>"Pecho","Metros"=>"25 Metros"],
-                "Mariposa25"=>["Prueba"=>"Mariposa","Metros"=>"25 Metros"],
-                "Espalda50"=>["Prueba"=>"Espalda","Metros"=>"50 Metros"],
-                "Libre50"=>["Prueba"=>"Libre","Metros"=>"50 Metros"],
-                "Pecho50"=>["Prueba"=>"Pecho","Metros"=>"50 Metros"],
-                "Mariposa50"=>["Prueba"=>"Mariposa","Metros"=>"50 Metros"],
-                "CI100"=>["Prueba"=>"CI","Metros"=>"100 Metros"],
-                "PR_L"=>["Prueba"=>"PR_L","Metros"=>"25 Metros"],
-                "PR_E"=>["Prueba"=>"PR_E","Metros"=>"25 Metros"],
-            ];
-            foreach ($Pruebas as $keyPr => $valueCat) {
-                if($string==$keyPr){
-                    return $valueCat;
-                }
-            }
-        }
-        function getTiempo($nadador){
-            $array=SqlService::selectData("tiempos",
-            ["tiempos.*"],
-            ["cedula"=>$nadador["Cedula"],"metros"=>$nadador["Metros"],"prueba"=>$nadador["Prueba"]],null,"tiempo");
-            if(count($array)>0){
-                return $array[0]["tiempo"];
-            }else{
-                return "";
-            }
-        }
-        function cmp($a, $b) {
-            // Ordenar según tu criterio personalizado
-            $ordenPersonalizado = array(
-                'PR_E-2016-2017' => 1,
-                'PR_E-2014-2015' => 2,
-                '25Esp-2012-2013' => 3,
-                '50Esp-2010-2011' => 4,
-                '50Esp-2008-2009' => 5,
-                '50Esp-2006-2007' => 6,
-                '50Esp-2004-2005' => 7,
-
-                'PR_L-2016-2017' => 8,
-                'PR_L-2014-2015' => 9,
-                '25Lib-2012-2013' => 10,
-                '50Lib-2010-2011' => 11,
-                '50Lib-2008-2009' => 12,
-                '50Lib-2006-2007' => 13,
-                '50Lib-2004-2005' => 14,
-
-
-                '25Esp-2016-2017' => 15,
-                '25Esp-2014-2015' => 16,
-                '100CI-2012-2013' => 17,
-                '100CI-2010-2011' => 18,
-                '100CI-2008-2009' => 19,
-                '100CI-2006-2007' => 20,
-                '100CI-2004-2005' => 21,
-                '25Lib-2016-2017' => 22,
-                '25Lib-2014-2015' => 23,
-
-                // 'PR_L-2016-2017' => 28,
-                // 'PR_L-2014-2015' => 29,
-                '25Mari-2012-2013' => 30,
-                '50Mari-2010-2011' => 31,
-                '50Mari-2008-2009' => 32,
-                '50Mari-2006-2007' => 33,
-                '50Mari-2004-2005' => 34,
-
-                '25Pech-2012-2013' => 35,
-                '50Pech-2010-2011' => 36,
-                '50Pech-2008-2009' => 37,
-                '50Pech-2006-2007' => 38,
-                '50Pech-2004-2005' => 39,
-
-
-
-
-
-            );
-        
-            $claveA = $a['Prueba'] . '-' . $a['Categoria'];
-            $claveB = $b['Prueba'] . '-' . $b['Categoria'];
-        
-            $posicionA = $ordenPersonalizado[$claveA] ?? PHP_INT_MAX;
-            $posicionB = $ordenPersonalizado[$claveB] ?? PHP_INT_MAX;
-        
-            if ($posicionA !== $posicionB) {
-                return $posicionA - $posicionB;
-            }
-        
-            // Si los elementos tienen la misma posición en el orden personalizado, ordenar por género
-            $generoOrden = array(
-                'F' => 1,
-                'M' => 2
-            );
-            $generoA = $generoOrden[$a['Genero']];
-            $generoB = $generoOrden[$b['Genero']];
-        
-            return $generoA - $generoB;
-        }
-        function intercalarEntidades($array) {
-            $entidades = array(); // Un array para mantener los objetos agrupados por entidad
-            $resultado = array(); // El nuevo array resultante
-        
-            // Agrupar los objetos por entidad
-            foreach ($array as $objeto) {
-                $entidad = $objeto['entidad'];
-                if (!isset($entidades[$entidad])) {
-                    $entidades[$entidad] = array();
-                }
-                $entidades[$entidad][] = $objeto;
-            }
-        
-            // Intercalar los objetos de cada entidad en el resultado
-            $maxCount = max(array_map('count', $entidades));
-            for ($i = 0; $i < $maxCount; $i++) {
-                foreach ($entidades as $entidad => $objetos) {
-                    if (isset($objetos[$i])) {
-                        $resultado[] = $objetos[$i];
-                        unset($entidades[$entidad][$i]);
-                    }
-                }
-            }
-        
-            return $resultado;
-        }
-        function organizarPorTiempoYVacios($array) {
-            usort($array, function($a, $b) {
-                // Si uno de los tiempos es vacío, colócalo primero
-                if ($a['tiempo'] === '') {
-                    return -1;
-                } elseif ($b['tiempo'] === '') {
-                    return 1;
-                }
-        
-                // Compara los tiempos como strings
-                return strcmp($b['tiempo'], $a['tiempo']);
-            });
-        
-            return $array;
-        }
-
-        $Competencia=[];
-        $array=SqlService::selectData("institucion_nadador 
-        INNER JOIN nadador ON nadador.cedula=institucion_nadador.id_nadador 
-        INNER JOIN competencia ON competencia.id=institucion_nadador.id_competencia 
-        INNER JOIN institucion ON institucion.id=institucion_nadador.id_institucion
-        ",
-        ["institucion.nombre AS entidad","nadador.cedula","nadador.genero","nadador.fecha_nacimiento","Concat(nadador.nombres,' ',nadador.apellidos) AS nadador","institucion_nadador.*"],
-        ["id_competencia"=>$data->IdCompetencia],null,"CAST(SUBSTRING_INDEX(institucion_nadador.categoria, '-', 1) AS SIGNED) DESC");
-        $contador=1;
-        $arrayEventosGenerales=null;
-
-        //este foreach crea los eventos pero todo en ovbetos
-
-        foreach ($array as $clave => $valor) {
-            $objPruebas = json_decode($valor["configCheck"]);
-            foreach ($objPruebas as $key => $value) {
-                if($value!=''){
-                    $arrayTime=[];
-                    $arrayTime=getObjetoMetrosPrueba($key);
-                    $arrayTime["Cedula"]=$valor["cedula"];
-                    $valor["tiempo"]=getTiempo($arrayTime);
-                    
-                    $eventos[$key."||".getCategoria($valor["fecha_nacimiento"])."||".$valor["genero"]][]=$valor;
-                    $arrayEventosGenerales=$eventos;
-                }
-            }
-            $contador++;
-        }
-
-         // Función de comparación para ordenar por tiempo
-         $arrayDistribucion=[];
-         foreach ($arrayEventosGenerales as $clave => $valor) {
-             $arrayDistribucion[$clave] = organizarPorTiempoYVacios($valor);
-         }
-        
-         //este foreach ya me organizar en arrays con objetos
-        $contador=1;
-        foreach ($arrayDistribucion as $clave => $valor) {
-            $opciones=explode("||",$clave);
-            // $respuesta= $opciones[0];
-            $evento=[
-                "Numero"=>$contador,
-                "Prueba"=>getMetrosPrueba($opciones[0]),
-                "Genero"=>$opciones[2],
-                "Categoria"=>$opciones[1],
-                "Series"=>getSeries($valor,5),
-            ];
-            $Competencia[]=$evento;
-            $contador++;
-        }
-
-        //funcion que me organizar por pruebas y categorias
-        usort($Competencia, 'cmp');
-
-        // este es para crear la competencia
-        if($data->Create){
-            $contador=1;
-            foreach ($Competencia as $clave => $valor) {
-                $idEvento=SqlService::saveData("evento",(object)["id_competencia"=>$data->IdCompetencia,"numero"=>$contador,"prueba"=>$valor["Prueba"],"categoria"=>$valor["Categoria"],"genero"=>$valor["Genero"]]);
-                $contadorSerie=1;
-                foreach ($valor["Series"] as $keySerie => $valueSerie) {
-                    foreach ($valueSerie["Nadadores"] as $keyNadador => $valueNad) {
-                        SqlService::saveData("serie",(object)["id_evento"=>$idEvento,"numero"=>$contadorSerie,"carril"=>$valueNad["carril"],"cedula"=>$valueNad["cedula"],
-                        "nadador"=>$valueNad["nadador"],"id_institucion"=>$valueNad["id_institucion"]]);
-                    }
-                    $contadorSerie++;
-                }
-                $contador++;
-            }
-        }
-
-        $arraySeriesGlobal=[];
-        $arrayNadadoresGlobal=[];
-
-        foreach ($Competencia as $clave => $evento) {
-            foreach ($evento["Series"] as $keySerie => $valueSerie) {
-                $arraySeriesGlobal[]["Evento".($clave+1)."Serie".($keySerie+1)]=$valueSerie["Nadadores"];
-                    shuffle($valueSerie["Nadadores"]);
-                foreach ($valueSerie["Nadadores"] as $keyNadador => $valueNad) {
-
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]=$valueNad;
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["carriles"]=[];
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["carrilAnterior"]=isset($arrayNadadoresGlobal[$valueNad["cedula"]]["carrilInicial"])?:$valueNad["carril"];
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["carrilInicial"]=isset($arrayNadadoresGlobal[$valueNad["cedula"]]["carrilInicial"])?:$valueNad["carril"];
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["compitio"]=false;
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["numeroEvento"]=$clave;
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["numeroSerie"]=$keySerie;
-                    // $arrayNadadoresGlobal[$valueNad["cedula"]]["numeroNadador"]=$keyNadador;
-                }
-            }
-        }
-        // foreach ($arraySeriesGlobal as $key => $eventoSerie) {
-        //     foreach ($eventoSerie as $keyNad => $serie) {
-        //         $carrilesOcupados=[];
-        //         foreach ($serie as $nad) {
-        //             $cedula = $nad["cedula"];
-        //             $nadador=$arrayNadadoresGlobal[$cedula];
-        //             if (isset($nadador) && !$nadador["compitio"]) {
-                        
-        //                 array_push($nadador["carriles"], $nadador["carrilInicial"]);
-        //                 $nadador["compitio"] = true;
-        //                 // $carril=
-        //             }else{
-        //                 for ($i=1; $i < count($serie)+1; $i++) { 
-        //                     if(!in_array($i, $carrilesOcupados)){
-                                
-        //                         if(!in_array($i, $nadador["carriles"])){
-        //                             array_push($nadador["carriles"], $i);
-        //                             array_push($carrilesOcupados, $i);
-        //                             // $Competencia[$nadador["numeroEvento"]]["Series"][$nadador["numeroSerie"]]["Nadadores"][$nadador["numeroNadador"]]["carril"]=34;
-        //                         }
-
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        function alternarPosicionesNadadores($competencia) {
-            foreach ($competencia as &$evento) {
-                foreach ($evento['Series'] as &$serie) {
-                    // Obtén el array de nadadores de la serie
-                    $nadadores = $serie['Nadadores'];
-        
-                    // Reorganiza aleatoriamente las posiciones de los nadadores
-                    shuffle($nadadores);
-        
-                    // Asigna el nuevo orden de nadadores a la serie
-                    $serie['Nadadores'] = $nadadores;
-                }
-            }
-        
-            return $competencia;
-        }
-        
-        $Competencia = alternarPosicionesNadadores($Competencia);
-        
-
-        
-        $respuesta=$Competencia;
-        Flight::json($respuesta);
-    }
     public static function getCompetenciaTiempos(){
         $respuesta=false;
         // $data = json_decode(Flight::request()->getBody());
@@ -1216,6 +459,15 @@ class Competencia{
 
             Flight::json(["message" => "Tiempo actualizados"]);
         }
+    }
+    public static function createCompetencia(){
+        $data = json_decode(Flight::request()->getBody());
+
+        if (SqlService::saveData("competencia",$data)) {
+            # code...
+            Flight::json(["message" => "Competencia agregada"]);
+        }
+
     }
 
 }

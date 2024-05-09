@@ -59,6 +59,10 @@ class Tables {
             "(".
                 Nadador::$cedula.$espacio.$typeBigInteger.$espacio.$primaryKey.$coma.
                 Nadador::$nadador.$espacio.$typeText.$coma.
+                Nadador::$primer_nombre.$espacio.$typeText.$coma.
+                Nadador::$segundo_nombre.$espacio.$typeText.$coma.
+                Nadador::$primer_apellido.$espacio.$typeText.$coma.
+                Nadador::$segundo_apellido.$espacio.$typeText.$coma.
                 Nadador::$nombres.$espacio.$typeText.$coma.
                 Nadador::$apellidos.$espacio.$typeText.$coma.
                 Nadador::$fecha_nacimiento.$espacio.$typeText.$coma.

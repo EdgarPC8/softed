@@ -142,6 +142,9 @@ Flight::route("GET /meters", function () {
 Flight::route("POST /meters", function () {
     MetersController::addMeters();
 });
+Flight::route("POST /createCompetencia", function () {
+    Competencia::createCompetencia();
+});
 
 
 Flight::route("PUT /meters/@id", function ($id) {
@@ -204,7 +207,7 @@ Flight::route('POST /getTable', function () {
 Flight::route('POST /deleteData', function () {
     Data::deleteData();
 });
-Flight::route('POST /ejecutar', function () {
+Flight::route('GET /ejecutar', function () {
     Comands::ejecutar();
 });
 Flight::route('GET /createBD', function () {

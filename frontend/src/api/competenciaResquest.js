@@ -27,6 +27,12 @@ export const getCompetencia = async () =>
       Authorization: jwt(),
     },
   });
+  export const addCompetencia = async (data) =>
+  await axios.post("/createCompetencia",data, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
 
 
 export const updateTimeCompetencia = async (id, data) =>

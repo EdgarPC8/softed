@@ -18,11 +18,12 @@ import Checkbox from '@mui/material/Checkbox'; // Import Checkbox
 import { inputsNumberToTime } from '../helpers/functions';
 import { updateTimeCompetencia } from '../api/competenciaResquest';
 
-function createData(name, metros, prueba, categoria, genero, history) {
+function createData(name, metros, prueba,entidades ,categoria, genero, history) {
   return {
     name,
     metros,
     prueba,
+    entidades,
     categoria,
     genero,
     history
@@ -63,7 +64,8 @@ function Row(props) {
         </TableCell>
         <TableCell align="right">{row.metros}</TableCell>
         <TableCell align="right">{row.prueba}</TableCell>
-        <TableCell align="right">{row.categoria}</TableCell>
+        <TableCell align="right">{row.entidades}</TableCell>
+        <TableCell align="right">{row.categoria.name}</TableCell>
         <TableCell align="right">{row.genero}</TableCell>
       </TableRow>
       <TableRow>
@@ -71,7 +73,7 @@ function Row(props) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                {`Evento #${row.metros} ${row.prueba} ${row.categoria} ${row.genero}`}
+                {`Evento #${row.name}`}
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
@@ -97,7 +99,7 @@ function Row(props) {
                                 </TableRow>
                               </TableHead>
                               <TableBody>
-                                {historyData.Nadadores.map((nadadorData, nadIndex) => (
+                                {historyData.nadadores.map((nadadorData, nadIndex) => (
                                   <TableRow key={"nad"+nadIndex}>
                                     <TableCell component="th" scope="row">
                                     {nadadorData.carril}
@@ -183,6 +185,7 @@ export default function CollapsibleTable({data=[]}) {
             <TableCell>Evento</TableCell>
             <TableCell align="right">Series</TableCell>
             <TableCell align="right">Nadadores</TableCell>
+            <TableCell align="right">Entidades</TableCell>
             <TableCell align="right">Tiempos</TableCell>
             <TableCell align="right">Descalificados</TableCell>
           </TableRow>
@@ -192,14 +195,15 @@ export default function CollapsibleTable({data=[]}) {
             ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : data
           ).map((row,index) => (
-            <Row key={row.Categoria+row.Genero+row.Prueba} 
+            <Row key={row.categoria.name+row.genero+row.metros+row.prueba} 
               row={createData(
-                `#${index+1} ${row.Prueba} ${row.Categoria} ${row.Genero}`, 
-                row.Series.length, 
-                "Numero de Nadadores", 
+                `#${index+1} ${row.metros} ${row.prueba} ${row.categoria.name} ${row.genero}`, 
+                row.series.length, 
+                row.nadadores.length, 
+                row.entidades.length,
                 "Tiempos Registrados", 
                 "Nadadores descalificados",
-                row.Series)} 
+                row.series)} 
             />
           ))}
         </TableBody>

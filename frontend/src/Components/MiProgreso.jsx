@@ -9,9 +9,6 @@ import { inputsNumberToTime } from '../helpers/functions.js';
 import StarIcon from '@mui/icons-material/Star';
 import ChartBarAllTiempos from "../Components/ChartBarAllTiempos.jsx";
 import { getAllTiemposRecordsById } from '../api/tiemposResquest.js';
-import {
-  getAllNadadores,
-} from "../api/nadadoresResquest.js";
 
 
 
@@ -21,22 +18,14 @@ export default function Progreso() {
   const [dataBar, setDataBar] = useState([]);
   const [dataPruebas, setDataPruebas] = useState([]);
   const [dataMetros, setDataMetros] = useState([]);
-  const [dataNadadores, setDataNadadores] = useState([]);
   const [tiempoRecord, setTiempoRecord] = useState([]);
   const [prueba, setPrueba] = useState('');
   const [metros, setMetros] = useState('');
-  const [nadadores, setNadadores] = useState('');
 
   async function getData() {
     try {
       const resMetros = await getMetros();
       const resPruebas = await getPruebas();
-      const resNadadores = await getAllNadadores();
-      const nadadoresData = resNadadores.data.map(nad => ({
-        name: nad.nadador,
-        value: nad.cedula
-      }));
-      setDataNadadores(nadadoresData);
 
 
       const pruebasData = resPruebas.data.map(prueba => ({
@@ -55,8 +44,14 @@ export default function Progreso() {
     }
   }
   async function getAllTiempos() {
-      const allTime = await getAllTiemposRecordsById(nadadores);
+    // try {
+    
+      const allTime = await getAllTiemposRecordsById(user.username);
       setDataBar(allTime.data.array)
+      // console.log(allTime.data)
+    // } catch (error) {
+    //   console.error('Error al obtener datos:', error);
+    // }
   }
 
   useEffect(() => {
@@ -69,10 +64,10 @@ export default function Progreso() {
   
 
   useEffect(() => {
-    if (metros !== '' && prueba !== ''& nadadores !== '') {
+    if (metros !== '' && prueba !== '') {
       const fetchData = async () => {
         try {
-          const res = await getTiemposByMetrosPrueba(nadadores, metros, prueba);
+          const res = await getTiemposByMetrosPrueba(user.username, metros, prueba);
           setData(res.data.obj);
           setTiempoRecord(res.data.tiempoRecord);
          
@@ -82,7 +77,7 @@ export default function Progreso() {
       };
       fetchData();
     }
-  }, [metros, prueba,nadadores]);
+  }, [metros, prueba]);
 
   return (
     <Container style={{ textAlign: 'center' }}>
@@ -92,9 +87,6 @@ export default function Progreso() {
         </Grid>
         <Grid item xs={12} md={6}>
           <SelectData Data={dataPruebas} Label="Pruebas" onChange={setPrueba} />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <SelectData Data={dataNadadores} Label="Nadadores" onChange={setNadadores} />
         </Grid>
       </Grid>
 

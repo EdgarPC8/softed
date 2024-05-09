@@ -11,7 +11,7 @@ class NadadoresController
 
     public static function getAllNadadores()
     {
-        Flight::json(SqlService::selectData(Nadador::$tableName, [], [], null, null));
+        Flight::json(SqlService::selectData(Nadador::$tableName, [], ["grupo"=>1], null, null));
         // Flight::json("dededed");
     }
 

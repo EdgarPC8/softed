@@ -25,6 +25,7 @@ import ResultsCompetencia from "./Components/ResultsCompetencia.jsx";
 import Meters from "./page/Meters.jsx";
 import Tests from "./page/Tests.jsx";
 import AddUserForm from "./Components/AddUserForm.jsx";
+import MiProgreso from "./Components/MiProgreso.jsx";
 import EditUserForm from "./Components/EditUserForm.jsx";
 import Users from "./page/Users.jsx";
 
@@ -46,7 +47,7 @@ function App() {
               }
             >
               <Route path="/tiempos" element={<Tiempos />} />
-              <Route path="/progreso" element={<Progreso />} />
+              <Route path="/miprogreso" element={<MiProgreso />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
 
@@ -60,6 +61,7 @@ function App() {
                 path="/editar-nadador/:dni"
                 element={<EditSwimmerForm />}
               />
+              <Route path="/progreso" element={<Progreso />} />
               <Route path="/metros" element={<Meters />} />
               <Route path="/pruebas" element={<Tests />} />
               <Route path="/institucion" element={<Institution />} />

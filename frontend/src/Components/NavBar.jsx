@@ -22,23 +22,12 @@ function ResponsiveAppBar() {
   const { isAuthenticated, logout, user, isLoading } = useAuth();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [moreMenuAnchor, setMoreMenuAnchor] = useState(null);
-
-  const settings = [
-    {
-      name: "Perfil",
-      link: "/perfil",
-      icon: <AdbIcon />,
-      function: () => {
-        /* Agrega la función correspondiente */
-      },
-    },
-    { name: "Cerrar Sesión", link: "/", icon: <AdbIcon />, function: logout }, // Asumiendo que 'logout' es una función definida
-  ];
+  const [moreMenuAnchors, setMoreMenuAnchors] = useState({});
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -51,27 +40,55 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
-  const handleMoreMenuOpen = (event) => {
-    setMoreMenuAnchor(event.currentTarget);
+  const handleMoreMenuOpen = (id) => (event) => {
+    setMoreMenuAnchors((prevAnchors) => ({
+      ...prevAnchors,
+      [id]: event.currentTarget,
+    }));
   };
 
-  const handleMoreMenuClose = () => {
-    setMoreMenuAnchor(null);
+  const handleMoreMenuClose = (id) => () => {
+    setMoreMenuAnchors((prevAnchors) => ({
+      ...prevAnchors,
+      [id]: null,
+    }));
   };
+  const settings = [
+    {
+      name: "Perfil",
+      link: "/perfil",
+      icon: <AdbIcon />,
+      function: () => {
+        /* Agrega la función correspondiente */
+      },
+    },
+    { name: "Cerrar Sesión", link: "/", icon: <AdbIcon />, function: logout }, // Asumiendo que 'logout' es una función definida
+  ];
+
+
 
   // Definir los arrays de páginas para cada rol
   const permisos = {
     Programador: [
       { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
       { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
-      { name: "Progreso", link: "/progreso", icon: <AdbIcon /> },
       { name: "Institucion", link: "/institucion", icon: <AdbIcon /> },
+      {
+        name: "Progreso",
+        icon: <AdbIcon />,
+        menu: {
+          items: [
+            { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
+            { name: "Todos los progresos", link: "/progreso", icon: <AdbIcon /> },
+          ],
+        },
+      },
       {
         name: "Competencia",
         icon: <AdbIcon />,
         menu: {
           items: [
-            { name: "Ver", link: "/competencia", icon: <AdbIcon /> },
+            { name: "Organizar", link: "/competencia", icon: <AdbIcon /> },
             { name: "Llenar", link: "/competencia/insert", icon: <AdbIcon /> },
             { name: "Resultados", link: "/competencia/resultados", icon: <AdbIcon /> },
             { name: "Metros", link: "/metros", icon: <AdbIcon /> },
@@ -87,7 +104,16 @@ function ResponsiveAppBar() {
     ],
     Usuario: [
       { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
-      { name: "Progreso", link: "/progreso", icon: <AdbIcon /> },
+      {
+        name: "Progreso",
+        icon: <AdbIcon />,
+        menu: {
+          items: [
+            { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
+            { name: "Todos los progresos", link: "/progreso", icon: <AdbIcon /> },
+          ],
+        },
+      },
     ],
   };
 
@@ -183,8 +209,9 @@ function ResponsiveAppBar() {
               alignItems: "center",
             }}
           >
-            {pagesToShow.map((page) => {
+            {pagesToShow.map((page, index) => {
               if (page.menu) {
+                const menuId = `${page.name.toLowerCase()}-menu-${index}`;
                 return (
                   <React.Fragment key={page.name}>
                     <Tabs
@@ -195,21 +222,21 @@ function ResponsiveAppBar() {
                     >
                       <Tab
                         label={page.name}
-                        onClick={handleMoreMenuOpen}
+                        onClick={handleMoreMenuOpen(menuId)}
                         sx={{ my: 2, color: "white" }}
                       />
                     </Tabs>
                     <Menu
-                      id={`${page.name.toLowerCase()}-menu`}
-                      anchorEl={moreMenuAnchor}
+                      id={menuId}
+                      anchorEl={moreMenuAnchors[menuId]}
                       keepMounted
-                      open={Boolean(moreMenuAnchor)}
-                      onClose={handleMoreMenuClose}
+                      open={Boolean(moreMenuAnchors[menuId])}
+                      onClose={handleMoreMenuClose(menuId)}
                     >
                       {page.menu.items.map((item) => (
                         <MenuItem
                           key={item.name}
-                          onClick={handleMoreMenuClose}
+                          onClick={handleMoreMenuClose(menuId)}
                           component={Link}
                           to={item.link}
                         >
@@ -235,6 +262,7 @@ function ResponsiveAppBar() {
               }
             })}
           </Box>
+
 
           {!isLoading && isAuthenticated ? (
             <>

@@ -309,32 +309,69 @@ class Comands{
     //     }
     //     Flight::json($array);
     // }
+    // public static function ejecutar(){
+    //     $respuesta = "No hay mensaje";
+
+    //     $statement = Flight::db()->prepare("SELECT * FROM tiempos");
+    //     $statement->execute();
+    //     $data = $statement->fetchAll();
+    //     $lista=[];
+    //     $count=0;
+    //     foreach ($data as $key => $value) {
+    //         if($value["tiempo"]==""){
+                
+    //             $condition=[
+    //                 "id"=>$value["id"],
+    //             ];
+    //             $objeto = (object)$condition;
+
+    //             SqlService::deleteData("tiempos",$objeto);
+    //         }
+    //         $success=[
+    //             "icon"=>"success",
+    //             "title"=>"Éxito",
+    //             "text"=>"Datos procesados correctamente",
+    //         ];
+    //         $respuesta=$success;
+            
+    //     }
+    //     Flight::json($respuesta);
+    // }
     public static function ejecutar(){
         $respuesta = "No hay mensaje";
-
-        $statement = Flight::db()->prepare("SELECT * FROM tiempos");
+        $statement = Flight::db()->prepare("SELECT * FROM institucion_nadador WHERE id_competencia = 3");
         $statement->execute();
         $data = $statement->fetchAll();
-        $lista=[];
-        $count=0;
+    
         foreach ($data as $key => $value) {
-            if($value["tiempo"]==""){
-                
-                $condition=[
-                    "id"=>$value["id"],
-                ];
-                $objeto = (object)$condition;
-
-                SqlService::deleteData("tiempos",$objeto);
+            $jsonString = $value["configCheck"];
+            if (!empty($jsonString)) {
+                $obj = json_decode($jsonString, true); // Decodifica el JSON como un array asociativo
+                if (is_array($obj)) {
+                    $clavesNoVacias="";
+                    foreach ($obj as $clave => $valor) {
+                        // Aquí puedes hacer lo que necesites con cada propiedad del objeto
+                        if (!empty($valor)) { // Verifica si el valor no está vacío
+                            if (!empty($clavesNoVacias)) {
+                                $clavesNoVacias .= ","; // Agrega una coma si ya hay claves no vacías en la cadena
+                            }
+                            $clavesNoVacias .= $clave; // Agrega la clave a la cadena
+                        }
+                    }
+                    $respuesta=$clavesNoVacias;
+                    SqlService::editData("institucion_nadador",(object) ["configCheck"=>$clavesNoVacias], (object) ["id" => $value["id"]]);
+                } else {
+                    // Manejar el caso en que el JSON no pudo ser decodificado correctamente
+                    $respuesta = "Error al decodificar el JSON";
+                }
+            } else {
+                // Manejar el caso en que el valor de configCheck está vacío
+                $respuesta = "El campo configCheck está vacío";
             }
-            $success=[
-                "icon"=>"success",
-                "title"=>"Éxito",
-                "text"=>"Datos procesados correctamente",
-            ];
-            $respuesta=$success;
-            
         }
-        Flight::json($respuesta);
+        
+        
+        Flight::json($clavesNoVacias);
     }
+    
 }
