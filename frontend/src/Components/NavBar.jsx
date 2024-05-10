@@ -65,8 +65,6 @@ function ResponsiveAppBar() {
     { name: "Cerrar Sesión", link: "/", icon: <AdbIcon />, function: logout }, // Asumiendo que 'logout' es una función definida
   ];
 
-
-
   // Definir los arrays de páginas para cada rol
   const permisos = {
     Programador: [
@@ -79,7 +77,11 @@ function ResponsiveAppBar() {
         menu: {
           items: [
             { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
-            { name: "Todos los progresos", link: "/progreso", icon: <AdbIcon /> },
+            {
+              name: "Todos los progresos",
+              link: "/progreso",
+              icon: <AdbIcon />,
+            },
           ],
         },
       },
@@ -90,13 +92,23 @@ function ResponsiveAppBar() {
           items: [
             { name: "Organizar", link: "/competencia", icon: <AdbIcon /> },
             { name: "Llenar", link: "/competencia/insert", icon: <AdbIcon /> },
-            { name: "Resultados", link: "/competencia/resultados", icon: <AdbIcon /> },
+            {
+              name: "Resultados",
+              link: "/competencia/resultados",
+              icon: <AdbIcon />,
+            },
             { name: "Metros", link: "/metros", icon: <AdbIcon /> },
             { name: "Pruebas", link: "/pruebas", icon: <AdbIcon /> },
           ],
         },
       },
       { name: "Usuarios", link: "/usuarios", icon: <AdbIcon /> },
+
+      {
+        name: "Panel de programador",
+        link: "/panel-programador",
+        icon: <AdbIcon />,
+      },
     ],
     Administrador: [
       { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
@@ -110,7 +122,11 @@ function ResponsiveAppBar() {
         menu: {
           items: [
             { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
-            { name: "Todos los progresos", link: "/progreso", icon: <AdbIcon /> },
+            {
+              name: "Todos los progresos",
+              link: "/progreso",
+              icon: <AdbIcon />,
+            },
           ],
         },
       },
@@ -262,7 +278,6 @@ function ResponsiveAppBar() {
               }
             })}
           </Box>
-
 
           {!isLoading && isAuthenticated ? (
             <>

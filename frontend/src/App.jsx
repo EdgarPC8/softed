@@ -29,7 +29,7 @@ import MiProgreso from "./Components/MiProgreso.jsx";
 import EditUserForm from "./Components/EditUserForm.jsx";
 import Users from "./page/Users.jsx";
 import { grey } from "@mui/material/colors";
-
+import PanelProgramador from "./page/PanelProgramador.jsx";
 
 function App() {
   return (
@@ -55,8 +55,14 @@ function App() {
 
             <Route element={<ProtectedRoute requiredRol={["Programador"]} />}>
               <Route path="/competencia" element={<Competencia />} />
-              <Route path="/competencia/insert" element={<InsertTimesCompetencia />} />
-              <Route path="/competencia/resultados" element={<ResultsCompetencia />} />
+              <Route
+                path="/competencia/insert"
+                element={<InsertTimesCompetencia />}
+              />
+              <Route
+                path="/competencia/resultados"
+                element={<ResultsCompetencia />}
+              />
               <Route path="/nadadores" element={<Nadadores />} />
               <Route path="/añadir-nadador" element={<AddSwimmerForm />} />
               <Route
@@ -70,6 +76,7 @@ function App() {
               <Route path="/usuarios" element={<Users />} />
               <Route path="/añadir-usuario" element={<AddUserForm />} />
               <Route path="/editar-usuario/:dni" element={<EditUserForm />} />
+              <Route path="/panel-programador" element={<PanelProgramador />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -42,6 +42,11 @@ Flight::route('POST /login', function () {
     Sesiones::setSession();
 });
 
+Flight::route('POST /backUp', function () {
+    ProgrammerController::saveBackUp();
+
+});
+
 Flight::route('POST /createCuenta', function () {
     CuentaController::createCuenta();
 });
