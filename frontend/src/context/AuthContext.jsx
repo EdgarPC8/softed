@@ -5,7 +5,7 @@ import {
   getSessionRequest,
 } from "../api/userRequest.js";
 import { jwt } from "../api/axios";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -60,20 +60,18 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await loginRequest(user);
       const { data } = response;
-      
+
       if (data.token) {
         window.localStorage.setItem("token", data.token);
         setIsAuthenticated(true);
         loadUserProfile();
-      }else{
-        setMessage(data.message)
-        setStatus(data.status)
-      // console.log(data.message)
-
+        return;
       }
+      setErrors({ message: data.message, status: data.status });
     } catch (error) {
-      // console.log(error.response.data.mensaje);
-      setErrors(error);
+      setIsAuthenticated(false);
+      setIsLoading(true);
+      setErrors(error.response.data.message);
     }
   };
 
