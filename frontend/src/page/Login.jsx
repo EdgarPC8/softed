@@ -1,102 +1,124 @@
-
-
-
-import React, { useState, useEffect } from 'react';
-import { Typography, Paper, Grid, TextField, Button, Container, Box,Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate en lugar de useHistory
+import React, { useState, useEffect } from "react";
+import {
+  Typography,
+  Paper,
+  Grid,
+  TextField,
+  Button,
+  Container,
+  Box,
+  Alert,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Importa useNavigate en lugar de useHistory
 import { useAuth } from "../context/AuthContext";
+import { ErrorSharp } from "@mui/icons-material";
 
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const { signin, isAuthenticated, message,status } = useAuth();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { signin, isAuthenticated, errors } = useAuth();
   const navigate = useNavigate(); // Utiliza useNavigate para obtener la función de navegación
   const [showMessage, setShowMessage] = useState(false);
 
-  const handleLogin = async () => {
-    try {
-      await signin({ username, password });
-      setShowMessage(true);
-      setTimeout(() => {
-        setShowMessage(false);
-      }, 5000); // Ocultar el mensaje después de 5 segundos
-      navigate('/');
-      
-    } catch (error) {
-      console.error('Error:', error);
-    }
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    signin({ username, password });
   };
-  // dcd
+  
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/'); // Utiliza navigate para redirigir a la página de dashboard o la que desees
+      navigate("/");
     }
   }, [isAuthenticated]);
 
   return (
-    <Container maxWidth="xs">
-      <Box
+    <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid
+        item
+        xs={false}
+        sm={4}
+        md={7}
         sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          backgroundImage:
+            "url(https://images.unsplash.com/photo-1709603945846-6901ed447ecd?q=80&w=1529&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+          backgroundRepeat: "no-repeat",
+          backgroundColor: (t) =>
+            t.palette.mode === "light"
+              ? t.palette.grey[50]
+              : t.palette.grey[900],
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
-      >
-        <Paper
-          elevation={3}
+      />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Box
           sx={{
-            padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            my: 8,
+            mx: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h5">
-            Iniciar Sesión
-          </Typography>
-          {showMessage && (
-          <Box mt={2}>
-            <Alert severity={status}>{message}</Alert>
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Typography variant="h5" gutterBottom>
+              Bienvenido nuevamente
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Ingrese sus credenciales
+            </Typography>
+            {errors?.message && (
+              <Alert severity={errors.status}>{errors.message}</Alert>
+            )}
           </Box>
-        )}
-          <Box component="form" sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Usuario"
-                  variant="outlined"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Contraseña"
-                  type="password"
-                  variant="outlined"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </Grid>
-            </Grid>
+
+          <Box component="form" sx={{ mt: 1 }} onSubmit={handleLogin}>
+            <TextField
+              margin="normal"
+              // required
+              fullWidth
+              id="email"
+              label="Usuario"
+              autoComplete="email"
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              // required
+              fullWidth
+              type="password"
+              id="password"
+              label="Contraseña"
+              autoComplete="email"
+              value={password}
+              onChange={({ target }) => setPassword(target.value)}
+              autoFocus
+            />
+
+            {/* <Button variant="contained" color="primary">
+              Login
+            </Button> */}
             <Button
+              type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              onClick={handleLogin}
+              sx={{ mt: 3, mb: 2 }}
             >
-              Iniciar Sesión
+              Inicar sesión
             </Button>
+            {/* <Copyright sx={{ mt: 5 }} /> */}
           </Box>
-        </Paper>
-       
-      </Box>
-    </Container>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
 

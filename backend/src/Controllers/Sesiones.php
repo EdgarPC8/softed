@@ -16,17 +16,17 @@ class Sesiones
         $username = Flight::request()->data->username;
         $password = Flight::request()->data->password;
 
-        if($username==""||$password==""){
-            Flight::json(["message" => "Complete los campos","status"=>"warning"]);
+        if ($username == "" || $password == "") {
+            Flight::json(["message" => "Complete los campos", "status" => "warning"]);
             return;
         }
-        
+
         $statement = Flight::db()->prepare(
             "SELECT *
-        FROM ".Cuenta::$tableName." INNER JOIN
-        ".Roles::$tableName."  ON ".Roles::$tableName.".".Roles::$id."  = ".Cuenta::$tableName.".".Cuenta::$rol." 
-         INNER JOIN ".Usuario::$tableName." ON ".Usuario::$tableName.".".Usuario::$id." = ".Cuenta::$tableName.".".Cuenta::$idUsuario." 
-         WHERE ".Cuenta::$username."  = :username      
+        FROM " . Cuenta::$tableName . " INNER JOIN
+        " . Roles::$tableName . "  ON " . Roles::$tableName . "." . Roles::$id . "  = " . Cuenta::$tableName . "." . Cuenta::$rol . " 
+         INNER JOIN " . Usuario::$tableName . " ON " . Usuario::$tableName . "." . Usuario::$id . " = " . Cuenta::$tableName . "." . Cuenta::$idUsuario . " 
+         WHERE " . Cuenta::$username . "  = :username      
         "
         );
 
@@ -38,33 +38,33 @@ class Sesiones
             $isCorrectPassword = EncryptPassword::isCorrectPassword($password, $passwordHashed);
             if (!$isCorrectPassword || empty($user)) {
                 // Flight::res()->unauthorized();
-                Flight::json(["message" => "Usuario o Contraseña invalida","status"=>"error"]);
+                Flight::json(["message" => "Usuario o Contraseña invalida", "status" => "error"]);
                 return;
-            }else{
-                $token=$isCorrectPassword;
-            $now = strtotime("now");
-            $privateKey = $_ENV["JWT_SECRET_KEY"];
-            $payload = [
-                'exp' => $now + $_ENV["TIME_EXP_TOKEN"],
-                'data' => [
-                    "username" => $user->username,
-                    "rol" => $user->rol,
-                    "nameRol" => $user->name,
-                    "firstName" => $user->primer_nombre,
-                    "secondName" => $user->segundo_nombre,
-                    "firstLastName" => $user->primer_apellido,
-                    "secondLastName" => $user->segundo_apellido,
-                    "genero" => $user->genero,
-                ]
-            ];
-            $token = AuthService::createToken($payload, $privateKey);
-            Flight::json(["token" => $token]);
+            } else {
+                $token = $isCorrectPassword;
+                $now = strtotime("now");
+                $privateKey = $_ENV["JWT_SECRET_KEY"];
+                $payload = [
+                    'exp' => $now + $_ENV["TIME_EXP_TOKEN"],
+                    'data' => [
+                        "username" => $user->username,
+                        "rol" => $user->rol,
+                        "nameRol" => $user->name,
+                        "firstName" => $user->primer_nombre,
+                        "secondName" => $user->segundo_nombre,
+                        "firstLastName" => $user->primer_apellido,
+                        "secondLastName" => $user->segundo_apellido,
+                        "genero" => $user->genero,
+                    ]
+                ];
+                $token = AuthService::createToken($payload, $privateKey);
+                Flight::json(["token" => $token]);
 
             }
-            
+
         } catch (Exception $e) {
             // Flight::res()->unauthorized();
-            Flight::json(["message" => "Usuario o Contraseña invalida","status"=>"error"]);
+            HTTPResponse::badRequest(["message" => "Usuario o Contraseña invalida", "status" => "error"]);
 
 
         }
@@ -72,15 +72,19 @@ class Sesiones
 
 
     }
-  
+
     public static function getAuthorizedUserData()
     {
-        $headers = getallheaders();
-        $authorization = $headers["Authorization"];
-        $authorizationKey = explode(" ", $authorization);
-        $token = $authorizationKey[1];
-        $user = JWT::decode($token, new Key($_ENV["JWT_SECRET_KEY"], 'HS256'));
-        Flight::json($user);
+        try {
+            $authorization = getallheaders()["Authorization"] ?? null;
+            $authorizationKey = explode(" ", $authorization);
+            $token = $authorizationKey[1];
+            $user = JWT::decode($token, new Key($_ENV["JWT_SECRET_KEY"], 'HS256'));
+            Flight::json($user);
+        } catch (Exception $e) {
+            HTTPResponse::unauthorized();
+        }
+
     }
     /**
      * Registra un evento de salida en el registro de logs.

@@ -15,7 +15,6 @@ import { Person, Edit, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-
 function Users() {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -93,7 +92,6 @@ function Users() {
           <IconButton
             onClick={() => {
               handleDialog();
-              // console.log(params.row)
               setUserToDelete(params.row);
             }}
           >

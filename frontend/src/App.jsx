@@ -31,7 +31,7 @@ import MiProgreso from "./Components/MiProgreso.jsx";
 import EditUserForm from "./Components/EditUserForm.jsx";
 import Users from "./page/Users.jsx";
 import { grey } from "@mui/material/colors";
-
+import PanelProgramador from "./page/PanelProgramador.jsx";
 
 
 function App() {
@@ -74,6 +74,7 @@ function App() {
               <Route path="/usuarios" element={<Users />} />
               <Route path="/añadir-usuario" element={<AddUserForm />} />
               <Route path="/editar-usuario/:dni" element={<EditUserForm />} />
+              <Route path="/panel-programador" element={<PanelProgramador />} />
             </Route>
           </Routes>
         </BrowserRouter>

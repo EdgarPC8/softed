@@ -59,7 +59,7 @@ function Nadadores() {
     {
       headerName: "Cedula",
       field: "cedula",
-      width: 150,
+      width: 200,
       editable: true,
     },
     {
@@ -71,7 +71,7 @@ function Nadadores() {
     {
       headerName: "Genero",
       field: "genero",
-      width: 100,
+      width: 200,
       
     },
     {
