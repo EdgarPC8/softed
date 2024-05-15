@@ -28,6 +28,12 @@ export const getCompetencia = async () =>
     },
   });
   export const addCompetencia = async (data) =>
+  await axios.post("/addCompetencia",data, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+  export const createCompetencia = async (data) =>
   await axios.post("/createCompetencia",data, {
     headers: {
       Authorization: jwt(),

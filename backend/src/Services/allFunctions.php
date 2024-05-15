@@ -446,6 +446,30 @@ class allFunctions
     
         return $array;
     }
+    public static function organizarResultadosTiempos($array) {
+        usort($array, function($a, $b) {
+            // Si uno de los tiempos es vacío, colócalo al final
+            if ($a['tiempo'] === '') {
+                return 1;
+            } elseif ($b['tiempo'] === '') {
+                return -1;
+            }
+    
+            // Si $a está descalificado y $b no lo está, coloca $a después de $b
+            if ($a['descalificado'] == 1 && $b['descalificado'] != 1) {
+                return 1;
+            } elseif ($a['descalificado'] != 1 && $b['descalificado'] == 1) {
+                return -1;
+            }
+    
+            // Compara los tiempos como strings en orden ascendente
+            return strcmp($a['tiempo'], $b['tiempo']);
+        });
+    
+        return $array;
+    }
+    
+    
     public static  function alternarPosicionesNadadores($competencia) {
         foreach ($competencia as &$evento) {
             foreach ($evento['series'] as &$serie) {
@@ -555,24 +579,68 @@ class allFunctions
         
         return $ResultadoEventos;
     }
-    public static function getInfoCompetencia($nadadores){
-        foreach ($competencia as &$evento) {
-            foreach ($evento['series'] as &$serie) {
-                // Obtén el array de nadadores de la serie
-                $nadadores = $serie['nadadores'];
+   
     
-                // Reorganiza aleatoriamente las posiciones de los nadadores
-                shuffle($nadadores);
+    public static function getInfoCompetencia($competencia) {
+        $reglas = (object) [
+            "puestos" => 9 // Establecer el número de puestos a considerar
+        ];
     
-                // Asigna el nuevo orden de nadadores a la serie
-                $serie['nadadores'] = $nadadores;
+        $resultados = [];
+        
+        foreach ($competencia as $keyEvento => &$evento) {
+            $puntos = $reglas->puestos;
+            $entidadesConsecutivas = 0; // Variable para contar entidades consecutivas
+            $entidadesEvento = []; // Variable para almacenar la próxima entidad a la que se le asignarán los puntos
+            $ultimaEntidad = null; // Variable para almacenar la última entidad procesada
+    
+            $entidadesPuntuadas = []; // Arreglo para almacenar las entidades que ya han sumado puntos
+
+            $contador=0;
+            foreach ($evento['nadadores'] as $key => &$nad) {
+                if ($contador >= $reglas->puestos) {
+                    break; // Si ya se han asignado los puntos para los primeros puestos, salir del bucle
+                }
+                if ($nad["descalificado"] == 1 || $nad["tiempo"] == "") {
+                    continue; // Si el nadador está descalificado, omitir la suma de puntos y pasar al siguiente nadador
+                }
+            
+                // Verificar si la entidad actual ya ha sumado puntos en dos ocasiones
+                if (!isset($entidadesPuntuadas[$nad["entidad"]]) || $entidadesPuntuadas[$nad["entidad"]] < 2) {
+                    if (!isset($resultados[$nad["entidad"]]["puntosTotal"])) {
+                        $resultados[$nad["entidad"]]["puntosTotal"] = 0; // Inicializar puntos totales para la entidad si no existen
+                        $resultados[$nad["entidad"]]["puntosEvento"] = []; // Inicializar arreglo de puntos por evento
+                    }
+                    if (!isset($resultados[$nad["entidad"]]["puntosEvento"][$keyEvento])) {
+                        $resultados[$nad["entidad"]]["puntosEvento"][$keyEvento] = [
+                            "numeroEvento" => $keyEvento + 1, // El índice del evento más 1 (para que empiece en 1)
+                            "puntos" => 0 // Inicializar puntos del evento para la entidad si no existen
+                        ];
+                    }
+                    $resultados[$nad["entidad"]]["puntosTotal"] += $puntos; // Sumar puntos totales a la entidad
+                    $resultados[$nad["entidad"]]["puntosEvento"][$keyEvento]["puntos"] += $puntos; // Sumar puntos del evento a la entidad
+                    $nad["puntos"]=$puntos;
+            
+                    $entidadesPuntuadas[$nad["entidad"]] = isset($entidadesPuntuadas[$nad["entidad"]]) ? $entidadesPuntuadas[$nad["entidad"]] + 1 : 1; // Incrementar el contador de apariciones de la entidad
+                    $puntos--;
+                    $contador++;
+                } else {
+                    // No asignar puntos a la entidad si ya ha sumado puntos en dos ocasiones
+                    // Aquí puedes decidir si quieres hacer algo adicional en este caso
+                }
+            
+                 // Reducir los puntos para el siguiente puesto
             }
+            
         }
     
-        return $competencia;
-
-
+        // return $resultados;
+        return ["resultados"=>$resultados,"competencia"=>$competencia];
     }
+    
+    
+    
+    
    
     
 }

@@ -5,6 +5,7 @@ class Tables {
     const TABLA_COMPETENCIA = "competencia";
     const TABLA_INSTITUCION = "institucion";
     const TABLA_INSTITUCION_NADADOR = "institucion_nadador";
+    const TABLA_COMPTENCIA_EVENTO = "competencia_evento";
     
     public static function create() {
         $tableDe=Roles::$tableName;
@@ -112,7 +113,9 @@ class Tables {
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 id_competencia INTEGER, 
                 numero INTEGER, 
+                name TEXT, 
                 prueba TEXT, 
+                metros TEXT, 
                 categoria TEXT, 
                 genero TEXT
             )",
@@ -133,6 +136,17 @@ class Tables {
                 id_competencia INTEGER, 
                 categoria TEXT, 
                 configCheck TEXT
+            )",
+            "CREATE TABLE IF NOT EXISTS " . self::TABLA_COMPTENCIA_EVENTO . " (
+                id INTEGER PRIMARY KEY AUTO_INCREMENT, 
+                id_competencia INTEGER, 
+                numero INTEGER, 
+                name TEXT, 
+                metros TEXT, 
+                prueba TEXT, 
+                categoriaName TEXT,
+                categoriaValues TEXT,
+                genero TEXT
             )"
         );
 
@@ -159,7 +173,8 @@ class Tables {
             "DROP TABLE IF EXISTS " . self::TABLA_EVENTO,
             "DROP TABLE IF EXISTS " . self::TABLA_COMPETENCIA,
             "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION,
-            "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION_NADADOR
+            "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION_NADADOR,
+            "DROP TABLE IF EXISTS " . self::TABLA_COMPTENCIA_EVENTO
         );
     
         // Ejecutar cada sentencia DELETE
@@ -182,6 +197,7 @@ class Tables {
             self::TABLA_COMPETENCIA => "SELECT * FROM " . self::TABLA_COMPETENCIA,
             self::TABLA_INSTITUCION => "SELECT * FROM " . self::TABLA_INSTITUCION,
             self::TABLA_INSTITUCION_NADADOR => "SELECT * FROM " . self::TABLA_INSTITUCION_NADADOR,
+            self::TABLA_COMPTENCIA_EVENTO => "SELECT * FROM " . self::TABLA_COMPTENCIA_EVENTO,
             Usuario::$tableName => "SELECT * FROM " . Usuario::$tableName,
             Cuenta::$tableName => "SELECT * FROM " . Cuenta::$tableName,
             Roles::$tableName => "SELECT * FROM " . Roles::$tableName
@@ -229,7 +245,8 @@ class Tables {
             self::TABLA_EVENTO,
             self::TABLA_COMPETENCIA,
             self::TABLA_INSTITUCION,
-            self::TABLA_INSTITUCION_NADADOR
+            self::TABLA_INSTITUCION_NADADOR,
+            self::TABLA_COMPTENCIA_EVENTO
         );
     
         // Leer el contenido del archivo JSON

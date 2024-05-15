@@ -29,8 +29,8 @@ function ResultsCompetencia() {
   async function getData() {
     try {
       const res = await getResultados();
-      setData(res.data)
-      console.log(res.data)
+      setData(res.data.Competencia)
+      console.log(res.data.Competencia)
 
     } catch (error) {
       console.error('Error al obtener datos:', error);
@@ -41,7 +41,7 @@ function ResultsCompetencia() {
     }, []);
   return (
     <>  
-      <DataTableCompResults data={data.Competencia}/>
+      <DataTableCompResults data={data}/>
     </>
   );
 }

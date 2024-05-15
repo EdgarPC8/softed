@@ -142,6 +142,10 @@ Flight::route("GET /meters", function () {
 Flight::route("POST /meters", function () {
     MetersController::addMeters();
 });
+Flight::route("POST /addCompetencia", function () {
+    Competencia::addCompetencia();
+});
+
 Flight::route("POST /createCompetencia", function () {
     Competencia::createCompetencia();
 });

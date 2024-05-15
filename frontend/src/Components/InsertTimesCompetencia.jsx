@@ -16,7 +16,7 @@ import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 
 import DataTable from "../Components/DataTable";
-// import DataTableCompetencia from "../Components/DataTableCompetencia";
+import DataTableCompetencia from "../Components/DataTableCompetencia";
 import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
 import { getCompetencia,getCompetenciaTiempos,getResultados } from "../api/competenciaResquest";
@@ -41,7 +41,7 @@ function InsertTimesCompetencia() {
     }, []);
   return (
     <>  
-      {/* <DataTableCompetencia data={data}/> */}
+      <DataTableCompetencia data={data.Competencia}/>
     </>
   );
 }

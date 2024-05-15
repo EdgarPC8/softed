@@ -88,7 +88,8 @@ function ResponsiveAppBar() {
         icon: <AdbIcon />,
         menu: {
           items: [
-            { name: "Organizar", link: "/competencia", icon: <AdbIcon /> },
+            { name: "Crear", link: "/competencia", icon: <AdbIcon /> },
+            { name: "Organizar", link: "/organizar", icon: <AdbIcon /> },
             { name: "Llenar", link: "/competencia/insert", icon: <AdbIcon /> },
             { name: "Resultados", link: "/competencia/resultados", icon: <AdbIcon /> },
             { name: "Metros", link: "/metros", icon: <AdbIcon /> },

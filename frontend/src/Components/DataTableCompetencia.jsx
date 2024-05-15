@@ -18,14 +18,15 @@ import Checkbox from '@mui/material/Checkbox'; // Import Checkbox
 import { inputsNumberToTime } from '../helpers/functions';
 import { updateTimeCompetencia } from '../api/competenciaResquest';
 
-function createData(name, metros, prueba,entidades ,categoria, genero, history) {
+function createData(name,categoria, series, nadadores,entidades, tiempos,descalificados, history) {
   return {
     name,
-    metros,
-    prueba,
-    entidades,
     categoria,
-    genero,
+    series,
+    nadadores,
+    entidades,
+    tiempos,
+    descalificados,
     history
   };
 }
@@ -62,18 +63,19 @@ function Row(props) {
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
-        <TableCell align="right">{row.metros}</TableCell>
-        <TableCell align="right">{row.prueba}</TableCell>
+        <TableCell align="right">{row.categoria}</TableCell>
+        <TableCell align="right">{row.series}</TableCell>
+        <TableCell align="right">{row.nadadores}</TableCell>
         <TableCell align="right">{row.entidades}</TableCell>
-        <TableCell align="right">{row.categoria.name}</TableCell>
-        <TableCell align="right">{row.genero}</TableCell>
+        <TableCell align="right">{row.tiempos}</TableCell>
+        <TableCell align="right">{row.descalificados}</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                {`Evento #${row.name}`}
+                {`Evento ${row.name}`}
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
@@ -90,12 +92,12 @@ function Row(props) {
                   {row.history.map((historyData, index) => (
                     <React.Fragment key={index}>
                       <TableRow>
-                        <TableCell colSpan={6} style={{ borderBottom: 'unset' }}>
+                        <TableCell colSpan={9} style={{ borderBottom: 'unset' }}>
                           <Box sx={{ margin: 1 }}>
                             <Table size="small" aria-label="purchases">
                               <TableHead>
                                 <TableRow>
-                                  <TableCell colSpan={5} align={"center"}>Serie {index + 1}</TableCell>
+                                  <TableCell colSpan={9} align={"center"}>Serie {index + 1}</TableCell>
                                 </TableRow>
                               </TableHead>
                               <TableBody>
@@ -183,6 +185,7 @@ export default function CollapsibleTable({data=[]}) {
           <TableRow>
             <TableCell />
             <TableCell>Evento</TableCell>
+            <TableCell align="right">Categoria</TableCell>
             <TableCell align="right">Series</TableCell>
             <TableCell align="right">Nadadores</TableCell>
             <TableCell align="right">Entidades</TableCell>
@@ -197,12 +200,13 @@ export default function CollapsibleTable({data=[]}) {
           ).map((row,index) => (
             <Row key={row.categoria.name+row.genero+row.metros+row.prueba} 
               row={createData(
-                `#${index+1} ${row.metros} ${row.prueba} ${row.categoria.name} ${row.genero}`, 
+                `#${row.numero} ${row.metros} ${row.prueba} ${row.categoria.name} ${row.genero}`, 
+                row.categoria.name,
                 row.series.length, 
                 row.nadadores.length, 
                 row.entidades.length,
-                "Tiempos Registrados", 
-                "Nadadores descalificados",
+                row.tiempos?`${row.tiempos.length}/${row.nadadores.length}`:"",
+                row.descalificados?`${row.descalificados.length}/${row.nadadores.length}`:"0/0",
                 row.series)} 
             />
           ))}
