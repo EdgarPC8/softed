@@ -7,7 +7,7 @@ const objUrl = {
   pc: "192.168.137.250:8888",
   alumni: "aplicaciones.marianosamaniego.edu.ec",
 };
-const url = objUrl.pc;
+const url = objUrl.pato;
 
 const instance = axios.create({
   baseURL: `http://${url}/natacion/backend`,
