@@ -45,7 +45,7 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -88,7 +88,10 @@ function Row(props) {
                   {row.history.map((historyData, index) => (
                     <React.Fragment key={index}>
                       <TableRow>
-                        <TableCell colSpan={9} style={{ borderBottom: 'unset' }}>
+                        <TableCell
+                          colSpan={9}
+                          style={{ borderBottom: "unset" }}
+                        >
                           <Box sx={{ margin: 1 }}>
                             <Table size="small" aria-label="purchases">
                               <TableHead>

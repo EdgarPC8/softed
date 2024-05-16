@@ -1,6 +1,13 @@
+// import { fromBlankAsync } from "xlsx-populate";
+
+
 export function inputsNumberToTime(value) {
   // Verificar si el valor no está vacío y es un número entero
-  if (value !== "" && Number.isInteger(parseInt(value))&& value.toString().length <= 8) {
+  if (
+    value !== "" &&
+    Number.isInteger(parseInt(value)) &&
+    value.toString().length <= 8
+  ) {
     let valor = value.toString(); // Convertir a cadena de texto si no lo es
 
     // Asegurarse de que la longitud de la cadena sea la correcta
@@ -20,7 +27,6 @@ export function inputsNumberToTime(value) {
     return formattedTime;
   } else {
     return value;
-
   }
 }
 
