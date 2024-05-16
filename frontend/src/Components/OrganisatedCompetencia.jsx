@@ -16,7 +16,7 @@ import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 
 import DataTable from "../Components/DataTable";
-// import DataTableCompetencia from "../Components/DataTableCompetencia";
+import DataTableCompetencia from "../Components/DataTableCompetencia";
 import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
 import { getCompetencia,getCompetenciaTiempos,getResultados } from "../api/competenciaResquest";
@@ -28,8 +28,8 @@ function ResultsCompetencia() {
 
   async function getData() {
     try {
-      const res = await getResultados();
-      setData(res.data.Competencia)
+      const res = await getCompetencia();
+      setData(res.data)
       console.log(res.data.Competencia)
 
     } catch (error) {
@@ -41,7 +41,7 @@ function ResultsCompetencia() {
     }, []);
   return (
     <>  
-      <DataTableCompResults data={data}/>
+      <DataTableCompetencia data={data.Competencia} setData={setData}/>
     </>
   );
 }

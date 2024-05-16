@@ -14,11 +14,14 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
 import TextField from '@mui/material/TextField';
-import Checkbox from '@mui/material/Checkbox'; // Import Checkbox
+import Checkbox from '@mui/material/Checkbox';
 import { inputsNumberToTime } from '../helpers/functions';
 import { updateTimeCompetencia } from '../api/competenciaResquest';
+import { Person, Edit, Delete } from "@mui/icons-material";
+import ConfirmDialog from './ConfirmDialog';
+import AddNadadorModal from './AddNadadorModal';
 
-function createData(name,categoria, series, nadadores,entidades, tiempos,descalificados, history) {
+function createData(name,categoria, series, nadadores,entidades, tiempos,descalificados, history,numEvento) {
   return {
     name,
     categoria,
@@ -27,26 +30,18 @@ function createData(name,categoria, series, nadadores,entidades, tiempos,descali
     entidades,
     tiempos,
     descalificados,
-    history
+    history,
+    numEvento
   };
 }
 
 function Row(props) {
-  const { row } = props;
+  const { row, functions, handleOpenModal } = props;
   const [open, setOpen] = React.useState(false);
 
-  const handleTiempoChange = (index, newValue) => {
-    
-  };
-
-  const putTime = async(id,time)=>{
-    const res = await updateTimeCompetencia(id,{tiempo:time})
-    // console.log(id)
-  }
-  const putDesc = async(id,desc)=>{
-    const res = await updateTimeCompetencia(id,{descalificado:desc})
-    // console.log(id)
-  }
+  const handleTiempoChange = (index, newValue) => {};
+  const putTime = async(id,time)=>{};
+  const putDesc = async(id,desc)=>{};
 
   return (
     <React.Fragment>
@@ -86,6 +81,7 @@ function Row(props) {
                     <TableCell>Entidad</TableCell>
                     <TableCell>Tiempo</TableCell>
                     <TableCell>Desc</TableCell>
+                    <TableCell>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -97,43 +93,44 @@ function Row(props) {
                             <Table size="small" aria-label="purchases">
                               <TableHead>
                                 <TableRow>
-                                  <TableCell colSpan={9} align={"center"}>Serie {index + 1}</TableCell>
+                                  <TableCell colSpan={9} align={"center"}>Serie {index + 1}
+                                    <IconButton onClick={() => handleOpenModal(row.numEvento, index)}>
+                                      <Person /> {/* Icono de "añadir nadador" */}
+                                    </IconButton>
+                                  </TableCell>
                                 </TableRow>
                               </TableHead>
                               <TableBody>
                                 {historyData.nadadores.map((nadadorData, nadIndex) => (
                                   <TableRow key={"nad"+nadIndex}>
                                     <TableCell component="th" scope="row">
-                                    {nadadorData.carril}
+                                      {nadadorData.carril}
                                     </TableCell>
                                     <TableCell>{nadadorData.cedula}</TableCell>
                                     <TableCell>{nadadorData.nadador}</TableCell>
                                     <TableCell>{nadadorData.entidad}</TableCell>
                                     <TableCell>
-                                    <TextField
-                                      type="text"
-                                      defaultValue={nadadorData.tiempo}
-                                      // onChange={(e) => handleTiempoChange(nadIndex, e.target.value)}
-                                      inputProps={{ maxLength: 8 }}
-                                      onKeyPress={(e) => {
-                                        const charCode = e.charCode;
-                                        if (charCode < 48 || charCode > 57) {
-                                          e.preventDefault();
-                                        }
-                                      }}
-                                      onBlur={(e) => {
-                                        const newValue=e.target.value 
-                                        e.target.value = inputsNumberToTime(newValue);
-                                        putTime(nadadorData.id,inputsNumberToTime(newValue))
-                                      }}
-                                    />
+                                      <TextField
+                                        type="text"
+                                        defaultValue={nadadorData.tiempo}
+                                        inputProps={{ maxLength: 8 }}
+                                        onKeyPress={(e) => {
+                                          const charCode = e.charCode;
+                                          if (charCode < 48 || charCode > 57) {
+                                            e.preventDefault();
+                                          }
+                                        }}
+                                        onBlur={(e) => {
+                                          const newValue=e.target.value;
+                                          e.target.value = inputsNumberToTime(newValue);
+                                          putTime(nadadorData.id,inputsNumberToTime(newValue));
+                                        }}
+                                      />
                                     </TableCell>
-                                      
-                                      
                                     <TableCell>
                                       {nadadorData.descalificado !== undefined && nadadorData.descalificado !== null && (
                                         <Checkbox
-                                          defaultChecked={nadadorData.descalificado === 1 ? true : false}
+                                          defaultChecked={nadadorData.descalificado === 1}
                                           onChange={() => {
                                             const newDescalificadoValue = nadadorData.descalificado === 1 ? 0 : 1;
                                             nadadorData.descalificado = newDescalificadoValue;
@@ -142,10 +139,14 @@ function Row(props) {
                                         />
                                       )}
                                     </TableCell>
-
-
-
-
+                                    <TableCell>
+                                      <IconButton>
+                                        <Edit />
+                                      </IconButton>
+                                      <IconButton onClick={() => functions.deleteNad(nadadorData)}>
+                                        <Delete />
+                                      </IconButton>
+                                    </TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>
@@ -165,9 +166,45 @@ function Row(props) {
   );
 }
 
-export default function CollapsibleTable({data=[]}) {
+export default function DataTableCompetencia({ data = [], setData }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [selectedNadador, setSelectedNadador] = useState(null);
+  const [addNadadorModalOpen, setAddNadadorModalOpen] = useState(false);
+  const [currentEventoIndex, setCurrentEventoIndex] = useState(null);
+  const [currentSerieIndex, setCurrentSerieIndex] = useState(null);
+
+  const deleteNad = (nadadorData) => {
+    setSelectedNadador(nadadorData);
+    setDeleteConfirmationOpen(true);
+  };
+
+  const handleDeleteConfirmation = () => {
+    const updatedCompetencias = data.map(competencia => {
+      const updatedSeries = competencia.series.map(serie => {
+        serie.nadadores = serie.nadadores.filter(nadador => nadador.id !== selectedNadador.id);
+        return serie;
+      });
+      competencia.series = updatedSeries;
+      return competencia;
+    });
+
+    setData({Competencia:updatedCompetencias});
+    setDeleteConfirmationOpen(false);
+  };
+
+  // En el componente DataTableCompetencia
+
+const addNad = (nuevoNadador) => {
+  const newData = [...data];
+
+  if (newData.length > 0 && newData[currentEventoIndex].series.length > 0 && newData[currentEventoIndex].series[currentSerieIndex].nadadores) {
+    newData[currentEventoIndex].series[currentSerieIndex].nadadores.push(nuevoNadador);
+    setData({Competencia:newData});
+  }
+};
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -178,8 +215,30 @@ export default function CollapsibleTable({data=[]}) {
     setPage(0);
   };
 
+  const handleOpenModal = (eventoIndex, serieIndex) => {
+    setCurrentEventoIndex(eventoIndex);
+    setCurrentSerieIndex(serieIndex);
+    setAddNadadorModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setAddNadadorModalOpen(false);
+  };
+
   return (
     <TableContainer component={Paper}>
+      <ConfirmDialog
+        open={deleteConfirmationOpen}
+        handleClose={() => setDeleteConfirmationOpen(false)}
+        handleConfirm={handleDeleteConfirmation}
+        title="Confirmación de Eliminación"
+        message="¿Estás seguro de que deseas eliminar este nadador?"
+      />
+      <AddNadadorModal
+        open={addNadadorModalOpen}
+        handleClose={handleCloseModal}
+        handleAddNadador={addNad}
+      />
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
@@ -197,17 +256,22 @@ export default function CollapsibleTable({data=[]}) {
           {(rowsPerPage > 0
             ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : data
-          ).map((row,index) => (
-            <Row key={row.categoria.name+row.genero+row.metros+row.prueba} 
+          ).map((row, index) => (
+            <Row
+              key={row.categoria.name + row.genero + row.metros + row.prueba}
               row={createData(
-                `#${row.numero} ${row.metros} ${row.prueba} ${row.categoria.name} ${row.genero}`, 
+                `#${row.numero} ${row.metros} ${row.prueba} ${row.categoria.name} ${row.genero}`,
                 row.categoria.name,
-                row.series.length, 
-                row.nadadores.length, 
+                row.series.length,
+                row.nadadores.length,
                 row.entidades.length,
-                row.tiempos?`${row.tiempos.length}/${row.nadadores.length}`:"",
-                row.descalificados?`${row.descalificados.length}/${row.nadadores.length}`:"0/0",
-                row.series)} 
+                row.tiempos ? `${row.tiempos.length}/${row.nadadores.length}` : "",
+                row.descalificados ? `${row.descalificados.length}/${row.nadadores.length}` : "0/0",
+                row.series,
+                index
+              )}
+              functions={{ deleteNad }}
+              handleOpenModal={handleOpenModal}
             />
           ))}
         </TableBody>

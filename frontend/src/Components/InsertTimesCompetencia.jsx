@@ -41,7 +41,9 @@ function InsertTimesCompetencia() {
     }, []);
   return (
     <>  
-      <DataTableCompetencia data={data.Competencia}/>
+      {/* <DataTableCompetencia data={data.Competencia} setData/> */}
+      <DataTableCompetencia data={data.Competencia} setData={setData} />
+
     </>
   );
 }

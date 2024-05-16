@@ -259,7 +259,7 @@ class Competencia{
         }
 
 
-        $respuesta=["IdCompetencia"=>$data->IdCompetencia,"Competencia"=>$Competencia];
+        $respuesta=["IdCompetencia"=>$data->IdCompetencia,"Competencia"=>$Competencia,"Creada"=>true];
         Flight::json($respuesta);
     }
     public static function createCompetencia(){
