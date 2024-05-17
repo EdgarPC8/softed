@@ -17,12 +17,16 @@ import PoolIcon from "@mui/icons-material/Pool";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { useAuth } from "../context/AuthContext";
+import { useLocation } from "react-router-dom";
 
 function ResponsiveAppBar() {
   const { isAuthenticated, logout, user, isLoading } = useAuth();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [moreMenuAnchors, setMoreMenuAnchors] = useState({});
+  const location = useLocation();
+
+  // console.log(location)
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -322,9 +326,11 @@ function ResponsiveAppBar() {
               </Menu>
             </>
           ) : (
-            <Button color="inherit" component={Link} to="/login">
-              Iniciar sesión
-            </Button>
+            location.pathname !== "/login" && (
+              <Button color="inherit" component={Link} to="/login">
+                Iniciar sesión
+              </Button>
+            )
           )}
         </Toolbar>
       </Container>

@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 
 function PanelProgramador() {
   const [file, setFile] = useState("");
+  const [imagesToUpload, setImagesToUpload] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const sendBackupFile = () => {
@@ -39,13 +40,13 @@ function PanelProgramador() {
     );
   };
   useEffect(() => {
-    console.log(file);
-  }, [file]);
+    console.log(imagesToUpload);
+  }, [imagesToUpload]);
 
   return (
     <Container maxWidth="md">
       <Box sx={{ display: "flex", alignItems: "center", mt: 3 }}>
-        <ButtonGroup aria-label="Basic button group">
+        <ButtonGroup>
           <Button
             component="label"
             role={undefined}
@@ -70,6 +71,33 @@ function PanelProgramador() {
           )}
         </ButtonGroup>
       </Box>
+
+      <ButtonGroup sx={{ mt: 3 }}>
+        <Button
+          variant="contained"
+          component="label"
+          role={undefined}
+          tabIndex={-1}
+        >
+          Subir imágenes para el Inicio
+          <VisuallyHiddenInput
+            onChange={({ target }) => {
+              setImagesToUpload([...target.files]);
+            }}
+            type="file"
+            multiple
+          />
+        </Button>
+        {imagesToUpload.length && (
+          <Button
+            disabled={loading}
+            endIcon={<Send />}
+            onClick={sendBackupFile}
+          >
+            {loading ? "Enviando..." : "Enviar"}
+          </Button>
+        )}
+      </ButtonGroup>
     </Container>
   );
 }

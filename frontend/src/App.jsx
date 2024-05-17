@@ -30,15 +30,15 @@ import AddUserForm from "./Components/AddUserForm.jsx";
 import MiProgreso from "./Components/MiProgreso.jsx";
 import EditUserForm from "./Components/EditUserForm.jsx";
 import Users from "./page/Users.jsx";
-import { grey } from "@mui/material/colors";
-import PanelProgramador from "./page/PanelProgramador.jsx";
 
+import PanelProgramador from "./page/PanelProgramador.jsx";
 
 function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <AuthProvider>
         <BrowserRouter basename="/natacion">
+          
           <Toaster />
           <NavBar />
           <Routes>
@@ -59,8 +59,14 @@ function App() {
             <Route element={<ProtectedRoute requiredRol={["Programador"]} />}>
               <Route path="/competencia" element={<Competencia />} />
               <Route path="/organizar" element={<OrganisatedCompetencia />} />
-              <Route path="/competencia/insert" element={<InsertTimesCompetencia />} />
-              <Route path="/competencia/resultados" element={<ResultsCompetencia />} />
+              <Route
+                path="/competencia/insert"
+                element={<InsertTimesCompetencia />}
+              />
+              <Route
+                path="/competencia/resultados"
+                element={<ResultsCompetencia />}
+              />
               <Route path="/nadadores" element={<Nadadores />} />
               <Route path="/añadir-nadador" element={<AddSwimmerForm />} />
               <Route
