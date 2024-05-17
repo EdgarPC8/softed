@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Paper,
@@ -17,6 +17,8 @@ import { Pagination, EffectCoverflow } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css/pagination";
 import { useAuth } from "../context/AuthContext";
+import { getHomeImagesRequest } from "../api/programerRequest";
+import { pathHomeImages } from "../api/axios";
 
 const images = [
   {
@@ -40,6 +42,20 @@ const images = [
 function Home() {
   const theme = useTheme();
   const { isAuthenticated } = useAuth();
+  const [imagesList, setImagesList] = useState([]);
+
+  const getHomeImages = async () => {
+    try {
+      const { data } = await getHomeImagesRequest();
+      setImagesList(data.images);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getHomeImages();
+  }, []);
 
   return (
     <Container
@@ -61,7 +77,7 @@ function Home() {
         grabCursor={true}
         centeredSlides={true}
         slidesPerView={"auto"}
-        initialSlide={2}
+        initialSlide={1}
         coverflowEffect={{
           rotate: 50,
           stretch: 0,
@@ -72,14 +88,14 @@ function Home() {
         pagination={true}
         modules={[EffectCoverflow, Pagination]}
       >
-        {images.map((step, index) => (
+        {imagesList.map((image, index) => (
           // <div key={step.label}>
           <SwiperSlide key={index}>
             <Box
               component="img"
-              src={step.imgPath}
+              src={`${pathHomeImages}/${image.name}`}
               sx={{ width: "100%" }}
-              alt={step.label}
+              // alt={step.label}
             />
           </SwiperSlide>
           // </div>

@@ -15,6 +15,8 @@ const instance = axios.create({
 });
 
 export const pathPhotos = `http://${url}/natacion/backend/photos`;
+export const pathHomeImages = `http://${url}/natacion/backend/homeimages`;
+
 export const jwt = () => {
   return `Bearer ${window.localStorage.getItem("token")}`;
 };
