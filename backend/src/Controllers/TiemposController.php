@@ -26,7 +26,18 @@ class TiemposController
         $Tiempos = SqlService::selectData(Tiempos::$tableName,
             ["MIN(tiempo) AS tiempo","Prueba","Metros","Fecha"],
             [Tiempos::$cedula => $cedula], "Prueba,Metros", null);
-        Flight::json(["array" => allFunctions::getTiemposProcesadorBarChart($Tiempos)]);
+             // Ordenar $Tiempos por Fecha ascendente
+            usort($Tiempos, function($a, $b) {
+                return strtotime($a['Fecha']) - strtotime($b['Fecha']);
+            });
+
+
+
+
+
+
+
+        Flight::json(["array" => allFunctions::getTiemposProcesadorBarChart($Tiempos),"minTimeByDate"=>$Tiempos]);
     }
     
     

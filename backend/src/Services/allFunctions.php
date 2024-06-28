@@ -583,7 +583,7 @@ class allFunctions
     
     public static function getInfoCompetencia($competencia) {
         $reglas = (object) [
-            "puestos" => 9 // Establecer el número de puestos a considerar
+            "puestos" => 3 // Establecer el número de puestos a considerar
         ];
     
         $resultados = [];

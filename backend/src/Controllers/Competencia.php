@@ -204,8 +204,11 @@ class Competencia{
         INNER JOIN evento ON evento.id = serie.id_evento 
         INNER JOIN competencia ON competencia.id=evento.id_competencia
         INNER JOIN institucion ON institucion.id=serie.id_institucion
+        INNER JOIN nadador ON nadador.cedula=serie.cedula
         ",
-        ["evento.*","evento.numero AS numeroEvento","serie.numero AS numeroSerie","serie.cedula","serie.carril","serie.tiempo","serie.nadador","institucion.nombre AS entidad","serie.id AS idTiempo","serie.descalificado","serie.premiado","serie.lugar"],
+        ["evento.*","evento.numero AS numeroEvento","serie.numero AS numeroSerie",
+        "serie.cedula","serie.carril","serie.tiempo","serie.nadador","institucion.nombre AS entidad",
+        "serie.id AS idTiempo","serie.id_evento","serie.descalificado","serie.premiado","serie.lugar","nadador.*"],
         ["id_competencia"=>$data->IdCompetencia],null,null);
     
         $contador=1;
@@ -220,6 +223,10 @@ class Competencia{
                 "descalificado" => $valor["descalificado"],
                 "premiado" => $valor["premiado"],
                 "lugar" => $valor["lugar"],
+                "primer_nombre" => $valor["primer_nombre"],
+                "segundo_nombre" => $valor["segundo_nombre"],
+                "primer_apellido" => $valor["primer_apellido"],
+                "segundo_apellido" => $valor["segundo_apellido"],
             ];
         
             // Indexar por número de evento y número de serie
@@ -231,6 +238,7 @@ class Competencia{
             $Competencia[$valor["numeroEvento"]-1]["name"] = $valor["name"];
             $Competencia[$valor["numeroEvento"]-1]["prueba"] = $valor["prueba"]?$valor["prueba"]:'';
             $Competencia[$valor["numeroEvento"]-1]["metros"] = $valor["metros"]?$valor["metros"]:'';
+            $Competencia[$valor["numeroEvento"]-1]["idEvento"] = $valor["id_evento"]?$valor["id_evento"]:'';
         }
 
         foreach ($Competencia as &$evento) {
@@ -305,23 +313,21 @@ class Competencia{
 
     }
     public static function getResultados(){
-        $respuesta=false;
-        // $data = json_decode(Flight::request()->getBody());
+        $respuesta = false;
         $data = (object)[
-            "IdCompetencia"=>3,
+            "IdCompetencia" => 3,
         ];
     
-        $Competencia=[];
+        $Competencia = [];
     
-        $array=SqlService::selectData("serie 
+        $array = SqlService::selectData("serie 
         INNER JOIN evento ON evento.id = serie.id_evento 
         INNER JOIN competencia ON competencia.id=evento.id_competencia
         INNER JOIN institucion ON institucion.id=serie.id_institucion
         ",
         ["evento.*","evento.numero AS numeroEvento","serie.numero AS numeroSerie","serie.cedula","serie.carril","serie.tiempo","serie.nadador","institucion.nombre AS entidad","serie.id AS idTiempo","serie.descalificado","serie.premiado","serie.lugar"],
-        ["id_competencia"=>$data->IdCompetencia],null,null);
+        ["id_competencia" => $data->IdCompetencia], null, null);
     
-        $contador=1;
         foreach ($array as $clave => $valor) {
             $nadador = [
                 "cedula" => $valor["cedula"],
@@ -335,7 +341,6 @@ class Competencia{
                 "lugar" => $valor["lugar"],
             ];
         
-            // Indexar por número de evento y número de serie
             $Competencia[$valor["numeroEvento"]-1]["series"][$valor["numeroSerie"]-1]["nadadores"][] = $nadador;
             $Competencia[$valor["numeroEvento"]-1]["nadadores"][] = $nadador;
             $Competencia[$valor["numeroEvento"]-1]["categoria"] = ["name" => $valor["categoria"]];
@@ -345,39 +350,54 @@ class Competencia{
             $Competencia[$valor["numeroEvento"]-1]["prueba"] = $valor["prueba"];
             $Competencia[$valor["numeroEvento"]-1]["metros"] = $valor["metros"];
         }
-
+    
         foreach ($Competencia as &$evento) {
-            $entidadesEvento = []; // Inicializar arreglo de entidades
-            $descEvento = []; // Inicializar arreglo de entidades
-            $timeEvento = []; // Inicializar arreglo de entidades
+            $entidadesEvento = [];
+            $descEvento = [];
+            $timeEvento = [];
             $evento["nadadores"] = allFunctions::organizarResultadosTiempos($evento["nadadores"]);
         
-            // Recorrer cada nadador y agregar sus entidades al arreglo
-            foreach ($evento["nadadores"] as $nadador) {
+            // Asignar puestos y manejar empates
+            $puesto = 1;
+            $ultimoTiempo = null;
+            $contadorEmpates = 0;
+    
+            foreach ($evento["nadadores"] as &$nadador) {
+                if ($nadador["tiempo"] != "") {
+                    if ($ultimoTiempo !== null && $nadador["tiempo"] == $ultimoTiempo) {
+                        $contadorEmpates++;
+                    } else {
+                        $puesto += $contadorEmpates;
+                        $contadorEmpates = 1;
+                    }
+                    $nadador["puesto"] = $puesto;
+                    $ultimoTiempo = $nadador["tiempo"];
+                } else {
+                    $nadador["puesto"] = "";
+                }
+    
                 $entidadesEvento[] = $nadador["entidad"];
-                if($nadador["descalificado"]==1){
+                if ($nadador["descalificado"] == 1) {
                     $descEvento[] = $nadador["descalificado"];
                 }
-                if($nadador["tiempo"]!=""){
+                if ($nadador["tiempo"] != "") {
                     $timeEvento[] = $nadador["tiempo"];
                 }
             }
-            // Eliminar duplicados manteniendo el orden original
+    
             $entidadesEvento = array_values(array_unique($entidadesEvento));
-            // $descEvento = array_values(array_unique($descEvento));
         
-            // Asignar el arreglo de entidades al evento
             $evento["entidades"] = $entidadesEvento;
             $evento["descalificados"] = $descEvento;
             $evento["tiempos"] = $timeEvento;
         }
-
-        $info=allFunctions::getInfoCompetencia($Competencia);
-
-
-        $respuesta=["IdCompetencia"=>$data->IdCompetencia,"Competencia"=>$info["competencia"],"Info"=>$info["resultados"]];
+    
+        $info = allFunctions::getInfoCompetencia($Competencia);
+    
+        $respuesta = ["IdCompetencia" => $data->IdCompetencia, "Competencia" => $info["competencia"], "Info" => $info["resultados"]];
         Flight::json($respuesta);
     }
+    
     public static function addCompetencia(){
         $data = json_decode(Flight::request()->getBody());
 
@@ -390,7 +410,8 @@ class Competencia{
         foreach ($data->eventos as $key => $value) {
             # code...
             SqlService::saveData("competencia_evento",(object)[
-            "id_competencia"=>3,
+            "id_competencia"=>4,
+            "numero"=>$value->numeroEvento,
             "name"=>$value->name,
             "metros"=>$value->metros,
             "prueba"=>$value->prueba,
@@ -411,272 +432,11 @@ class Competencia{
         }
         Flight::json(["message" => "Competencia agregada","eventos"=>$eventos]);
     }
-    
-    // public static function administrarCompetencia(){
-    //     $respuesta=false;
-    //     $data = (object)[
-    //         "IdCompetencia"=>3,
-    //         "Create"=>false,
-    //     ];
-
-
-    //     $Competencia=[];
-    //     $array=SqlService::selectData("institucion_nadador 
-    //     INNER JOIN nadador ON nadador.cedula=institucion_nadador.id_nadador 
-    //     INNER JOIN competencia ON competencia.id=institucion_nadador.id_competencia 
-    //     INNER JOIN institucion ON institucion.id=institucion_nadador.id_institucion
-    //     ",
-    //     ["institucion.nombre AS entidad","nadador.cedula","nadador.genero","nadador.fecha_nacimiento","Concat(nadador.nombres,' ',nadador.apellidos) AS nadador","institucion_nadador.*"],
-    //     ["id_competencia"=>$data->IdCompetencia],null,"CAST(SUBSTRING_INDEX(institucion_nadador.categoria, '-', 1) AS SIGNED) DESC");
-    //     $contador=1;
-    //     $arrayEventosGenerales=null;
-
-    //     //este foreach crea los eventos pero todo en ovbetos
-
-    //     foreach ($array as $clave => $valor) {
-    //         // $objPruebas = json_decode($valor["configCheck"]);
-    //         $objPruebas=explode(",", $valor["configCheck"]);
-
-    //         foreach ($objPruebas as $key => $value) {
-    //             if($value!=''){
-    //                 $arrayTime=[];
-    //                 $arrayTime=allFunctions::getObjetoMetrosPrueba($value);
-    //                 $arrayTime["Cedula"]=$valor["cedula"];
-    //                 $valor["tiempo"]=allFunctions::getTiempo($arrayTime);
-                    
-    //                 $eventos[$value."||".allFunctions::getCategoria($valor["fecha_nacimiento"])."||".$valor["genero"]][]=$valor;
-    //                 $arrayEventosGenerales=$eventos;
-    //             }
-    //         }
-    //         $contador++;
-    //     }
-
-    //      // Función de comparación para ordenar por tiempo
-    //      $arrayDistribucion=[];
-    //      foreach ($arrayEventosGenerales as $clave => $valor) {
-    //          $arrayDistribucion[$clave] = allFunctions::organizarPorTiempoYVacios($valor);
-    //      }
-        
-    //      //este foreach ya me organizar en arrays con objetos
-    //     $contador=1;
-    //     foreach ($arrayDistribucion as $clave => $valor) {
-    //         $opciones=explode("||",$clave);
-    //         // $respuesta= $opciones[0];
-    //         $evento=[
-    //             "Numero"=>$contador,
-    //             "Prueba"=>allFunctions::getMetrosPrueba($opciones[0]),
-    //             "Genero"=>$opciones[2],
-    //             "Categoria"=>$opciones[1],
-    //             "Series"=>allFunctions::getSeries($valor,5),
-    //         ];
-    //         $Competencia[]=$evento;
-    //         $contador++;
-    //     }
-
-    //     //funcion que me organizar por pruebas y categorias
-    //     usort($Competencia, ['allFunctions', 'cmp']);
-
-    //     // allFunctions::cmp
-
-    //     // este es para crear la competencia
-    //     if($data->Create){
-    //         $contador=1;
-    //         foreach ($Competencia as $clave => $valor) {
-    //             $idEvento=SqlService::saveData("evento",(object)["id_competencia"=>$data->IdCompetencia,"numero"=>$contador,"prueba"=>$valor["Prueba"],"categoria"=>$valor["Categoria"],"genero"=>$valor["Genero"]]);
-    //             $contadorSerie=1;
-    //             foreach ($valor["Series"] as $keySerie => $valueSerie) {
-    //                 foreach ($valueSerie["Nadadores"] as $keyNadador => $valueNad) {
-    //                     SqlService::saveData("serie",(object)["id_evento"=>$idEvento,"numero"=>$contadorSerie,"carril"=>$valueNad["carril"],"cedula"=>$valueNad["cedula"],
-    //                     "nadador"=>$valueNad["nadador"],"id_institucion"=>$valueNad["id_institucion"]]);
-    //                 }
-    //                 $contadorSerie++;
-    //             }
-    //             $contador++;
-    //         }
-    //     }
-
-    //     $arraySeriesGlobal=[];
-    //     $arrayNadadoresGlobal=[];
-
-    //     foreach ($Competencia as $clave => $evento) {
-    //         foreach ($evento["Series"] as $keySerie => $valueSerie) {
-    //             $arraySeriesGlobal[]["Evento".($clave+1)."Serie".($keySerie+1)]=$valueSerie["Nadadores"];
-    //                 shuffle($valueSerie["Nadadores"]);
-            
-    //         }
-    //     }
-    //     $Competencia = allFunctions::alternarPosicionesNadadores($Competencia);
-    //     $respuesta=$Competencia;
-    //     Flight::json($respuesta);
-    // }
-    // public static function getCompetenciaTiempos(){
-    //     $respuesta=false;
-    //     // $data = json_decode(Flight::request()->getBody());
-    //     $data = (object)[
-    //         "IdCompetencia"=>3,
-    //     ];
-
-    //     $Competencia=[];
-
-    //     $array=SqlService::selectData("serie 
-    //     INNER JOIN evento ON evento.id = serie.id_evento 
-    //     INNER JOIN competencia ON competencia.id=evento.id_competencia
-    //     INNER JOIN institucion ON institucion.id=serie.id_institucion
-    //     ",
-    //     ["evento.*","serie.numero AS numeroSerie","serie.cedula","serie.carril","serie.tiempo","serie.nadador","institucion.nombre AS entidad","serie.id AS idTiempo","serie.descalificado","serie.premiado","serie.lugar"],
-    //     ["id_competencia"=>$data->IdCompetencia],null,null);
-
-    //     $contador=1;
-    //     foreach ($array as $clave => $valor) {
-
-    //         $nadador=[
-    //             "cedula"=>$valor["cedula"],
-    //             "tiempo"=>$valor["tiempo"] ? $valor['tiempo'] : "",
-    //             "entidad"=>$valor["entidad"],
-    //             "nadador"=>$valor["nadador"],
-    //             "carril"=>$valor["carril"],
-    //             "id"=>$valor["idTiempo"],
-    //             "descalificado"=>$valor["descalificado"],
-    //             "premiado"=>$valor["premiado"],
-    //             "lugar"=>$valor["lugar"],
-    //         ];
-    //         if(!isset($Competencia[$valor["numero"]-1])){
-    //             $series=[];
-    //             $series[$valor["numeroSerie"]-1]["Nadadores"][]=$nadador;
-    //             $Competencia[$valor["numero"]-1]=["Categoria"=>$valor["categoria"],"Genero"=>$valor["genero"],"Numero"=>$valor["numero"],"Prueba"=>$valor["prueba"],"Series"=>$series];
-    //         }else{
-    //             $series[$valor["numeroSerie"]-1]["Nadadores"][]=$nadador;
-    //             $Competencia[$valor["numero"]-1]=["Categoria"=>$valor["categoria"],"Genero"=>$valor["genero"],"Numero"=>$valor["numero"],"Prueba"=>$valor["prueba"],"Series"=>$series];
-    //         }
-
-            
-    //         // $Competencia[$valor["numero"]-1]=["Prueba"=>$valor["prueba"]];
-      
-    //         // $Competencia[$valor["numero"]-1]["Series"][$valor["numeroSerie"]-1]["Nadadores"][]=["cedula"=>$valor["cedula"],"tiempo"=>$valor["tiempo"],"entidad"=>$valor["entidad"]];
-           
-    //         $contador++;
-    //     }
-    //     $respuesta=$Competencia;
-    //     Flight::json($respuesta);
-    // }
-    // public static function getResultados(){
-    //     // Función de comparación personalizada
-    //     function compararNadadores($nadador1, $nadador2) {
-    //         // Filtrar vacíos
-    //         if ($nadador1["tiempo"] == '' || $nadador2["tiempo"] == '') {
-    //             return strcmp($nadador2["tiempo"], $nadador1["tiempo"]);
-    //         }
-            
-    //         // Ordenar primero por descalificado (ascendente), luego por tiempo (ascendente)
-    //         if ($nadador1["descalificado"] == $nadador2["descalificado"]) {
-    //             return strcmp($nadador1["tiempo"], $nadador2["tiempo"]);
-    //         }
-        
-    //         return $nadador1["descalificado"] - $nadador2["descalificado"];
-    //     }
-        
-    //     $respuesta=false;
-    //     // $data = json_decode(Flight::request()->getBody());
-    //     $data = (object)[
-    //         "IdCompetencia"=>3,
-    //     ];
-
-    //     $Competencia=[];
-
-    //     $array=SqlService::selectData("serie 
-    //     INNER JOIN evento ON evento.id = serie.id_evento 
-    //     INNER JOIN competencia ON competencia.id=evento.id_competencia
-    //     INNER JOIN institucion ON institucion.id=serie.id_institucion
-    //     ",
-    //     ["competencia.nombre AS nombreCompetencia","evento.*","serie.numero AS numeroSerie","serie.cedula","serie.carril","serie.tiempo","serie.nadador","institucion.nombre AS entidad","serie.id AS idTiempo","serie.descalificado","serie.premiado","serie.lugar"],
-    //     ["id_competencia"=>$data->IdCompetencia],null,null);
-
-    //     foreach ($array as $clave => $valor) {
-
-    //         $nadador=[
-    //             "cedula"=>$valor["cedula"],
-    //             "tiempo"=>$valor["tiempo"] ? $valor['tiempo'] : "",
-    //             "entidad"=>$valor["entidad"],
-    //             "nadador"=>$valor["nadador"],
-    //             "carril"=>$valor["carril"],
-    //             "id"=>$valor["idTiempo"],
-    //             "descalificado"=>$valor["descalificado"],
-    //             "premiado"=>$valor["premiado"],
-    //             "lugar"=>$valor["lugar"],
-    //         ];
-    //         if(!isset($Competencia[$valor["numero"]-1])){
-    //             $series=[];
-    //             $series[]=$nadador;
-    //             $Competencia[$valor["numero"]-1]=["Categoria"=>$valor["categoria"],"Genero"=>$valor["genero"],"Numero"=>$valor["numero"],"Prueba"=>$valor["prueba"],"Nadadores"=>$series];
-    //         }else{
-    //             $series[]=$nadador;
-    //             $Competencia[$valor["numero"]-1]=["Categoria"=>$valor["categoria"],"Genero"=>$valor["genero"],"Numero"=>$valor["numero"],"Prueba"=>$valor["prueba"],"Nadadores"=>$series];
-    //         }
-    //     }
-    //     foreach ($Competencia as $clave => $valor) {
-    //         usort($Competencia[$clave]["Nadadores"], 'compararNadadores');
-    //     }
-    //     $entidad=[];
-    //     $resultados=[];
-    //     foreach ($Competencia as $key => $valor) {
-    //         $lugar = 1;
-    //         $ultimoTiempo = null;
-    //         foreach ($valor["Nadadores"] as $keyNad => $value) {
-    //             if($value["descalificado"] != 1){
-    //                 if ($value["tiempo"] != $ultimoTiempo) {
-    //                     $Competencia[$key]["Nadadores"][$keyNad]["lugar"] = $lugar;
-    //                     $ultimoTiempo = $value["tiempo"];
-            
-    //                 }else{
-    //                     $lugar--;
-    //                     $Competencia[$key]["Nadadores"][$keyNad]["lugar"] = $lugar;
-    
-    //                 }
-    //             }
-    //             if ($lugar == 1 && $value["tiempo"] != ""&&$value["descalificado"] != 1)$entidad[$value["entidad"]]["oro"] = ($entidad[$value["entidad"]]["oro"] ?? 0) + 1;
-    //             if ($lugar == 2 && $value["tiempo"] != ""&&$value["descalificado"] != 1)$entidad[$value["entidad"]]["plata"] = ($entidad[$value["entidad"]]["plata"] ?? 0) + 1;
-    //             if ($lugar == 3 && $value["tiempo"] != ""&&$value["descalificado"] != 1)$entidad[$value["entidad"]]["bronce"] = ($entidad[$value["entidad"]]["bronce"] ?? 0) + 1;
-    //             $lugar++;
-                
-    //         }
-    //     }
-
-    //     foreach ($entidad as $key => $valor) {
-
-    //         $oro=isset($valor["oro"])?$valor["oro"]:0;
-    //         $plata=isset($valor["plata"])?$valor["plata"]:0;
-    //         $bronce=isset($valor["bronce"])?$valor["bronce"]:0;
-            
-
-    //         $resultados[]=["Entidad"=>$key,"Medallas"=>
-    //             [
-    //                 "Oro"=>$oro,
-    //                 "Plata"=>$plata,
-    //                 "Bronce"=>$bronce,
-    //                 "OroPlata"=>$oro+$plata,
-    //                 "OroBronce"=>$oro+$bronce,
-    //                 "PlataBronce"=>$plata+$bronce,
-    //                 "Total"=>$oro+$plata+$bronce,
-    //             ]
-    //         ];
-            
-    //     }
-    //     function ordenarPorOroPlataYBronce($arrayDeObjetos) {
-    //         usort($arrayDeObjetos, function($a, $b) {
-    //             if ($b["Medallas"]["Oro"] === $a["Medallas"]["Oro"]) {
-    //                 if ($b["Medallas"]["Plata"] === $a["Medallas"]["Plata"]) {
-    //                     return $b["Medallas"]["Bronce"] - $a["Medallas"]["Bronce"];
-    //                 }
-    //                 return $b["Medallas"]["Plata"] - $a["Medallas"]["Plata"];
-    //             }
-    //             return $b["Medallas"]["Oro"] - $a["Medallas"]["Oro"];
-    //         });
-    //         return $arrayDeObjetos;
-    //     }
-        
-    //     $respuesta=["Competencia"=>$Competencia,"Resultados"=>ordenarPorOroPlataYBronce($resultados),"Nombre"=>$array[0]["nombreCompetencia"]];
-    //     Flight::json($respuesta);
-    // }
+    public static function getCompetenciasData(){
+        // $data = json_decode(Flight::request()->getBody());
+        $array=SqlService::selectData("competencia");
+        Flight::json(["message" => "Competencia agregada","data"=>$array]);
+    }
     public static function updateTimeCompetencia($id)
     {
         $body = json_decode(Flight::request()->getBody());
@@ -686,6 +446,5 @@ class Competencia{
             Flight::json(["message" => "Tiempo actualizados"]);
         }
     }
-
-
+    
 }

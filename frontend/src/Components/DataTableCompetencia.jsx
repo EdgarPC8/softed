@@ -20,8 +20,10 @@ import { updateTimeCompetencia } from '../api/competenciaResquest';
 import { Person, Edit, Delete } from "@mui/icons-material";
 import ConfirmDialog from './ConfirmDialog';
 import AddNadadorModal from './AddNadadorModal';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import { createSerie,removeSerie } from '../api/seriesResquest';
 
-function createData(name,categoria, series, nadadores,entidades, tiempos,descalificados, history,numEvento) {
+function createData(name,categoria, series, nadadores,entidades, tiempos,descalificados, history,numEvento,idEvento) {
   return {
     name,
     categoria,
@@ -31,7 +33,8 @@ function createData(name,categoria, series, nadadores,entidades, tiempos,descali
     tiempos,
     descalificados,
     history,
-    numEvento
+    numEvento,
+    idEvento
   };
 }
 
@@ -40,8 +43,16 @@ function Row(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleTiempoChange = (index, newValue) => {};
-  const putTime = async(id,time)=>{};
-  const putDesc = async(id,desc)=>{};
+
+  const putTime = async(id,time)=>{
+    const res = await updateTimeCompetencia(id,{tiempo:time})
+    // console.log(id)
+  }
+  const putDesc = async(id,desc)=>{
+    const res = await updateTimeCompetencia(id,{descalificado:desc})
+    // console.log(id)
+  }
+
 
   return (
     <React.Fragment>
@@ -71,7 +82,11 @@ function Row(props) {
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
                 {`Evento ${row.name}`}
+                <IconButton onClick={() => functions.addSerie(row.numEvento)}>
+  <LibraryAddIcon />
+</IconButton>
               </Typography>
+             
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
@@ -97,8 +112,11 @@ function Row(props) {
                               <TableHead>
                                 <TableRow>
                                   <TableCell colSpan={9} align={"center"}>Serie {index + 1}
-                                    <IconButton onClick={() => handleOpenModal(row.numEvento, index)}>
+                                    <IconButton onClick={() => handleOpenModal(row.numEvento, index,row.idEvento)}>
                                       <Person /> {/* Icono de "añadir nadador" */}
+                                    </IconButton>
+                                    <IconButton onClick={() => functions.deleteSerie(row.numEvento,index)}>
+                                      <Delete /> 
                                     </IconButton>
                                   </TableCell>
                                 </TableRow>
@@ -143,9 +161,9 @@ function Row(props) {
                                       )}
                                     </TableCell>
                                     <TableCell>
-                                      <IconButton>
+                                      {/* <IconButton>
                                         <Edit />
-                                      </IconButton>
+                                      </IconButton> */}
                                       <IconButton onClick={() => functions.deleteNad(nadadorData)}>
                                         <Delete />
                                       </IconButton>
@@ -173,8 +191,14 @@ export default function DataTableCompetencia({ data = [], setData }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [deleteConfirmationOpenSerie, setDeleteConfirmationOpenSerie] = useState(false);
+
+  const [addConfirmationOpenSerie, setAddConfirmationOpenSerie] = useState(false);
+
   const [selectedNadador, setSelectedNadador] = useState(null);
+  const [selectedSerie, setSelectedSerie] = useState(null);
   const [addNadadorModalOpen, setAddNadadorModalOpen] = useState(false);
+  const [currentIdEvento, setCurrentIdEvento] = useState(null);
   const [currentEventoIndex, setCurrentEventoIndex] = useState(null);
   const [currentSerieIndex, setCurrentSerieIndex] = useState(null);
 
@@ -183,7 +207,9 @@ export default function DataTableCompetencia({ data = [], setData }) {
     setDeleteConfirmationOpen(true);
   };
 
-  const handleDeleteConfirmation = () => {
+
+
+  const handleDeleteConfirmation = async() => {
     const updatedCompetencias = data.map(competencia => {
       const updatedSeries = competencia.series.map(serie => {
         serie.nadadores = serie.nadadores.filter(nadador => nadador.id !== selectedNadador.id);
@@ -192,18 +218,54 @@ export default function DataTableCompetencia({ data = [], setData }) {
       competencia.series = updatedSeries;
       return competencia;
     });
+    const serie = await removeSerie(selectedNadador.id)
+    console.log(serie.data)
 
     setData({Competencia:updatedCompetencias});
     setDeleteConfirmationOpen(false);
   };
+  const deleteSerie = (eventoIndex, serieIndex) => {
+    // console.log(eventoIndex, serieIndex);
+    setSelectedSerie({ eventoIndex, serieIndex });
+    setDeleteConfirmationOpenSerie(true);
+  };
+  
+  const handleDeleteConfirmationSerie = () => {
+    const updatedCompetencias = [...data];
+    const { eventoIndex, serieIndex } = selectedSerie;
+  
+    // Remove the series from the selected event
+    updatedCompetencias[eventoIndex].series.splice(serieIndex, 1);
+  
+    setData({Competencia:updatedCompetencias});
+    setDeleteConfirmationOpenSerie(false);
+  };
+  const addSerie = (eventoIndex) => {
+    setAddConfirmationOpenSerie(true);
+    setCurrentEventoIndex(eventoIndex);
+  };
+  
+  const handleAddConfirmationSerie = () => {
+    const newData = [...data];
+    const newSerie = {nadadores:[]};
+    newData[currentEventoIndex].series.push(newSerie);
+    setData({Competencia:newData});
+    setAddConfirmationOpenSerie(false);
+  };
+  
 
   // En el componente DataTableCompetencia
 
-const addNad = (nuevoNadador) => {
+const addNad =  async (nuevoNadador)=> {
   const newData = [...data];
+  nuevoNadador.idEvento=currentIdEvento
+  nuevoNadador.numeroSerie=currentSerieIndex+1
+  const serie = await createSerie(nuevoNadador)
+  const nadador=serie.data.nad
+  console.log(serie.data)
 
   if (newData.length > 0 && newData[currentEventoIndex].series.length > 0 && newData[currentEventoIndex].series[currentSerieIndex].nadadores) {
-    newData[currentEventoIndex].series[currentSerieIndex].nadadores.push(nuevoNadador);
+    newData[currentEventoIndex].series[currentSerieIndex].nadadores.push(nadador);
     setData({Competencia:newData});
   }
 };
@@ -218,8 +280,9 @@ const addNad = (nuevoNadador) => {
     setPage(0);
   };
 
-  const handleOpenModal = (eventoIndex, serieIndex) => {
+  const handleOpenModal = (eventoIndex, serieIndex,idEvento) => {
     setCurrentEventoIndex(eventoIndex);
+    setCurrentIdEvento(idEvento);
     setCurrentSerieIndex(serieIndex);
     setAddNadadorModalOpen(true);
   };
@@ -236,6 +299,20 @@ const addNad = (nuevoNadador) => {
         handleConfirm={handleDeleteConfirmation}
         title="Confirmación de Eliminación"
         message="¿Estás seguro de que deseas eliminar este nadador?"
+      />
+      <ConfirmDialog
+        open={deleteConfirmationOpenSerie}
+        handleClose={() => setDeleteConfirmationOpenSerie(false)}
+        handleConfirm={handleDeleteConfirmationSerie}
+        title="Confirmación de Eliminación"
+        message="¿Estás seguro de que deseas eliminar esta Serie?"
+      />
+      <ConfirmDialog
+        open={addConfirmationOpenSerie}
+        handleClose={() => setAddConfirmationOpenSerie(false)}
+        handleConfirm={handleAddConfirmationSerie}
+        title="Confirmación de Creacion"
+        message="¿Estás seguro de que deseas agregar una Serie?"
       />
       <AddNadadorModal
         open={addNadadorModalOpen}
@@ -261,7 +338,7 @@ const addNad = (nuevoNadador) => {
             : data
           ).map((row, index) => (
             <Row
-              key={row.categoria.name + row.genero + row.metros + row.prueba}
+              key={row.categoria.name + row.genero + row.metros + row.prueba+index}
               row={createData(
                 `#${row.numero} ${row.metros} ${row.prueba} ${row.categoria.name} ${row.genero}`,
                 row.categoria.name,
@@ -271,9 +348,10 @@ const addNad = (nuevoNadador) => {
                 row.tiempos ? `${row.tiempos.length}/${row.nadadores.length}` : "",
                 row.descalificados ? `${row.descalificados.length}/${row.nadadores.length}` : "0/0",
                 row.series,
-                index
+                index,
+                row.idEvento
               )}
-              functions={{ deleteNad }}
+              functions={{ deleteNad,deleteSerie,addSerie }}
               handleOpenModal={handleOpenModal}
             />
           ))}

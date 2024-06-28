@@ -142,58 +142,7 @@ class Comands{
     
         Flight::json($mensaje);
     }
-    // public static function createBD(){
-
-    //     $mensaje = "No hay mensaje";
-    //     $archivo = '/Applications/XAMPP/htdocs/natacion/BD/crono_swim.db';
-        
     
-    //     // Borrar el archivo de la base de datos si existe
-    //     if (file_exists($archivo)) {
-    //         unlink($archivo);
-    //     }
-    //     // Crear o abrir la base de datos
-    //     $conexion = new SQLite3($archivo);
-    //     if (!$conexion) {
-    //         $mensaje = 'No se pudo crear o abrir la base de datos. AUTOINCREMENT';
-    //     } else {
-    //         $insertNadador=Comands::getInsertsInto("nadador",0);
-    //         $insertPruebas=Comands::getInsertsInto("pruebas",1);
-    //         $insertMetros=Comands::getInsertsInto("metros",1);
-    //         $insertTiempos=Comands::getInsertsInto("tiempos",1);
-    //         $insertSerie=Comands::getInsertsInto("serie",1);
-    //         $insertEvento=Comands::getInsertsInto("evento",1);
-    //         $insertCompetencia=Comands::getInsertsInto("competencia",1);
-    //         $insertInstitucion=Comands::getInsertsInto("institucion",1);
-    //         $insertInstitucionNadador=Comands::getInsertsInto("institucion_nadador",1);
-
-
-    //         // Crear la tabla usuarios
-    //         $tablas = "
-        
-    //         CREATE TABLE IF NOT EXISTS estudiantes (
-    //             id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //             cedula INTEGER,
-    //             fecha_nacimiento TEXT,
-    //             nombres TEXT,
-    //             apellidos TEXT,
-    //             genero TEXT
-    //         );";
-
-    //         $tablas.="INSERT INTO estudiantes (cedula,fecha_nacimiento,nombres,apellidos,genero) 
-    //         VALUES (1104661598,'05-07-2000','Edgar Patricio','Torres Condolo','M'),(1104661599,'05-07-2001','Edgar1 Patricio1','Torres1 Condolo1','M');";
-    
-    //         if ($conexion->exec($tablas)) {
-    //             $mensaje = 'La Base de Datos Android se ha creado correctamente.';
-    //         } else {
-    //             $mensaje = 'No se pudo crear la tabla usuarios.';
-    //         }
-    
-    //         $conexion->close();
-    //     }
-    
-    //     Flight::json($mensaje);
-    // }
     public static function getInsertsInto($tabla,$primary){
         $statement = Flight::db()->prepare("SELECT * FROM $tabla");
         $statement->execute();
@@ -225,153 +174,57 @@ class Comands{
     
         return $insertValues;
     }
-    // public static function ejecutar(){
-    //     $mensaje = "No hay mensaje";
-
-    //     $statement = Flight::db()->prepare("SELECT serie.cedula,serie.nadador,evento.prueba,serie.tiempo,competencia.nombre FROM serie INNER JOIN
-    //     evento ON evento.id = serie.id_evento INNER JOIN 
-    //     competencia ON competencia.id=evento.id_competencia");
-    //     $statement->execute();
-    //     $data = $statement->fetchAll();
-    //     foreach ($data as $key => $value) {
-    //         $prueba="";
-    //         $metros="";
-    //         $fecha="";
-    //         if("25PR_L"==$value["prueba"]){
-    //             $metros="25 Metros";
-    //             $prueba="PR_L";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("25PR_E"==$value["prueba"]){
-    //             $metros="25 Metros";
-    //             $prueba="PR_E";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("25Lib"==$value["prueba"]){
-    //             $metros="25 Metros";
-    //             $prueba="Libre";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("25Esp"==$value["prueba"]){
-    //             $metros="25 Metros";
-    //             $prueba="Espalda";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("25Pech"==$value["prueba"]){
-    //             $metros="25 Metros";
-    //             $prueba="Pecho";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("25Mari"==$value["prueba"]){
-    //             $metros="25 Metros";
-    //             $prueba="Mariposa";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("50Lib"==$value["prueba"]){
-    //             $metros="50 Metros";
-    //             $prueba="Libre";
-    //             $fecha="04-08-2023";
-    //         }
-    //         if("50Esp"==$value["prueba"]){
-    //             $metros="50 Metros";
-    //             $prueba="Espalda";
-    //             $fecha="04-08-2023";
-    //         }
-    //         if("50Pech"==$value["prueba"]){
-    //             $metros="50 Metros";
-    //             $prueba="Pecho";
-    //             $fecha="04-08-2023";
-    //         }
-    //         if("50Mari"==$value["prueba"]){
-    //             $metros="50 Metros";
-    //             $prueba="Mariposa";
-    //             $fecha="04-08-2023";
-    //         }
-    //         if("100CI"==$value["prueba"] && "Tercer Campeonato InterEscolar de Natacion 2023"==$value["nombre"]){
-    //             $metros="100 Metros";
-    //             $prueba="CI";
-    //             $fecha="03-08-2023";
-    //         }
-    //         if("100CI"==$value["prueba"] && "Tercer Campeonato Intercolegial de Natacion 2023"==$value["nombre"]){
-    //             $metros="100 Metros";
-    //             $prueba="CI";
-    //             $fecha="04-08-2023";
-    //         }
-    //         $array=[
-    //             "cedula"=>$value["cedula"],
-    //             "fecha"=>$fecha,
-    //             "prueba"=>$prueba,
-    //             "metros"=>$metros,
-    //             "tiempo"=>$value["tiempo"],
-    //         ];
-    //         $objeto = (object)$array;
-    //         SqlService::saveData("tiempos",$objeto);
-    //     }
-    //     Flight::json($array);
-    // }
-    // public static function ejecutar(){
-    //     $respuesta = "No hay mensaje";
-
-    //     $statement = Flight::db()->prepare("SELECT * FROM tiempos");
-    //     $statement->execute();
-    //     $data = $statement->fetchAll();
-    //     $lista=[];
-    //     $count=0;
-    //     foreach ($data as $key => $value) {
-    //         if($value["tiempo"]==""){
-                
-    //             $condition=[
-    //                 "id"=>$value["id"],
-    //             ];
-    //             $objeto = (object)$condition;
-
-    //             SqlService::deleteData("tiempos",$objeto);
-    //         }
-    //         $success=[
-    //             "icon"=>"success",
-    //             "title"=>"Éxito",
-    //             "text"=>"Datos procesados correctamente",
-    //         ];
-    //         $respuesta=$success;
-            
-    //     }
-    //     Flight::json($respuesta);
-    // }
+   
     public static function ejecutar(){
         $respuesta = "No hay mensaje";
-        $statement = Flight::db()->prepare("SELECT * FROM institucion_nadador WHERE id_competencia = 3");
-        $statement->execute();
-        $data = $statement->fetchAll();
+        // $letras = 'Metros'; // Las letras que quieres buscar
+
+        // // Preparar la consulta SQL con WHERE y LIKE
+        // $statement = Flight::db()->prepare("SELECT * FROM competencia");
+        
+        // // Concatenar los comodines '%' para buscar cualquier ocurrencia
+        // $parametro = "%" . $letras . "%";
+        
+        // // Asociar el parámetro a la consulta preparada y ejecutarla
+        // $statement->execute();
+        
+        // // Obtener los datos resultantes
+        // $data = $statement->fetchAll();
+        // $count=0;
+
+        // foreach ($data as $key => $value) {
+        //     if (isset($value["fecha"])) {
+        //         $fechaSeparada = explode("-", $value["fecha"]);
+        
+        //         // Verificar que $fechaSeparada tenga al menos 3 elementos antes de acceder a ellos
+        //         if (count($fechaSeparada) >= 3) {
+        //             $fecha = $fechaSeparada[2] . "-" . $fechaSeparada[1] . "-" . $fechaSeparada[0];
+
+        //             $id=$value["id"];
+                    
+        //             // Continuar con el procesamiento
+        //             if(SqlService::editData("competencia", (object) ["fecha" => $fecha], (object) ["id" => $id])){
+        //             $count++;
+
+        //             }
+        //         } else {
+
+           
+
+        //         }
+        //     } else {
+        //         // Manejar el caso donde $value["fecha"] no está definido
+
+        //     }
+        // }
+        // $respuesta=$count;
+
+        
     
-        foreach ($data as $key => $value) {
-            $jsonString = $value["configCheck"];
-            if (!empty($jsonString)) {
-                $obj = json_decode($jsonString, true); // Decodifica el JSON como un array asociativo
-                if (is_array($obj)) {
-                    $clavesNoVacias="";
-                    foreach ($obj as $clave => $valor) {
-                        // Aquí puedes hacer lo que necesites con cada propiedad del objeto
-                        if (!empty($valor)) { // Verifica si el valor no está vacío
-                            if (!empty($clavesNoVacias)) {
-                                $clavesNoVacias .= ","; // Agrega una coma si ya hay claves no vacías en la cadena
-                            }
-                            $clavesNoVacias .= $clave; // Agrega la clave a la cadena
-                        }
-                    }
-                    $respuesta=$clavesNoVacias;
-                    SqlService::editData("institucion_nadador",(object) ["configCheck"=>$clavesNoVacias], (object) ["id" => $value["id"]]);
-                } else {
-                    // Manejar el caso en que el JSON no pudo ser decodificado correctamente
-                    $respuesta = "Error al decodificar el JSON";
-                }
-            } else {
-                // Manejar el caso en que el valor de configCheck está vacío
-                $respuesta = "El campo configCheck está vacío";
-            }
-        }
+ 
         
         
-        Flight::json($clavesNoVacias);
+        Flight::json($respuesta);
     }
     
 }

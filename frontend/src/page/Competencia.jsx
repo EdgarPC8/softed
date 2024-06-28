@@ -28,7 +28,7 @@ import DataTable from "../Components/DataTable";
 import DataTableCompetencia from "../Components/DataTableCompetencia";
 import { deleteSwimmerRequest, getAllNadadores } from "../api/nadadoresResquest.js";
 import { deleteInstitutionRequest } from "../api/institutionRequest.js";
-import { getCompetencia, getCompetenciaTiempos, getResultados, getEntidadCompetencia, addCompetencia, createCompetencia } from "../api/competenciaResquest";
+import { getCompetencia, getCompetenciaTiempos, getResultados, getEntidadCompetencia, addCompetencia, createCompetencia, getCompetenciasData } from "../api/competenciaResquest";
 import DataTableCompResults from "../Components/DataTableCompResults";
 import DataTableEntidadesComp from "../Components/DataTableEntidadesComp";
 import { useForm, Controller } from "react-hook-form";
@@ -41,6 +41,7 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { getOneSwimmerRequest } from "../api/nadadoresResquest";
 import { getMetros, getPruebas } from "../api/metrosPruebaResquest.js";
+
 function Competencia() {
   const [data, setData] = useState([]);
   const [competencia, setCompetencia] = useState({});
@@ -50,6 +51,7 @@ function Competencia() {
   const [prueba, setPrueba] = useState('');
   const [metros, setMetros] = useState('');
   const [nameEvento, setNameEvento] = useState("");
+  const [numberEvento, setNumberEvento] = useState("");
   const [nameCategoria, setNameCategoria] = useState("");
   const [nameAnioInicial, setNameAnioInicial] = useState("");
   const [nameAnioFinal, setNameAnioFinal] = useState("");
@@ -57,19 +59,19 @@ function Competencia() {
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
-  
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-  
+
 
   async function getData() {
     try {
       const res = await getEntidadCompetencia();
       // const res = await getCompetenciaTiempos();
-      const res2 = await getCompetencia();
-      setData(res.data)
-      console.log(res.data, res2.data)
+      const res2 = await getCompetenciasData();
+      setData(res2.data.data)
+      console.log(res2.data)
 
 
 
@@ -132,33 +134,39 @@ function Competencia() {
       return;
     }
     // console.log(values)
-    if (dataComp.length==0) {
+    if (dataComp.length == 0) {
       toast.error("Debes llenar al menos un campo para agregar un evento.");
       return;
     }
-    const obj={
-      datos:values,
-      eventos:dataComp
+    const obj = {
+      datos: values,
+      eventos: dataComp
     }
     setCompetencia(obj)
 
     handleOpenDialog();
 
-  
+
     // fetchMeters();
     // reset();
   };
   const columns = [
     {
-      headerName: "Metros",
-      field: "metros",
-      width: 500,
+      headerName: "Nombre",
+      field: "nombre",
+      width: 700,
+      editable: true,
+    },
+    {
+      headerName: "Fecha",
+      field: "fecha",
+      width: 300,
       editable: true,
     },
     {
       headerName: "Actions",
       field: "actions",
-      width: 300,
+      width: 200,
       sortable: false,
       renderCell: (params) => (
         <>
@@ -172,9 +180,9 @@ function Competencia() {
             >
               <Edit />
             </IconButton>
-            <IconButton onClick={() => deleteMeters(params.row.id)}>
+            {/* <IconButton onClick={() => deleteMeters(params.row.id)}>
               <Delete />
-            </IconButton>
+            </IconButton> */}
           </>
         </>
       ),
@@ -207,30 +215,31 @@ function Competencia() {
 
   const addEvento = () => {
     // const { nameEvento, nameCategoria, nameAnioInicial, nameAnioFinal } = values;
-  
+
     const initialYear = parseInt(nameAnioInicial);
     const finalYear = parseInt(nameAnioFinal);
-  
+
     if (isNaN(initialYear) || isNaN(finalYear)) {
       console.error("Por favor ingresa años válidos.");
       return;
     }
- 
-  
+
+
     const yearsRange = [];
     for (let year = initialYear; year <= finalYear; year++) {
       yearsRange.push(year);
     }
-  
+
     const newCompetencia = {
+      numeroEvento:1,
       name: nameEvento,
       metros: metros,
       prueba: prueba,
       categoria: nameCategoria,
       anio: yearsRange.join(","),
-      genero:"F,M"
+      genero: "F,M"
     };
-  
+
     // Verificar si ya existe un evento con los mismos datos
     const isDuplicate = dataComp.some((evento) => {
       return (
@@ -241,35 +250,35 @@ function Competencia() {
           evento.anio === newCompetencia.anio)
       );
     });
-  
+
     if (isDuplicate) {
       console.error("Ya existe un evento con el mismo nombre o los mismos datos.");
       return;
     }
-  
+
     setDataComp([...dataComp, newCompetencia]);
   };
-  
+
 
 
   return (
     <>
-    <Dialog open={openDialog} onClose={handleCloseDialog}>
-  <DialogTitle>Confirmación</DialogTitle>
-  <DialogContent>
-    <DialogContentText>
-      ¿Estás seguro de que quieres crear la competencia?
-    </DialogContentText>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseDialog} color="primary">
-      Cancelar
-    </Button>
-    <Button onClick={handleButtonClick} color="primary">
-      Crear Competencia
-    </Button>
-  </DialogActions>
-</Dialog>
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirmación</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Estás seguro de que quieres crear la competencia?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleButtonClick} color="primary">
+            Crear Competencia
+          </Button>
+        </DialogActions>
+      </Dialog>
 
 
       <Box mt={10} component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -308,12 +317,18 @@ function Competencia() {
       <Box mt={10} >
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            label="Nombre del evento"
-            value={nameEvento}
-            onChange={(e) => setNameEvento(e.target.value)}
-          />
+            {/* <TextField
+              fullWidth
+              label="Numero de evento"
+              value={numberEvento}
+              onChange={(e) => setNumberEvento(e.target.value)}
+            /> */}
+            <TextField
+              fullWidth
+              label="Nombre del evento"
+              value={nameEvento}
+              onChange={(e) => setNameEvento(e.target.value)}
+            />
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <SelectData Data={dataMetros} Label="Metros" onChange={setMetros} />
@@ -324,33 +339,33 @@ function Competencia() {
             </Grid>
           </Grid>
           <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            label="Nombre de la Categoría"
-            value={nameCategoria}
-            onChange={(e) => setNameCategoria(e.target.value)}
-          />
+            <TextField
+              fullWidth
+              label="Nombre de la Categoría"
+              value={nameCategoria}
+              onChange={(e) => setNameCategoria(e.target.value)}
+            />
             <Grid container spacing={2}>
               <Grid item xs={6}>
-              <TextField
-            fullWidth
-            label="Año Inicial"
-            value={nameAnioInicial}
-            onChange={(e) => setNameAnioInicial(e.target.value)}
-          />
+                <TextField
+                  fullWidth
+                  label="Año Inicial"
+                  value={nameAnioInicial}
+                  onChange={(e) => setNameAnioInicial(e.target.value)}
+                />
               </Grid>
 
               <Grid item xs={6}>
-              <TextField
-            fullWidth
-            label="Año Final"
-            value={nameAnioFinal}
-            onChange={(e) => setNameAnioFinal(e.target.value)}
-          />
+                <TextField
+                  fullWidth
+                  label="Año Final"
+                  value={nameAnioFinal}
+                  onChange={(e) => setNameAnioFinal(e.target.value)}
+                />
               </Grid>
 
               <Grid item xs={6}>
-              <Button onClick={addEvento}>Añadir</Button>
+                <Button onClick={addEvento}>Añadir</Button>
               </Grid>
             </Grid>
           </Grid>
@@ -358,6 +373,12 @@ function Competencia() {
         <Grid container >
           <Grid item xs={12}>
             <DataTable data={dataComp} columns={[
+               {
+                headerName: "#",
+                field: "numeroEvento",
+                width: 50,
+                editable: true,
+              },
               {
                 headerName: "Evento",
                 field: "name",
@@ -385,7 +406,7 @@ function Competencia() {
               {
                 headerName: "Años",
                 field: "anio",
-                width: 200,
+                width: 50,
                 editable: true,
               },
               {
@@ -419,11 +440,8 @@ function Competencia() {
       </Box>
 
 
-      {/* <DataTableEntidadesComp data={data}/> */}
-      {/* <DataTableCompetencia data={data.Competencia}/> */}
-      {/* <Button variant="contained" onClick={handleButtonClick}>
-        Crear Competencia
-      </Button> */}
+      <DataTable data={data} columns={columns}/>
+      
     </>
   );
 }

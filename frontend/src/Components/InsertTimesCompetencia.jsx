@@ -1,138 +1,116 @@
 import { useEffect, useState } from "react";
 import ExcelJS from "exceljs";
+import { Button } from "@mui/material";
+import { getCompetenciaTiempos } from "../api/competenciaResquest";
+import DataTableCompetencia from "./DataTableCompetencia";
 
-import {
-  Button,
-  Container,
-  IconButton,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Dialog,
-  DialogTitle,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-
-import { Person, Edit, Delete } from "@mui/icons-material";
-import toast from "react-hot-toast";
-
-import DataTable from "../Components/DataTable";
-import DataTableCompetencia from "../Components/DataTableCompetencia";
-import {
-  deleteSwimmerRequest,
-  getAllNadadores,
-} from "../api/nadadoresResquest.js";
-import { deleteInstitutionRequest } from "../api/institutionRequest.js";
-import {
-  getCompetencia,
-  getCompetenciaTiempos,
-  getResultados,
-} from "../api/competenciaResquest";
-// import DataTableCompResults from "../Components/DataTableCompResults";
-
-function InsertTimesCompetencia() {
+export default function InsertTimesCompetencia() {
   const [data, setData] = useState([]);
 
   const saveDataToExcel = async () => {
     const workbook = new ExcelJS.Workbook();
-
-    const maleSheet = workbook.addWorksheet("masculino");
-    const femaleSheet = workbook.addWorksheet("femenino");
-
-    maleSheet.columns = [
-      { header: "", key: "columna1", width: 40 },
-      { header: "", key: "columna2", width: 40 },
-      { header: "", key: "columna3", width: 40 },
-      { header: "", key: "columna3", width: 40 },
-      { header: "", key: "columna3", width: 40 },
+    const competenciaSheet = workbook.addWorksheet("competencia");
+    competenciaSheet.columns = [
+      { header: "", width: 10 },
+      { header: "", width: 20 },
+      { header: "", width: 25 },
+      { header: "", width: 10 },
+      { header: "", width: 3 },
+      { header: "", width: 10 },
+      { header: "", width: 20 },
+      { header: "", width: 25 },
+      { header: "", width: 10 },
+      { header: "", width: 3 },
     ];
 
-    femaleSheet.columns = [
-      { header: "", key: "columna1", width: 40 },
-      { header: "", key: "columna2", width: 40 },
-      { header: "", key: "columna3", width: 40 },
-      { header: "", key: "columna3", width: 40 },
-      { header: "", key: "columna3", width: 40 },
-    ];
+    let currentRowFemenino = 1;
+    let currentRowMasculino = 1;
 
-    // Recorrer cada competencia
     data.Competencia.forEach((competence, index) => {
-      if (competence.genero === "M") {
-        maleSheet.addRow([
-          `Evento: ${index + 1}`,
-          `${competence.name}`,
-          "Cat:",
-          competence.categoria.name,
-          competence.genero,
-        ]);
-
-        competence.series.forEach((serie, index) => {
-          maleSheet.addRow([``, "Nadador", "Institución", "Tiempo", "N"]);
-
-          maleSheet.addRow([`Serie: ${index + 1}/carril`]);
-
-          serie.nadadores.forEach((nadador, index) => {
-            maleSheet.addRow([
-              index + 1,
-              nadador.nadador,
-              nadador.entidad,
-              nadador.tiempo,
-            ]);
-          });
-        });
-
-        maleSheet.addRow({});
-      }
-
       if (competence.genero === "F") {
-        femaleSheet.addRow([
-          `Evento: ${index + 1}`,
-          `${competence.name}`,
-          "Cat:",
-          competence.categoria.name,
-          competence.genero,
-        ]);
+        if (index !== 0 && index !== 1) {
+          if (currentRowFemenino < currentRowMasculino) {
+            currentRowFemenino = currentRowMasculino;
+          } else {
+            currentRowMasculino = currentRowFemenino;
+          }
+        }
+        // Evento: F
+        competenciaSheet.getRow(currentRowFemenino).getCell(1).value = `Evento: ${index + 1}`;
+        competenciaSheet.getRow(currentRowFemenino).getCell(2).value = competence.name;
+        competenciaSheet.getRow(currentRowFemenino).getCell(3).value = "Cat:";
+        competenciaSheet.getRow(currentRowFemenino).getCell(4).value = competence.categoria.name;
+        competenciaSheet.getRow(currentRowFemenino).getCell(5).value = competence.genero;
+        currentRowFemenino++;
 
-        competence.series.forEach((serie, index) => {
-          femaleSheet.addRow([``, "Nadador", "Institución", "Tiempo", "N"]);
+        // Cabecera de nadadores (F)
+        competenciaSheet.getRow(currentRowFemenino).values = ["Carril", "Nadador", "Institución", "Tiempo", "N"];
+        currentRowFemenino++;
 
-          femaleSheet.addRow([`Serie: ${index + 1}/carril`]);
+        // Datos de nadadores (F)
+        competence.series.forEach((serie, serieIndex) => {
+          competenciaSheet.getRow(currentRowFemenino).getCell(2).value = `Serie: ${serieIndex + 1}`;
+          competenciaSheet.mergeCells(`B${currentRowFemenino}:D${currentRowFemenino}`);
+          competenciaSheet.getRow(currentRowFemenino).getCell(2).alignment = { horizontal: 'center' };
+          currentRowFemenino++;
 
-          serie.nadadores.forEach((nadador, index) => {
-            femaleSheet.addRow([
-              index + 1,
-              nadador.nadador,
-              nadador.entidad,
-              nadador.tiempo,
-            ]);
+          serie.nadadores.forEach((nadador) => {
+            competenciaSheet.getRow(currentRowFemenino).getCell(1).value = nadador.carril;
+            competenciaSheet.getRow(currentRowFemenino).getCell(2).value = nadador.nadador;
+            competenciaSheet.getRow(currentRowFemenino).getCell(3).value = nadador.entidad;
+            competenciaSheet.getRow(currentRowFemenino).getCell(4).value = nadador.tiempo;
+            competenciaSheet.getRow(currentRowFemenino).getCell(5).value = "";
+            currentRowFemenino++;
           });
+
+          currentRowFemenino++;
         });
 
-        femaleSheet.addRow({});
+      } else {
+        competenciaSheet.getRow(currentRowMasculino).getCell(6).value = `Evento: ${index + 1}`;
+        competenciaSheet.getRow(currentRowMasculino).getCell(7).value = competence.name;
+        competenciaSheet.getRow(currentRowMasculino).getCell(8).value = "Cat:";
+        competenciaSheet.getRow(currentRowMasculino).getCell(9).value = competence.categoria.name;
+        competenciaSheet.getRow(currentRowMasculino).getCell(10).value = competence.genero;
+        currentRowMasculino++;
+
+        // Cabecera de nadadores (M)
+        competenciaSheet.getRow(currentRowMasculino).getCell(6).value = "Carril";
+        competenciaSheet.getRow(currentRowMasculino).getCell(7).value = "Nadador";
+        competenciaSheet.getRow(currentRowMasculino).getCell(8).value = "Institución";
+        competenciaSheet.getRow(currentRowMasculino).getCell(9).value = "Tiempo";
+        competenciaSheet.getRow(currentRowMasculino).getCell(10).value = "N";
+        currentRowMasculino++;
+
+        // Datos de nadadores (M)
+        competence.series.forEach((serie, serieIndex) => {
+          competenciaSheet.getRow(currentRowMasculino).getCell(7).value = `Serie: ${serieIndex + 1}`;
+          competenciaSheet.mergeCells(`G${currentRowMasculino}:I${currentRowMasculino}`);
+          competenciaSheet.getRow(currentRowMasculino).getCell(7).alignment = { horizontal: 'center' };
+          currentRowMasculino++;
+
+          serie.nadadores.forEach((nadador) => {
+            competenciaSheet.getRow(currentRowMasculino).getCell(6).value = nadador.carril;
+            competenciaSheet.getRow(currentRowMasculino).getCell(7).value = nadador.nadador;
+            competenciaSheet.getRow(currentRowMasculino).getCell(8).value = nadador.entidad;
+            competenciaSheet.getRow(currentRowMasculino).getCell(9).value = nadador.tiempo;
+            competenciaSheet.getRow(currentRowMasculino).getCell(10).value = "";
+            currentRowMasculino++;
+          });
+
+          currentRowMasculino++;
+        });
       }
-      // Definir las columnas para este evento/competencia
     });
 
-    // Generar un archivo Excel en formato buffer
+    // Guardar el archivo Excel
     const buffer = await workbook.xlsx.writeBuffer();
-
-    // Convertir el buffer en un Blob
-    const excelBlob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-
-    // Crear un objeto URL para el Blob
+    const excelBlob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     const excelBlobUrl = URL.createObjectURL(excelBlob);
-
-    // Crear un enlace para descargar el archivo
     const link = document.createElement("a");
     link.href = excelBlobUrl;
     link.download = "resultados.xlsx";
-
-    // Simular un clic en el enlace para iniciar la descarga
     link.click();
-
-    // Liberar el objeto URL
     URL.revokeObjectURL(excelBlobUrl);
   };
 
@@ -145,16 +123,16 @@ function InsertTimesCompetencia() {
       console.error("Error al obtener datos:", error);
     }
   }
+
   useEffect(() => {
     getData();
   }, []);
+
   return (
-    <>  
-      {/* <DataTableCompetencia data={data.Competencia} setData/> */}
-      <DataTableCompetencia data={data.Competencia} setData={setData} />
+    <>
+      <Button onClick={saveDataToExcel}>Exportar</Button>
+      <DataTableCompetencia data={data.Competencia}setData={setData}/>
 
     </>
   );
 }
-
-export default InsertTimesCompetencia;

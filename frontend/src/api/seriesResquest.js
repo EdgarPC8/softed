@@ -15,12 +15,6 @@ export const getCompetencia = async () =>
       Authorization: jwt(),
     },
   });
-  export const getCompetenciasData = async () =>
-  await axios.get("/getCompetenciasData", {
-    headers: {
-      Authorization: jwt(),
-    },
-  });
   export const getResultados = async () =>
   await axios.get("/getResultados", {
     headers: {
@@ -33,8 +27,14 @@ export const getCompetencia = async () =>
       Authorization: jwt(),
     },
   });
-  export const addCompetencia = async (data) =>
-  await axios.post("/addCompetencia",data, {
+  export const createSerie = async (data) =>
+  await axios.post("/addSerie",data, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+  export const removeSerie = async (id) =>
+  await axios.delete(`/serie/${id}`, {
     headers: {
       Authorization: jwt(),
     },

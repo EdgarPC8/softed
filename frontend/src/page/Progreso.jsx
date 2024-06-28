@@ -12,6 +12,7 @@ import { getAllTiemposRecordsById } from '../api/tiemposResquest.js';
 import {
   getAllNadadores,
 } from "../api/nadadoresResquest.js";
+import DataTable from "../Components/DataTable";
 
 
 
@@ -23,6 +24,7 @@ export default function Progreso() {
   const [dataMetros, setDataMetros] = useState([]);
   const [dataNadadores, setDataNadadores] = useState([]);
   const [tiempoRecord, setTiempoRecord] = useState([]);
+  const [times, setTimes] = useState([]);
   const [prueba, setPrueba] = useState('');
   const [metros, setMetros] = useState('');
   const [nadadores, setNadadores] = useState('');
@@ -57,6 +59,8 @@ export default function Progreso() {
   async function getAllTiempos() {
       const allTime = await getAllTiemposRecordsById(nadadores);
       setDataBar(allTime.data.array)
+      setTimes(allTime.data.minTimeByDate)
+
   }
 
   useEffect(() => {
@@ -83,6 +87,28 @@ export default function Progreso() {
       fetchData();
     }
   }, [metros, prueba,nadadores]);
+  const columns = [
+    {
+      headerName: "Metros",
+      field: "Metros",
+      width: 250,
+    },
+    {
+      headerName: "Prueba",
+      field: "Prueba",
+      width: 250,
+    },
+    {
+      headerName: "Fecha",
+      field: "Fecha",
+      width: 250,
+    },
+    {
+      headerName: "Tiempo",
+      field: "tiempo",
+      width: 250,
+    },
+  ];
 
   return (
     <Container style={{ textAlign: 'center' }}>
@@ -97,6 +123,8 @@ export default function Progreso() {
           <SelectData Data={dataNadadores} Label="Nadadores" onChange={setNadadores} />
         </Grid>
       </Grid>
+      <DataTable data={times} columns={columns} />
+
 
       <Box mt={4}>
         <Box mt={4}>

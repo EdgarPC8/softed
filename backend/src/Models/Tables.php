@@ -66,7 +66,7 @@ class Tables {
                 Nadador::$segundo_apellido.$espacio.$typeText.$coma.
                 Nadador::$nombres.$espacio.$typeText.$coma.
                 Nadador::$apellidos.$espacio.$typeText.$coma.
-                Nadador::$fecha_nacimiento.$espacio.$typeText.$coma.
+                Nadador::$fecha_nacimiento.$espacio.$typeDate.$coma.
                 Nadador::$genero.$espacio.$typeText.$coma.
                 Nadador::$grupo.$espacio.$typeInteger.
             ")"
@@ -75,7 +75,7 @@ class Tables {
             "(".
                 Tiempos::$id.$espacio.$typeInteger.$espacio.$primaryKeyAutoIncrement.$coma.
                 Tiempos::$cedula.$espacio.$typeBigInteger.$coma.
-                Tiempos::$fecha.$espacio.$typeText.$coma.
+                Tiempos::$fecha.$espacio.$typeDate.$coma.
                 Tiempos::$prueba.$espacio.$typeText.$coma.
                 Tiempos::$metros.$espacio.$typeText.$coma.
                 Tiempos::$tiempo.$espacio.$typeText.
@@ -123,7 +123,7 @@ class Tables {
             "CREATE TABLE IF NOT EXISTS " . self::TABLA_COMPETENCIA . " (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 
                 nombre TEXT, 
-                fecha TEXT
+                fecha DATE
             )",
             "CREATE TABLE IF NOT EXISTS " . self::TABLA_INSTITUCION . " (
                 id INTEGER PRIMARY KEY AUTO_INCREMENT, 

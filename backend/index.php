@@ -143,12 +143,19 @@ Flight::route("GET /meters", function () {
     MetersController::getMeters();
 
 });
+Flight::route("GET /getCompetenciasData", function () {
+    Competencia::getCompetenciasData();
+
+});
 
 Flight::route("POST /meters", function () {
     MetersController::addMeters();
 });
 Flight::route("POST /addCompetencia", function () {
     Competencia::addCompetencia();
+});
+Flight::route("POST /addSerie", function () {
+    SeriesController::addSerie();
 });
 
 Flight::route("POST /createCompetencia", function () {
@@ -167,6 +174,9 @@ Flight::route("PUT /updateTimeCompetencia/@id", function ($id) {
 
 Flight::route("DELETE /meters/@id", function ($id) {
     MetersController::deleteMeters($id);
+});
+Flight::route("DELETE /serie/@id", function ($id) {
+    SeriesController::removeSerie($id);
 });
 
 
