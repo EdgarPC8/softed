@@ -24,7 +24,6 @@ function Login() {
     event.preventDefault();
     signin({ username, password });
   };
-  
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -33,7 +32,12 @@ function Login() {
   }, [isAuthenticated]);
 
   return (
-    <Grid container component="main" sx={{ height: "100vh" }}>
+    <Grid
+      container
+      component="main"
+      
+      sx={{ height: "calc(100vh - 64px)" }}
+    >
       <Grid
         item
         xs={false}
@@ -41,7 +45,7 @@ function Login() {
         md={7}
         sx={{
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1709603945846-6901ed447ecd?q=80&w=1529&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
+            "url(https://images.unsplash.com/photo-1600965962102-9d260a71890d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
           backgroundRepeat: "no-repeat",
           backgroundColor: (t) =>
             t.palette.mode === "light"

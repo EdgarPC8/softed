@@ -44,7 +44,18 @@ Flight::route('POST /login', function () {
 
 Flight::route('POST /backUp', function () {
     ProgrammerController::saveBackUp();
+});
 
+Flight::route('POST /images', function () {
+    ProgrammerController::addImages();
+});
+
+Flight::route('DELETE /images/@name', function($name) {
+    ProgrammerController::deleteImage($name);
+});
+
+Flight::route('GET /images', function () {
+    ProgrammerController::getListImages();
 });
 
 Flight::route('POST /createCuenta', function () {
