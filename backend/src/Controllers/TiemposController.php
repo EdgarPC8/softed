@@ -24,20 +24,38 @@ class TiemposController
     }
     public static function getAllTiemposRecordsById($cedula) {
         $Tiempos = SqlService::selectData(Tiempos::$tableName,
-            ["MIN(tiempo) AS tiempo","Prueba","Metros","Fecha"],
-            [Tiempos::$cedula => $cedula], "Prueba,Metros", null);
+            ["MIN(tiempo) AS tiempo","fecha","prueba","metros"],
+            ["cedula"=> $cedula], "prueba,metros", null);
+
+
+            $statement = Flight::db()->prepare(
+                "SELECT t1.fecha, t1.prueba, t1.metros, t1.tiempo
+                FROM tiempos t1
+                JOIN (
+                  SELECT prueba, metros, MIN(tiempo) AS min_tiempo
+                  FROM tiempos
+                  WHERE cedula = ' $cedula'
+                  GROUP BY prueba, metros
+                ) t2 ON t1.prueba = t2.prueba
+                   AND t1.metros = t2.metros
+                   AND t1.tiempo = t2.min_tiempo
+                WHERE t1.cedula = '$cedula'   
+            "
+            );
+            $statement->execute();
+            $data = $statement->fetchAll();
+
+
+
              // Ordenar $Tiempos por Fecha ascendente
-            usort($Tiempos, function($a, $b) {
-                return strtotime($a['Fecha']) - strtotime($b['Fecha']);
+            usort($data, function($a, $b) {
+                return strtotime($a['fecha']) - strtotime($b['fecha']);
             });
 
 
 
 
-
-
-
-        Flight::json(["array" => allFunctions::getTiemposProcesadorBarChart($Tiempos),"minTimeByDate"=>$Tiempos]);
+        Flight::json(["array" => allFunctions::getTiemposProcesadorBarChart($Tiempos),"minTimeByDate"=>$data]);
     }
     
     

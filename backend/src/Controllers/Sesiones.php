@@ -58,6 +58,23 @@ class Sesiones
                     ]
                 ];
                 $token = AuthService::createToken($payload, $privateKey);
+
+                $system = $_SERVER['HTTP_USER_AGENT'];
+                $httpMethod = Flight::request()->getMethod();
+                $endPoint = Flight::request()->url;
+                $usuario=$user->primer_nombre." ".$user->segundo_nombre." ".$user->primer_apellido." ".$user->segundo_apellido;
+
+                    SqlService::saveData("logs", (object)[
+                        "httpMethod" => $httpMethod,
+                        "action" => "Se logeo al Sistema",
+                        "endPoint" => $endPoint,
+                        "description" =>$usuario." Ingreso" ,
+                        "system" => $system
+                    ]);
+
+
+
+
                 Flight::json(["token" => $token]);
 
             }
@@ -65,8 +82,6 @@ class Sesiones
         } catch (Exception $e) {
             // Flight::res()->unauthorized();
             HTTPResponse::badRequest(["message" => "Usuario o Contraseña invalida", "status" => "error"]);
-
-
         }
         // Flight::json($user);
 

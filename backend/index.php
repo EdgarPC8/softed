@@ -23,6 +23,14 @@ Flight::path('src/Services');
 Flight::register('db', 'PDO', ["mysql:host=$DB_HOST;dbname=$DB_NAME", "$DB_USER", '']);
 Flight::register('res', 'HTTPResponse');
 
+// Middleware para registrar la actividad
+Flight::before('start', function(&$params, &$output) {
+    LoggerMiddleware::logs(Flight::request(), Flight::response(), function(){});
+    // $request = Flight::request();
+    // var_dump($request->url); // Verifica qué métodos están disponibles en $request
+    // LoggerMiddleware::logs($request, Flight::response(), function(){});
+});
+
 
 
 // Flight::register('res', 'HTTPResponse');
@@ -217,6 +225,10 @@ Flight::route('GET /getPruebas', function () {
 Flight::route('GET /getMetros', function () {
     MetrosPruebaController::getMetros();
 });
+Flight::route('GET /getInfo/@cedula', function ($cedula) {
+    Info::getInfo($cedula);
+});
+
 
 
 // -----------------------------------------------------------

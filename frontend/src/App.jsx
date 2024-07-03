@@ -13,7 +13,6 @@ import Nadadores from "./page/Nadadores";
 import Progreso from "./page/Progreso";
 import Competencia from "./page/Competencia";
 import NavBar from "./Components/NavBar";
-
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Institution from "./page/Institution.jsx";
@@ -32,6 +31,7 @@ import EditUserForm from "./Components/EditUserForm.jsx";
 import Users from "./page/Users.jsx";
 
 import PanelProgramador from "./page/PanelProgramador.jsx";
+import CronoSwim from "./page/CronoSwim.jsx";
 
 function App() {
   return (
@@ -57,6 +57,7 @@ function App() {
             </Route>
 
             <Route element={<ProtectedRoute requiredRol={["Programador"]} />}>
+              <Route path="/cronoswim" element={<CronoSwim />} />
               <Route path="/competencia" element={<Competencia />} />
               <Route path="/organizar" element={<OrganisatedCompetencia />} />
               <Route

@@ -6,6 +6,7 @@ class Tables {
     const TABLA_INSTITUCION = "institucion";
     const TABLA_INSTITUCION_NADADOR = "institucion_nadador";
     const TABLA_COMPTENCIA_EVENTO = "competencia_evento";
+    const TABLA_LOGS = "logs";
     
     public static function create() {
         $tableDe=Roles::$tableName;
@@ -147,9 +148,17 @@ class Tables {
                 categoriaName TEXT,
                 categoriaValues TEXT,
                 genero TEXT
+            )",
+            "CREATE TABLE IF NOT EXISTS " . self::TABLA_LOGS . " (
+                id INTEGER PRIMARY KEY AUTO_INCREMENT, 
+                httpMethod TEXT, 
+                action TEXT, 
+                endPoint TEXT, 
+                description TEXT, 
+                system TEXT, 
+                date DATE DEFAULT CURRENT_TIMESTAMP
             )"
         );
-
         // Ejecutar cada sentencia SQL
         foreach ($sentencias_sql as $sentencia) {
             $statement = Flight::db()->prepare($sentencia);
@@ -174,7 +183,8 @@ class Tables {
             "DROP TABLE IF EXISTS " . self::TABLA_COMPETENCIA,
             "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION,
             "DROP TABLE IF EXISTS " . self::TABLA_INSTITUCION_NADADOR,
-            "DROP TABLE IF EXISTS " . self::TABLA_COMPTENCIA_EVENTO
+            "DROP TABLE IF EXISTS " . self::TABLA_COMPTENCIA_EVENTO,
+            "DROP TABLE IF EXISTS " . self::TABLA_LOGS
         );
     
         // Ejecutar cada sentencia DELETE
@@ -198,6 +208,7 @@ class Tables {
             self::TABLA_INSTITUCION => "SELECT * FROM " . self::TABLA_INSTITUCION,
             self::TABLA_INSTITUCION_NADADOR => "SELECT * FROM " . self::TABLA_INSTITUCION_NADADOR,
             self::TABLA_COMPTENCIA_EVENTO => "SELECT * FROM " . self::TABLA_COMPTENCIA_EVENTO,
+            self::TABLA_LOGS => "SELECT * FROM " . self::TABLA_LOGS,
             Usuario::$tableName => "SELECT * FROM " . Usuario::$tableName,
             Cuenta::$tableName => "SELECT * FROM " . Cuenta::$tableName,
             Roles::$tableName => "SELECT * FROM " . Roles::$tableName
@@ -246,7 +257,8 @@ class Tables {
             self::TABLA_COMPETENCIA,
             self::TABLA_INSTITUCION,
             self::TABLA_INSTITUCION_NADADOR,
-            self::TABLA_COMPTENCIA_EVENTO
+            self::TABLA_COMPTENCIA_EVENTO,
+            self::TABLA_LOGS
         );
     
         // Leer el contenido del archivo JSON
@@ -282,7 +294,6 @@ class Tables {
         
         echo "Datos importados correctamente.\n";
     }
-    
     
     // Función auxiliar para verificar si una tabla existe en la base de datos
     private static function tablaExists($tabla) {

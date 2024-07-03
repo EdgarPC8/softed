@@ -14,8 +14,8 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import PoolIcon from "@mui/icons-material/Pool";
-import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "react-router-dom";
 
@@ -24,9 +24,9 @@ function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [moreMenuAnchors, setMoreMenuAnchors] = useState({});
-  const location = useLocation();
+  const [mobileMenuAnchors, setMobileMenuAnchors] = useState({});
 
-  // console.log(location)
+  const location = useLocation();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -57,6 +57,21 @@ function ResponsiveAppBar() {
       [id]: null,
     }));
   };
+
+  const handleMobileMenuOpen = (id) => (event) => {
+    setMobileMenuAnchors((prevAnchors) => ({
+      ...prevAnchors,
+      [id]: event.currentTarget,
+    }));
+  };
+
+  const handleMobileMenuClose = (id) => () => {
+    setMobileMenuAnchors((prevAnchors) => ({
+      ...prevAnchors,
+      [id]: null,
+    }));
+  };
+
   const settings = [
     {
       name: "Perfil",
@@ -69,23 +84,29 @@ function ResponsiveAppBar() {
     { name: "Cerrar Sesión", link: "/", icon: <AdbIcon />, function: logout }, // Asumiendo que 'logout' es una función definida
   ];
 
-  // Definir los arrays de páginas para cada rol
   const permisos = {
     Programador: [
-      { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
-      { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
-      { name: "Institucion", link: "/institucion", icon: <AdbIcon /> },
       {
         name: "Progreso",
         icon: <AdbIcon />,
         menu: {
           items: [
             { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
-            {
-              name: "Todos los progresos",
-              link: "/progreso",
-              icon: <AdbIcon />,
-            },
+            { name: "Todos los progresos", link: "/progreso", icon: <AdbIcon /> },
+          ],
+        },
+      },
+      {
+        name: "Tablas",
+        icon: <AdbIcon />,
+        menu: {
+          items: [
+            { name: "Metros", link: "/metros", icon: <AdbIcon /> },
+            { name: "Pruebas", link: "/pruebas", icon: <AdbIcon /> },
+            { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
+            { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
+            { name: "Institucion", link: "/institucion", icon: <AdbIcon /> },
+            { name: "Usuarios", link: "/usuarios", icon: <AdbIcon /> },
           ],
         },
       },
@@ -97,22 +118,19 @@ function ResponsiveAppBar() {
             { name: "Crear", link: "/competencia", icon: <AdbIcon /> },
             { name: "Organizar", link: "/organizar", icon: <AdbIcon /> },
             { name: "Llenar", link: "/competencia/insert", icon: <AdbIcon /> },
-            {
-              name: "Resultados",
-              link: "/competencia/resultados",
-              icon: <AdbIcon />,
-            },
-            { name: "Metros", link: "/metros", icon: <AdbIcon /> },
-            { name: "Pruebas", link: "/pruebas", icon: <AdbIcon /> },
+            { name: "Resultados", link: "/competencia/resultados", icon: <AdbIcon /> },
           ],
         },
       },
-      { name: "Usuarios", link: "/usuarios", icon: <AdbIcon /> },
-
       {
         name: "Panel de programador",
-        link: "/panel-programador",
         icon: <AdbIcon />,
+        menu: {
+          items: [
+            { name: "Backup y Home", link: "/panel-programador", icon: <AdbIcon /> },
+            { name: "CronoSwim", link: "/cronoswim", icon: <AdbIcon /> },
+          ],
+        },
       },
     ],
     Administrador: [
@@ -120,18 +138,12 @@ function ResponsiveAppBar() {
       { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
     ],
     Usuario: [
-      { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
       {
         name: "Progreso",
         icon: <AdbIcon />,
         menu: {
           items: [
             { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
-            {
-              name: "Todos los progresos",
-              link: "/progreso",
-              icon: <AdbIcon />,
-            },
           ],
         },
       },
@@ -191,20 +203,50 @@ function ResponsiveAppBar() {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pagesToShow.map((page) => (
-                <MenuItem
-                  key={page.name}
-                  onClick={handleCloseNavMenu}
-                  component={Link}
-                  to={page.link}
-                >
-                  <Typography textAlign="center">{page.name}</Typography>
-                </MenuItem>
-              ))}
+              {pagesToShow.map((page, index) => {
+                if (page.menu) {
+                  const mobileMenuId = `${page.name.toLowerCase()}-menu-mobile-${index}`;
+                  return (
+                    <React.Fragment key={page.name}>
+                      <MenuItem onClick={handleMobileMenuOpen(mobileMenuId)}>
+                        <Typography textAlign="center">{page.name}</Typography>
+                      </MenuItem>
+                      <Menu
+                        id={mobileMenuId}
+                        anchorEl={mobileMenuAnchors[mobileMenuId]}
+                        keepMounted
+                        open={Boolean(mobileMenuAnchors[mobileMenuId])}
+                        onClose={handleMobileMenuClose(mobileMenuId)}
+                      >
+                        {page.menu.items.map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            onClick={handleMobileMenuClose(mobileMenuId)}
+                            component={Link}
+                            to={item.link}
+                          >
+                            <Typography textAlign="center">{item.name}</Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </React.Fragment>
+                  );
+                } else {
+                  return (
+                    <MenuItem
+                      key={page.name}
+                      onClick={handleCloseNavMenu}
+                      component={Link}
+                      to={page.link}
+                    >
+                      <Typography textAlign="center">{page.name}</Typography>
+                    </MenuItem>
+                  );
+                }
+              })}
             </Menu>
           </Box>
           <PoolIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-
           <Typography
             variant="h5"
             noWrap
@@ -223,13 +265,7 @@ function ResponsiveAppBar() {
           >
             Natación
           </Typography>
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              alignItems: "center",
-            }}
-          >
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pagesToShow.map((page, index) => {
               if (page.menu) {
                 const menuId = `${page.name.toLowerCase()}-menu-${index}`;
@@ -261,9 +297,7 @@ function ResponsiveAppBar() {
                           component={Link}
                           to={item.link}
                         >
-                          <Typography textAlign="center">
-                            {item.name}
-                          </Typography>
+                          <Typography textAlign="center">{item.name}</Typography>
                         </MenuItem>
                       ))}
                     </Menu>

@@ -12,14 +12,14 @@ import React, { useEffect, useState } from 'react';
 const valueFormatter = (value) => {
   // Aquí debes poner la lógica para formatear el valor según tus necesidades
   // En este ejemplo, se devuelve simplemente el valor sin formatear
-  if(value===0)return "No hay Tiempo"
-  if(value===null)return "No hay Tiempo"
+  if (value === 0) return "No hay Tiempo"
+  if (value === null) return "No hay Tiempo"
 
-  const resultado=inputsNumberToTime(value)
+  const resultado = inputsNumberToTime(value)
   return resultado;
 };
 
- function ChartBarAllTiempos({Data=[]}) {
+function ChartBarAllTiempos({ Data = [] }) {
   const [seriesNb, setSeriesNb] = useState(2);
   const [itemNb, setItemNb] = useState(5);
   const [skipAnimation, setSkipAnimation] = useState(false);
@@ -49,9 +49,9 @@ const valueFormatter = (value) => {
         dataset={Data}
         series={Data
           .slice(0, seriesNb)
-          .map((s) => ({ ...s, data: s.data.slice(0, itemNb),label: `${s.label}`,valueFormatter }))}
+          .map((s) => ({ ...s, data: s.data.slice(0, itemNb), label: `${s.label}`, valueFormatter }))}
         skipAnimation={skipAnimation}
-        xAxis={[{ scaleType: 'band', dataKey: 'prueba' }]} 
+        xAxis={[{ scaleType: 'band', dataKey: 'prueba' }]}
       />
       <FormControlLabel
         checked={skipAnimation}

@@ -127,7 +127,7 @@ class allFunctions
         $combinacionesValidas = [];
         foreach ($metros as $metro) {
             foreach ($pruebas as $prueba) {
-                $combinacionesValidas[] = ['Metros' => $metro, 'Prueba' => $prueba];
+                $combinacionesValidas[] = ['metros' => $metro, 'prueba' => $prueba];
             }
         }
 
@@ -135,7 +135,7 @@ class allFunctions
         foreach ($combinacionesValidas as $combinacion) {
             $encontrado = false;
             foreach ($Tiempos as $tiempo) {
-                if ($tiempo['Metros'] === $combinacion['Metros'] && $tiempo['Prueba'] === $combinacion['Prueba']) {
+                if ($tiempo['metros'] === $combinacion['metros'] && $tiempo['prueba'] === $combinacion['prueba']) {
                     $ejemplo[] = $tiempo;
                     $encontrado = true;
                     break;
@@ -144,9 +144,9 @@ class allFunctions
             if (!$encontrado) {
                 // Si no se encuentra, agregar un registro con valores nulos
                 $ejemplo[] = [
-                    "Fecha" => "05-07-2000",
-                    "Metros" => $combinacion['Metros'],
-                    "Prueba" => $combinacion['Prueba'],
+                    "fecha" => "05-07-2000",
+                    "metros" => $combinacion['metros'],
+                    "prueba" => $combinacion['prueba'],
                     "tiempo" => "00:00:00,00",
                 ];
             }
@@ -163,7 +163,7 @@ class allFunctions
         $valor=[];
 
         foreach ($ejemplo as $key => $value) {
-            $valor[$value["Metros"]][$value["Prueba"]]=intval(allFunctions::convertirTiempoATiempoEntero($value["tiempo"]));
+            $valor[$value["metros"]][$value["prueba"]]=intval(allFunctions::convertirTiempoATiempoEntero($value["tiempo"]));
         }
         $ejemplo=[];
 

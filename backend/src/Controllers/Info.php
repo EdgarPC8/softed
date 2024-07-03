@@ -1,54 +1,141 @@
 <?php
 
 class Info{
-    public static function getInfo(){
-        $respuesta=null;
-        $statement = Flight::db()->prepare("SELECT
-        (SELECT GROUP_CONCAT(cedula SEPARATOR '..|..')
-         FROM nadador
-         WHERE grupo != 4) AS cedulas,
-         (SELECT GROUP_CONCAT(nadador SEPARATOR '..|..')
-         FROM nadador
-         WHERE grupo != 4) AS nadador,
-        (SELECT GROUP_CONCAT(nombre SEPARATOR '..|..')
-         FROM pruebas) AS pruebas,
-        (SELECT GROUP_CONCAT(metros SEPARATOR '..|..')
-         FROM metros) AS metros;");
-        $statement->execute();
-        $data = $statement->fetchAll();
-        $arrayCedulas=explode("..|..",$data[0]["cedulas"]);
-        $arrayNadador=explode("..|..",$data[0]["nadador"]);
-        $arrayMetros=explode("..|..",$data[0]["metros"]);
-        $arrayPruebas=explode("..|..",$data[0]["pruebas"]);
-
-        for ($i=0; $i < count($arrayCedulas); $i++) { 
-            $cedula=$arrayCedulas[$i];
-            $nadador=$arrayNadador[$i];
-            $respuesta.="<br>";
-            $respuesta.="$nadador:";
-            for ($j=0; $j < count($arrayMetros); $j++) { 
-                $metros=$arrayMetros[$j];
-                $respuesta.="<br>";
-                $respuesta.="$metros: ";
-
-                for ($k=0; $k < count($arrayPruebas); $k++) { 
-                    $prueba=$arrayPruebas[$k];
-                    $statement2 = Flight::db()->prepare("SELECT * FROM tiempos WHERE cedula=$cedula AND metros='$metros' AND prueba='$prueba'");
-                    $statement2->execute();
-                    $data2 = $statement2->fetchAll();
-                    if (count($data2) > 0) {
-                        // $respuesta.=$prueba;
-                        // $respuesta.="<br>";
-                    }else{
-                        $respuesta.="$prueba,";
-                    }
+    public static function getInfo($cedula) {
+        $respuesta = false;
+        
+        $array = SqlService::selectData(
+            "tiempos",
+            [],
+            ["cedula" => $cedula], 
+            null, 
+            null
+        );
+    
+        // Inicializa un array vacío para agrupar los resultados por fecha
+        $groupedByFecha = [];
+    
+        // Itera sobre los resultados obtenidos de la base de datos
+        foreach ($array as $entry) {
+            $fecha = $entry['fecha'];
+            $prueba = $entry['prueba'];
+            $metros = $entry['metros'];
+    
+            // Consulta para obtener el tiempo mínimo anterior
+            $statement = Flight::db()->prepare(
+                "SELECT MIN(tiempo) AS tiempo, fecha FROM tiempos 
+                WHERE prueba = :prueba 
+                AND metros = :metros 
+                AND cedula = :cedula 
+                AND fecha < :fecha"
+            );
+            $statement->execute([
+                ':prueba' => $prueba,
+                ':metros' => $metros,
+                ':cedula' => $cedula,
+                ':fecha' => $fecha
+            ]);
+            $recordTime = $statement->fetch(PDO::FETCH_ASSOC);
+    
+            // Determina el tipo de tiempo
+            $tipoTiempo = '';
+            if ($recordTime['tiempo']) {
+                if ($entry['tiempo'] < $recordTime['tiempo']) {
+                    $tipoTiempo = 'Superado'; // Tiempo actual es mejor que el anterior
+                } else {
+                    $tipoTiempo = 'No Superado'; // Tiempo actual es igual o peor que el anterior
                 }
+            } else {
+                // Si no hay registro anterior, consideramos 'Nuevo'
+                $tipoTiempo = 'Nuevo';
             }
-
-
+            
+            // Prepara el tiempo con información adicional
+            $tiempo = [
+                'id' => $entry['id'],
+                'cedula' => $entry['cedula'],
+                'metros' => $entry['metros'],
+                'tiempo' => $entry['tiempo'],
+                'recordAnterior' => $recordTime['tiempo'] ? $recordTime['tiempo'] : null,
+                'recordFechaAnterior' => $recordTime['tiempo'] ? $recordTime['fecha'] : null,
+                'tipoTiempo' => $tipoTiempo
+            ];
+    
+            // Si la fecha no existe en el array agrupado, la inicializa
+            if (!isset($groupedByFecha[$fecha])) {
+                $groupedByFecha[$fecha] = [
+                    'fecha' => $fecha,
+                    'pruebas' => [],
+                    'tiemposSuperados' => 0,
+                    'tiemposNoSuperados' => 0,
+                    'tiemposNuevos' => 0,
+                    'tiemposTotal' => 0
+                ];
+            }
+    
+            // Si la prueba no existe dentro de la fecha, la inicializa
+            if (!isset($groupedByFecha[$fecha]['pruebas'][$prueba])) {
+                $groupedByFecha[$fecha]['pruebas'][$prueba] = [
+                    'prueba' => $prueba,
+                    'dataPruebas' => [],
+                    'tiemposSuperados' => 0,
+                    'tiemposNoSuperados' => 0,
+                    'tiemposNuevos' => 0,
+                    'tiemposTotal' => 0
+                ];
+            }
+    
+            // Actualiza los contadores según el tipo de tiempo
+            switch ($tipoTiempo) {
+                case 'Superado':
+                    $groupedByFecha[$fecha]['tiemposSuperados']++;
+                    $groupedByFecha[$fecha]['pruebas'][$prueba]['tiemposSuperados']++;
+                    break;
+                case 'No Superado':
+                    $groupedByFecha[$fecha]['tiemposNoSuperados']++;
+                    $groupedByFecha[$fecha]['pruebas'][$prueba]['tiemposNoSuperados']++;
+                    break;
+                case 'Nuevo':
+                    $groupedByFecha[$fecha]['tiemposNuevos']++;
+                    $groupedByFecha[$fecha]['pruebas'][$prueba]['tiemposNuevos']++;
+                    break;
+            }
+    
+            // Incrementa el contador total
+            $groupedByFecha[$fecha]['tiemposTotal']++;
+            $groupedByFecha[$fecha]['pruebas'][$prueba]['tiemposTotal']++;
+    
+            // Agrega el tiempo al array correspondiente a la prueba dentro de la fecha
+            $groupedByFecha[$fecha]['pruebas'][$prueba]['dataPruebas'][] = $tiempo;
         }
+    
+        // Convierte el array agrupado en una lista de objetos
+        $info = [];
+        foreach ($groupedByFecha as $fecha => $data) {
+            $fechaData = [
+                'fecha' => $data['fecha'],
+                'pruebas' => array_values($data['pruebas']),
+                'tiemposSuperados' => $data['tiemposSuperados'],
+                'tiemposNoSuperados' => $data['tiemposNoSuperados'],
+                'tiemposNuevos' => $data['tiemposNuevos'],
+                'tiemposTotal' => $data['tiemposTotal']
+            ];
+            $info[] = $fechaData;
+        }
+    
+        // Ordena las fechas de la más reciente a la más antigua
+        usort($info, function ($a, $b) {
+            return strtotime($b['fecha']) - strtotime($a['fecha']);
+        });
+    
+        // Prepara la respuesta
+        $respuesta = ["Info" => $info];
         Flight::json($respuesta);
     }
+    
+    
+    
+    
     public static function getComparacion(){
         $datos = json_decode(Flight::request()->getBody());
         $cedula=$datos->cedula;
