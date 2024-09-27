@@ -7,6 +7,13 @@ export const sendBackUpRequest = async (back) =>
     },
   });
 
+  export const reloadBD = async () =>
+  await axios.get("/dataBase", {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+
 export const addImagesHomeRequest = async (images) =>
   await axios.post("/images", images, {
     headers: {

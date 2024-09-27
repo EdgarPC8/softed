@@ -29,6 +29,7 @@ import AddUserForm from "./Components/AddUserForm.jsx";
 import MiProgreso from "./Components/MiProgreso.jsx";
 import EditUserForm from "./Components/EditUserForm.jsx";
 import Users from "./page/Users.jsx";
+import Comandos from "./page/Comandos.jsx";
 
 import PanelProgramador from "./page/PanelProgramador.jsx";
 import CronoSwim from "./page/CronoSwim.jsx";
@@ -60,6 +61,7 @@ function App() {
               <Route path="/cronoswim" element={<CronoSwim />} />
               <Route path="/competencia" element={<Competencia />} />
               <Route path="/organizar" element={<OrganisatedCompetencia />} />
+              <Route path="/comandos" element={<Comandos />} />
               <Route
                 path="/competencia/insert"
                 element={<InsertTimesCompetencia />}

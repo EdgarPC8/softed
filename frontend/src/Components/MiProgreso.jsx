@@ -9,18 +9,13 @@ import { inputsNumberToTime } from '../helpers/functions.js';
 import StarIcon from '@mui/icons-material/Star';
 import ChartBarAllTiempos from "../Components/ChartBarAllTiempos.jsx";
 import { getAllTiemposRecordsById } from '../api/tiemposResquest.js';
-
 import DataTableInfo from "../Components/DataTableTiemposInfo";
 import { getInfo } from "../api/infoResquest.js";
-
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DataTable from "../Components/DataTable";
-
-
-
 
 export default function Progreso() {
   const { user } = useAuth();
@@ -33,8 +28,6 @@ export default function Progreso() {
   const [metros, setMetros] = useState('');
   const [dataInfo, setDataInfo] = useState([]);
   const [times, setTimes] = useState([]);
-
-
 
   const [expanded, setExpanded] = React.useState(false);
 
@@ -120,6 +113,10 @@ export default function Progreso() {
       width: 250,
     },
   ];
+
+
+
+
 
 
   return (

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import {
   Button,
   Container,
@@ -11,10 +10,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
 import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
-
 import DataTable from "../Components/DataTable";
 import {
   deleteSwimmerRequest,
@@ -37,8 +34,8 @@ function Nadadores() {
       deleteSwimmerRequest(swimmer.cedula),
       {
         loading: "Eliminando...",
-        success: "Usuario elimninado con éxito",
-        error: "Ocurrio un error",
+        success: "Usuario eliminado con éxito",
+        error: "Ocurrió un error",
       },
       {
         position: "top-right",
@@ -47,7 +44,7 @@ function Nadadores() {
         },
       }
     );
-    setData(data.filter((data) => data.cedula !== swimmer.cedula));
+    setData(data.filter((item) => item.cedula !== swimmer.cedula));
     setOpen(false);
   };
 
@@ -66,13 +63,35 @@ function Nadadores() {
       headerName: "Nadador",
       field: "nombres",
       width: 200,
-      
     },
     {
       headerName: "Genero",
       field: "genero",
       width: 200,
-      
+    },
+    {
+      headerName: "Resultado",
+      field: "resultado",
+      width: 200,
+      sortable: false,
+      renderCell: (params) => {
+        const [value, setValue] = useState(params.value || "");
+
+        const handleBlur = () => {
+          if (value.trim()) {
+            console.log(value);
+          }
+        };
+
+        return (
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+          />
+        );
+      },
     },
     {
       headerName: "Actions",
@@ -90,7 +109,6 @@ function Nadadores() {
             onClick={() => {
               handleClickOpen();
               setSwimmer(params.row);
-              // console.log(params.row.nadador)
             }}
           >
             <Delete />
@@ -99,15 +117,16 @@ function Nadadores() {
       ),
     },
   ];
+
   async function fetchData() {
     try {
       const nadadores = await getAllNadadores();
       setData(nadadores.data);
-      // console.log(nadadores)
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
   }
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -123,7 +142,7 @@ function Nadadores() {
         <DialogTitle id="alert-dialog-title">Eliminar Usuario</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            ¿Está seguro de eliminar al nadador {swimmer?.nadador}?
+            ¿Está seguro de eliminar al nadador {swimmer?.nombres}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

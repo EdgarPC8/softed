@@ -1,0 +1,264 @@
+//
+//package com.example.cronoswim.funciones;
+//
+//import android.annotation.SuppressLint;
+//import android.app.Activity;
+//import android.bluetooth.BluetoothAdapter;
+//import android.bluetooth.BluetoothDevice;
+//import android.bluetooth.BluetoothSocket;
+//import android.content.Context;
+//import android.content.Intent;
+//import android.os.AsyncTask;
+//import android.util.Log;
+//import android.widget.TextView;
+//import android.widget.Toast;
+//
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.OutputStream;
+//import java.util.ArrayList;
+//import java.util.Objects;
+//import java.util.Set;
+//import java.util.UUID;
+//
+//public class BluetoothManager {
+//
+//    private BluetoothAdapter mBlueAdapter;
+//    private BluetoothDevice selectedDevice;
+//    private BluetoothSocket bluetoothSocket;
+//    private Context context;
+//    private static final int REQUEST_ENABLE_BT = 0;
+//    private static final int REQUEST_DISCOVER_BT = 1;
+//    private TextView mStatusBlueTv, mPairedTv;
+//    public Cronometro crono;
+//    public ArrayList<Cronometro> listaCronometros;
+//
+//
+//    public BluetoothManager(Context context) {
+//        this.context = context;
+//        initBluetooth();
+//    }
+//
+//    public ArrayList<Cronometro> getListaCronometros() {
+//        return listaCronometros;
+//    }
+//
+//    public void setListaCronometros(ArrayList<Cronometro> listaCronometros) {
+//        this.listaCronometros = listaCronometros;
+//    }
+//
+//    public Cronometro getCrono() {
+//        return crono;
+//    }
+//
+//    public void setCrono(Cronometro crono) {
+//        this.crono = crono;
+//    }
+//
+//    private void initBluetooth() {
+//        mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
+//        if (mBlueAdapter == null) {
+//            showToast("El Bluetooth no está disponible");
+//        }
+//    }
+//
+//    @SuppressLint("MissingPermission")
+//    public String getDispositivo() {
+//        if (mBlueAdapter.isEnabled()) {
+////            mPairedTv.setText("Dispositivos Emparejados");
+//            Set<BluetoothDevice> devices = mBlueAdapter.getBondedDevices();
+//            for (BluetoothDevice device : devices) {
+////                mPairedTv.append("\nDispositivo: " + device.getName() + ", " + device);
+//
+//                if ("ESP32-BT-Slave".equals(device.getName())) {
+//                    selectedDevice = device;
+//                }
+//            }
+//
+//            if (selectedDevice != null) {
+////                showToast("Dispositivo seleccionado: " + selectedDevice.getName());
+//                return selectedDevice.getName();
+//            } else {
+//                showToast("No se encontró el dispositivo ESP32-BT-Slave");
+//            }
+//        } else {
+//            showToast("Enciende el Bluetooth para obtener dispositivos emparejados");
+//        }
+//        return null;
+//    }
+//
+//    public void sendMensaje() {
+//        if (selectedDevice != null) {
+//            new ConnectBluetoothTask().execute(selectedDevice);
+//            new ReceiveMessageTask().execute();
+//        } else {
+//            showToast("Selecciona un dispositivo emparejado primero");
+//        }
+//    }
+//    public void enviarMensaje(String message) {
+//        if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
+//            try {
+//                OutputStream outputStream = bluetoothSocket.getOutputStream();
+//                outputStream.write(message.getBytes());
+//                showToast("Mensaje enviado: " + message);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                showToast("Error al enviar el mensaje");
+//            }
+//        } else {
+//            showToast("La conexión Bluetooth no está establecida");
+//        }
+//    }
+//
+//
+//    @SuppressLint("MissingPermission")
+//    public void onBluetooth(){
+//        if (!mBlueAdapter.isEnabled()) {
+//            showToast("Encendiendo el Bluetooth...");
+//            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            ((Activity) context).startActivityForResult(intent, REQUEST_ENABLE_BT);
+//        } else {
+//            showToast("El Bluetooth ya está encendido");
+//        }
+//    }
+//
+//    @SuppressLint("MissingPermission")
+//    public void offBluetooth(){
+//        if (mBlueAdapter.isEnabled()) {
+//            mBlueAdapter.disable();
+//            showToast("Apagando el Bluetooth");
+//        } else {
+//            showToast("El Bluetooth ya está apagado");
+//        }
+//    }
+//
+//    @SuppressLint("MissingPermission")
+//    public void visible(){
+//        if (!mBlueAdapter.isDiscovering()) {
+//            showToast("Haciendo tu dispositivo visible");
+//            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//            ((Activity) context).startActivityForResult(intent, REQUEST_DISCOVER_BT);
+//        }
+//    }
+//    public void connectToDevice() {
+//        if (selectedDevice != null) {
+//            new ConnectBluetoothTask().execute(selectedDevice);
+//        } else {
+//            showToast("Selecciona un dispositivo emparejado primero");
+//        }
+//    }
+//
+//    public void disconnect() {
+//        try {
+//            if (bluetoothSocket != null) {
+//                bluetoothSocket.close();
+//                showToast("Desconectado del dispositivo Bluetooth");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            showToast("Error al desconectar");
+//        }
+//    }
+//
+//
+//    private class ConnectBluetoothTask extends AsyncTask<BluetoothDevice, Void, Boolean> {
+//        @SuppressLint("MissingPermission")
+//        @Override
+//        protected Boolean doInBackground(BluetoothDevice... params) {
+//            try {
+//                if (bluetoothSocket != null) {
+//                    try {
+//                        bluetoothSocket.close(); // Cerrar el socket anterior si existe
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                bluetoothSocket = params[0].createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+//                bluetoothSocket.connect();
+//
+//                // No cerrar el socket aquí para mantener la conexión abierta
+//
+//                return true;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return false;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Boolean result) {
+//            if (result) {
+//                showToast("Conectado al dispositivo Bluetooth");
+//            } else {
+//                showToast("Error al conectar al dispositivo Bluetooth");
+//            }
+//            // No necesitas cerrar el socket aquí
+//        }
+//    }
+//
+//    // Clase AsyncTask para recibir mensajes Bluetooth
+//    private class ReceiveMessageTask extends AsyncTask<Void, String, Boolean> {
+//        @Override
+//        protected Boolean doInBackground(Void... params) {
+//            try {
+//                InputStream inputStream = bluetoothSocket.getInputStream();
+//                byte[] buffer = new byte[1024];
+//                int bytes;
+//
+//                while (true) {
+//                    try {
+//                        bytes = inputStream.read(buffer);
+//                        if (bytes == -1) {
+//                            // El socket se ha cerrado
+//                            break;
+//                        }
+//                        String message = new String(buffer, 0, bytes);
+//                        publishProgress(message);  // Notifica el mensaje recibido
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        Log.e("ReceiveMessageTask", "Error al leer el mensaje", e);
+//                        break;
+//                    }
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                Log.e("ReceiveMessageTask", "Error al obtener el InputStream", e);
+//                return false;
+//            }
+//            return true;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            // Manejar el mensaje recibido en el hilo principal
+//            showToast("Mensaje recibido: " + values[0]);
+//
+//            if ("Stop1".equals(values[0])) {
+//                // Actualizar la interfaz de usuario según el mensaje recibido
+//                Cronometro cronBT = listaCronometros.get(0);
+//                cronBT.viewNombre.setText("valor:" + values[0]);
+//            } else if ("Stop2".equals(values[0])) {
+//                // Actualizar la interfaz de usuario según el mensaje recibido
+//                Cronometro cronBT = listaCronometros.get(1);
+//                cronBT.viewNombre.setText("valor:" + values[0]);
+//            } else {
+//                crono.viewNombre.setText("no es");
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Boolean result) {
+//            if (!result) {
+//                showToast("Error al recibir mensajes");
+//            }
+//            // No necesitas cerrar el socket aquí
+//        }
+//    }
+//
+//    private void showToast(String msg) {
+//        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+//    }
+//
+//}
+//

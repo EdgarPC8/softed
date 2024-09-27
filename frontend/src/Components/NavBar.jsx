@@ -127,7 +127,8 @@ function ResponsiveAppBar() {
         icon: <AdbIcon />,
         menu: {
           items: [
-            { name: "Backup y Home", link: "/panel-programador", icon: <AdbIcon /> },
+            { name: "Config Home", link: "/panel-programador", icon: <AdbIcon /> },
+            { name: "Comandos", link: "/comandos", icon: <AdbIcon /> },
             { name: "CronoSwim", link: "/cronoswim", icon: <AdbIcon /> },
           ],
         },

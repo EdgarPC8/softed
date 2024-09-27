@@ -34,7 +34,7 @@ class TiemposController
                 JOIN (
                   SELECT prueba, metros, MIN(tiempo) AS min_tiempo
                   FROM tiempos
-                  WHERE cedula = ' $cedula'
+                  WHERE cedula = ' $cedula'and (metros='400 Metros' or metros='800 Metros') and (prueba='Libre')
                   GROUP BY prueba, metros
                 ) t2 ON t1.prueba = t2.prueba
                    AND t1.metros = t2.metros

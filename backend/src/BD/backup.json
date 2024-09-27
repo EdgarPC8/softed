@@ -217,7 +217,7 @@
             "apellidos": "Ramos Villalta",
             "fecha_nacimiento": "2012-09-27",
             "genero": "M",
-            "grupo": 1
+            "grupo": 2
         },
         {
             "cedula": 1104661698,
@@ -1459,7 +1459,7 @@
             "apellidos": "Guzman Alverca",
             "fecha_nacimiento": "2010-07-23",
             "genero": "M",
-            "grupo": 4
+            "grupo": 1
         },
         {
             "cedula": 1105991093,
@@ -1567,7 +1567,7 @@
             "apellidos": "Quezada Castillo",
             "fecha_nacimiento": "2008-12-25",
             "genero": "M",
-            "grupo": 4
+            "grupo": 1
         },
         {
             "cedula": 1150301863,
@@ -1853,7 +1853,7 @@
             "nadador": "Ariana Jumbo",
             "nombres": "Ariana Mercedes",
             "apellidos": "Jumbo Torres",
-            "fecha_nacimiento": "2008-7-24",
+            "fecha_nacimiento": "2008-07-24",
             "genero": "F",
             "grupo": 4
         },
@@ -1961,7 +1961,7 @@
             "nadador": "Vianca Cuenca",
             "nombres": "Vianca Stefania",
             "apellidos": "Cuenca Palacios",
-            "fecha_nacimiento": "2012-9-15",
+            "fecha_nacimiento": "2012-09-15",
             "genero": "F",
             "grupo": 4
         },
@@ -1990,7 +1990,7 @@
             "apellidos": "Uzhca Sarango",
             "fecha_nacimiento": "1996-12-10",
             "genero": "F",
-            "grupo": 1
+            "grupo": 2
         },
         {
             "cedula": 1754139500,
@@ -1999,7 +1999,7 @@
             "apellidos": "Uzhca Sarango",
             "fecha_nacimiento": "1996-12-10",
             "genero": "F",
-            "grupo": 1
+            "grupo": 4
         },
         {
             "cedula": 1754139501,
@@ -2017,7 +2017,7 @@
             "apellidos": "Pinza Villalba",
             "fecha_nacimiento": "2012-09-17",
             "genero": "M",
-            "grupo": 1
+            "grupo": 2
         },
         {
             "cedula": 1754139503,
@@ -2035,6 +2035,24 @@
             "apellidos": "Velasquez Flores",
             "fecha_nacimiento": "2008-01-01",
             "genero": "F",
+            "grupo": 4
+        },
+        {
+            "cedula": 1104662599,
+            "nadador": "Sophia Torres",
+            "nombres": "Sophia Titanes",
+            "apellidos": "Torres Club",
+            "fecha_nacimiento": "2011-01-01",
+            "genero": "F",
+            "grupo": 1
+        },
+        {
+            "cedula": 1104662598,
+            "nadador": "Elian Guzmán",
+            "nombres": "Elian Elian",
+            "apellidos": "Guzmán Alverca",
+            "fecha_nacimiento": "2011-01-01",
+            "genero": "M",
             "grupo": 1
         }
     ],
@@ -16934,14 +16952,6 @@
             "prueba": "PR_P",
             "metros": "300 Metros",
             "tiempo": "00:10:42,03"
-        },
-        {
-            "id": 1863,
-            "cedula": "1150130894",
-            "fecha": "2022-04-05",
-            "prueba": "PR_L",
-            "metros": "300 Metros",
-            "tiempo": "00:05:51,97"
         },
         {
             "id": 1864,
@@ -50558,6 +50568,4982 @@
             "prueba": "PR_P",
             "metros": "300 Metros",
             "tiempo": "00:07:25,97"
+        },
+        {
+            "id": 6121,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:23,47"
+        },
+        {
+            "id": 6122,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,74"
+        },
+        {
+            "id": 6123,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:01:23,30"
+        },
+        {
+            "id": 6124,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:01:56,17"
+        },
+        {
+            "id": 6125,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "125 Metros",
+            "tiempo": "00:02:29,61"
+        },
+        {
+            "id": 6126,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "150 Metros",
+            "tiempo": "00:03:02,93"
+        },
+        {
+            "id": 6127,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "175 Metros",
+            "tiempo": "00:03:37,73"
+        },
+        {
+            "id": 6128,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "200 Metros",
+            "tiempo": "00:04:12,33"
+        },
+        {
+            "id": 6129,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "225 Metros",
+            "tiempo": "00:04:46,19"
+        },
+        {
+            "id": 6130,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "250 Metros",
+            "tiempo": "00:05:19,14"
+        },
+        {
+            "id": 6131,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "275 Metros",
+            "tiempo": "00:05:49,65"
+        },
+        {
+            "id": 6132,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "300 Metros",
+            "tiempo": "00:06:19,20"
+        },
+        {
+            "id": 6133,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,03"
+        },
+        {
+            "id": 6134,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:00:48,86"
+        },
+        {
+            "id": 6135,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:01:17,78"
+        },
+        {
+            "id": 6136,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:01:49,81"
+        },
+        {
+            "id": 6137,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "125 Metros",
+            "tiempo": "00:02:22,25"
+        },
+        {
+            "id": 6138,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "150 Metros",
+            "tiempo": "00:02:55,17"
+        },
+        {
+            "id": 6139,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "175 Metros",
+            "tiempo": "00:03:28,17"
+        },
+        {
+            "id": 6140,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "200 Metros",
+            "tiempo": "00:04:04,11"
+        },
+        {
+            "id": 6141,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "225 Metros",
+            "tiempo": "00:04:39,26"
+        },
+        {
+            "id": 6142,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "250 Metros",
+            "tiempo": "00:05:15,31"
+        },
+        {
+            "id": 6143,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "275 Metros",
+            "tiempo": "00:05:48,85"
+        },
+        {
+            "id": 6144,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_M",
+            "metros": "300 Metros",
+            "tiempo": "00:06:18,75"
+        },
+        {
+            "id": 6145,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:35,62"
+        },
+        {
+            "id": 6146,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:14,78"
+        },
+        {
+            "id": 6147,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:55,48"
+        },
+        {
+            "id": 6148,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:35,13"
+        },
+        {
+            "id": 6149,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "125 Metros",
+            "tiempo": "00:03:15,80"
+        },
+        {
+            "id": 6150,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "150 Metros",
+            "tiempo": "00:03:56,67"
+        },
+        {
+            "id": 6151,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "175 Metros",
+            "tiempo": "00:04:38,19"
+        },
+        {
+            "id": 6152,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "200 Metros",
+            "tiempo": "00:05:17,89"
+        },
+        {
+            "id": 6153,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "225 Metros",
+            "tiempo": "00:05:57,29"
+        },
+        {
+            "id": 6154,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "250 Metros",
+            "tiempo": "00:06:36,71"
+        },
+        {
+            "id": 6155,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "275 Metros",
+            "tiempo": "00:07:15,48"
+        },
+        {
+            "id": 6156,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "300 Metros",
+            "tiempo": "00:07:52,98"
+        },
+        {
+            "id": 6157,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "325 Metros",
+            "tiempo": "00:08:31,36"
+        },
+        {
+            "id": 6158,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "350 Metros",
+            "tiempo": "00:09:09,24"
+        },
+        {
+            "id": 6159,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "375 Metros",
+            "tiempo": "00:09:46,44"
+        },
+        {
+            "id": 6160,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "400 Metros",
+            "tiempo": "00:10:22,84"
+        },
+        {
+            "id": 6161,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:31,53"
+        },
+        {
+            "id": 6162,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:03,33"
+        },
+        {
+            "id": 6163,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:37,76"
+        },
+        {
+            "id": 6164,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:13,46"
+        },
+        {
+            "id": 6165,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "125 Metros",
+            "tiempo": "00:02:46,94"
+        },
+        {
+            "id": 6166,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "150 Metros",
+            "tiempo": "00:03:22,22"
+        },
+        {
+            "id": 6167,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "175 Metros",
+            "tiempo": "00:03:55,28"
+        },
+        {
+            "id": 6168,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "200 Metros",
+            "tiempo": "00:04:29,71"
+        },
+        {
+            "id": 6169,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "225 Metros",
+            "tiempo": "00:05:03,87"
+        },
+        {
+            "id": 6170,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "250 Metros",
+            "tiempo": "00:05:38,26"
+        },
+        {
+            "id": 6171,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "275 Metros",
+            "tiempo": "00:06:13,13"
+        },
+        {
+            "id": 6172,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "300 Metros",
+            "tiempo": "00:06:46,92"
+        },
+        {
+            "id": 6173,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "325 Metros",
+            "tiempo": "00:07:20,73"
+        },
+        {
+            "id": 6174,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "350 Metros",
+            "tiempo": "00:07:55,01"
+        },
+        {
+            "id": 6175,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "375 Metros",
+            "tiempo": "00:08:28,72"
+        },
+        {
+            "id": 6176,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "400 Metros",
+            "tiempo": "00:09:04,29"
+        },
+        {
+            "id": 6177,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,65"
+        },
+        {
+            "id": 6178,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:00,21"
+        },
+        {
+            "id": 6179,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:33,84"
+        },
+        {
+            "id": 6180,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:07,65"
+        },
+        {
+            "id": 6181,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "125 Metros",
+            "tiempo": "00:02:41,33"
+        },
+        {
+            "id": 6182,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "150 Metros",
+            "tiempo": "00:03:15,59"
+        },
+        {
+            "id": 6183,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "175 Metros",
+            "tiempo": "00:03:50,11"
+        },
+        {
+            "id": 6184,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "200 Metros",
+            "tiempo": "00:04:26,75"
+        },
+        {
+            "id": 6185,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "225 Metros",
+            "tiempo": "00:05:01,54"
+        },
+        {
+            "id": 6186,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "250 Metros",
+            "tiempo": "00:05:37,44"
+        },
+        {
+            "id": 6187,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "275 Metros",
+            "tiempo": "00:06:14,09"
+        },
+        {
+            "id": 6188,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "300 Metros",
+            "tiempo": "00:06:49,79"
+        },
+        {
+            "id": 6189,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "325 Metros",
+            "tiempo": "00:07:24,49"
+        },
+        {
+            "id": 6190,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "350 Metros",
+            "tiempo": "00:08:00,03"
+        },
+        {
+            "id": 6191,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "375 Metros",
+            "tiempo": "00:08:35,14"
+        },
+        {
+            "id": 6192,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "400 Metros",
+            "tiempo": "00:09:09,35"
+        },
+        {
+            "id": 6193,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,27"
+        },
+        {
+            "id": 6194,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:02,94"
+        },
+        {
+            "id": 6195,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:37,65"
+        },
+        {
+            "id": 6196,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:12,17"
+        },
+        {
+            "id": 6197,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "125 Metros",
+            "tiempo": "00:02:48,88"
+        },
+        {
+            "id": 6198,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "150 Metros",
+            "tiempo": "00:03:25,03"
+        },
+        {
+            "id": 6199,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "175 Metros",
+            "tiempo": "00:04:03,38"
+        },
+        {
+            "id": 6200,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "200 Metros",
+            "tiempo": "00:04:42,14"
+        },
+        {
+            "id": 6201,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "225 Metros",
+            "tiempo": "00:05:19,48"
+        },
+        {
+            "id": 6202,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "250 Metros",
+            "tiempo": "00:05:58,45"
+        },
+        {
+            "id": 6203,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "275 Metros",
+            "tiempo": "00:06:37,25"
+        },
+        {
+            "id": 6204,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "300 Metros",
+            "tiempo": "00:07:16,10"
+        },
+        {
+            "id": 6205,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "325 Metros",
+            "tiempo": "00:07:54,27"
+        },
+        {
+            "id": 6206,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "350 Metros",
+            "tiempo": "00:08:30,55"
+        },
+        {
+            "id": 6207,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "375 Metros",
+            "tiempo": "00:09:06,54"
+        },
+        {
+            "id": 6208,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "BR_P",
+            "metros": "400 Metros",
+            "tiempo": "00:09:41,02"
+        },
+        {
+            "id": 6209,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:32,17"
+        },
+        {
+            "id": 6210,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:06,97"
+        },
+        {
+            "id": 6211,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:43,33"
+        },
+        {
+            "id": 6212,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:20,27"
+        },
+        {
+            "id": 6213,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "125 Metros",
+            "tiempo": "00:02:58,80"
+        },
+        {
+            "id": 6214,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "150 Metros",
+            "tiempo": "00:03:37,17"
+        },
+        {
+            "id": 6215,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "175 Metros",
+            "tiempo": "00:04:14,77"
+        },
+        {
+            "id": 6216,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "200 Metros",
+            "tiempo": "00:04:54,53"
+        },
+        {
+            "id": 6217,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "225 Metros",
+            "tiempo": "00:05:32,93"
+        },
+        {
+            "id": 6218,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "250 Metros",
+            "tiempo": "00:06:11,37"
+        },
+        {
+            "id": 6219,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "275 Metros",
+            "tiempo": "00:06:51,49"
+        },
+        {
+            "id": 6220,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "300 Metros",
+            "tiempo": "00:07:31,48"
+        },
+        {
+            "id": 6221,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "325 Metros",
+            "tiempo": "00:08:09,86"
+        },
+        {
+            "id": 6222,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "350 Metros",
+            "tiempo": "00:08:51,00"
+        },
+        {
+            "id": 6223,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "375 Metros",
+            "tiempo": "00:09:28,91"
+        },
+        {
+            "id": 6224,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "400 Metros",
+            "tiempo": "00:10:08,15"
+        },
+        {
+            "id": 6225,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:38,31"
+        },
+        {
+            "id": 6226,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:23,65"
+        },
+        {
+            "id": 6227,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:02:08,92"
+        },
+        {
+            "id": 6228,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:52,92"
+        },
+        {
+            "id": 6229,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "125 Metros",
+            "tiempo": "00:03:36,13"
+        },
+        {
+            "id": 6230,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "150 Metros",
+            "tiempo": "00:04:22,38"
+        },
+        {
+            "id": 6231,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "175 Metros",
+            "tiempo": "00:05:06,52"
+        },
+        {
+            "id": 6232,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "200 Metros",
+            "tiempo": "00:05:52,36"
+        },
+        {
+            "id": 6233,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "225 Metros",
+            "tiempo": "00:06:37,06"
+        },
+        {
+            "id": 6234,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "250 Metros",
+            "tiempo": "00:07:23,54"
+        },
+        {
+            "id": 6235,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "275 Metros",
+            "tiempo": "00:08:07,98"
+        },
+        {
+            "id": 6236,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "300 Metros",
+            "tiempo": "00:08:53,62"
+        },
+        {
+            "id": 6237,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "325 Metros",
+            "tiempo": "00:09:37,54"
+        },
+        {
+            "id": 6238,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "350 Metros",
+            "tiempo": "00:10:20,88"
+        },
+        {
+            "id": 6239,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "375 Metros",
+            "tiempo": "00:11:02,40"
+        },
+        {
+            "id": 6240,
+            "cedula": "1150424552",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "400 Metros",
+            "tiempo": "00:11:45,02"
+        },
+        {
+            "id": 6241,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,50"
+        },
+        {
+            "id": 6242,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:02,97"
+        },
+        {
+            "id": 6243,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,23"
+        },
+        {
+            "id": 6244,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:00:53,73"
+        },
+        {
+            "id": 6245,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:25,74"
+        },
+        {
+            "id": 6246,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,38"
+        },
+        {
+            "id": 6247,
+            "cedula": "1150130894",
+            "fecha": "2024-07-04",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,76"
+        },
+        {
+            "id": 6248,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,14"
+        },
+        {
+            "id": 6249,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:00,39"
+        },
+        {
+            "id": 6250,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,36"
+        },
+        {
+            "id": 6251,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:00:54,26"
+        },
+        {
+            "id": 6252,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,56"
+        },
+        {
+            "id": 6253,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,93"
+        },
+        {
+            "id": 6254,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,63"
+        },
+        {
+            "id": 6255,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:04,30"
+        },
+        {
+            "id": 6256,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:38,90"
+        },
+        {
+            "id": 6257,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "PR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:15,40"
+        },
+        {
+            "id": 6258,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "10Pruebas",
+            "metros": "500 Metros",
+            "tiempo": "00:10:00,22"
+        },
+        {
+            "id": 6259,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "10Pruebas",
+            "metros": "1000 Metros",
+            "tiempo": "00:20:13,96"
+        },
+        {
+            "id": 6260,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "10Pruebas",
+            "metros": "1500 Metros",
+            "tiempo": "00:30:25,99"
+        },
+        {
+            "id": 6261,
+            "cedula": "1150130894",
+            "fecha": "2024-07-05",
+            "prueba": "Pecho",
+            "metros": "200 Metros",
+            "tiempo": "00:03:46,18"
+        },
+        {
+            "id": 6262,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:41,92"
+        },
+        {
+            "id": 6263,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:25,19"
+        },
+        {
+            "id": 6264,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,18"
+        },
+        {
+            "id": 6265,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,82"
+        },
+        {
+            "id": 6266,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,71"
+        },
+        {
+            "id": 6267,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,35"
+        },
+        {
+            "id": 6268,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,80"
+        },
+        {
+            "id": 6269,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,51"
+        },
+        {
+            "id": 6270,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,66"
+        },
+        {
+            "id": 6271,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,95"
+        },
+        {
+            "id": 6272,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,45"
+        },
+        {
+            "id": 6273,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,32"
+        },
+        {
+            "id": 6274,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,80"
+        },
+        {
+            "id": 6275,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:27,66"
+        },
+        {
+            "id": 6276,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,27"
+        },
+        {
+            "id": 6277,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,50"
+        },
+        {
+            "id": 6278,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,77"
+        },
+        {
+            "id": 6279,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,35"
+        },
+        {
+            "id": 6280,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,31"
+        },
+        {
+            "id": 6281,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:23,22"
+        },
+        {
+            "id": 6282,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,02"
+        },
+        {
+            "id": 6283,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:27,87"
+        },
+        {
+            "id": 6284,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,51"
+        },
+        {
+            "id": 6285,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,51"
+        },
+        {
+            "id": 6286,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,58"
+        },
+        {
+            "id": 6287,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:31,66"
+        },
+        {
+            "id": 6288,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,40"
+        },
+        {
+            "id": 6289,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:27,70"
+        },
+        {
+            "id": 6290,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:27,15"
+        },
+        {
+            "id": 6291,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,57"
+        },
+        {
+            "id": 6292,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:27,10"
+        },
+        {
+            "id": 6293,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,40"
+        },
+        {
+            "id": 6294,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,28"
+        },
+        {
+            "id": 6295,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,55"
+        },
+        {
+            "id": 6296,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,83"
+        },
+        {
+            "id": 6297,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:08,20"
+        },
+        {
+            "id": 6298,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:32,99"
+        },
+        {
+            "id": 6299,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "125 Metros",
+            "tiempo": "00:01:57,42"
+        },
+        {
+            "id": 6300,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "150 Metros",
+            "tiempo": "00:02:22,76"
+        },
+        {
+            "id": 6301,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "175 Metros",
+            "tiempo": "00:02:48,23"
+        },
+        {
+            "id": 6302,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "200 Metros",
+            "tiempo": "00:03:13,01"
+        },
+        {
+            "id": 6303,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,70"
+        },
+        {
+            "id": 6304,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,43"
+        },
+        {
+            "id": 6305,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:07,57"
+        },
+        {
+            "id": 6306,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:31,90"
+        },
+        {
+            "id": 6307,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "125 Metros",
+            "tiempo": "00:01:56,69"
+        },
+        {
+            "id": 6308,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "150 Metros",
+            "tiempo": "00:02:21,57"
+        },
+        {
+            "id": 6309,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "175 Metros",
+            "tiempo": "00:02:46,29"
+        },
+        {
+            "id": 6310,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Espalda",
+            "metros": "200 Metros",
+            "tiempo": "00:03:09,71"
+        },
+        {
+            "id": 6311,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,23"
+        },
+        {
+            "id": 6312,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:45,06"
+        },
+        {
+            "id": 6313,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:14,45"
+        },
+        {
+            "id": 6314,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:42,59"
+        },
+        {
+            "id": 6315,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,06"
+        },
+        {
+            "id": 6316,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,22"
+        },
+        {
+            "id": 6317,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:18,00"
+        },
+        {
+            "id": 6318,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:44,68"
+        },
+        {
+            "id": 6319,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,14"
+        },
+        {
+            "id": 6320,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:54,61"
+        },
+        {
+            "id": 6321,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:23,68"
+        },
+        {
+            "id": 6322,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:51,63"
+        },
+        {
+            "id": 6323,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,84"
+        },
+        {
+            "id": 6324,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,84"
+        },
+        {
+            "id": 6325,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:22,56"
+        },
+        {
+            "id": 6326,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:50,51"
+        },
+        {
+            "id": 6327,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:19,41"
+        },
+        {
+            "id": 6328,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:40,92"
+        },
+        {
+            "id": 6329,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:04,00"
+        },
+        {
+            "id": 6330,
+            "cedula": "1150424552",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:25,67"
+        },
+        {
+            "id": 6331,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:19,62"
+        },
+        {
+            "id": 6332,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:41,59"
+        },
+        {
+            "id": 6333,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:06,54"
+        },
+        {
+            "id": 6334,
+            "cedula": "1150130894",
+            "fecha": "2024-07-08",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:30,92"
+        },
+        {
+            "id": 6335,
+            "cedula": "1150424552",
+            "fecha": "2024-05-10",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:39,21"
+        },
+        {
+            "id": 6336,
+            "cedula": "1150130894",
+            "fecha": "2024-05-10",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:38,07"
+        },
+        {
+            "id": 6337,
+            "cedula": "1150424552",
+            "fecha": "2024-05-10",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,27"
+        },
+        {
+            "id": 6338,
+            "cedula": "1150130894",
+            "fecha": "2024-05-10",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:42,33"
+        },
+        {
+            "id": 6339,
+            "cedula": "1150424552",
+            "fecha": "2024-05-11",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:40,09"
+        },
+        {
+            "id": 6340,
+            "cedula": "1150130894",
+            "fecha": "2024-05-11",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:36,17"
+        },
+        {
+            "id": 6341,
+            "cedula": "1150424552",
+            "fecha": "2024-05-11",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:33,72"
+        },
+        {
+            "id": 6342,
+            "cedula": "1150130894",
+            "fecha": "2024-05-11",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:33,12"
+        },
+        {
+            "id": 6343,
+            "cedula": "1150424552",
+            "fecha": "2024-05-11",
+            "prueba": "Libre",
+            "metros": "200 Metros",
+            "tiempo": "00:02:42,85"
+        },
+        {
+            "id": 6344,
+            "cedula": "1150130894",
+            "fecha": "2024-05-11",
+            "prueba": "Libre",
+            "metros": "200 Metros",
+            "tiempo": "00:02:58,00"
+        },
+        {
+            "id": 6345,
+            "cedula": "1150130894",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "500 Metros",
+            "tiempo": "00:09:50,34"
+        },
+        {
+            "id": 6346,
+            "cedula": "1150130894",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "1000 Metros",
+            "tiempo": "00:20:03,31"
+        },
+        {
+            "id": 6347,
+            "cedula": "1150130894",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "1500 Metros",
+            "tiempo": "00:30:24,33"
+        },
+        {
+            "id": 6348,
+            "cedula": "1150130894",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "2000 Metros",
+            "tiempo": "00:40:45,38"
+        },
+        {
+            "id": 6349,
+            "cedula": "1150130894",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "2500 Metros",
+            "tiempo": "00:51:00,14"
+        },
+        {
+            "id": 6350,
+            "cedula": "1150130894",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "3000 Metros",
+            "tiempo": "01:01:22,26"
+        },
+        {
+            "id": 6351,
+            "cedula": "1150424552",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "500 Metros",
+            "tiempo": "00:11:50,39"
+        },
+        {
+            "id": 6352,
+            "cedula": "1150424552",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "1000 Metros",
+            "tiempo": "00:23:29,41"
+        },
+        {
+            "id": 6353,
+            "cedula": "1150424552",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "1500 Metros",
+            "tiempo": "00:35:19,80"
+        },
+        {
+            "id": 6354,
+            "cedula": "1150424552",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "2000 Metros",
+            "tiempo": "00:47:14,28"
+        },
+        {
+            "id": 6355,
+            "cedula": "1150424552",
+            "fecha": "2024-07-09",
+            "prueba": "10Pruebas",
+            "metros": "2500 Metros",
+            "tiempo": "00:58:51,77"
+        },
+        {
+            "id": 6356,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,72"
+        },
+        {
+            "id": 6357,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:00:58,02"
+        },
+        {
+            "id": 6358,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:01:29,82"
+        },
+        {
+            "id": 6359,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:01:59,95"
+        },
+        {
+            "id": 6360,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,62"
+        },
+        {
+            "id": 6361,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:01:01,35"
+        },
+        {
+            "id": 6362,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:01:35,11"
+        },
+        {
+            "id": 6363,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:02:08,73"
+        },
+        {
+            "id": 6364,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,95"
+        },
+        {
+            "id": 6365,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,84"
+        },
+        {
+            "id": 6366,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:01:18,71"
+        },
+        {
+            "id": 6367,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:01:46,33"
+        },
+        {
+            "id": 6368,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:23,85"
+        },
+        {
+            "id": 6369,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:00:53,04"
+        },
+        {
+            "id": 6370,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:01:24,01"
+        },
+        {
+            "id": 6371,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:01:55,37"
+        },
+        {
+            "id": 6372,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,07"
+        },
+        {
+            "id": 6373,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:00:56,81"
+        },
+        {
+            "id": 6374,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "75 Metros",
+            "tiempo": "00:01:28,89"
+        },
+        {
+            "id": 6375,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "100 Metros",
+            "tiempo": "00:02:00,43"
+        },
+        {
+            "id": 6376,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,34"
+        },
+        {
+            "id": 6377,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:00:59,89"
+        },
+        {
+            "id": 6378,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "75 Metros",
+            "tiempo": "00:01:35,06"
+        },
+        {
+            "id": 6379,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_E",
+            "metros": "100 Metros",
+            "tiempo": "00:02:08,67"
+        },
+        {
+            "id": 6380,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,61"
+        },
+        {
+            "id": 6381,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:00:48,98"
+        },
+        {
+            "id": 6382,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "75 Metros",
+            "tiempo": "00:01:14,84"
+        },
+        {
+            "id": 6383,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "100 Metros",
+            "tiempo": "00:01:39,63"
+        },
+        {
+            "id": 6384,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,85"
+        },
+        {
+            "id": 6385,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:00:49,80"
+        },
+        {
+            "id": 6386,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "75 Metros",
+            "tiempo": "00:01:15,81"
+        },
+        {
+            "id": 6387,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_E",
+            "metros": "100 Metros",
+            "tiempo": "00:01:41,57"
+        },
+        {
+            "id": 6388,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:35,61"
+        },
+        {
+            "id": 6389,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:04,07"
+        },
+        {
+            "id": 6390,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:40,99"
+        },
+        {
+            "id": 6391,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:16,60"
+        },
+        {
+            "id": 6392,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:36,36"
+        },
+        {
+            "id": 6393,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:06,77"
+        },
+        {
+            "id": 6394,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:45,18"
+        },
+        {
+            "id": 6395,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:21,44"
+        },
+        {
+            "id": 6396,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,55"
+        },
+        {
+            "id": 6397,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:00,52"
+        },
+        {
+            "id": 6398,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:33,40"
+        },
+        {
+            "id": 6399,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:06,42"
+        },
+        {
+            "id": 6400,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "25 Metros",
+            "tiempo": "00:00:31,41"
+        },
+        {
+            "id": 6401,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "50 Metros",
+            "tiempo": "00:01:04,48"
+        },
+        {
+            "id": 6402,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "75 Metros",
+            "tiempo": "00:01:38,57"
+        },
+        {
+            "id": 6403,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_P",
+            "metros": "100 Metros",
+            "tiempo": "00:02:12,04"
+        },
+        {
+            "id": 6404,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,24"
+        },
+        {
+            "id": 6405,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:01,67"
+        },
+        {
+            "id": 6406,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:36,55"
+        },
+        {
+            "id": 6407,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:08,87"
+        },
+        {
+            "id": 6408,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:31,87"
+        },
+        {
+            "id": 6409,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:06,67"
+        },
+        {
+            "id": 6410,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:42,29"
+        },
+        {
+            "id": 6411,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:17,08"
+        },
+        {
+            "id": 6412,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,70"
+        },
+        {
+            "id": 6413,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:00:43,99"
+        },
+        {
+            "id": 6414,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:08,44"
+        },
+        {
+            "id": 6415,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:01:33,11"
+        },
+        {
+            "id": 6416,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,04"
+        },
+        {
+            "id": 6417,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,66"
+        },
+        {
+            "id": 6418,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:09,40"
+        },
+        {
+            "id": 6419,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:01:34,42"
+        },
+        {
+            "id": 6420,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,74"
+        },
+        {
+            "id": 6421,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:46,74"
+        },
+        {
+            "id": 6422,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:15,63"
+        },
+        {
+            "id": 6423,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:45,38"
+        },
+        {
+            "id": 6424,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,01"
+        },
+        {
+            "id": 6425,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,80"
+        },
+        {
+            "id": 6426,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:22,57"
+        },
+        {
+            "id": 6427,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:52,01"
+        },
+        {
+            "id": 6428,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,44"
+        },
+        {
+            "id": 6429,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,04"
+        },
+        {
+            "id": 6430,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:11,57"
+        },
+        {
+            "id": 6431,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:37,27"
+        },
+        {
+            "id": 6432,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,21"
+        },
+        {
+            "id": 6433,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:50,64"
+        },
+        {
+            "id": 6434,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:17,60"
+        },
+        {
+            "id": 6435,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:42,57"
+        },
+        {
+            "id": 6436,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,64"
+        },
+        {
+            "id": 6437,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:51,65"
+        },
+        {
+            "id": 6438,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:21,28"
+        },
+        {
+            "id": 6439,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:49,66"
+        },
+        {
+            "id": 6440,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:27,90"
+        },
+        {
+            "id": 6441,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:01:00,53"
+        },
+        {
+            "id": 6442,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:33,86"
+        },
+        {
+            "id": 6443,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:02:04,86"
+        },
+        {
+            "id": 6444,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,36"
+        },
+        {
+            "id": 6445,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:43,38"
+        },
+        {
+            "id": 6446,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:06,68"
+        },
+        {
+            "id": 6447,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:29,98"
+        },
+        {
+            "id": 6448,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:18,81"
+        },
+        {
+            "id": 6449,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:39,45"
+        },
+        {
+            "id": 6451,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:03,19"
+        },
+        {
+            "id": 6452,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:25,23"
+        },
+        {
+            "id": 6453,
+            "cedula": "1150130894",
+            "fecha": "2024-07-11",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:37,67"
+        },
+        {
+            "id": 6454,
+            "cedula": "1150424552",
+            "fecha": "2024-07-11",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:43,81"
+        },
+        {
+            "id": 6455,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:43,51"
+        },
+        {
+            "id": 6456,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "600 Metros",
+            "tiempo": "00:11:47,03"
+        },
+        {
+            "id": 6457,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "900 Metros",
+            "tiempo": "00:17:51,63"
+        },
+        {
+            "id": 6458,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "1200 Metros",
+            "tiempo": "00:24:00,57"
+        },
+        {
+            "id": 6459,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "1500 Metros",
+            "tiempo": "00:30:10,64"
+        },
+        {
+            "id": 6460,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "1800 Metros",
+            "tiempo": "00:36:23,12"
+        },
+        {
+            "id": 6461,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "2100 Metros",
+            "tiempo": "00:42:35,75"
+        },
+        {
+            "id": 6462,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "2400 Metros",
+            "tiempo": "00:48:48,95"
+        },
+        {
+            "id": 6463,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "2700 Metros",
+            "tiempo": "00:55:01,81"
+        },
+        {
+            "id": 6464,
+            "cedula": "1150130894",
+            "fecha": "2024-07-12",
+            "prueba": "12Pruebas",
+            "metros": "3000 Metros",
+            "tiempo": "01:01:08,69"
+        },
+        {
+            "id": 6465,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:23,51"
+        },
+        {
+            "id": 6466,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:24,04"
+        },
+        {
+            "id": 6467,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:07,44"
+        },
+        {
+            "id": 6468,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:29,07"
+        },
+        {
+            "id": 6469,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:10,50"
+        },
+        {
+            "id": 6470,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:24,39"
+        },
+        {
+            "id": 6471,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:10,95"
+        },
+        {
+            "id": 6472,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:28,70"
+        },
+        {
+            "id": 6473,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:27,86"
+        },
+        {
+            "id": 6474,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:47,48"
+        },
+        {
+            "id": 6475,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:51,31"
+        },
+        {
+            "id": 6476,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "150 Metros",
+            "tiempo": "00:02:42,93"
+        },
+        {
+            "id": 6477,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:47,62"
+        },
+        {
+            "id": 6478,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:51,43"
+        },
+        {
+            "id": 6479,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:48,16"
+        },
+        {
+            "id": 6480,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:47,81"
+        },
+        {
+            "id": 6481,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:52,71"
+        },
+        {
+            "id": 6482,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:48,81"
+        },
+        {
+            "id": 6483,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:39,42"
+        },
+        {
+            "id": 6484,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:41,25"
+        },
+        {
+            "id": 6485,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:29,93"
+        },
+        {
+            "id": 6486,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:35,67"
+        },
+        {
+            "id": 6487,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:41,45"
+        },
+        {
+            "id": 6488,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:42,65"
+        },
+        {
+            "id": 6489,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:31,04"
+        },
+        {
+            "id": 6490,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:42,63"
+        },
+        {
+            "id": 6491,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:40,44"
+        },
+        {
+            "id": 6492,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:28,24"
+        },
+        {
+            "id": 6493,
+            "cedula": "1150424552",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:45,34"
+        },
+        {
+            "id": 6494,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:42,24"
+        },
+        {
+            "id": 6495,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:56,48"
+        },
+        {
+            "id": 6496,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:25,62"
+        },
+        {
+            "id": 6497,
+            "cedula": "1150130894",
+            "fecha": "2024-07-16",
+            "prueba": "12Pruebas",
+            "metros": "600 Metros",
+            "tiempo": "00:12:08,75"
+        },
+        {
+            "id": 6498,
+            "cedula": "1104662599",
+            "fecha": "2024-07-16",
+            "prueba": "12Pruebas",
+            "metros": "600 Metros",
+            "tiempo": "00:10:44,23"
+        },
+        {
+            "id": 6499,
+            "cedula": "1150442463",
+            "fecha": "2024-07-17",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:07:27,94"
+        },
+        {
+            "id": 6500,
+            "cedula": "1150130894",
+            "fecha": "2024-07-18",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,18"
+        },
+        {
+            "id": 6501,
+            "cedula": "1150424552",
+            "fecha": "2024-07-18",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,06"
+        },
+        {
+            "id": 6502,
+            "cedula": "1104662599",
+            "fecha": "2024-07-18",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:00:35,76"
+        },
+        {
+            "id": 6503,
+            "cedula": "1150130894",
+            "fecha": "2024-07-18",
+            "prueba": "10Pruebas",
+            "metros": "250 Metros",
+            "tiempo": "00:04:38,36"
+        },
+        {
+            "id": 6504,
+            "cedula": "1104662599",
+            "fecha": "2024-07-18",
+            "prueba": "10Pruebas",
+            "metros": "250 Metros",
+            "tiempo": "00:04:19,36"
+        },
+        {
+            "id": 6505,
+            "cedula": "1104662599",
+            "fecha": "2024-07-18",
+            "prueba": "10Pruebas",
+            "metros": "500 Metros",
+            "tiempo": "00:09:05,11"
+        },
+        {
+            "id": 6506,
+            "cedula": "1150130894",
+            "fecha": "2024-07-18",
+            "prueba": "10Pruebas",
+            "metros": "500 Metros",
+            "tiempo": "00:09:54,42"
+        },
+        {
+            "id": 6507,
+            "cedula": "1104662599",
+            "fecha": "2024-07-19",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:20,73"
+        },
+        {
+            "id": 6508,
+            "cedula": "1150130894",
+            "fecha": "2024-07-19",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:31,92"
+        },
+        {
+            "id": 6509,
+            "cedula": "1150130894",
+            "fecha": "2024-08-13",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:57,99"
+        },
+        {
+            "id": 6510,
+            "cedula": "1150130894",
+            "fecha": "2024-08-13",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:56,54"
+        },
+        {
+            "id": 6511,
+            "cedula": "1150130894",
+            "fecha": "2024-08-13",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:57,76"
+        },
+        {
+            "id": 6512,
+            "cedula": "1150130894",
+            "fecha": "2024-08-13",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:37,62"
+        },
+        {
+            "id": 6513,
+            "cedula": "1150130894",
+            "fecha": "2024-08-15",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:05:32,67"
+        },
+        {
+            "id": 6514,
+            "cedula": "1150424552",
+            "fecha": "2024-08-15",
+            "prueba": "12Pruebas",
+            "metros": "300 Metros",
+            "tiempo": "00:06:04,78"
+        },
+        {
+            "id": 6515,
+            "cedula": "1150130894",
+            "fecha": "2024-08-16",
+            "prueba": "12Pruebas",
+            "metros": "600 Metros",
+            "tiempo": "00:11:40,51"
+        },
+        {
+            "id": 6516,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:52,10"
+        },
+        {
+            "id": 6517,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:53,69"
+        },
+        {
+            "id": 6518,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:31,63"
+        },
+        {
+            "id": 6519,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:17,49"
+        },
+        {
+            "id": 6520,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:59,79"
+        },
+        {
+            "id": 6521,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:46,12"
+        },
+        {
+            "id": 6522,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:34,02"
+        },
+        {
+            "id": 6523,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:25,79"
+        },
+        {
+            "id": 6524,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:02:14,15"
+        },
+        {
+            "id": 6525,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:03:02,15"
+        },
+        {
+            "id": 6526,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:47,19"
+        },
+        {
+            "id": 6527,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:33,15"
+        },
+        {
+            "id": 6528,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:25,69"
+        },
+        {
+            "id": 6529,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:05,23"
+        },
+        {
+            "id": 6530,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:54,04"
+        },
+        {
+            "id": 6531,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:02:20,18"
+        },
+        {
+            "id": 6532,
+            "cedula": "1150265120",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:00,97"
+        },
+        {
+            "id": 6533,
+            "cedula": "1150265120",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:00,97"
+        },
+        {
+            "id": 6534,
+            "cedula": "1104662598",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:03:35,28"
+        },
+        {
+            "id": 6535,
+            "cedula": "1105990764",
+            "fecha": "2024-09-09",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:37,04"
+        },
+        {
+            "id": 6536,
+            "cedula": "1105990764",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:42,68"
+        },
+        {
+            "id": 6537,
+            "cedula": "1105990764",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:01:35,83"
+        },
+        {
+            "id": 6538,
+            "cedula": "1105990764",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:02:47,57"
+        },
+        {
+            "id": 6539,
+            "cedula": "1105990764",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:03:59,18"
+        },
+        {
+            "id": 6540,
+            "cedula": "1104662598",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:49,89"
+        },
+        {
+            "id": 6541,
+            "cedula": "1104662598",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:01:59,46"
+        },
+        {
+            "id": 6542,
+            "cedula": "1104662598",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:03:15,95"
+        },
+        {
+            "id": 6543,
+            "cedula": "1104662598",
+            "fecha": "2024-09-10",
+            "prueba": "PR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:04:29,66"
+        },
+        {
+            "id": 6544,
+            "cedula": "1104662598",
+            "fecha": "2024-09-10",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,75"
+        },
+        {
+            "id": 6545,
+            "cedula": "1104662598",
+            "fecha": "2024-09-10",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:17,61"
+        },
+        {
+            "id": 6546,
+            "cedula": "1105990764",
+            "fecha": "2024-09-10",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,53"
+        },
+        {
+            "id": 6547,
+            "cedula": "1105990764",
+            "fecha": "2024-09-10",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,41"
+        },
+        {
+            "id": 6548,
+            "cedula": "1150130894",
+            "fecha": "2024-09-12",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:39,76"
+        },
+        {
+            "id": 6549,
+            "cedula": "1150424552",
+            "fecha": "2024-09-12",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:41,90"
+        },
+        {
+            "id": 6550,
+            "cedula": "1150424552",
+            "fecha": "2024-09-12",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,30"
+        },
+        {
+            "id": 6551,
+            "cedula": "1150130894",
+            "fecha": "2024-09-12",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:42,32"
+        },
+        {
+            "id": 6552,
+            "cedula": "1150424552",
+            "fecha": "2024-09-12",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:50,83"
+        },
+        {
+            "id": 6553,
+            "cedula": "1150130894",
+            "fecha": "2024-09-12",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,35"
+        },
+        {
+            "id": 6554,
+            "cedula": "1150424552",
+            "fecha": "2024-09-12",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:37,85"
+        },
+        {
+            "id": 6555,
+            "cedula": "1150130894",
+            "fecha": "2024-09-12",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:36,50"
+        },
+        {
+            "id": 6556,
+            "cedula": "1104662598",
+            "fecha": "2024-09-12",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:34,25"
+        },
+        {
+            "id": 6557,
+            "cedula": "1104662598",
+            "fecha": "2024-09-12",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:13,39"
+        },
+        {
+            "id": 6559,
+            "cedula": "1105990764",
+            "fecha": "2024-09-12",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:25,43"
+        },
+        {
+            "id": 6560,
+            "cedula": "1105990764",
+            "fecha": "2024-09-12",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,27"
+        },
+        {
+            "id": 6561,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:15,53"
+        },
+        {
+            "id": 6562,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:17,14"
+        },
+        {
+            "id": 6563,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:56,09"
+        },
+        {
+            "id": 6564,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:56,01"
+        },
+        {
+            "id": 6566,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:50,67"
+        },
+        {
+            "id": 6567,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:02:04,35"
+        },
+        {
+            "id": 6568,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "75 Metros",
+            "tiempo": "00:03:24,83"
+        },
+        {
+            "id": 6569,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "100 Metros",
+            "tiempo": "00:04:26,47"
+        },
+        {
+            "id": 6570,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "25 Metros",
+            "tiempo": "00:00:39,92"
+        },
+        {
+            "id": 6571,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "50 Metros",
+            "tiempo": "00:01:33,38"
+        },
+        {
+            "id": 6572,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "75 Metros",
+            "tiempo": "00:02:37,35"
+        },
+        {
+            "id": 6573,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_E",
+            "metros": "100 Metros",
+            "tiempo": "00:03:26,61"
+        },
+        {
+            "id": 6574,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:34,17"
+        },
+        {
+            "id": 6575,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:17,02"
+        },
+        {
+            "id": 6576,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:02:03,75"
+        },
+        {
+            "id": 6577,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:02:45,34"
+        },
+        {
+            "id": 6578,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,98"
+        },
+        {
+            "id": 6579,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:59,73"
+        },
+        {
+            "id": 6580,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:44,35"
+        },
+        {
+            "id": 6581,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:02:15,08"
+        },
+        {
+            "id": 6583,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:40,62"
+        },
+        {
+            "id": 6584,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:01:31,76"
+        },
+        {
+            "id": 6585,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:02:33,55"
+        },
+        {
+            "id": 6586,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:03:25,08"
+        },
+        {
+            "id": 6587,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:45,14"
+        },
+        {
+            "id": 6588,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:01:39,65"
+        },
+        {
+            "id": 6589,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:02:54,25"
+        },
+        {
+            "id": 6590,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:03:46,35"
+        },
+        {
+            "id": 6591,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:39,93"
+        },
+        {
+            "id": 6592,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:01:27,11"
+        },
+        {
+            "id": 6593,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:02:27,14"
+        },
+        {
+            "id": 6594,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:03:19,24"
+        },
+        {
+            "id": 6595,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "25 Metros",
+            "tiempo": "00:00:48,05"
+        },
+        {
+            "id": 6596,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "50 Metros",
+            "tiempo": "00:01:48,17"
+        },
+        {
+            "id": 6597,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "75 Metros",
+            "tiempo": "00:02:44,62"
+        },
+        {
+            "id": 6598,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "PR_M",
+            "metros": "100 Metros",
+            "tiempo": "00:03:37,56"
+        },
+        {
+            "id": 6599,
+            "cedula": "1150130894",
+            "fecha": "2024-09-13",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,53"
+        },
+        {
+            "id": 6600,
+            "cedula": "1150130894",
+            "fecha": "2024-09-13",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:46,52"
+        },
+        {
+            "id": 6601,
+            "cedula": "1150424552",
+            "fecha": "2024-09-13",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:23,70"
+        },
+        {
+            "id": 6602,
+            "cedula": "1150424552",
+            "fecha": "2024-09-13",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:50,47"
+        },
+        {
+            "id": 6603,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:34,38"
+        },
+        {
+            "id": 6604,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:11,57"
+        },
+        {
+            "id": 6605,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:24,54"
+        },
+        {
+            "id": 6606,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,82"
+        },
+        {
+            "id": 6607,
+            "cedula": "1150424552",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,82"
+        },
+        {
+            "id": 6608,
+            "cedula": "1150424552",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,25"
+        },
+        {
+            "id": 6609,
+            "cedula": "1150130894",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,30"
+        },
+        {
+            "id": 6610,
+            "cedula": "1150130894",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:43,09"
+        },
+        {
+            "id": 6611,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:45,17"
+        },
+        {
+            "id": 6612,
+            "cedula": "1104662598",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:01:35,24"
+        },
+        {
+            "id": 6613,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,15"
+        },
+        {
+            "id": 6614,
+            "cedula": "1105990764",
+            "fecha": "2024-09-13",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:01:04,35"
+        },
+        {
+            "id": 6615,
+            "cedula": "1150424552",
+            "fecha": "2024-09-13",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:35,25"
+        },
+        {
+            "id": 6616,
+            "cedula": "1150130894",
+            "fecha": "2024-09-13",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:30,23"
+        },
+        {
+            "id": 6617,
+            "cedula": "1150424552",
+            "fecha": "2024-09-17",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:43,32"
+        },
+        {
+            "id": 6618,
+            "cedula": "1150130894",
+            "fecha": "2024-09-17",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:38,64"
+        },
+        {
+            "id": 6619,
+            "cedula": "1150424552",
+            "fecha": "2024-09-17",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:42,90"
+        },
+        {
+            "id": 6620,
+            "cedula": "1150130894",
+            "fecha": "2024-09-17",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:41,93"
+        },
+        {
+            "id": 6621,
+            "cedula": "1150130894",
+            "fecha": "2024-09-17",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,34"
+        },
+        {
+            "id": 6622,
+            "cedula": "1150424552",
+            "fecha": "2024-09-17",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:48,90"
+        },
+        {
+            "id": 6623,
+            "cedula": "1150265120",
+            "fecha": "2024-09-17",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:49,58"
+        },
+        {
+            "id": 6624,
+            "cedula": "1150424552",
+            "fecha": "2024-07-25",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:23,65"
+        },
+        {
+            "id": 6625,
+            "cedula": "1150424552",
+            "fecha": "2024-07-26",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:31,11"
+        },
+        {
+            "id": 6626,
+            "cedula": "1150424552",
+            "fecha": "2024-07-25",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:38,40"
+        },
+        {
+            "id": 6627,
+            "cedula": "1150424552",
+            "fecha": "2024-07-25",
+            "prueba": "Libre",
+            "metros": "200 Metros",
+            "tiempo": "00:02:51,01"
+        },
+        {
+            "id": 6628,
+            "cedula": "1150424552",
+            "fecha": "2024-07-25",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:40,01"
+        },
+        {
+            "id": 6629,
+            "cedula": "1150424552",
+            "fecha": "2024-07-26",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:15,82"
+        },
+        {
+            "id": 6630,
+            "cedula": "1150424552",
+            "fecha": "2024-07-27",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:46,63"
+        },
+        {
+            "id": 6631,
+            "cedula": "1150424552",
+            "fecha": "2024-07-27",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:34,28"
+        },
+        {
+            "id": 6632,
+            "cedula": "1150424552",
+            "fecha": "2024-07-27",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:34,28"
+        },
+        {
+            "id": 6633,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:35,18"
+        },
+        {
+            "id": 6634,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:24,20"
+        },
+        {
+            "id": 6635,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:02:13,99"
+        },
+        {
+            "id": 6636,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:57,60"
+        },
+        {
+            "id": 6637,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:43,11"
+        },
+        {
+            "id": 6638,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:33,28"
+        },
+        {
+            "id": 6639,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:02:24,65"
+        },
+        {
+            "id": 6640,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "PR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:03:14,82"
+        },
+        {
+            "id": 6645,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:40,35"
+        },
+        {
+            "id": 6646,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:35,01"
+        },
+        {
+            "id": 6647,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:02:27,92"
+        },
+        {
+            "id": 6648,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:03:21,69"
+        },
+        {
+            "id": 6653,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "25 Metros",
+            "tiempo": "00:00:28,28"
+        },
+        {
+            "id": 6654,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "50 Metros",
+            "tiempo": "00:01:00,52"
+        },
+        {
+            "id": 6655,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "75 Metros",
+            "tiempo": "00:01:35,01"
+        },
+        {
+            "id": 6656,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "BR_L",
+            "metros": "100 Metros",
+            "tiempo": "00:02:09,03"
+        },
+        {
+            "id": 6657,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:26,52"
+        },
+        {
+            "id": 6658,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:55,02"
+        },
+        {
+            "id": 6659,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:28,55"
+        },
+        {
+            "id": 6660,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:02:02,36"
+        },
+        {
+            "id": 6661,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:33,34"
+        },
+        {
+            "id": 6662,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:39,45"
+        },
+        {
+            "id": 6663,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:02:29,03"
+        },
+        {
+            "id": 6664,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:03:17,25"
+        },
+        {
+            "id": 6665,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:30,99"
+        },
+        {
+            "id": 6666,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:01:08,56"
+        },
+        {
+            "id": 6667,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:48,86"
+        },
+        {
+            "id": 6668,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:02:25,30"
+        },
+        {
+            "id": 6669,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:44,52"
+        },
+        {
+            "id": 6670,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:01:37,04"
+        },
+        {
+            "id": 6671,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:02:36,99"
+        },
+        {
+            "id": 6672,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:03:18,63"
+        },
+        {
+            "id": 6673,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:18,71"
+        },
+        {
+            "id": 6674,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:41,67"
+        },
+        {
+            "id": 6675,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:15,88"
+        },
+        {
+            "id": 6676,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:30,70"
+        },
+        {
+            "id": 6678,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:37,35"
+        },
+        {
+            "id": 6679,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:01:03,78"
+        },
+        {
+            "id": 6680,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,43"
+        },
+        {
+            "id": 6681,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,30"
+        },
+        {
+            "id": 6682,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:08,71"
+        },
+        {
+            "id": 6683,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:30,77"
+        },
+        {
+            "id": 6684,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:47,68"
+        },
+        {
+            "id": 6685,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:01:04,27"
+        },
+        {
+            "id": 6686,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,83"
+        },
+        {
+            "id": 6687,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:48,77"
+        },
+        {
+            "id": 6688,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:16,38"
+        },
+        {
+            "id": 6689,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:44,76"
+        },
+        {
+            "id": 6690,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,75"
+        },
+        {
+            "id": 6691,
+            "cedula": "1104662598",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:07,34"
+        },
+        {
+            "id": 6692,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,60"
+        },
+        {
+            "id": 6693,
+            "cedula": "1105990764",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:51,62"
+        },
+        {
+            "id": 6694,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:18,30"
+        },
+        {
+            "id": 6695,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:39,92"
+        },
+        {
+            "id": 6696,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:02,83"
+        },
+        {
+            "id": 6697,
+            "cedula": "1150130894",
+            "fecha": "2024-09-18",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:23,57"
+        },
+        {
+            "id": 6698,
+            "cedula": "1105990764",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:29,21"
+        },
+        {
+            "id": 6699,
+            "cedula": "1105990764",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:01,63"
+        },
+        {
+            "id": 6700,
+            "cedula": "1105990764",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:01:39,96"
+        },
+        {
+            "id": 6701,
+            "cedula": "1105990764",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:02:14,35"
+        },
+        {
+            "id": 6702,
+            "cedula": "1104662598",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:32,49"
+        },
+        {
+            "id": 6703,
+            "cedula": "1104662598",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:01:16,66"
+        },
+        {
+            "id": 6704,
+            "cedula": "1104662598",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:02:06,76"
+        },
+        {
+            "id": 6705,
+            "cedula": "1104662598",
+            "fecha": "2024-09-19",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:02:49,65"
+        },
+        {
+            "id": 6706,
+            "cedula": "1150424552",
+            "fecha": "2024-09-20",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:34,58"
+        },
+        {
+            "id": 6707,
+            "cedula": "1150130894",
+            "fecha": "2024-09-20",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:31,14"
+        },
+        {
+            "id": 6708,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:16,50"
+        },
+        {
+            "id": 6709,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:34,31"
+        },
+        {
+            "id": 6710,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:00:55,04"
+        },
+        {
+            "id": 6711,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:17,28"
+        },
+        {
+            "id": 6712,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:17,37"
+        },
+        {
+            "id": 6713,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:36,59"
+        },
+        {
+            "id": 6714,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:00:57,34"
+        },
+        {
+            "id": 6715,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:16,00"
+        },
+        {
+            "id": 6716,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "25 Metros",
+            "tiempo": "00:00:16,89"
+        },
+        {
+            "id": 6717,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:36,23"
+        },
+        {
+            "id": 6718,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "75 Metros",
+            "tiempo": "00:00:57,64"
+        },
+        {
+            "id": 6719,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "100 Metros",
+            "tiempo": "00:01:18,65"
+        },
+        {
+            "id": 6720,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,59"
+        },
+        {
+            "id": 6721,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:48,27"
+        },
+        {
+            "id": 6722,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:15,45"
+        },
+        {
+            "id": 6723,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:44,56"
+        },
+        {
+            "id": 6724,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,95"
+        },
+        {
+            "id": 6725,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:52,25"
+        },
+        {
+            "id": 6726,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:25,81"
+        },
+        {
+            "id": 6727,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:02:01,34"
+        },
+        {
+            "id": 6728,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "25 Metros",
+            "tiempo": "00:00:23,20"
+        },
+        {
+            "id": 6729,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,77"
+        },
+        {
+            "id": 6730,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "75 Metros",
+            "tiempo": "00:01:14,14"
+        },
+        {
+            "id": 6731,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Pecho",
+            "metros": "100 Metros",
+            "tiempo": "00:01:40,51"
+        },
+        {
+            "id": 6732,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,99"
+        },
+        {
+            "id": 6733,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:51,20"
+        },
+        {
+            "id": 6734,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:27,96"
+        },
+        {
+            "id": 6735,
+            "cedula": "1150265120",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:02:08,03"
+        },
+        {
+            "id": 6736,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:18,65"
+        },
+        {
+            "id": 6737,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:41,85"
+        },
+        {
+            "id": 6738,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:08,31"
+        },
+        {
+            "id": 6739,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:34,81"
+        },
+        {
+            "id": 6740,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "25 Metros",
+            "tiempo": "00:00:20,56"
+        },
+        {
+            "id": 6741,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "50 Metros",
+            "tiempo": "00:00:46,87"
+        },
+        {
+            "id": 6742,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "75 Metros",
+            "tiempo": "00:01:15,89"
+        },
+        {
+            "id": 6743,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Mariposa",
+            "metros": "100 Metros",
+            "tiempo": "00:01:45,24"
+        },
+        {
+            "id": 6744,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:22,47"
+        },
+        {
+            "id": 6745,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:47,22"
+        },
+        {
+            "id": 6746,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:13,15"
+        },
+        {
+            "id": 6747,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:37,78"
+        },
+        {
+            "id": 6748,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "25 Metros",
+            "tiempo": "00:00:21,24"
+        },
+        {
+            "id": 6749,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "50 Metros",
+            "tiempo": "00:00:44,44"
+        },
+        {
+            "id": 6750,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "75 Metros",
+            "tiempo": "00:01:07,86"
+        },
+        {
+            "id": 6751,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Espalda",
+            "metros": "100 Metros",
+            "tiempo": "00:01:31,22"
+        },
+        {
+            "id": 6752,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:37,71"
+        },
+        {
+            "id": 6753,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "CI",
+            "metros": "100 Metros",
+            "tiempo": "00:01:33,79"
+        },
+        {
+            "id": 6754,
+            "cedula": "1150424552",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:36,03"
+        },
+        {
+            "id": 6755,
+            "cedula": "1150130894",
+            "fecha": "2024-09-25",
+            "prueba": "Libre",
+            "metros": "50 Metros",
+            "tiempo": "00:00:37,81"
         }
     ],
     "cuenta": [
@@ -50587,6 +55573,20 @@
             "rol": 3,
             "idUsuario": 4,
             "username": "1150442463",
+            "password": "$2y$10$SOIUaf5K6OYnv4f5st5v2OvlZBLn5g2jTeXB3Z\/AdDdrWY\/.ShuFu"
+        },
+        {
+            "id": 5,
+            "rol": 3,
+            "idUsuario": 5,
+            "username": "1106120916",
+            "password": "$2y$10$SOIUaf5K6OYnv4f5st5v2OvlZBLn5g2jTeXB3Z\/AdDdrWY\/.ShuFu"
+        },
+        {
+            "id": 6,
+            "rol": 3,
+            "idUsuario": 6,
+            "username": "1150265120",
             "password": "$2y$10$SOIUaf5K6OYnv4f5st5v2OvlZBLn5g2jTeXB3Z\/AdDdrWY\/.ShuFu"
         }
     ],
@@ -50639,6 +55639,16 @@
             "primer_apellido": "Narvaez",
             "segundo_apellido": "Torres",
             "fecha_nacimiento": "2012-08-30",
+            "genero": "M"
+        },
+        {
+            "id": 6,
+            "cedula": 1150265120,
+            "primer_nombre": "Jose",
+            "segundo_nombre": "Luis",
+            "primer_apellido": "Quezada",
+            "segundo_apellido": "Castillo",
+            "fecha_nacimiento": "2008-12-25",
             "genero": "M"
         }
     ],
@@ -64584,5 +69594,6 @@
             "nombre": "SEGUNDO CAMPEONATO COPA CIUDAD DE CARIAMANGA",
             "fecha": "2023-10-28"
         }
-    ]
+    ],
+    "logs": []
 }
