@@ -1,0 +1,2422 @@
+{
+  "Roles": [
+    {
+      "id": 1,
+      "name": "Programador"
+    }
+  ],
+  "Users": [
+    {
+      "id": 1,
+      "ci": "1104661598",
+      "firstName": "Edgar",
+      "secondName": "Patricio",
+      "firstLastName": "Torres",
+      "secondLastName": "Condolo",
+      "birthday": "2000-07-05",
+      "gender": "M",
+      "photo": "userPhotoProfileId1.jpg"
+    }
+  ],
+  "Account": [
+    {
+      "id": 1,
+      "username": "1104661598",
+      "password": "$2b$10$/zTVaMzSX4IN7IZwHMT6N.65kCTb5srVCQBRzCZg9MYAJS9mAxD8.",
+      "userId": 1,
+      "rolId": 1
+    }
+  ],
+  "Quizzes": [
+    {
+      "id": 1,
+      "title": "Preguntas Policia Estudios Sociales",
+      "description": "240 Preguntas 2024 Estudios Solaciales para el proceso Policia"
+    }
+  ],
+  "Questions": [
+    {
+      "id": 1,
+      "quizId": 1,
+      "text": " El petróleo ha sido un recurso clave en la economía de las potencias mundiales desde el siglo XIX. "
+    },
+    {
+      "id": 2,
+      "quizId": 1,
+      "text": " La Revolución Francesa fue inspirada por los ideales de la Ilustración, como la libertad y la igualdad. "
+    },
+    {
+      "id": 3,
+      "quizId": 1,
+      "text": " El río Guayas es el principal sistema fluvial de la región Sierra. "
+    },
+    {
+      "id": 4,
+      "quizId": 1,
+      "text": " El Ecuador formó parte de la Gran Colombia hasta 1830. "
+    },
+    {
+      "id": 5,
+      "quizId": 1,
+      "text": " La Gran Depresión de 1929 afectó únicamente a Estados Unidos, dejando intactas las economías de otros países. "
+    },
+    {
+      "id": 6,
+      "quizId": 1,
+      "text": " Durante la presidencia de Jaime Roldós, se aprobó la primera constitución democrática del Ecuador. "
+    },
+    {
+      "id": 7,
+      "quizId": 1,
+      "text": " La región amazónica de Ecuador alberga más del 50% de la biodiversidad del país. "
+    },
+    {
+      "id": 8,
+      "quizId": 1,
+      "text": " La Declaración Universal de los Derechos Humanos fue adoptada en 1938 por las Naciones Unidas. "
+    },
+    {
+      "id": 9,
+      "quizId": 1,
+      "text": " El sistema judicial de Ecuador permite la reelección indefinida del Presidente. "
+    },
+    {
+      "id": 10,
+      "quizId": 1,
+      "text": " La biodiversidad de la Amazonía ecuatoriana se debe en gran parte a su proximidad con la Cordillera de los Andes. "
+    },
+    {
+      "id": 11,
+      "quizId": 1,
+      "text": " El feriado bancario fue causado por la caída de los precios del petróleo exclusivamente. "
+    },
+    {
+      "id": 12,
+      "quizId": 1,
+      "text": " El Tratado de Río de Janeiro, firmado en 1942, resolvió definitivamente los conflictos territoriales entre Ecuador y Perú. "
+    },
+    {
+      "id": 13,
+      "quizId": 1,
+      "text": " La Revolución Neolítica marcó el paso de las sociedades nómadas a las sedentarias, gracias al desarrollo de la agricultura. "
+    },
+    {
+      "id": 14,
+      "quizId": 1,
+      "text": " Las civilizaciones de la India antigua se desarrollaron alrededor del río Amarillo y el Yangtsé. "
+    },
+    {
+      "id": 15,
+      "quizId": 1,
+      "text": " La civilización china es conocida por inventos como la pólvora, la brújula y el papel. "
+    },
+    {
+      "id": 16,
+      "quizId": 1,
+      "text": " El feudalismo europeo se basaba en relaciones de vasallaje entre señores y campesinos. "
+    },
+    {
+      "id": 17,
+      "quizId": 1,
+      "text": " La independencia de Ecuador se consolidó con la Batalla de Tarqui el 24 de mayo de 1822. "
+    },
+    {
+      "id": 18,
+      "quizId": 1,
+      "text": " El primer presidente de la República del Ecuador fue Vicente Rocafuerte. "
+    },
+    {
+      "id": 19,
+      "quizId": 1,
+      "text": " La Constitución de 1945 fue conocida como \"La Carta de Montecristi\". "
+    },
+    {
+      "id": 20,
+      "quizId": 1,
+      "text": " La economía del Ecuador durante el siglo XIX dependía principalmente de la exportación de petróleo. "
+    },
+    {
+      "id": 21,
+      "quizId": 1,
+      "text": " Los incas utilizaron un sistema de escritura similar al alfabeto romano. "
+    },
+    {
+      "id": 22,
+      "quizId": 1,
+      "text": " La cultura Olmeca es conocida como la madre de las culturas mesoamericanas. "
+    },
+    {
+      "id": 23,
+      "quizId": 1,
+      "text": " La Gran Depresión de 1929 afectó únicamente a Estados Unidos. "
+    },
+    {
+      "id": 24,
+      "quizId": 1,
+      "text": " Simón Bolívar es conocido como el Libertador de Sudamérica. "
+    },
+    {
+      "id": 25,
+      "quizId": 1,
+      "text": " La Primera Guerra Mundial comenzó en 1914. "
+    },
+    {
+      "id": 26,
+      "quizId": 1,
+      "text": " Los mayas utilizaban un sistema de numeración basado en el número 20. "
+    },
+    {
+      "id": 27,
+      "quizId": 1,
+      "text": " La independencia del Ecuador se consolidó en 1830. "
+    },
+    {
+      "id": 28,
+      "quizId": 1,
+      "text": " El Renacimiento fue un movimiento cultural que se originó en Italia. "
+    },
+    {
+      "id": 29,
+      "quizId": 1,
+      "text": " El Tratado de Tordesillas dividió América entre España y Francia. "
+    },
+    {
+      "id": 30,
+      "quizId": 1,
+      "text": " El Imperio Romano alcanzó su máxima expansión durante la Edad Media. "
+    },
+    {
+      "id": 31,
+      "quizId": 1,
+      "text": " El cacao fino de aroma, una de las principales exportaciones de Ecuador, es considerado patrimonio cultural y económico del país debido a su calidad mundialmente reconocida. "
+    },
+    {
+      "id": 32,
+      "quizId": 1,
+      "text": " La cultura egipcia destacó por el uso de jeroglíficos. "
+    },
+    {
+      "id": 33,
+      "quizId": 1,
+      "text": " La Revolución Industrial tuvo su origen en Francia. "
+    },
+    {
+      "id": 34,
+      "quizId": 1,
+      "text": " El mestizaje en América fue una consecuencia de la colonización española. "
+    },
+    {
+      "id": 35,
+      "quizId": 1,
+      "text": " La Revolución Liberal en Ecuador fue liderada por Eloy Alfaro en 1895. "
+    },
+    {
+      "id": 36,
+      "quizId": 1,
+      "text": " La Guerra del Cenepa entre Ecuador y Perú ocurrió en 1941. "
+    },
+    {
+      "id": 37,
+      "quizId": 1,
+      "text": " La Constitución de 2008 reconoció los derechos de la naturaleza en Ecuador. "
+    },
+    {
+      "id": 38,
+      "quizId": 1,
+      "text": " La dolarización de la economía ecuatoriana se implementó en el año 1998. "
+    },
+    {
+      "id": 39,
+      "quizId": 1,
+      "text": " El Tratado de Río de Janeiro fue firmado para resolver el conflicto limítrofe entre Ecuador y Perú. "
+    },
+    {
+      "id": 40,
+      "quizId": 1,
+      "text": " La guerra de 1932 entre fuerzas liberales y rebeldes conservadores en Ecuador se conoce como la Guerra de los Cuatro Días. "
+    },
+    {
+      "id": 41,
+      "quizId": 1,
+      "text": " El petróleo es la principal fuente de ingresos económicos en la historia reciente de Ecuador. "
+    },
+    {
+      "id": 42,
+      "quizId": 1,
+      "text": " La civilización Quitu-Cara se estableció en la región de la Sierra ecuatoriana. "
+    },
+    {
+      "id": 43,
+      "quizId": 1,
+      "text": " La cultura Jama-Coaque desarrolló un sistema avanzado de irrigación en la sierra ecuatoriana. "
+    },
+    {
+      "id": 44,
+      "quizId": 1,
+      "text": " El movimiento indígena en Ecuador cobró fuerza política con la creación de la CONAIE en 1986. "
+    },
+    {
+      "id": 45,
+      "quizId": 1,
+      "text": " El volcán Cotopaxi es uno de los volcanes más activos del mundo. "
+    },
+    {
+      "id": 46,
+      "quizId": 1,
+      "text": " La Batalla de Tarqui en 1829 consolidó la independencia de Ecuador. "
+    },
+    {
+      "id": 47,
+      "quizId": 1,
+      "text": " El cacao fue conocido como el “oro verde” durante el auge exportador de Ecuador en el siglo XIX. "
+    },
+    {
+      "id": 48,
+      "quizId": 1,
+      "text": " Las Islas Galápagos fueron declaradas Patrimonio Natural de la Humanidad en 1978. "
+    },
+    {
+      "id": 49,
+      "quizId": 1,
+      "text": " La Revolución Ciudadana introdujo la noción de Buen Vivir (Sumak Kawsay) en la política ecuatoriana. "
+    },
+    {
+      "id": 50,
+      "quizId": 1,
+      "text": " La región amazónica del Ecuador contiene una de las mayores biodiversidades del mundo. "
+    },
+    {
+      "id": 51,
+      "quizId": 1,
+      "text": " La explotación petrolera en el Parque Nacional Yasuní comenzó en la década de 1990. "
+    },
+    {
+      "id": 52,
+      "quizId": 1,
+      "text": " Jaime Roldós Aguilera fue el presidente de Ecuador, y su mandato (1979-1981) marcó el retorno a la democracia tras varios años de dictaduras militares. "
+    },
+    {
+      "id": 53,
+      "quizId": 1,
+      "text": " La Guerra de Independencia del Ecuador finalizó con la Batalla de Pichincha en 1822. "
+    },
+    {
+      "id": 54,
+      "quizId": 1,
+      "text": " La crisis bancaria de 1999 provocó una migración masiva de ecuatorianos hacia el continente asiático. "
+    },
+    {
+      "id": 55,
+      "quizId": 1,
+      "text": " La cultura Tolita destacó por la producción de objetos de oro y cerámica. "
+    },
+    {
+      "id": 56,
+      "quizId": 1,
+      "text": " La Revolución Liberal liderada por Eloy Alfaro en 1895 consolidó la separación entre Iglesia y Estado en Ecuador y promovió la educación pública laica. "
+    },
+    {
+      "id": 57,
+      "quizId": 1,
+      "text": " La ciudad de Guayaquil fue fundada en 1534 por Sebastián de Benalcázar. "
+    },
+    {
+      "id": 58,
+      "quizId": 1,
+      "text": " La Constitución de 1978 en Ecuador estableció el voto obligatorio para las mujeres. "
+    },
+    {
+      "id": 59,
+      "quizId": 1,
+      "text": " La provincia de Galápagos, creada en 1973 enfrenta problemas de manejo de residuos debido al turismo masivo. "
+    },
+    {
+      "id": 60,
+      "quizId": 1,
+      "text": " La Sierra ecuatoriana fue el principal centro político y cultural del Imperio Inca en Ecuador. "
+    },
+    {
+      "id": 61,
+      "quizId": 1,
+      "text": " El Monumento a la Independencia, ubicado en Guayaquil, celebra la firma del Acta de Independencia de la ciudad en 1820. "
+    },
+    {
+      "id": 62,
+      "quizId": 1,
+      "text": " La dolarización fue adoptada como política económica para combatir la hiperinflación. "
+    },
+    {
+      "id": 63,
+      "quizId": 1,
+      "text": " Las Islas Galápagos deben su nombre a los caballos que se llevaron durante la colonización. "
+    },
+    {
+      "id": 64,
+      "quizId": 1,
+      "text": " La Amazonía ecuatoriana es conocida como la región menos poblada del país. "
+    },
+    {
+      "id": 65,
+      "quizId": 1,
+      "text": " La primera Asamblea Nacional del Ecuador se llevó a cabo en 1830. "
+    },
+    {
+      "id": 66,
+      "quizId": 1,
+      "text": " El conflicto entre Ecuador y Perú terminó con un acuerdo definitivo en 1998. "
+    },
+    {
+      "id": 67,
+      "quizId": 1,
+      "text": " La población afro ecuatoriana es mayoritaria en la provincia de Esmeraldas. "
+    },
+    {
+      "id": 68,
+      "quizId": 1,
+      "text": " La cultura Chorrera desarrolló el comercio marítimo en Ecuador. "
+    },
+    {
+      "id": 69,
+      "quizId": 1,
+      "text": " Quito fue declarada Patrimonio Cultural de la Humanidad en 1978 por la UNESCO. "
+    },
+    {
+      "id": 70,
+      "quizId": 1,
+      "text": " La Revolución Industrial comenzó en Inglaterra en el siglo XVIII. "
+    },
+    {
+      "id": 71,
+      "quizId": 1,
+      "text": " La Declaración de Independencia de los Estados Unidos fue firmada en 1776.  "
+    },
+    {
+      "id": 72,
+      "quizId": 1,
+      "text": " El Parque Nacional Yasuní, declarado Reserva de la Biosfera por la UNESCO, enfrenta amenazas constantes debido a la explotación petrolera en su territorio.  "
+    },
+    {
+      "id": 73,
+      "quizId": 1,
+      "text": " La Gran Muralla China fue construida durante la dinastía Ming.  "
+    },
+    {
+      "id": 74,
+      "quizId": 1,
+      "text": " Durante la colonización española, Quito se convirtió en un importante centro administrativo y económico del Virreinato del Perú antes de formar parte del Virreinato de la Nueva Granada.  "
+    },
+    {
+      "id": 75,
+      "quizId": 1,
+      "text": " La Primera Guerra Mundial finalizó en 1918 con el Tratado de Versalles.  "
+    },
+    {
+      "id": 76,
+      "quizId": 1,
+      "text": " La Revolución Francesa inició en 1789.  "
+    },
+    {
+      "id": 77,
+      "quizId": 1,
+      "text": " La caída de Constantinopla en 1453 marcó el fin de la Edad Media.  "
+    },
+    {
+      "id": 78,
+      "quizId": 1,
+      "text": " La Guerra Fría fue un conflicto armado directo entre Estados Unidos y la Unión Soviética.  "
+    },
+    {
+      "id": 79,
+      "quizId": 1,
+      "text": " La Revolución Rusa de 1917 resultó en la creación de la Unión Soviética.  "
+    },
+    {
+      "id": 80,
+      "quizId": 1,
+      "text": " La independencia de la India del dominio británico se logró en 1947.  "
+    },
+    {
+      "id": 81,
+      "quizId": 1,
+      "text": " La Guerra de los Cien Años fue un conflicto entre Francia e Inglaterra que duró exactamente 100 años.  "
+    },
+    {
+      "id": 82,
+      "quizId": 1,
+      "text": " La cultura Valdivia, una de las más antiguas de América, es conocida por sus figurillas femeninas de cerámica.  "
+    },
+    {
+      "id": 83,
+      "quizId": 1,
+      "text": " La Declaración Universal de los Derechos Humanos fue adoptada por la ONU en 1948.  "
+    },
+    {
+      "id": 84,
+      "quizId": 1,
+      "text": " La Revolución Cubana culminó con la llegada al poder de Fidel Castro en 1959.  "
+    },
+    {
+      "id": 85,
+      "quizId": 1,
+      "text": " La caída del Muro de Berlín ocurrió en 1989, simbolizando el fin de la Guerra Fría.  "
+    },
+    {
+      "id": 86,
+      "quizId": 1,
+      "text": " José María Velasco Ibarra es conocido como el presidente que ocupó el cargo cinco veces, pero fue destituido o derrocado en cuatro de sus mandatos debido a conflictos con el Congreso y el ejército.  "
+    },
+    {
+      "id": 87,
+      "quizId": 1,
+      "text": " La independencia de las colonias africanas ocurrió principalmente en la década de los 90.  "
+    },
+    {
+      "id": 88,
+      "quizId": 1,
+      "text": " La Guerra de Vietnam concluyó en 1975 con la victoria del Norte comunista.  "
+    },
+    {
+      "id": 89,
+      "quizId": 1,
+      "text": " El proceso de dolarización en Ecuador, que inició en el año 2000, eliminó de forma inmediata la inflación y solucionó todos los problemas económicos del país.  "
+    },
+    {
+      "id": 90,
+      "quizId": 1,
+      "text": " La Revolución Iraní de 1979 resultó en el establecimiento de una república islámica.  "
+    },
+    {
+      "id": 91,
+      "quizId": 1,
+      "text": " La Primavera Árabe fue una serie de protestas y levantamientos en el mundo árabe que comenzaron en 2010.  "
+    },
+    {
+      "id": 92,
+      "quizId": 1,
+      "text": " La Guerra del Golfo de 1991 fue una respuesta a la invasión de Kuwait por parte de Irak.  "
+    },
+    {
+      "id": 93,
+      "quizId": 1,
+      "text": " La ciudad de Quito fue fundada por los españoles el 6 de diciembre de 1534.  "
+    },
+    {
+      "id": 94,
+      "quizId": 1,
+      "text": " Eloy Alfaro Delgado, conocido como el \"Viejo Leñador\", se opuso a la construcción del ferrocarril transandino.  "
+    },
+    {
+      "id": 95,
+      "quizId": 1,
+      "text": " La Real Audiencia de Quito fue creada como parte del Virreinato del Perú en 1563.  "
+    },
+    {
+      "id": 96,
+      "quizId": 1,
+      "text": " La cultura Valdivia se asentó únicamente en la región de la Amazonía ecuatoriana.  "
+    },
+    {
+      "id": 97,
+      "quizId": 1,
+      "text": " El ferrocarril fue inaugurado oficialmente durante la presidencia de Eloy Alfaro.  "
+    },
+    {
+      "id": 98,
+      "quizId": 1,
+      "text": " La independencia de Guayaquil fue declarada el 24 de mayo de 1822.  "
+    },
+    {
+      "id": 99,
+      "quizId": 1,
+      "text": " Las Islas Galápagos fueron anexadas al territorio ecuatoriano en 1832.  "
+    },
+    {
+      "id": 100,
+      "quizId": 1,
+      "text": " La Batalla de Pichincha ocurrió en las faldas del volcán Chimborazo.  "
+    },
+    {
+      "id": 101,
+      "quizId": 1,
+      "text": " La Constitución de 1830 fue la primera carta magna del Ecuador independiente.  "
+    },
+    {
+      "id": 102,
+      "quizId": 1,
+      "text": " La cultura Quitu-Cara construyó grandes centros ceremoniales en la actual ciudad de Quito.  "
+    },
+    {
+      "id": 103,
+      "quizId": 1,
+      "text": " El cacao fue el principal producto de exportación de Ecuador durante el siglo XIX.  "
+    },
+    {
+      "id": 104,
+      "quizId": 1,
+      "text": " La cultura Manteña fue la primera en utilizar grandes balsas para el comercio marítimo.  "
+    },
+    {
+      "id": 105,
+      "quizId": 1,
+      "text": " La Revolución de Quito en 1809 fue el primer intento de independencia en América Latina.  "
+    },
+    {
+      "id": 106,
+      "quizId": 1,
+      "text": " La cultura Jama-Coaque es conocida por sus sofisticados sistemas de irrigación.  "
+    },
+    {
+      "id": 107,
+      "quizId": 1,
+      "text": " El feriado bancario de 1999, conocido como la crisis financiera más grave de Ecuador, resultó en la migración masiva de ecuatorianos hacia Estados Unidos y Europa, especialmente España.  "
+    },
+    {
+      "id": 108,
+      "quizId": 1,
+      "text": " El volcán Tungurahua es el más alto de Ecuador.  "
+    },
+    {
+      "id": 109,
+      "quizId": 1,
+      "text": " La ciudad de Cuenca fue un importante asentamiento inca conocido como Tomebamba.  "
+    },
+    {
+      "id": 110,
+      "quizId": 1,
+      "text": " La lengua quichua se introdujo en Ecuador durante la época colonial.  "
+    },
+    {
+      "id": 111,
+      "quizId": 1,
+      "text": " La Guerra del Cenepa entre Ecuador y Perú ocurrió en 1995.  "
+    },
+    {
+      "id": 112,
+      "quizId": 1,
+      "text": " El Tratado de Paz entre Ecuador y Perú, firmado en 1998, marcó el fin de una serie de conflictos fronterizos que se habían prolongado por más de un siglo.  "
+    },
+    {
+      "id": 113,
+      "quizId": 1,
+      "text": " El Parque Nacional Yasuní es una de las áreas con mayor biodiversidad del planeta.  "
+    },
+    {
+      "id": 114,
+      "quizId": 1,
+      "text": " Las Islas Galápagos, declaradas Patrimonio Natural de la Humanidad en 1978, son conocidas por haber inspirado a Charles Darwin en el desarrollo de su teoría de la evolución.  "
+    },
+    {
+      "id": 115,
+      "quizId": 1,
+      "text": " La cultura Tolita destacó por su trabajo en cerámica y orfebrería.  "
+    },
+    {
+      "id": 116,
+      "quizId": 1,
+      "text": " En el periodo presidencial de Galo Plaza Lasso (1948-1952), se impulsaron importantes reformas agrarias y se promovió el desarrollo del sector exportador, especialmente en el ámbito del cacao.  "
+    },
+    {
+      "id": 117,
+      "quizId": 1,
+      "text": " El primer ferrocarril en Ecuador conectaba las ciudades de Quito y Cuenca.  "
+    },
+    {
+      "id": 118,
+      "quizId": 1,
+      "text": " La caída de Constantinopla en 1453 marcó el fin del Imperio Bizantino.  "
+    },
+    {
+      "id": 119,
+      "quizId": 1,
+      "text": " La Primera Guerra Mundial comenzó en 1914 tras el asesinato del archiduque Francisco Fernando.  "
+    },
+    {
+      "id": 120,
+      "quizId": 1,
+      "text": " El Inti Raymi, una festividad tradicional andina, celebra el solsticio de invierno y está relacionada con las tradiciones agrícolas de las comunidades indígenas de la Sierra ecuatoriana.  "
+    },
+    {
+      "id": 121,
+      "quizId": 1,
+      "text": " La Segunda Guerra Mundial terminó con la rendición de Alemania en 1945.  "
+    },
+    {
+      "id": 122,
+      "quizId": 1,
+      "text": " La Declaración de Independencia de Estados Unidos fue firmada en 1876.  "
+    },
+    {
+      "id": 123,
+      "quizId": 1,
+      "text": " La Revolución Industrial comenzó en el siglo XX.  "
+    },
+    {
+      "id": 124,
+      "quizId": 1,
+      "text": " El Renacimiento tuvo su origen en Francia durante el siglo XV.  "
+    },
+    {
+      "id": 125,
+      "quizId": 1,
+      "text": " La Guerra de los Cien Años fue un conflicto entre Inglaterra y Francia que duró 116 años.  "
+    },
+    {
+      "id": 126,
+      "quizId": 1,
+      "text": " La Peste Negra del siglo XIV mató aproximadamente a un tercio de la población europea.  "
+    },
+    {
+      "id": 127,
+      "quizId": 1,
+      "text": " Carlos Julio Arosemena Monroy fue presidente del Ecuador entre 1986 y enfrentó su destitución debido a conflictos con las Fuerzas Armadas, quienes lo acusaron de estar alineado con ideas comunistas.  "
+    },
+    {
+      "id": 128,
+      "quizId": 1,
+      "text": " La Declaración Universal de los Derechos Humanos fue adoptada por la ONU en 1945.  "
+    },
+    {
+      "id": 129,
+      "quizId": 1,
+      "text": " La caída del Muro de Berlín en 1989 simbolizó el fin de la Guerra Fría.  "
+    },
+    {
+      "id": 130,
+      "quizId": 1,
+      "text": " La Gran Depresión comenzó en 1929 con el colapso de la Bolsa de Nueva York.  "
+    },
+    {
+      "id": 131,
+      "quizId": 1,
+      "text": " Durante el primer periodo presidencial de Juan José Flores (1830-1834), se enfrentaron numerosos conflictos internos y externos que consolidaron las bases del nuevo Estado ecuatoriano, incluida la primera Constitución de la República.  "
+    },
+    {
+      "id": 132,
+      "quizId": 1,
+      "text": " La Revolución Francesa dio lugar al establecimiento de una monarquía absoluta en Francia.  "
+    },
+    {
+      "id": 133,
+      "quizId": 1,
+      "text": " La Real Audiencia de Quito fue parte del Virreinato de Nueva Granada antes de la independencia.  "
+    },
+    {
+      "id": 134,
+      "quizId": 1,
+      "text": " La independencia de Cuenca se declaró el 3 de noviembre de 1820.  "
+    },
+    {
+      "id": 135,
+      "quizId": 1,
+      "text": " El cacao fue conocido como “oro negro” durante el auge exportador de Ecuador en el siglo XIX.  "
+    },
+    {
+      "id": 136,
+      "quizId": 1,
+      "text": " La ciudad de Guayaquil fue fundada por Sebastián de Benalcázar.  "
+    },
+    {
+      "id": 137,
+      "quizId": 1,
+      "text": " Las Islas Galápagos se conocían originalmente como “Encantadas” debido a su biodiversidad.  "
+    },
+    {
+      "id": 138,
+      "quizId": 1,
+      "text": " La Revolución de Octubre de 1925 fue un movimiento social impulsado por la crisis económica.  "
+    },
+    {
+      "id": 139,
+      "quizId": 1,
+      "text": " El volcán Reventador está ubicado en la región de la Sierra ecuatoriana.  "
+    },
+    {
+      "id": 140,
+      "quizId": 1,
+      "text": " La cultura Panzaleo se desarrolló principalmente en la región central de la Sierra.  "
+    }
+  ],
+  "Options": [
+    {
+      "id": 1,
+      "questionId": 1,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 2,
+      "questionId": 1,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 3,
+      "questionId": 2,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 4,
+      "questionId": 2,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 5,
+      "questionId": 3,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 6,
+      "questionId": 3,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 7,
+      "questionId": 4,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 8,
+      "questionId": 4,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 9,
+      "questionId": 5,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 10,
+      "questionId": 5,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 11,
+      "questionId": 6,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 12,
+      "questionId": 6,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 13,
+      "questionId": 7,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 14,
+      "questionId": 7,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 15,
+      "questionId": 8,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 16,
+      "questionId": 8,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 17,
+      "questionId": 9,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 18,
+      "questionId": 9,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 19,
+      "questionId": 10,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 20,
+      "questionId": 10,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 21,
+      "questionId": 11,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 22,
+      "questionId": 11,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 23,
+      "questionId": 12,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 24,
+      "questionId": 12,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 25,
+      "questionId": 13,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 26,
+      "questionId": 13,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 27,
+      "questionId": 14,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 28,
+      "questionId": 14,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 29,
+      "questionId": 15,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 30,
+      "questionId": 15,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 31,
+      "questionId": 16,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 32,
+      "questionId": 16,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 33,
+      "questionId": 17,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 34,
+      "questionId": 17,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 35,
+      "questionId": 18,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 36,
+      "questionId": 18,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 37,
+      "questionId": 19,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 38,
+      "questionId": 19,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 39,
+      "questionId": 20,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 40,
+      "questionId": 20,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 41,
+      "questionId": 21,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 42,
+      "questionId": 21,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 43,
+      "questionId": 22,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 44,
+      "questionId": 22,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 45,
+      "questionId": 23,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 46,
+      "questionId": 23,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 47,
+      "questionId": 24,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 48,
+      "questionId": 24,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 49,
+      "questionId": 25,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 50,
+      "questionId": 25,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 51,
+      "questionId": 26,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 52,
+      "questionId": 26,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 53,
+      "questionId": 27,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 54,
+      "questionId": 27,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 55,
+      "questionId": 28,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 56,
+      "questionId": 28,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 57,
+      "questionId": 29,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 58,
+      "questionId": 29,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 59,
+      "questionId": 30,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 60,
+      "questionId": 30,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 61,
+      "questionId": 31,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 62,
+      "questionId": 31,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 63,
+      "questionId": 32,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 64,
+      "questionId": 32,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 65,
+      "questionId": 33,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 66,
+      "questionId": 33,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 67,
+      "questionId": 34,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 68,
+      "questionId": 34,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 69,
+      "questionId": 35,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 70,
+      "questionId": 35,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 71,
+      "questionId": 36,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 72,
+      "questionId": 36,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 73,
+      "questionId": 37,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 74,
+      "questionId": 37,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 75,
+      "questionId": 38,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 76,
+      "questionId": 38,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 77,
+      "questionId": 39,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 78,
+      "questionId": 39,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 79,
+      "questionId": 40,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 80,
+      "questionId": 40,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 81,
+      "questionId": 41,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 82,
+      "questionId": 41,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 83,
+      "questionId": 42,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 84,
+      "questionId": 42,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 85,
+      "questionId": 43,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 86,
+      "questionId": 43,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 87,
+      "questionId": 44,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 88,
+      "questionId": 44,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 89,
+      "questionId": 45,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 90,
+      "questionId": 45,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 91,
+      "questionId": 46,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 92,
+      "questionId": 46,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 93,
+      "questionId": 47,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 94,
+      "questionId": 47,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 95,
+      "questionId": 48,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 96,
+      "questionId": 48,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 97,
+      "questionId": 49,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 98,
+      "questionId": 49,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 99,
+      "questionId": 50,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 100,
+      "questionId": 50,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 101,
+      "questionId": 51,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 102,
+      "questionId": 51,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 103,
+      "questionId": 52,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 104,
+      "questionId": 52,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 105,
+      "questionId": 53,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 106,
+      "questionId": 53,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 107,
+      "questionId": 54,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 108,
+      "questionId": 54,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 109,
+      "questionId": 55,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 110,
+      "questionId": 55,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 111,
+      "questionId": 56,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 112,
+      "questionId": 56,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 113,
+      "questionId": 57,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 114,
+      "questionId": 57,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 115,
+      "questionId": 58,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 116,
+      "questionId": 58,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 117,
+      "questionId": 59,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 118,
+      "questionId": 59,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 119,
+      "questionId": 60,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 120,
+      "questionId": 60,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 121,
+      "questionId": 61,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 122,
+      "questionId": 61,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 123,
+      "questionId": 62,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 124,
+      "questionId": 62,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 125,
+      "questionId": 63,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 126,
+      "questionId": 63,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 127,
+      "questionId": 64,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 128,
+      "questionId": 64,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 129,
+      "questionId": 65,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 130,
+      "questionId": 65,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 131,
+      "questionId": 66,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 132,
+      "questionId": 66,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 133,
+      "questionId": 67,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 134,
+      "questionId": 67,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 135,
+      "questionId": 68,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 136,
+      "questionId": 68,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 137,
+      "questionId": 69,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 138,
+      "questionId": 69,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 139,
+      "questionId": 70,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 140,
+      "questionId": 70,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 141,
+      "questionId": 71,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 142,
+      "questionId": 71,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 143,
+      "questionId": 72,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 144,
+      "questionId": 72,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 145,
+      "questionId": 73,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 146,
+      "questionId": 73,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 147,
+      "questionId": 74,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 148,
+      "questionId": 74,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 149,
+      "questionId": 75,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 150,
+      "questionId": 75,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 151,
+      "questionId": 76,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 152,
+      "questionId": 76,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 153,
+      "questionId": 77,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 154,
+      "questionId": 77,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 155,
+      "questionId": 78,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 156,
+      "questionId": 78,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 157,
+      "questionId": 79,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 158,
+      "questionId": 79,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 159,
+      "questionId": 80,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 160,
+      "questionId": 80,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 161,
+      "questionId": 81,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 162,
+      "questionId": 81,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 163,
+      "questionId": 82,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 164,
+      "questionId": 82,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 165,
+      "questionId": 83,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 166,
+      "questionId": 83,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 167,
+      "questionId": 84,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 168,
+      "questionId": 84,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 169,
+      "questionId": 85,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 170,
+      "questionId": 85,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 171,
+      "questionId": 86,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 172,
+      "questionId": 86,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 173,
+      "questionId": 87,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 174,
+      "questionId": 87,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 175,
+      "questionId": 88,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 176,
+      "questionId": 88,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 177,
+      "questionId": 89,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 178,
+      "questionId": 89,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 179,
+      "questionId": 90,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 180,
+      "questionId": 90,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 181,
+      "questionId": 91,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 182,
+      "questionId": 91,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 183,
+      "questionId": 92,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 184,
+      "questionId": 92,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 185,
+      "questionId": 93,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 186,
+      "questionId": 93,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 187,
+      "questionId": 94,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 188,
+      "questionId": 94,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 189,
+      "questionId": 95,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 190,
+      "questionId": 95,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 191,
+      "questionId": 96,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 192,
+      "questionId": 96,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 193,
+      "questionId": 97,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 194,
+      "questionId": 97,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 195,
+      "questionId": 98,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 196,
+      "questionId": 98,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 197,
+      "questionId": 99,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 198,
+      "questionId": 99,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 199,
+      "questionId": 100,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 200,
+      "questionId": 100,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 201,
+      "questionId": 101,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 202,
+      "questionId": 101,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 203,
+      "questionId": 102,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 204,
+      "questionId": 102,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 205,
+      "questionId": 103,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 206,
+      "questionId": 103,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 207,
+      "questionId": 104,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 208,
+      "questionId": 104,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 209,
+      "questionId": 105,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 210,
+      "questionId": 105,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 211,
+      "questionId": 106,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 212,
+      "questionId": 106,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 213,
+      "questionId": 107,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 214,
+      "questionId": 107,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 215,
+      "questionId": 108,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 216,
+      "questionId": 108,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 217,
+      "questionId": 109,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 218,
+      "questionId": 109,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 219,
+      "questionId": 110,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 220,
+      "questionId": 110,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 221,
+      "questionId": 111,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 222,
+      "questionId": 111,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 223,
+      "questionId": 112,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 224,
+      "questionId": 112,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 225,
+      "questionId": 113,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 226,
+      "questionId": 113,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 227,
+      "questionId": 114,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 228,
+      "questionId": 114,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 229,
+      "questionId": 115,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 230,
+      "questionId": 115,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 231,
+      "questionId": 116,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 232,
+      "questionId": 116,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 233,
+      "questionId": 117,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 234,
+      "questionId": 117,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 235,
+      "questionId": 118,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 236,
+      "questionId": 118,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 237,
+      "questionId": 119,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 238,
+      "questionId": 119,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 239,
+      "questionId": 120,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 240,
+      "questionId": 120,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 241,
+      "questionId": 121,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 242,
+      "questionId": 121,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 243,
+      "questionId": 122,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 244,
+      "questionId": 122,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 245,
+      "questionId": 123,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 246,
+      "questionId": 123,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 247,
+      "questionId": 124,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 248,
+      "questionId": 124,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 249,
+      "questionId": 125,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 250,
+      "questionId": 125,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 251,
+      "questionId": 126,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 252,
+      "questionId": 126,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 253,
+      "questionId": 127,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 254,
+      "questionId": 127,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 255,
+      "questionId": 128,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 256,
+      "questionId": 128,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 257,
+      "questionId": 129,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 258,
+      "questionId": 129,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 259,
+      "questionId": 130,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 260,
+      "questionId": 130,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 261,
+      "questionId": 131,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 262,
+      "questionId": 131,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 263,
+      "questionId": 132,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 264,
+      "questionId": 132,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 265,
+      "questionId": 133,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 266,
+      "questionId": 133,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 267,
+      "questionId": 134,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 268,
+      "questionId": 134,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 269,
+      "questionId": 135,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 270,
+      "questionId": 135,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 271,
+      "questionId": 136,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 272,
+      "questionId": 136,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 273,
+      "questionId": 137,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 274,
+      "questionId": 137,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 275,
+      "questionId": 138,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 276,
+      "questionId": 138,
+      "text": "Falso",
+      "iCorrect": false
+    },
+    {
+      "id": 277,
+      "questionId": 139,
+      "text": "Falso",
+      "iCorrect": true
+    },
+    {
+      "id": 278,
+      "questionId": 139,
+      "text": "Verdadero",
+      "iCorrect": false
+    },
+    {
+      "id": 279,
+      "questionId": 140,
+      "text": "Verdadero",
+      "iCorrect": true
+    },
+    {
+      "id": 280,
+      "questionId": 140,
+      "text": "Falso",
+      "iCorrect": false
+    }
+  ],
+  "AnswersUsers": []
+}

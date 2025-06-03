@@ -1,0 +1,172 @@
+{
+    "accounts": [
+        {
+            "id": 1,
+            "rolId": 1,
+            "userId": 1,
+            "username": "1104661598",
+            "password": "$2y$10$f61vnwxLyMRqOrUOSy.HO.Wq0bs65SYCdZGz\/FsTj8OdJQOU9VAAi"
+        }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "ci": "1104661598",
+            "firstName": "Edgar",
+            "secondName": "Patricio",
+            "firstLastName": "Torres",
+            "secondLastName": "Condolo",
+            "birthay": "2000-07-05",
+            "gender": "M"
+        }
+    ],
+    "roles": [
+        {
+            "id": 1,
+            "name": "Programador"
+        },
+        {
+            "id": 2,
+            "name": "Administrador"
+        },
+        {
+            "id": 3,
+            "name": "Usuario"
+        }
+    ],
+    "logs": [
+        {
+            "id": 1,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/2",
+            "description": "No definida"
+        },
+        {
+            "id": 2,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/3",
+            "description": "No definida"
+        },
+        {
+            "id": 3,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/2",
+            "description": "No definida"
+        },
+        {
+            "id": 4,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 5,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 6,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 7,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/2",
+            "description": "No definida"
+        },
+        {
+            "id": 8,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/3",
+            "description": "No definida"
+        },
+        {
+            "id": 9,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 10,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/2",
+            "description": "No definida"
+        },
+        {
+            "id": 11,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 12,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 13,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 14,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 15,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 16,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 17,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 18,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        },
+        {
+            "id": 19,
+            "httpMethod": "PUT",
+            "action": "No definica",
+            "endPoint": "\/users\/1",
+            "description": "No definida"
+        }
+    ]
+}

@@ -2,38 +2,43 @@ import {
   Container,
   IconButton,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  DialogContentText,
+  Avatar,
+  Tooltip,
 } from "@mui/material";
-import DataTable from "../Components/DataTable";
+import DataTable from "../Components/Tables/DataTable";
 import { useEffect, useState } from "react";
 import { deleteUserRequest, getUsersRequest } from "../api/userRequest";
 import { Person, Edit, Delete } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import SimpleDialog from "../Components/Dialogs/SimpleDialog";
+import UserForm from "../Components/Forms/UserForm";
+import { pathPhotos } from "../api/axios";
+
 
 function Users() {
-  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [datos, setDatos] = useState([]);
+  const [titleUserDialog, settitleUserDialog] = useState("");
 
   const fetchUsers = async () => {
     const { data } = await getUsersRequest();
-
     setUsers(data);
   };
 
   const handleDialog = () => {
     setOpen(!open);
   };
+  const handleDialogUser = () => {
+    setOpenDialog(!openDialog);
+  };
 
   const deleteUser = async () => {
     toast.promise(
-      deleteUserRequest(userToDelete.cedula),
+      deleteUserRequest(userToDelete.id),
       {
         loading: "Eliminando...",
         success: "Usuario elimninado con éxito",
@@ -47,48 +52,92 @@ function Users() {
       }
     );
 
-    setUsers(users.filter((user) => user.cedula !== userToDelete.cedula));
+    setUsers(users.filter((user) => user.id !== userToDelete.id));
     handleDialog();
   };
 
   const columns = [
     {
+      headerName: "Id",
+      field: "others",
+      width: 50,
+      sortable: false,
+      renderCell: (params,index) => {
+        return params.id;
+      },
+    },
+    {
       headerName: "Cedula",
-      field: "cedula",
-      width: 150,
+      field: "ci",
+      width: 100,
     },
     {
-      headerName: "Nombres",
-      field: "nombres",
-      width: 150,
+      headerName: "Primer Nombre",
+      field: "firstName",
+      width: 130,
+    },
+     {
+      headerName: "Segundo Nombre",
+      field: "secondName",
+      width: 130,
     },
     {
-      headerName: "Apellidos",
-      field: "apellidos",
-      width: 150,
+      headerName: "Primer Apellido",
+      field: "firstLastName",
+      width: 130,
+    },
+    {
+      headerName: "Segundo Apellido",
+      field: "secondLastName",
+      width: 130,
     },
     {
       headerName: "Fecha de nacimiento",
-      field: "fecha_nacimiento",
+      field: "birthday",
       width: 150,
     },
     {
       headerName: "Genero",
-      field: "genero",
-      width: 150,
+      field: "gender",
+      width: 80,
+    },
+    {
+      headerName: "Foto",
+      field: "photoPerfil",
+      width: 80,
+      sortable: false,
+      renderCell: (params) => (
+        <>
+             <Avatar
+          src={`${pathPhotos}${params.row.photo}`} // Imagen del estado
+          alt={params.row.firstName}
+        />
+        </>
+      ),
     },
     {
       headerName: "Actions",
       field: "actions",
-      width: 150,
+      width: 100,
       sortable: false,
       renderCell: (params) => (
         <>
-          <IconButton
-            onClick={() => navigate(`/editar-usuario/${params.row.cedula}`)}
+             <Tooltip title="Editar Usuario">
+             <IconButton
+            onClick={() => {
+              setDatos(params.row)
+              setIsEditing(true)
+              settitleUserDialog("Editar Usuario")
+              handleDialogUser();
+            }}
           >
             <Edit />
           </IconButton>
+
+        </Tooltip>
+        <Tooltip title="Eliminar Usuario">
+
+     
           <IconButton
             onClick={() => {
               handleDialog();
@@ -97,6 +146,8 @@ function Users() {
           >
             <Delete />
           </IconButton>
+        </Tooltip>
+
         </>
       ),
     },
@@ -106,36 +157,37 @@ function Users() {
     fetchUsers();
   }, []);
 
+
   return (
-    <Container maxWidth="md">
-      <Dialog
+    <Container>
+        <SimpleDialog
         open={open}
         onClose={handleDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        tittle="Eliminar Usuario"
+        onClickAccept={deleteUser}
       >
-        <DialogTitle id="alert-dialog-title">Eliminar Usuario</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            ¿Está seguro de eliminar al usuario {userToDelete?.nombres}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialog}>Cancelar</Button>
-          <Button onClick={deleteUser} autoFocus>
-            Aceptar
-          </Button>
-        </DialogActions>
-      </Dialog>
-
+            ¿Está seguro de eliminar al usuario?
+      </SimpleDialog>
       <Button
         sx={{ marginTop: "30px" }}
         variant="text"
         endIcon={<Person />}
-        onClick={() => navigate("/añadir-usuario")}
+        onClick={() => {
+          setIsEditing(false)
+          settitleUserDialog("Agregar Usuario")
+          handleDialogUser();
+        }}
       >
         Añadir Usuario
       </Button>
+
+      <SimpleDialog
+        open={openDialog}
+        onClose={handleDialogUser}
+        tittle={titleUserDialog}
+      >
+        <UserForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchUsers}></UserForm> 
+      </SimpleDialog>
       <DataTable data={users} columns={columns} />
     </Container>
   );

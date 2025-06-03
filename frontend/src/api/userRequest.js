@@ -18,36 +18,47 @@ export const addUserRequest = async (data) =>
     },
   });
 
-export const updateUserRequest = async (dni, data) =>
-  await axios.put(`/users/${dni}`, data, {
-    headers: {
-      Authorization: jwt(),
-    },
-  });
+
 
 export const addUserPhotoRequest = async (photo) =>
-  await axios.post("/users/pohto", photo, {
+  await axios.post("/users/photo", photo, {
     headers: {
       Authorization: jwt(),
     },
   });
 
-export const updateUserPhotoRequest = async (dni, photo) =>
-  await axios.post(`/users/photo/${dni}`, photo, {
+// export const updateUserPhotoRequest = async (id, photo) =>
+//   await axios.put(`/users/photo/${id}`, photo);
+
+  export const updateUserPhotoRequest = async (id, userData) =>
+  await axios.put(`/users/photo/${id}`, userData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: jwt(),
+    },
+  });
+  export const deleteUserPhotoRequest = async (id) =>
+  await axios.delete(`/users/photo/${id}`, {
     headers: {
       Authorization: jwt(),
     },
   });
 
-export const getOneUserRequest = async (dni) =>
-  await axios.get(`/users/${dni}`, {
+export const getOneUserRequest = async (id) =>
+  await axios.get(`/users/${id}`, {
     headers: {
       Authorization: jwt(),
     },
   });
 
-export const deleteUserRequest = async (dni) =>
-  await axios.delete(`/users/${dni}`, {
+export const deleteUserRequest = async (id) =>
+  await axios.delete(`/users/${id}`, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+  export const updateUserRequest = async (id, data) =>
+  await axios.put(`/users/${id}`, data, {
     headers: {
       Authorization: jwt(),
     },

@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import * as React from 'react';
 import { useAuth } from "../context/AuthContext";
-import NoAcces from "../Components/NoAcces";
+import NoAcces from "../Components/NoAccess";
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
@@ -26,14 +26,13 @@ function ProtectedRoute({ requiredRol }) {
 
 
 
-  if (isLoading && isAuthenticated && !requiredRol.includes(user.nameRol)) {
-    return <NoAcces />;
+  if (isLoading && isAuthenticated && !requiredRol.includes(user.loginRol)) {
+    return <NoAcces/>;
 
   }
   if (!isAuthenticated && !isLoading) return <Navigate to="/login" replace />;
 
   // console.log(user)
-
 
 
   return <Outlet />;
