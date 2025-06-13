@@ -33,5 +33,31 @@ export const deleteMatriz = async (id) =>
 
 
 
+  export const getMatriculas = async () =>
+  await axios.get("/alumni/matricula", { headers: { Authorization: jwt() } });
+  export const getEspecialidades= async () =>
+  await axios.get("/alumni/matricula/especialidades", { headers: { Authorization: jwt() } });
+
+  export const getPeriodosAcademicos= async () =>
+  await axios.get("/alumni/matricula/periodosAcademicos", { headers: { Authorization: jwt() } });
+
+
+  export const addMatriculasBulk = async (data) =>
+  await axios.post("/alumni/matricula/bulk", data, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+  export const filterUsers = async (data) =>
+  await axios.post("/alumni/filterUsers", data, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
+
+
+
+
+
 
 

@@ -15,4 +15,14 @@ export function formatDate(fechaISO) {
 
   return `${dia}-${mes}-${año} a las ${horas}:${minutos}:${segundos}`;
 }
+export function anonimizarTextoChino(texto) {
+  const caracteresChinos = "的一是不了人我在有他这为之大来以个中上们";
+  if (typeof texto !== "string") return texto;
+
+  return Array.from(texto).map(() => {
+    const i = Math.floor(Math.random() * caracteresChinos.length);
+    return caracteresChinos[i];
+  }).join('');
+}
+
 

@@ -9,7 +9,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import Login from "./page/Login";
-import Home from "./page/Home";
 import Comandos from "./page/Comandos";
 import Analytics from "./page/hotel/Analytics.jsx";
 import NavBar from "./Components/NavBar/NavBar.jsx";
@@ -34,9 +33,14 @@ import CareerPage from "./page/alumni/Entidades/CareerPage.jsx";
 import PeriodPage from "./page/alumni/Entidades/PeriodPage.jsx";
 import MatrizPage from "./page/alumni/Entidades/MatrizPage.jsx";
 import FormViewer from "./page/form/admin/FormViewer.jsx";
-
-
-
+import Tokens from "./page/Tokens.jsx";
+import NotificationsPage from "./page/Notifications.jsx";
+import PublicOnlyRoute from "./context/PublicOnlyRoute.jsx";
+import Roles from "./page/Roles.jsx";
+import ControlPanelPage from "./page/ControlPanel.jsx";
+import HomePageAlumni from "./page/alumni/Home.jsx";
+import Info from "./page/Info.jsx";
+import Donations from "./page/Donations.jsx";
 
 function App() {
   return (
@@ -47,53 +51,64 @@ function App() {
           vertical: 'bottom',
           horizontal: 'right',
         }}
-        >
-      <AuthProvider>
-        <BrowserRouter basename="/softed">
-          <NavBar>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                element={
-                  <ProtectedRoute requiredRol={["Administrador", "Programador"]} />
-                }
-              >
-            
-              <Route path="/analisis" element={<Analytics />} />
-              <Route path="/reservas" element={<Reservas />} />
-              <Route path="/recepcion" element={<Recepcion />} />
-              <Route path="/infoHotel" element={<InfoHotel />} />
-              <Route path="/nivel" element={<NivelesHotel />} />
+      >
+        <AuthProvider>
+          <BrowserRouter basename="/alumni">
+            <NavBar>
+              <Routes>
+                <Route element={<PublicOnlyRoute />}>
+                  <Route path="/login" element={<Login />} />
+                </Route>
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Estudiante", "Administrador", "Programador"]} />
+                  }
+                >
+                  <Route path="/" element={<HomePageAlumni />} />
+                  <Route path="/perfil" element={<Profile />} />
+                  <Route path="/myforms" element={<FormsList />} />
+                  <Route path="/myforms/:id" element={<FormAnswer />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
+                  <Route path="/info" element={<Info />} />
+                  <Route path="/donations" element={<Donations />} />
 
-              <Route path="/" element={<Home />} />
-              <Route path="/comandos" element={<Comandos />} />
-              <Route path="/usuarios" element={<Users />} />
-              <Route path="/componentes" element={<All />} />
-              <Route path="/perfil" element={<Profile />} />
-              <Route path="/cuentas" element={<Accounts />} />
-              <Route path="/logs" element={<Logs />} />
-              
+                </Route>
+
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Administrador", "Programador"]} />
+                  }
+                >
+                  <Route path="/analisis" element={<Analytics />} />
+                  <Route path="/reservas" element={<Reservas />} />
+                  <Route path="/recepcion" element={<Recepcion />} />
+                  <Route path="/infoHotel" element={<InfoHotel />} />
+                  <Route path="/nivel" element={<NivelesHotel />} />
+
+                  <Route path="/panel_control" element={<ControlPanelPage />} />
+                  <Route path="/comandos" element={<Comandos />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/componentes" element={<All />} />
+                  <Route path="/cuentas" element={<Accounts />} />
+                  <Route path="/roles" element={<Roles/>} />
+                  <Route path="/logs" element={<Logs />} />
+                  <Route path="/tokens" element={<Tokens />} />
+
+                  <Route path="/forms" element={<AdminFormsList />} />
+                  <Route path="/forms/manage/:id" element={<FormQuestions />} />
+                  <Route path="/forms/assign/:id" element={<AssignForm />} />
+                  <Route path="/forms/charts/:id" element={<FormResponsesCharts />} />
+                  <Route path="/forms/view/:id" element={<FormViewer />} />
+                  <Route path="/careers" element={<CareerPage />} />
+                  <Route path="/periods" element={<PeriodPage />} />
+                  <Route path="/matriz" element={<MatrizPage />} />
+                </Route>
 
 
-
-
-              <Route path="/forms" element={<AdminFormsList />} />
-              <Route path="/forms/manage/:id" element={<FormQuestions />} />
-              <Route path="/forms/assign/:id" element={<AssignForm />} />
-              <Route path="/forms/charts/:id" element={<FormResponsesCharts />} />
-              <Route path="/forms/view/:id" element={<FormViewer />} />
-              <Route path="/myforms" element={<FormsList />} />
-              <Route path="/myforms/:id" element={<FormAnswer />} />
-              <Route path="/careers" element={<CareerPage />} />
-              <Route path="/periods" element={<PeriodPage />} />
-              <Route path="/matriz" element={<MatrizPage />} />
-
-
-              </Route>
-            </Routes>
-          </NavBar>
-        </BrowserRouter>
-      </AuthProvider>
+              </Routes>
+            </NavBar>
+          </BrowserRouter>
+        </AuthProvider>
       </SnackbarProvider>
     </LocalizationProvider>
   );

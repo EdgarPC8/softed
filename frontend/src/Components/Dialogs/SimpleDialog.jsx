@@ -11,15 +11,25 @@ import {
   import IconButton from "@mui/material/IconButton";
   import CloseIcon from "@mui/icons-material/Close";
   
-  function SimpleDialog({ onClickAccept, message, tittle, open, onClose, children }) {
+  function SimpleDialog({
+    onClickAccept,
+    message,
+    tittle,
+    open,
+    onClose,
+    children,
+    maxWidth = "sm",   // por defecto "sm"
+    fullWidth = false, // por defecto false
+  }) {
     return (
-      <Container maxWidth="md">
-        <Dialog
-          open={open}
-          onClose={onClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
+<Dialog
+  open={open}
+  onClose={onClose}
+  maxWidth={maxWidth}
+  fullWidth={fullWidth}
+>
+
+
           {/* Box para alinear correctamente el título y el botón de cierre */}
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <DialogTitle id="alert-dialog-title" sx={{ flexGrow: 1 }}>
@@ -57,7 +67,6 @@ import {
             </DialogActions>
           )}
         </Dialog>
-      </Container>
     );
   }
   

@@ -1,87 +1,117 @@
-// import { searchUser } from "../database/connection.js";
-// import { sequelize } from "../database/connection.js";
 import { Users } from "../models/Users.js";
 import { Account } from "../models/Account.js";
-import bycrypt from "bcrypt";
+import bcrypt from "bcrypt";
 import { createAccessToken, createLicenseToken, getHeaderToken, verifyJWT } from "../libs/jwt.js";
-// import jwt from "jsonwebtoken";
 import { Roles } from "../models/Roles.js";
-// import { UserRoles } from "../Models/UserRoles.js";
 import { logger } from "../log/LogActivity.js";
 import { License } from "../models/License.js";
 import { calculateExpirationDate } from "../helpers/functions.js";
 
-
-// Llamar a la función para agregar un usuario
-// agregarUsuario("admin", "contraseña", 1);
-
 export const login = async (req, res) => {
-
-  const { username, password} = req.body;
-  const system=req.headers['user-agent'];
+  let { username, password, selectedRoleId } = req.body;
+  // const system = req.headers['user-agent'];
 
   try {
     const account = await Account.findOne({
       where: { username },
       include: [
         {
-          model: Roles,
-          as: 'role',
+          model: Users,
+          as: 'user'
         },
         {
-          model: Users,
-          as: 'user',
-        },
-      ],
+          model: Roles,
+          as: 'roles', // MANY TO MANY
+          through: { attributes: [] }
+        }
+      ]
     });
-    
 
     if (!account) {
       return res.status(400).json({ message: "Datos incorrectos" });
     }
 
-    const isCorrectPassword = await bycrypt.compare(password, account.password);
-
+    const isCorrectPassword = await bcrypt.compare(password, account.password);
     if (!isCorrectPassword) {
       return res.status(400).json({ message: "Datos incorrectos" });
     }
 
+    // Si no se seleccionó un rol y tiene más de uno, devolvemos la lista para que el frontend elija
+    if (!selectedRoleId) {
+      if (account.roles.length > 1) {
+        return res.json({
+          selectRole: true,
+          roles: account.roles.map((role) => ({
+            id: role.id,
+            name: role.name,
+          })),
+          accountId: account.id,
+        });
+      }
+
+      // Si tiene uno solo, lo usamos directamente
+      selectedRoleId = account.roles[0]?.id;
+    }
+
+    const selectedRole = account.roles.find((r) => r.id === selectedRoleId);
+    if (!selectedRole) {
+      return res.status(400).json({ message: "Rol seleccionado inválido" });
+    }
 
     const payload = {
       userId: account.userId,
-      loginRol: account.role.name,
-      rolId: account.role.id,
       accountId: account.id,
-      // username: account.username,
-      // photo: account.user.photo,
-      // firstName:account.user.firstName,
-      // secondName:account.user.secondName,
-      // firstLastName:account.user.firstLastName,
-      // secondLastName:account.user.secondLastName,
-      // gender:account.user.gender,
-      // birthday:account.user.birthday,
+      rolId: selectedRole.id,
+      loginRol: selectedRole.name,
     };
-    
-    // //Crear token JWT
+
     const token = await createAccessToken({ payload });
-    const user=account.user
 
-    logger({
-      httpMethod: req.method,
-      endPoint: req.originalUrl,
-      action: "Se a Logeado al Sistema",
-      description: `EL ${account.role.name} ${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName} con CI: ${user.ci}`,
-      system:system
-    });
-
-
-
-    res.json({ message: "User auth",token });
+    res.json({ message: "User authenticated", token });
   } catch (error) {
+    console.error("Error en login:", error);
     res.status(500).json({ message: error.message });
-    console.log(error);
   }
 };
+
+export const changeRole = async (req, res) => {
+  const { accountId, rolId } = req.body;
+  console.log(accountId, rolId )
+  try {
+    const account = await Account.findByPk(accountId, {
+      include: [
+        {
+          model: Roles,
+          as: 'roles',
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    if (!account) {
+      return res.status(404).json({ message: "Cuenta no encontrada" });
+    }
+
+    const hasRole = account.roles.find((r) => r.id === rolId);
+    if (!hasRole) {
+      return res.status(403).json({ message: "No tiene asignado ese rol" });
+    }
+
+    const payload = {
+      userId: account.userId,
+      accountId: account.id,
+      rolId: hasRole.id,
+      loginRol: hasRole.name,
+    };
+
+    const token = await createAccessToken({ payload });
+    res.json({ token });
+  } catch (error) {
+    res.status(500).json({ message: "Error al cambiar de rol", error: error.message });
+  }
+};
+
+
 export const verifytoken = async (req, res) => {
   
   try {

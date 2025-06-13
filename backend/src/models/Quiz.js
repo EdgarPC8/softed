@@ -3,7 +3,7 @@ import { sequelize } from "../database/connection.js";
 import { Users } from "./Users.js";
 
 const Quizzes = sequelize.define(
-  "quizzesPolicia",
+  "policia_quizzes",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -23,7 +23,7 @@ const Quizzes = sequelize.define(
 );
 
 const Questions = sequelize.define(
-  "questionsPolicia",
+  "policia_questions",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -43,7 +43,7 @@ const Questions = sequelize.define(
 );
 
 const Options = sequelize.define(
-  "optionsPolicia",
+  "policia_options",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -66,7 +66,7 @@ const Options = sequelize.define(
 );
 
 const AnswersUsers = sequelize.define(
-  "answersUsersPolicia",
+  "policia_answersUsers",
   {
     id: {
       type: DataTypes.INTEGER,

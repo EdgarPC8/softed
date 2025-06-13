@@ -11,6 +11,8 @@ import {
   
   import { Op } from "sequelize";
 import { Users } from "../models/Users.js";
+import { Notifications } from "../models/Notifications.js";
+import { sendNotificationToUser } from "../sockets/notificationSocket.js";
   
   // Obtener todos los formularios
   export const getForms = async (req, res) => {
@@ -52,15 +54,7 @@ import { Users } from "../models/Users.js";
   // Crear un nuevo formulario con preguntas y opciones
   export const createForm = async (req, res) => {
     // POST /api/forms/
-    /*
-      req.body esperado:
-      {
-        title: "string",
-        description: "string",
-        date: "YYYY-MM-DD",
-        isPublic: true,
-      }
-    */
+   
     const { title, description, date, isPublic, questions } = req.body;
   
     try {
@@ -314,6 +308,8 @@ export const deleteUsersByFormAssign = async (req, res) => {
 };
 
 
+
+
 export const assignUsersToForm = async (req, res) => {
   const { formId } = req.params;
   const { userIds } = req.body;
@@ -322,12 +318,34 @@ export const assignUsersToForm = async (req, res) => {
     const assignments = userIds.map(userId => ({ formId, userId }));
     await UserForm.bulkCreate(assignments, { ignoreDuplicates: true });
 
-    res.status(201).json({ message: "Usuarios asignados correctamente" });
+    // Crear notificación para cada usuario
+    const notifications = userIds.map(userId => ({
+      userId,
+      type: "info",
+      title: "Encuesta asignada",
+      message: "Tienes una nueva encuesta disponible para responder.",
+      link: `/myforms/${formId}`
+    }));
+    await Notifications.bulkCreate(notifications);
+
+    // Emitir a cada usuario individual
+    userIds.forEach(userId => {
+      
+      sendNotificationToUser(userId, {
+        title: "Encuesta asignada",
+        message: "Tienes una nueva encuesta disponible para responder.",
+        link: `/myforms/${formId}`,
+        seen: false,
+      });
+    });
+
+    res.status(201).json({ message: "Usuarios asignados y notificados correctamente" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al asignar usuarios" });
+    res.status(500).json({ message: "Error al asignar usuarios o notificar" });
   }
 };
+
 
 export const getFormById = async (req, res) => {
   const { id } = req.params;

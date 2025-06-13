@@ -26,29 +26,28 @@ export const loggerMiddleware = async (req, res, next) => {
     !methodsToFilter.includes(req.method) &&
     !urlFilter.includes(req.method)
   ) {
-
     const token = getHeaderToken(req);
     const user = await verifyJWT(token);
 
     try {
-
       const account = await Account.findOne({
         include: [
           {
             model: Roles,
-            as: 'role',
+            as: 'roles',
+            through: { attributes: [] },
           },
           {
             model: Users,
             as: 'user',
           },
         ],
-        where: { id:user.accountId },
+        where: { id: user.accountId },
       });
-      // console.log(data)
-      // Buscar la acción asociada a la URL y método HTTP actual
+
+      const rolName = account.roles?.[0]?.name || "Rol desconocido";
+
       const matchedAction = actions.find(action => {
-        // Reemplazar :id con el valor actual del ID
         const pattern = action.url.replace(/:[a-zA-Z0-9]+/g, '[a-zA-Z0-9]+');
         const regex = new RegExp(`^${pattern}$`);
         return regex.test(req.originalUrl) && action.method === req.method;
@@ -60,7 +59,7 @@ export const loggerMiddleware = async (req, res, next) => {
         httpMethod: req.method,
         endPoint: req.originalUrl,
         action: actionText,
-        description: `EL ${account.role.name} ${account.user.firstName} ${account.user.firstLastName} realializo una accion`,
+        description: `EL ${rolName} ${account.user.firstName} ${account.user.firstLastName} realizó una acción`,
         system: system
       });
     } catch (error) {
@@ -70,5 +69,3 @@ export const loggerMiddleware = async (req, res, next) => {
 
   next();
 };
-
-

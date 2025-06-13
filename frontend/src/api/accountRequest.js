@@ -33,8 +33,8 @@ export const getOneAccountRequest = async (id) =>
       Authorization: jwt(),
     },
   });
-  export const getAccount = async (userId,rolId) =>
-  await axios.get(`/account/${userId}/${rolId}`, {
+  export const getAccount = async (accountId,rolId) =>
+  await axios.get(`/account/${accountId}/${rolId}`, {
     headers: {
       Authorization: jwt(),
     },

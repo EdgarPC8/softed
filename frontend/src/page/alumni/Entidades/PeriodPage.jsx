@@ -140,14 +140,20 @@ import {
     }, []);
     return (
   
-      <Container>
+            <Box maxWidth={"md"}
+        sx={{
+          mt:4,
+          mx: "auto",           // centra horizontalmente
+          textAlign: "center",  // opcional si quieres centrar textos
+        }}
+      >
             <SimpleDialog
               open={open}
               onClose={handleDialog}
-              tittle="Eliminar Carrera"
+              tittle="Eliminar Periodo"
               onClickAccept={deleteData}
             >
-              ¿Está seguro de eliminar la Carrera?
+              ¿Está seguro de eliminar la Periodo?
             </SimpleDialog>
               <Box component="form" onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
@@ -155,7 +161,7 @@ import {
                     <TextField
                       fullWidth
                       InputLabelProps={{ shrink: true }}
-                      label="Agregar Carrera"
+                      label="Agregar Periodo"
                       variant="standard"
                       {...register("name", { required: true })}
                       InputProps={{
@@ -176,7 +182,7 @@ import {
             >
             </SimpleDialog>
             <DataTable data={data} columns={columns} />
-      </Container>
+      </Box>
     );
   }
   

@@ -7,69 +7,87 @@ import UsersRoutes from "./src/routes/UsersRoutes.js";
 import AuthRoutes from "./src/routes/AuthRoutes.js";
 import ComandsRoutes from "./src/routes/ComandsRoutes.js";
 import AccountsRoutes from "./src/routes/AccountsRoutes.js";
-import QuizRoutes from "./src/routes/QuizRoutes.js";
+// import QuizRoutes from "./src/routes/QuizRoutes.js";
 import FormsRoutes from "./src/routes/FormsRoutes.js";
 import AlumniRoutes from "./src/routes/AlumniRoutes.js";
-
-
+import NotificationsRoutes from "./src/routes/NotificationsRoutes.js";
+import { initNotificationSocket } from "./src/sockets/notificationSocket.js";
+import { Server } from "socket.io";
+import { createServer } from "http";
 
 const app = express();
-const PORT = 4000;
+const httpServer = createServer(app); // 👈 solo este se usa para arrancar
+const api="api"
 
-// Middleware para parsear JSON
+const PORT = 3000;
+const allowedOrigins = [
+  "http://localhost:5174",
+  "http://localhost:4173",
+  "http://192.169.100.109:5174",
+  "https://aplicaciones.marianosamaniego.edu.ec",
+  "https://www.aplicaciones.marianosamaniego.edu.ec",
+];
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+
+// Middleware
 app.use(express.json());
 app.use(loggerMiddleware);
 
-const allowedOrigins = [
-  "http://localhost",
-  "http://localhost:8888",
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://192.168.137.228:5174",
-  "http://aplicaciones.marianosamaniego.edu.ec",
-  "http://www.aplicaciones.marianosamaniego.edu.ec",
-];
+// CORS
 
 const corsOptions = {
+
   origin: function (origin, callback) {
-    // Verifica si el origen está en la lista de orígenes permitidos
-    // if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
-    // } else {
-    //   callback(new Error("Acceso no permitido por CORS"));
-    // }
+    } else {
+      callback(new Error("Acceso no permitido por CORS"));
+    }
+    // callback(null, true); // ⚠️ Si quieres habilitar control estricto, descomenta el if
   },
   optionsSuccessStatus: 200,
-  credentials: true, // Permite el envío de cookies y encabezados de autenticación
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
-app.use("/photos", express.static("src/img/photos"));
-app.use("/api/users", UsersRoutes);
-app.use("/api/quiz", QuizRoutes);
-app.use("/api", AuthRoutes);
-app.use("/api/comands", ComandsRoutes);
-app.use("/api", AccountsRoutes);
-app.use("/api/forms", FormsRoutes);
-app.use("/api/alumni", AlumniRoutes);
+// Rutas
+app.use(`/photos`, express.static(`src/img/photos`));
+app.use(`/${api}/users`, UsersRoutes);
+// app.use(`/${api}/quiz`, QuizRoutes);
+app.use(`/${api}`, AuthRoutes);
+app.use(`/${api}/comands`, ComandsRoutes);
+app.use(`/${api}`, AccountsRoutes);
+app.use(`/${api}/forms`, FormsRoutes);
+app.use(`/${api}/alumni`, AlumniRoutes);
+app.use(`/${api}/notifications`, NotificationsRoutes);
+
+// Socket para notificaciones
+initNotificationSocket(io);
 
 export async function main() {
   try {
-    // Autentificación con la base de datos
     // await sequelize.authenticate();
-
-    // Sincronización de tablas (opcional: descomentar si es necesario)
     // await sequelize.sync({ force: true });
     // await insertData();
 
-    console.log("Conexión realizada con éxito.");
+    console.log("✅ Conexión realizada con éxito.");
     
-    // Iniciar el servidor
-    app.listen(PORT, () => {
-      console.log(`Backend escuchando en el puerto ${PORT}`);
+    // Solo usas httpServer.listen
+    httpServer.listen(PORT, () => {
+      console.log(`🟢 Backend + Socket.IO escuchando en puerto ${PORT}`);
     });
+ 
+    
   } catch (error) {
-    console.error("Error en la conexión a la base de datos:", error);
+    console.error("❌ Error en la conexión a la base de datos:", error);
   }
 }
 

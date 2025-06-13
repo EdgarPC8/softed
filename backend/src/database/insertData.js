@@ -2,22 +2,20 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 import { Roles } from '../models/Roles.js';
 import { Users } from '../models/Users.js';
-import { Quizzes,
-  Questions,
-  Options,
-  AnswersUsers } from '../models/Quiz.js';
-import { Account } from '../models/Account.js';
+// import { Quizzes,
+//   Questions,
+//   Options,
+//   AnswersUsers } from '../models/Quiz.js';
+import { Account, AccountRoles } from '../models/Account.js';
 import { sequelize } from './connection.js';
-import { Careers, Matriz, Periods } from '../models/Alumni.js';
+import { Careers, Matricula, Matriz, Periods } from '../models/Alumni.js';
 import { Form,
 Question,
   Option,
   Response,
   Answer,
   UserForm } from '../models/Forms.js';
-
-  
-
+import { Notifications } from '../models/Notifications.js';
 
 
 
@@ -41,10 +39,10 @@ export const insertData = async () => {
     await Roles.bulkCreate(jsonData.Roles, { returning: true });
     await Users.bulkCreate(jsonData.Users, { returning: true });
     await Account.bulkCreate(jsonData.Account, { returning: true });
-    await Quizzes.bulkCreate(jsonData.Quizzes, { returning: true });
-    await Questions.bulkCreate(jsonData.Questions, { returning: true });
-    await Options.bulkCreate(jsonData.Options, { returning: true });
-    await AnswersUsers.bulkCreate(jsonData.AnswersUsers, { returning: true });
+    // await Quizzes.bulkCreate(jsonData.Quizzes, { returning: true });
+    // await Questions.bulkCreate(jsonData.Questions, { returning: true });
+    // await Options.bulkCreate(jsonData.Options, { returning: true });
+    // await AnswersUsers.bulkCreate(jsonData.AnswersUsers, { returning: true });
     await Careers.bulkCreate(jsonData.Careers, { returning: true });
     await Periods.bulkCreate(jsonData.Periods, { returning: true });
     await Form.bulkCreate(jsonData.Form, { returning: true });
@@ -54,6 +52,9 @@ export const insertData = async () => {
     await Answer.bulkCreate(jsonData.Answer, { returning: true });
     await UserForm.bulkCreate(jsonData.UserForm, { returning: true });
     await Matriz.bulkCreate(jsonData.Matriz, { returning: true });
+    await Matricula.bulkCreate(jsonData.Matricula, { returning: true });
+    await AccountRoles.bulkCreate(jsonData.AccountRoles, { returning: true });
+    await Notifications.bulkCreate(jsonData.Notifications, { returning: true });
 
     console.log("Datos insertados correctamente desde el archivo de respaldo.");
   } catch (error) {
@@ -74,10 +75,10 @@ export const saveBackup = async () => {
     const rolesData = await Roles.findAll();
     const usersData = await Users.findAll();
     const accountData = await Account.findAll();
-    const quizzesData = await Quizzes.findAll();
-    const questionsData = await Questions.findAll();
-    const optionsData = await Options.findAll();
-    const answersUsersData = await AnswersUsers.findAll();
+    // const quizzesData = await Quizzes.findAll();
+    // const questionsData = await Questions.findAll();
+    // const optionsData = await Options.findAll();
+    // const answersUsersData = await AnswersUsers.findAll();
     const careersData = await Careers.findAll();
     const periodsData = await Periods.findAll();
     const FormData = await Form.findAll();
@@ -87,15 +88,18 @@ export const saveBackup = async () => {
     const AnswerData = await Answer.findAll();
     const UserFormData = await UserForm.findAll();
     const MatrizData = await Matriz.findAll();
+    const MatriculaData = await Matricula.findAll();
+    const AccountRolesData = await AccountRoles.findAll();
+    const NotificationsData = await Notifications.findAll();
 
     const backupData = {
       Roles: rolesData,
       Users: usersData,
       Account: accountData,
-      Quizzes: quizzesData,
-      Questions: questionsData,
-      Options: optionsData,
-      AnswersUsers: answersUsersData,
+      // Quizzes: quizzesData,
+      // Questions: questionsData,
+      // Options: optionsData,
+      // AnswersUsers: answersUsersData,
       Careers: careersData,
       Periods: periodsData,
       Form: FormData,
@@ -105,6 +109,9 @@ export const saveBackup = async () => {
       Answer: AnswerData,
       UserForm: UserFormData,
       Matriz: MatrizData,
+      Matricula: MatriculaData,
+      AccountRoles: AccountRolesData,
+      Notifications: NotificationsData,
     };
 
     await fs.mkdir(backups, { recursive: true });

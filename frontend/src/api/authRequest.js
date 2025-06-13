@@ -1,5 +1,11 @@
 
 import axios, { jwt } from "./axios.js";
+export const changeRole = async (data) =>
+await axios.post("/changeRole", data, {
+  headers: {
+    Authorization: jwt(),
+  },
+});
 
   export const getLicenses = async () =>
   await axios.get("/getLicenses", {
@@ -31,4 +37,18 @@ export const deleteLicense = async (id) =>
     headers: {
       Authorization: jwt(),
     },
+
+
   });
+
+  // 🔐 Login con accountId y password
+export const loginByAccountRequest = async (data) =>
+await axios.post("/loginByAccount", data);
+
+// 🔍 Obtener todas las cuentas asociadas a un usuario
+export const getAccountsByUsernameRequest = async (username) =>
+await axios.get(`/accounts/${username}`, {
+  headers: {
+    Authorization: jwt(),
+  },
+});

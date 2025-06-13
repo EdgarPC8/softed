@@ -1,94 +1,252 @@
-import { Account } from "../models/Account.js";
+import { Account, AccountRoles } from "../models/Account.js";
 import { Roles } from "../models/Roles.js";
 import { Users } from "../models/Users.js";
-import bycrypt from "bcrypt";
+import bcrypt from "bcrypt";
 
+
+export const addAccount = async (req, res) => {
+  try {
+    const {
+      username,
+      newPassword,
+      confirmPassword,
+      roles,  // Array de IDs de roles
+      userId,
+    } = req.body;
+
+    if (!newPassword || newPassword.trim() === "") {
+      return res.status(400).json({ message: "La contraseña es obligatoria" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Crear la cuenta
+    const newAccount = await Account.create({
+      username,
+      password: hashedPassword,
+      userId,
+    });
+    // Insertar los roles
+    if (roles && roles.length > 0) {
+      const roleEntries = roles.map(roleId => ({
+        accountId: newAccount.id,
+        roleId,
+      }));
+      await AccountRoles.bulkCreate(roleEntries);
+    }
+
+    res.json({ message: "Cuenta creada con éxito", data: newAccount });
+  } catch (error) {
+    console.error("Error al crear cuenta:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const updateAccount = async (req, res) => {
+  const data = req.body;
+  const idAccount = req.params.id;
+
+  try {
+    const cuenta = await Account.findByPk(idAccount);
+
+    if (!cuenta) {
+      return res.status(404).json({ message: "Cuenta no encontrada" });
+    }
+
+    // ✅ Actualizar el username si viene
+    if (data.username) {
+      cuenta.username = data.username;
+    }
+
+    // ✅ Solo actualiza la contraseña si se mandó explícitamente
+    if (data.newPassword && data.confirmPassword) {
+      if (data.newPassword !== data.confirmPassword) {
+        return res.status(400).json({ message: "Las contraseñas nuevas no coinciden" });
+      }
+
+      const passgenerate = await bcrypt.hash(data.newPassword, 10);
+      cuenta.password = passgenerate;
+    }
+
+    // ✅ Guardar cambios básicos
+    await cuenta.save();
+
+    // ✅ Actualizar roles si vienen
+    if (Array.isArray(data.roles)) {
+      await cuenta.setRoles(data.roles); // ← esto borra y vuelve a insertar
+    }
+
+    return res.json({ message: "Cuenta actualizada con éxito" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error al actualizar cuenta" });
+  }
+};
+
+
+export const updateAccountUser = async (req, res) => {
+  const data = req.body;
+  const idAccount = req.params.id;
+  console.log("-------------------:",idAccount)
+
+  try {
+    const cuenta = await Account.findByPk(idAccount, {
+      include: [
+        { model: Roles},
+        { model: Users }
+      ]
+    });
+
+    if (!cuenta) {
+      return res.status(404).json({ message: "Cuenta no encontrada" });
+    }
+
+    // Actualizar username si viene
+    if (data.username) {
+      cuenta.username = data.username;
+    }
+
+    // 🔒 Cambiar contraseña solo si se proveen ambas: old + new
+    if (data.oldPassword && data.newPassword) {
+      const isValid = await bcrypt.compare(data.oldPassword, cuenta.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "La contraseña anterior es incorrecta" });
+      }
+
+      const hashed = await bcrypt.hash(data.newPassword, 10);
+      cuenta.password = hashed;
+    }
+
+    await cuenta.save();
+
+    // Actualizar roles si se envían
+    if (Array.isArray(data.roles)) {
+      await cuenta.setRoles(data.roles);
+    }
+
+    // También podrías enviar los datos actualizados del usuario si quieres
+    return res.json({
+      message: "Cuenta actualizada con éxito",
+      data: {
+        id: cuenta.id,
+        username: cuenta.username,
+        roles: await cuenta.getRoles(), // opcional
+      }
+    });
+
+  } catch (error) {
+    console.error("Error actualizando cuenta:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 
 export const getAccounts = async (req, res) => {
   try {
-  
     const data = await Account.findAll({
+      attributes: ["id", "username"], // solo lo necesario de Account
       include: [
         {
           model: Roles,
-          as: 'role',
+          as: "roles",
+          attributes: ["id", "name"], // solo el nombre del rol
+          through: { attributes: [] },
         },
         {
           model: Users,
-          as: 'user',
+          as: "user",
+          attributes: [
+            "firstName",
+            "secondName",
+            "firstLastName",
+            "secondLastName",
+            "gender",
+          ],
         },
       ],
     });
+
     res.json(data);
   } catch (error) {
-    console.error("Error al obtener usuarios:", error);
+    console.error("Error al obtener cuentas:", error);
     res.status(500).json({ message: "Error en el servidor." });
   }
-  };
+};
+
   
   export const getOneAccount= async (req, res) => {
     const { id } = req.params;
     try {
       const data = await Account.findOne({
-        attributes: ['username','rolId','userId'],
-        where: { id:id },
+        where: { id },
+        include: [
+          {
+            model: Roles,
+            as: 'roles', // asegúrate de tener esta asociación en tus modelos
+            through: { attributes: [] }
+          }
+        ]
       });
-  
-      res.json(data);
+      
+      res.json({
+        ...data.toJSON(),
+        roles: data.roles.map(r => r.id)
+      });
+      
     } catch (error) {
       res.status(500).json({
         message: error.message,
       });
     }
   };
-  export const getAccount= async (req, res) => {
-    const { userId,rolId } = req.params;
+  export const getAccount = async (req, res) => {
+    const { accountId, rolId } = req.params;
+  
     try {
       const data = await Account.findOne({
-        where: { userId:userId,rolId:rolId },
+        where: { id:accountId },
+        attributes: [
+          "username",
+          "id",
+          "userId"
+        ],
         include: [
           {
             model: Roles,
-            as: 'role',
+            as: 'roles',
+            through: { attributes: [] }, // trae todos los roles, sin info de tabla intermedia
           },
           {
             model: Users,
             as: 'user',
-          },
-        ],
+            attributes: [
+              "id",
+              "firstName",
+              "secondName",
+              "firstLastName",
+              "secondLastName",
+              "photo",
+              "ci",
+              "birthday"
+            ]
+          }
+        ]
       });
-      res.json(data);
+  
+      if (!data) {
+        return res.status(404).json({ message: "Cuenta no encontrada" });
+      }
+  
+      res.json({
+        ...data.toJSON(),
+        activeRoleId: parseInt(rolId), // <- opcionalmente indicamos cuál es el rol actual
+      });
+  
     } catch (error) {
-      res.status(500).json({
-        message: error.message,
-      });
+      res.status(500).json({ message: error.message });
     }
   };
-  export const addAccount = async (req, res) => {
-    try {
-      const {
-        username,
-        password,
-        rolId,
-        userId,
-      } = req.body;
 
-      const passgenerate = await bycrypt.hash(password, 10);
-
-      const newData = await Account.create({
-        username:username,
-        password:passgenerate,
-        rolId:rolId,
-        userId:userId,
-
-      });
-    res.json({ message: `agregado con éxito`,data:newData});
-    } catch (error) {
-      // manejo de errores si ocurre algún problema durante la creación del usuario
-      console.error("error al crear la cuenta:", error);
-    }
-  };
   export const deleteAccount = async (req, res) => {
     try {
       await Account.destroy({
@@ -104,125 +262,7 @@ export const getAccounts = async (req, res) => {
       });
     }
   };
-  export const updateAccount = async (req, res) => {
-    const data=req.body;
-    const idAccount=req.params.id;
-    const cuenta={
-      username:data.username,
-      rolId:data.rolId,
-    }
 
-    try {
-
-      if(data.password){
-
-        const passAcc = await Account.findOne({
-          attributes: ['password'],
-          where: { id:idAccount },
-        });
-  
-        const isCorrectPassword = await bycrypt.compare(data.password, passAcc.password);
-  
-    
-        if(!isCorrectPassword){
-          res.status(500).json({
-            message: "La contraseña no coincide con la Anterior",
-          });
-        }
-      const passgenerate = await bycrypt.hash(data.password, 10);
-      cuenta.password=passgenerate;
-      }
-
-     await Account.update(cuenta,
-        {
-          where: {
-            id: idAccount
-          },
-        }
-      );
-      res.json({ message: "cuenta editado con éxito" });
-    } catch (error) {
-      res.status(500).json({
-        message: error.message,
-      });
-    }
-  };
-  export const updateAccountUser = async (req, res) => {
-    const data=req.body;
-    const idAccount=req.params.id;
-    const userId=req.params.userId;
-    try {
-
-      if(data.password&&data.confirmPassword){
-        
-        const passAcc = await Account.findOne({
-          attributes: ['password'],
-          where: { id:idAccount },
-        });
-  
-        const isCorrectPassword = await bycrypt.compare(data.password, passAcc.password);
-  
-    
-        if(!isCorrectPassword){
-          res.status(500).json({
-            message: "La contraseña no coincide con la Anterior",
-          });
-        }
-      const passgenerate = await bycrypt.hash(data.confirmPassword, 10);
-      await Account.update({password:passgenerate},
-        {
-          where: {
-            id: idAccount,
-          },
-        }
-      );
-      }
-    //  if( data.password)delete data.password
-    //  if( data.confirmPassword)delete data.confirmPassword
-
-      await Users.update(data,
-        {
-          where: {
-            id: userId
-          },
-        }
-      );
-
-      const newAccount = await Account.findOne({
-        where: { id:idAccount},
-        include: [
-          {
-            model: Roles,
-            as: 'role',
-          },
-          {
-            model: Users,
-            as: 'user',
-          },
-          
-        ],
-
-      });
-      const userData = {
-        ci: newAccount.user.ci,
-        firstName: newAccount.user.firstName,
-        secondName: newAccount.user.secondName,
-        firstLastName: newAccount.user.firstLastName,
-        secondLastName: newAccount.user.secondLastName,
-        username: newAccount.username,
-        accountId: newAccount.id,
-        userId: newAccount.userId,
-        rolId: newAccount.rolId,
-        loginRol: newAccount.role.name,
-      };
-    
-      res.json({ message: "cuenta editado con éxito",data:userData});
-    } catch (error) {
-      res.status(500).json({
-        message: error.message,
-      });
-    }
-  };
   export const resetPassword = async (req, res) => {
     // const data=req.body;
     const idAccount=req.params.id;
@@ -230,7 +270,7 @@ export const getAccounts = async (req, res) => {
   
     try {
 
-      const passgenerate = await bycrypt.hash("12345678", 10);
+      const passgenerate = await bcrypt.hash("12345678", 10);
 
      await Account.update({
       password:passgenerate,
@@ -316,4 +356,3 @@ export const getRoles = async (req, res) => {
       });
     }
   };
-

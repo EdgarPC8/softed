@@ -17,7 +17,12 @@ export const addUserRequest = async (data) =>
       Authorization: jwt(),
     },
   });
-
+export const addUsersBulk = async (data) =>
+  await axios.post("/users/bulk", data, {
+    headers: {
+      Authorization: jwt(),
+    },
+  });
 
 
 export const addUserPhotoRequest = async (photo) =>

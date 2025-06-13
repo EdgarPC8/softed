@@ -7,15 +7,17 @@ import {
     addAnswerUser,
     addAllAnswersUsers,
 } from "../controllers/QuizController.js";
+import { isAuthenticated } from "../middlewares/authMiddelware.js";
+
 
 const router = new Router();
 
-router.get("", getQuizzes);
-router.post("", saveQuiz);
-router.get("/getOptionsQuestions", getOptionsQuestions);
-router.put("/answer/:idQuestion/:idOption",updateAnswerUser);
-router.post("/answer", addAnswerUser);
-router.post("/addAllAnswersUsers", addAllAnswersUsers);
+router.get("", isAuthenticated,getQuizzes);
+router.post("", isAuthenticated,saveQuiz);
+router.get("/getOptionsQuestions", isAuthenticated,getOptionsQuestions);
+router.put("/answer/:idQuestion/:idOption",isAuthenticated,updateAnswerUser);
+router.post("/answer", isAuthenticated,addAnswerUser);
+router.post("/addAllAnswersUsers", isAuthenticated,addAllAnswersUsers);
 
 // router.put("/photo/:userId",uploadPhoto);
 // router.delete("/:userId", deleteUser);

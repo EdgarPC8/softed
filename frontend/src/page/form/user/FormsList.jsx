@@ -4,6 +4,7 @@ import {
     Button,
     Avatar,
     Tooltip,
+    Box,
     Typography
   } from "@mui/material";
   import { useEffect, useState } from "react";
@@ -90,9 +91,15 @@ import { useAuth } from "../../../context/AuthContext";
   
   
     return (
-      <Container>
+      <Box maxWidth={"md"}
+      sx={{
+        mt:4,
+        mx: "auto",           // centra horizontalmente
+        textAlign: "center",  // opcional si quieres centrar textos
+      }}
+    >
         <DataTable data={data} columns={columns} />
-      </Container>
+      </Box>
     );
   }
   

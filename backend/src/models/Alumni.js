@@ -82,6 +82,10 @@ export const Matricula = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    idUser: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
     especialidad: {
       type: DataTypes.STRING(400),
       defaultValue: null,
@@ -90,8 +94,12 @@ export const Matricula = sequelize.define(
       type: DataTypes.STRING(400),
       defaultValue: null,
     },
-    idUser: {
-      type: DataTypes.INTEGER,
+    periodoActivo: {
+      type: DataTypes.STRING(100),
+      defaultValue: null,
+    },
+    retirado: {
+      type: DataTypes.STRING(20),
       defaultValue: null,
     },
   },
@@ -125,3 +133,14 @@ Periods.hasMany(Matriz, {
   onDelete: "CASCADE",
 });
 Matriz.belongsTo(Periods, { foreignKey: "idPeriod", sourceKey: "idPeriod" });
+
+
+Users.hasMany(Matricula, {
+  foreignKey: "idUser",
+  sourceKey: "id",
+  onDelete: "CASCADE",
+});
+Matricula.belongsTo(Users, {
+  foreignKey: "idUser",
+  targetKey: "id",
+});

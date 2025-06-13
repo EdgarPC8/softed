@@ -1,124 +1,198 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import { 
+  Box, 
+  CssBaseline, 
+  Toolbar, 
+  Typography, 
+  IconButton, 
+  Tooltip, 
+  Divider, 
+  List, 
+  ListItem, 
+  ListItemButton, 
+  ListItemIcon, 
+  ListItemText, 
+  Accordion, 
+  AccordionSummary, 
+  AccordionDetails, 
+  Popover, 
+  Button, 
+  Avatar, 
+  Badge, 
+  Menu, 
+  MenuItem 
+} from '@mui/material';
+
+
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import AdbIcon from "@mui/icons-material/Adb";
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
-import HomeIcon from '@mui/icons-material/Home';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
-import TerminalIcon from '@mui/icons-material/Terminal';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import LoginIcon from '@mui/icons-material/Login';
-import GroupIcon from '@mui/icons-material/Group';
-import SettingsIcon from '@mui/icons-material/Settings';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
-import { Avatar } from '@mui/material';
+import { useNotificationSocket } from '../../hooks/useNotificationSocket';
+import { getNotificationsByUser } from '../../api/notificationsRequest';
+
+import SimpleDialog from '../Dialogs/SimpleDialog';
+import CambiarRol from '../ViewModal/CambiarRol';
+import NotificationList from '../NotificationList';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+
+import {
+  Terminal,
+  Home,
+  Settings,
+  Poll,
+  AssignmentInd,
+  School,
+  CalendarMonth,
+  AccountTree,
+  Info,
+  Layers,
+  ViewModule,
+  Quiz,
+  VpnKey,
+  Notifications as NotificationsIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  Menu as MenuIcon,
+  ExpandMore as ExpandMoreIcon,
+  AccountBox,
+  PeopleAlt,
+  List as ListIcon,
+  Workspaces,
+  Storage,
+  Dns,
+  IntegrationInstructions,
+  QuestionAnswer,
+} from '@mui/icons-material';
+
 
 
 const permisos = {
   Programador: [
     {
       name: "Home",
-      icon: <HomeIcon />,
+      icon: <Home />,
       link: "/"
     },
-    // {
-    //   name: "Reservas",
-    //   icon: <CalendarMonthIcon />,
-    //   link: "/reservas"
-    // },
-    // {
-    //   name: "Recepción",
-    //   icon: <LoginIcon />,
-    //   link: "/recepcion"
-    // },
-    // {
-    //   name: "Analisis",
-    //   icon: <AnalyticsIcon />,
-    //   link: "/analisis"
-    // },
     {
       name: "Encuestas",
-      icon: <SettingsIcon />,
+      icon: <Poll />,
       menu: {
         items: [
-          { name: "Ver lista", link: "/forms", icon: <AdbIcon /> },
-          { name: "Mis encuestas", link: "/myforms", icon: <AdbIcon /> },
+          { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
+          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
         ],
       },
     },
     {
       name: "Entidades",
-      icon: <SettingsIcon />,
+      icon: <AccountTree />,
       menu: {
         items: [
-          { name: "Carreras", link: "/careers", icon: <AdbIcon /> },
-          { name: "Periodos", link: "/periods", icon: <AdbIcon /> },
-          { name: "Matrices", link: "/matriz", icon: <AdbIcon /> },
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Carreras", link: "/careers", icon: <School /> },
+          { name: "Periodos", link: "/periods", icon: <CalendarMonth /> },
+          { name: "Matrices", link: "/matriz", icon: <Storage /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
         ],
       },
     },
     {
       name: "Configuracion",
-      icon: <SettingsIcon />,
+      icon: <Settings />,
       menu: {
         items: [
-          { name: "Info Hotel", link: "/infoHotel", icon: <AdbIcon /> },
-          { name: "Niveles", link: "/nivel", icon: <AdbIcon /> },
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Info", link: "/info", icon: <Info /> },
+          { name: "Donaciones", link: "/donations", icon: <CardGiftcardIcon /> },
         ],
       },
     },
     {
       name: "Programador",
-      icon: <TerminalIcon />,
+      icon: <Terminal />,
       menu: {
         items: [
-          { name: "Comandos", link: "/comandos", icon: <TerminalIcon /> },
-          { name: "Logs", link: "/logs", icon: <TerminalIcon /> },
-          { name: "Cuentas", link: "/cuentas", icon: <TerminalIcon /> },
-          { name: "Componentes", link: "/componentes", icon: <TerminalIcon /> },
-          { name: "Preguntas", link: "/quiz", icon: <TerminalIcon /> },
+          { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
+          { name: "Logs", link: "/logs", icon: <ListIcon /> },
+          { name: "Componentes", link: "/componentes", icon: <ViewModule /> },
+          { name: "Preguntas", link: "/quiz", icon: <QuestionAnswer /> },
+          { name: "Tokens", link: "/tokens", icon: <VpnKey /> },
         ],
       },
     },
   ],
   Administrador: [
-    { name: "Nadadores", link: "/nadadores", icon: <AdbIcon /> },
-    { name: "Tiempos", link: "/tiempos", icon: <AdbIcon /> },
-  ],
-  Usuario: [
     {
-      name: "Progreso",
-      icon: <AdbIcon />,
+      name: "Home",
+      icon: <Home />,
+      link: "/"
+    },
+    {
+      name: "Encuestas",
+      icon: <Poll />,
       menu: {
         items: [
-          { name: "Mi Progreso", link: "/miprogreso", icon: <AdbIcon /> },
+          { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
+          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
+        ],
+      },
+    },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Carreras", link: "/careers", icon: <School /> },
+          { name: "Periodos", link: "/periods", icon: <CalendarMonth /> },
+          { name: "Matrices", link: "/matriz", icon: <Storage /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Información", link: "/info", icon: <Info /> },
+        ],
+      },
+    },
+  ],
+  Estudiante: [
+    {
+      name: "Home",
+      icon: <Home />,
+      link: "/"
+    },
+    {
+      name: "Encuestas",
+      icon: <Poll />,
+      menu: {
+        items: [
+          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+
         ],
       },
     },
   ],
 };
+
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -190,9 +264,59 @@ export default function MiniDrawer({ children }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { isAuthenticated, logout, user, isLoading ,profileImageUser} = useAuth();
+  const { isAuthenticated, logout, user, isLoading, profileImageUser } = useAuth();
   const [expandedAccordion, setExpandedAccordion] = useState(null); // Estado para controlar qué Accordion está abierto
+  const [openChangeRol, setOpenChangeRol] = useState(false);
+  const [anchorMenu, setAnchorMenu] = useState(null);
+  const [anchorElNotif, setAnchorElNotif] = useState(null); // para popover de notificaciones
+  const location = useLocation();
+  const [tooltipOpen, setTooltipOpen] = useState(null);
 
+
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+
+
+  useNotificationSocket(user?.userId, (notif) => {
+    // console.log("Notificación recibida:", notif);
+    // setNotifications((prev) => [notif, ...prev]);
+    setUnreadCount((count) => count + 1); // aumenta solo si llega una nueva
+  });
+
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (!user?.userId) return;
+      try {
+        const res = await getNotificationsByUser(user.userId); // deberías tener esta función
+        setNotifications(res.data);
+        setUnreadCount(res.data.filter(n => !n.seen).length);
+      } catch (error) {
+        console.error("Error al obtener notificaciones:", error);
+      }
+    };
+    fetchNotifications();
+  }, [user?.userId]);
+
+
+
+
+  const openNotif = Boolean(anchorElNotif);
+
+  const handleNotifClick = (event) => {
+    setAnchorElNotif(event.currentTarget);
+  };
+  const handleNotifClose = () => {
+    setAnchorElNotif(null);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorMenu(null);
+  };
+
+  const handleDialogChangeRol = () => {
+    setOpenChangeRol(!openChangeRol);
+  };
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -209,6 +333,7 @@ export default function MiniDrawer({ children }) {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -220,7 +345,7 @@ export default function MiniDrawer({ children }) {
   const pagesToShow = permisos[user.loginRol] || [];
 
   if (!isAuthenticated) {
-    return <Box component="main" sx={{ flexGrow: 1, p: 3 }}>{children}</Box>;
+    return <Box component="main" sx={{ flexGrow: 1 }}>{children}</Box>;
   }
 
   return (
@@ -228,6 +353,7 @@ export default function MiniDrawer({ children }) {
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
+  
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -240,107 +366,226 @@ export default function MiniDrawer({ children }) {
           >
             <MenuIcon />
           </IconButton>
+
           <Typography variant="h4" noWrap component="div">
             {user.loginRol}
           </Typography>
-
           <Box sx={{ flexGrow: 1 }} />
-          {user.firstName} {user.firstLastName}
           <IconButton
             size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenu}
-            color="inherit"
+            aria-label="ver notificaciones"
+            color={location.pathname === "/notifications" ? "secondary" : "inherit"}
+            onClick={handleNotifClick}
+            disabled={location.pathname === "/notifications"}
           >
-            <Avatar alt={user.firstName} src={profileImageUser} />
+            <Badge
+              badgeContent={unreadCount}
+              color="error"
+              overlap="circular"
+            >
+              <NotificationsIcon />
+            </Badge>
+
           </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
+
+          <Popover
+            open={openNotif}
+            anchorEl={anchorElNotif}
+            onClose={handleNotifClose}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "bottom",
+              horizontal: "right",
             }}
-            keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
           >
+            <Box sx={{ width: 400, maxHeight: 500, display: "flex", flexDirection: "column" }}>
+
+              <Box sx={{ overflowY: "auto", flexGrow: 1, px: 2 }}>
+                <NotificationList
+                  setCount={setUnreadCount}
+                />
+
+              </Box>
+
+              {/* Botón Ver todo */}
+              <Box textAlign="center" p={1}>
+                <Button
+                  variant="text"
+                  onClick={() => {
+                    handleNotifClose();
+                    navigate("/notifications");
+                  }}
+                  sx={{ textTransform: "none", fontWeight: "bold" }}
+                >
+                  Ver todo
+                </Button>
+              </Box>
+            </Box>
+          </Popover>
+
+
+          {user.firstName} {user.firstLastName}
+          <IconButton
+  size="large"
+  aria-controls="menu-appbar"
+  aria-haspopup="true"
+  onClick={handleMenu}
+  color="inherit"
+>
+  <Avatar alt={user.firstName} src={profileImageUser} />
+</IconButton>
+
+          <Menu
+  id="menu-appbar"
+  anchorEl={anchorEl}
+  open={Boolean(anchorEl)}
+  onClose={handleClose}
+  anchorOrigin={{
+    vertical: 'bottom',
+    horizontal: 'right',
+  }}
+  transformOrigin={{
+    vertical: 'top',
+    horizontal: 'right',
+  }}
+>
+
             <MenuItem onClick={() => handleNavigation("/perfil") & handleClose()}>Perfil</MenuItem>
-            <MenuItem onClick={logout}>Cerrar Sesión</MenuItem>
+            <MenuItem onClick={handleDialogChangeRol}>Cambiar Rol</MenuItem>
+            <MenuItem
+  onClick={() => {
+    handleClose(); // 👈 Cierra el menú antes de cerrar sesión
+    logout();      // 👈 Luego cierra sesión
+  }}
+>
+  Cerrar Sesión
+</MenuItem>
+
+            <SimpleDialog
+              open={openChangeRol}
+              onClose={handleDialogChangeRol}
+              tittle={""}
+            >
+              <CambiarRol />
+            </SimpleDialog>
           </Menu>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
+      <DrawerHeader>
+  <Box
+    display="flex"
+    alignItems="center"
+    justifyContent="space-between"
+    width="100%"
+    px={2}
+  >
+    {/* Logo + texto */}
+    <Box display="flex" alignItems="center" gap={1}>
+      <img
+        src="/android-chrome-512x512.png"
+        alt="SoftEd Logo"
+        style={{ width: 50, height: 50 }}
+      />
+      <Typography variant="h6" color="black">
+        SoftEd - Alumni
+      </Typography>
+    </Box>
+
+    {/* Botón de cerrar */}
+    <IconButton onClick={handleDrawerClose}>
+      {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+    </IconButton>
+  </Box>
+</DrawerHeader>
+
         <Divider />
         <List>
           {pagesToShow.map((page, index) => {
             if (page.menu) {
               return (
                 <Accordion
-                  onClick={handleDrawerOpen}
-
                   key={page.name}
                   expanded={expandedAccordion === page.name}
                   onChange={handleAccordionChange(page.name)}
-                  sx={{ boxShadow: 'none', backgroundColor: 'transparent', paddingLeft: open ? 0 : "6.2rem" }}
+                  sx={{
+                    boxShadow: 'none',
+                    backgroundColor: 'transparent',
+                    '&:before': { display: 'none' },
+                    paddingLeft: open ? 0 : 0, // sin indentación lateral innecesaria
+                  }}
                 >
                   <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls={`${page.name}-content`}
-                    id={`${page.name}-header`}
+                    onClick={() => {
+                      if (!open) handleDrawerOpen();
+                    }}
+                    expandIcon={open ? <ExpandMoreIcon /> : null}
                     sx={{
                       padding: 0,
-                      minHeight: 0,
+                      minHeight: 48,
                       justifyContent: open ? 'initial' : 'center',
+                      cursor: 'pointer',
                     }}
                   >
+
                     <ListItemButton
                       sx={{
-                        minHeight: 1,
-                        justifyContent: open ? 'initial' : 'center',
-                        px: 2.5,
+                        minHeight: 38,
+                        justifyContent: 'center',
+                        px: 0,
                       }}
                     >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : 'auto',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {page.icon}
-                      </ListItemIcon>
-                      <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
+
+                      <Tooltip title={page.name} placement="right" disableHoverListener={open}>
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {page.icon}
+                        </ListItemIcon>
+                      </Tooltip>
+
+
+                      {open && (
+                        <ListItemText
+                          primary={page.name}
+                          sx={{ marginLeft: 1 }}
+                        />
+                      )}
+
                     </ListItemButton>
                   </AccordionSummary>
-                  <AccordionDetails sx={{ padding: 0 }}>
-                    <List component="div" disablePadding>
-                      {page.menu.items.map((subItem) => (
-                        <ListItem
-                          key={subItem.name}
-                          disablePadding
-                          sx={{ pl: open ? 4 : 2 }}
-                          onClick={() => handleNavigation(subItem.link)}
-                        >
-                          <ListItemButton>
-                            <ListItemText primary={subItem.name} />
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </AccordionDetails>
+                  {open && (
+                   <AccordionDetails sx={{ padding: 0 }}>
+                   <List component="div" disablePadding>
+                     {page.menu.items.map((subItem) => (
+                       <ListItem
+                         key={subItem.name}
+                         disablePadding
+                         onClick={() => handleNavigation(subItem.link)}
+                         sx={{ pl: 4 }}
+                       >
+                         <ListItemButton>
+                           <ListItemIcon>
+                             {subItem.icon}
+                           </ListItemIcon>
+                           <ListItemText primary={subItem.name} />
+                         </ListItemButton>
+                       </ListItem>
+                     ))}
+                   </List>
+                 </AccordionDetails>
+                 
+                  )}
                 </Accordion>
+
               );
             }
             return (
@@ -373,7 +618,7 @@ export default function MiniDrawer({ children }) {
           })}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1 }}>
         <DrawerHeader />
         {children}
       </Box>

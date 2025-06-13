@@ -24,6 +24,9 @@ ul {
   font-weight: normal;
 }
 
+
+
+
 ol,
 ul {
   list-style: none;
@@ -33,5 +36,10 @@ img {
   max-width: 100%;
   height: auto;
 }
+/* main {
+  padding: 0 !important;
+  margin: 0 !important;
+} */
+
 
 

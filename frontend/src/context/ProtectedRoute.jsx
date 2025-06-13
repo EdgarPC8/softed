@@ -8,35 +8,34 @@ import Box from '@mui/material/Box';
 function ProtectedRoute({ requiredRol }) {
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  // console.log(isLoading, isAuthenticated,user);
-
-  if (isLoading)
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh', // Establece la altura del contenedor al 100% del viewport
-      }}
-    >
-      <CircularProgress size={100} /> {/* Establece el tamaño del CircularProgress */}
-    </Box>
-  );
-
-
-
-  if (isLoading && isAuthenticated && !requiredRol.includes(user.loginRol)) {
-    return <NoAcces/>;
-
+  // Mostrar cargando mientras se verifica la sesión
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress size={100} />
+      </Box>
+    );
   }
-  if (!isAuthenticated && !isLoading) return <Navigate to="/login" replace />;
 
-  // console.log(user)
+  // Si no está autenticado, redirige al login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
+  // Si el usuario está autenticado pero no tiene el rol requerido, mostrar acceso denegado
+  if (requiredRol && !requiredRol.includes(user.loginRol)) {
+    return <NoAcces />;
+  }
 
+  // Si todo está bien, renderiza la ruta protegida
   return <Outlet />;
-
 }
 
 export default ProtectedRoute;

@@ -4,23 +4,26 @@ import {
     getOneUser,
     addUser,
     deleteUser,
-    updateUserData
+    updateUserData,
+    addUsersBulk
 } from "../controllers/UserController.js";
 import { 
     deletePhoto,
     uploadPhoto 
 } from "../middlewares/uploadPhotoMiddleware.js";
 
+import { isAuthenticated } from "../middlewares/authMiddelware.js";
+
+
 const router = new Router();
 
-router.put("/photo/:userId",uploadPhoto);
-router.post("", addUser);
-router.get("", getUsers);
-router.delete("/:userId", deleteUser);
-router.put("/:userId",updateUserData);
-router.get("/:userId", getOneUser);
-
-
-router.delete("/photo/:userId", deletePhoto);
+router.put("/photo/:userId",isAuthenticated,uploadPhoto);
+router.post("", isAuthenticated,addUser);
+router.post("/bulk", isAuthenticated,addUsersBulk);
+router.get("", isAuthenticated,getUsers);
+router.delete("/:userId", isAuthenticated,deleteUser);
+router.put("/:userId",isAuthenticated,updateUserData);
+router.get("/:userId", isAuthenticated,getOneUser);
+router.delete("/photo/:userId", isAuthenticated,deletePhoto);
 
 export default router;

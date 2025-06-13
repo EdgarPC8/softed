@@ -1,24 +1,25 @@
 import { Careers,Periods,Matriz } from "../../models/Alumni.js";
+import { Users } from "../../models/Users.js";
 export const getMatriz = async (req, res) => {
     try {
       const matriz = await Matriz.findAll({
         attributes: ["idMatriz", "grateDate", "modality"],
-        // include: [
-        //   {
-        //     model: Professionals,
-        //     attributes: [
-        //       "firstName",
-        //       "secondName",
-        //       "firstLastName",
-        //       "secondLastName",
-        //       "ci",
-        //       "id",
-        //     ],
-        //   },
-        //   { model: Carreers },
-        //   { model: Periods },
-        // ],
+        include: [
+          {
+            model: Users,
+            attributes: [
+              "firstName",
+              "secondName",
+              "firstLastName",
+              "secondLastName",
+              "ci",
+            ],
+          },
+          { model: Careers},
+          { model: Periods},
+        ],
       });
+      
   
       res.json(matriz);
     } catch (error) {

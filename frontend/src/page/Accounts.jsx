@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import DataTable from "../Components/Tables/DataTable";
 import { useEffect, useState } from "react";
-import { deleteAccountRequest, getAccountRequest,resetPassword } from "../api/accountRequest.js";
+import { deleteAccountRequest, getAccountRequest, resetPassword } from "../api/accountRequest.js";
 import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
@@ -46,7 +46,7 @@ function Accounts() {
   const deleteUser = async () => {
     toast({
       promise:
-      deleteAccountRequest(dataToDelete.id),
+        deleteAccountRequest(dataToDelete.id),
       successMessage: "Usuario elimninado con éxito",
       onSuccess: (success) => {
         setData(data.filter((d) => d.id !== dataToDelete.id));
@@ -57,7 +57,7 @@ function Accounts() {
   const resetPasswordAccount = async () => {
     toast({
       promise:
-      resetPassword(idResetPass),
+        resetPassword(idResetPass),
       successMessage: "Contraseña reseteada con éxito a 12345678",
       onSuccess: (data) => {
         setIdResetPass(0)
@@ -89,21 +89,21 @@ function Accounts() {
       },
     },
     {
-      headerName: "Rol",
-      field: "rolName",
-      width: 100,
+      headerName: "Usuario",
+      field: "username",
+      width: 120,
+    },
+    {
+      headerName: "Roles",
+      field: "roles",
+      width: 250,
       sortable: false,
       renderCell: (params) => {
-        const rol = params.row.role
-        return `${rol.name}`;
+        const roles = params.row.roles || [];
+        return roles.map(role => role.name).join(", ");
       },
     },
 
-    {
-      headerName: "Usuario",
-      field: "username",
-      width: 80,
-    },
     {
       headerName: "Actions",
       field: "actions",
@@ -111,43 +111,43 @@ function Accounts() {
       sortable: false,
       renderCell: (params) => (
         <>
-           <Tooltip title="Editar Cuenta">
-           <IconButton
-            onClick={() => {
-              setDatos(params.row)
-              setIsEditing(true)
-              settitleUserDialog("Editar Cuenta")
-              handleDialogUser();
-            }}
-          >
-            <Edit />
-          </IconButton>
-     
-
-</Tooltip>
-<Tooltip title="Resetear Contraseña">
-   
-          <IconButton
-            onClick={() => {
-              setIdResetPass(params.row.id)
-              handleDialogResetPass();
-            }}
-          >
-            {`<>`}
-          </IconButton>
-</Tooltip>
-<Tooltip title="Eliminar Cuenta">
+          <Tooltip title="Editar Cuenta">
+            <IconButton
+              onClick={() => {
+                setDatos(params.row)
+                setIsEditing(true)
+                settitleUserDialog("Editar Cuenta")
+                handleDialogUser();
+              }}
+            >
+              <Edit />
+            </IconButton>
 
 
-          <IconButton
-            onClick={() => {
-              handleDialog();
-              setDataToDelete(params.row);
-            }}
-          >
-            <Delete />
-          </IconButton>
-</Tooltip>
+          </Tooltip>
+          <Tooltip title="Resetear Contraseña">
+
+            <IconButton
+              onClick={() => {
+                setIdResetPass(params.row.id)
+                handleDialogResetPass();
+              }}
+            >
+              {`<>`}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Eliminar Cuenta">
+
+
+            <IconButton
+              onClick={() => {
+                handleDialog();
+                setDataToDelete(params.row);
+              }}
+            >
+              <Delete />
+            </IconButton>
+          </Tooltip>
 
         </>
       ),
@@ -158,11 +158,7 @@ function Accounts() {
   }, []);
   return (
     <Container>
-      <Grid container sx={{ justifyContent: 'center' }} spacing={2}>
-        <Grid item xs={4} sm={4}>
-          <Roles />
-        </Grid>
-        <Grid item xs={8} sm={8} sx={{ marginTop: "18px" }}>
+     
           <SimpleDialog
             open={openResetPass}
             onClose={handleDialogResetPass}
@@ -199,9 +195,6 @@ function Accounts() {
             <AccountForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchdata}></AccountForm>
           </SimpleDialog>
           <DataTable data={data} columns={columns} />
-
-        </Grid>
-      </Grid>
     </Container>
   );
 }

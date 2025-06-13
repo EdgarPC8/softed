@@ -11,7 +11,8 @@ import {
   
   import { useForm } from "react-hook-form";
   import DataTable from "../../../Components/Tables/DataTable";
-  import { getPeriods,addPeriod,editPeriod,deletePeriod } from "../../../api/alumniRequest.js";
+  import { getPeriods,addPeriod,editPeriod,deletePeriod, getMatriz } from "../../../api/alumniRequest.js";
+
 
 
   
@@ -63,7 +64,7 @@ import {
       }
   
     const fetchdata = async () => {
-      const { data } = await getPeriods();
+      const { data } = await getMatriz();
       setData(data);
     };
   
@@ -78,7 +79,7 @@ import {
       toast({
         promise: 
         deletePeriod(dataToDelete.idPeriod),
-            successMessage: "Carrera Eliminada con éxito",
+            successMessage: "Matriz Eliminada con éxito",
             onSuccess: (dataresponse) => {
   
               setData(data.filter((data) => data.idPeriod !== dataToDelete.idPeriod));
@@ -91,22 +92,51 @@ import {
       {
         headerName: "#",
         field: "#",
-        width: 30,
+        width: 20,
       },
       {
         headerName: "Id",
-        field: "idPeriod",
-        width: 50,
+        field: "idMatriz",
+        width: 30,
       },
       {
-        headerName: "Orden",
-        field: "order",
-        width: 50,
+        headerName: "Graduado",
+        field: "Graduado",
+        width: 220,
+        sortable: false,
+        renderCell: (params) => {
+          const user=params.row.user
+          return `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`
+        }
       },
       {
-        headerName: "Nombre",
-        field: "name",
-        width: 600,
+        headerName: "Periodo",
+        field: "Periodo",
+        width: 150,
+        sortable: false,
+        renderCell: (params) => {
+          const period=params.row.alumni_period
+          return `${period.name}`
+        }
+      },
+      {
+        headerName: "Modalidad",
+        field: "modality",
+        width: 80,
+      },
+      {
+        headerName: "Fecha Grado",
+        field: "grateDate",
+        width: 80,
+      },
+      {
+        headerName: "Carrera",
+        field: "Carrera",
+        width: 300,
+        sortable: false,
+        renderCell: (params) => {
+          return params.row.alumni_career.name
+        }
       },
       {
         headerName: "Actions",
@@ -155,7 +185,7 @@ import {
                     <TextField
                       fullWidth
                       InputLabelProps={{ shrink: true }}
-                      label="Agregar Carrera"
+                      label="Agregar Matriz"
                       variant="standard"
                       {...register("name", { required: true })}
                       InputProps={{

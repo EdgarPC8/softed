@@ -44,7 +44,9 @@ export const respondeForm = async (id, response) =>
 export const getFormsByUserId = async (userId) =>
   await axios.get(`/forms/user/${userId}`, { headers: { Authorization: jwt() } });
 
-export const cloneFormRequest = (formId) => axios.post(`/forms/clone/${formId}`);
+
+export const cloneFormRequest = async (formId) =>
+  await axios.get(`/forms/clone/${formId}`, { headers: { Authorization: jwt() } });
 
 
   

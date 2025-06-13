@@ -7,11 +7,11 @@ import {
   TextField
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Person, Edit, Delete,Send } from "@mui/icons-material";
+import { Person, Edit, Delete, Send } from "@mui/icons-material";
 
 import { useForm } from "react-hook-form";
 import DataTable from "../../../Components/Tables/DataTable";
-import { getCareers,addCareer,editCareer,deleteCareer } from "../../../api/alumniRequest.js";
+import { getCareers, addCareer, editCareer, deleteCareer } from "../../../api/alumniRequest.js";
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
 import { useAuth } from "../../../context/AuthContext";
 function CareerPage() {
@@ -22,7 +22,7 @@ function CareerPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [id, setId] = useState(0);
   const [titleUserDialog, settitleUserDialog] = useState("");
-  const { toast} = useAuth();
+  const { toast } = useAuth();
 
   const {
     register,
@@ -35,29 +35,29 @@ function CareerPage() {
   const onSubmit = async (values) => {
     if (isEditing) {
       toast({
-        promise: 
-        editCareer(id, values),
-            successMessage: "Carrera editada con éxito",
-            onSuccess: (data) => {
-              fetchdata();
-              reset();
-              setIsEditing(false);
-            }
+        promise:
+          editCareer(id, values),
+        successMessage: "Carrera editada con éxito",
+        onSuccess: (data) => {
+          fetchdata();
+          reset();
+          setIsEditing(false);
+        }
       });
       return;
     }
-      toast({
-        promise: 
+    toast({
+      promise:
         addCareer(values),
-            successMessage: "Carrera guardada con éxito",
-            onSuccess: (data) => {
-              fetchdata();
-              reset();
-              setIsEditing(false);
-            }
-      });
+      successMessage: "Carrera guardada con éxito",
+      onSuccess: (data) => {
+        fetchdata();
+        reset();
+        setIsEditing(false);
+      }
+    });
 
-    }
+  }
 
   const fetchdata = async () => {
     const { data } = await getCareers();
@@ -73,14 +73,14 @@ function CareerPage() {
 
   const deleteData = async () => {
     toast({
-      promise: 
-      deleteCareer(dataToDelete.idCareer),
-          successMessage: "Carrera Eliminada con éxito",
-          onSuccess: (dataresponse) => {
+      promise:
+        deleteCareer(dataToDelete.idCareer),
+      successMessage: "Carrera Eliminada con éxito",
+      onSuccess: (dataresponse) => {
 
-            setData(data.filter((data) => data.idCareer !== dataToDelete.idCareer));
-            handleDialog();
-          }
+        setData(data.filter((data) => data.idCareer !== dataToDelete.idCareer));
+        handleDialog();
+      }
     });
   };
 
@@ -98,7 +98,7 @@ function CareerPage() {
     {
       headerName: "Nombre",
       field: "name",
-      width: 600,
+      width: 500,
     },
     {
       headerName: "Actions",
@@ -116,11 +116,11 @@ function CareerPage() {
           >
             <Edit />
           </IconButton>
-          <IconButton  onClick={() => {
+          <IconButton onClick={() => {
             handleDialog();
             setDataToDelete(params.row);
           }}>
-            
+
             <Delete />
           </IconButton>
         </>
@@ -131,45 +131,51 @@ function CareerPage() {
     fetchdata();
   }, []);
   return (
-
-    <Container>
-          <SimpleDialog
-            open={open}
-            onClose={handleDialog}
-            tittle="Eliminar Carrera"
-            onClickAccept={deleteData}
-          >
-            ¿Está seguro de eliminar la Carrera?
-          </SimpleDialog>
-            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    label="Agregar Carrera"
-                    variant="standard"
-                    {...register("name", { required: true })}
-                    InputProps={{
-                      endAdornment: (
-                        <IconButton type="submit">
-                          <Send />
-                        </IconButton>
-                      ),
-                    }}
-                  />
-                </Grid>
+    <Box maxWidth={"md"}
+    sx={{
+      mt:4,
+      mx: "auto",           // centra horizontalmente
+      textAlign: "center",  // opcional si quieres centrar textos
+    }}
+  >
+        <SimpleDialog
+          open={open}
+          onClose={handleDialog}
+          tittle="Eliminar Carrera"
+          onClickAccept={deleteData}
+        >
+          ¿Está seguro de eliminar la Carrera?
+        </SimpleDialog>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                  label="Agregar Carrera"
+                  variant="standard"
+                  {...register("name", { required: true })}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton type="submit">
+                        <Send />
+                      </IconButton>
+                    ),
+                  }}
+                />
               </Grid>
-            </Box>
-          <SimpleDialog
-            open={openDialog}
-            onClose={handleDialogUser}
-            tittle={titleUserDialog}
-          >
-          </SimpleDialog>
-          <DataTable data={data} columns={columns} />
-    </Container>
+            </Grid>
+          </Box>
+        <SimpleDialog
+          open={openDialog}
+          onClose={handleDialogUser}
+          tittle={titleUserDialog}
+        >
+        </SimpleDialog>
+        <DataTable data={data} columns={columns} />
+  </Box>
   );
+
 }
 
 export default CareerPage;

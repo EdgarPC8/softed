@@ -5,10 +5,13 @@ import {
   getSessionRequest,
 } from "../api/userRequest.js";
 
-import { jwt, pathPhotos } from "../api/axios";
+
+
+import { jwt, pathPhotos } from "../api/axios.js";
 import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack"; // Importa useSnackbar
 import { getAccount } from "../api/accountRequest.js";
+import { changeRole as changeRoleRequest  } from "../api/authRequest.js";
 
 
 const AuthContext = createContext();
@@ -40,7 +43,7 @@ const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       const session = await getSessionRequest();
       // console.log(session.data)
-      const {data} = await getAccount(session.data.userId,session.data.rolId);
+      const {data} = await getAccount(session.data.accountId,session.data.rolId);
 
       const userData = {
         ci: data.user.ci,
@@ -54,6 +57,7 @@ const AuthProvider = ({ children }) => {
         userId: session.data.userId,
         rolId: session.data.rolId,
         loginRol: session.data.loginRol,
+        roles: data.roles || [], 
       };
       // console.log(userData)
 
@@ -175,36 +179,61 @@ const AuthProvider = ({ children }) => {
   };
   
   
+  const changeRole = async (newRoleId) => {
+    try {
+      const { data } = await changeRoleRequest({
+        accountId: user.accountId,
+        rolId: newRoleId,
+      });
   
-  
+      if (data.token) {
+        window.localStorage.setItem("token", data.token);
+        setIsAuthenticated(true);
+        loadUserProfile(); // para actualizar datos del nuevo rol
+      }
+    } catch (error) {
+      console.error("Error al cambiar de rol:", error);
+    }
+  };
   
   
 
   const signin = async (user) => {
-
     try {
       const response = await loginRequest(user);
       const { data } = response;
-      // console.log(data)
-
+  
+      // Si se requiere seleccionar un rol
+      if (data.selectRole) {
+        return { selectRole: true, roles: data.roles, accountId: data.accountId };
+      }
+  
+      // Si se devuelve directamente el token
       if (data.token) {
         window.localStorage.setItem("token", data.token);
         setIsAuthenticated(true);
         loadUserProfile();
-        return;
+        return { success: true };
       }
+  
       setErrors({ message: data.message, status: data.status });
-    } catch (error) {
-      setIsAuthenticated(false);
-      setIsLoading(true);
-      setErrors(error.response.data.message);
-    }
+      return { error: true };
+    }catch (error) {
+        setIsAuthenticated(false);
+        setIsLoading(false); // ✅ correcto: ya no está cargando
+        setErrors({
+          message: error.response?.data?.message || "Error de conexión",
+          status: "error",
+        });
+        return { error: true };
+      }
+      
   };
-
+  
   const logout = async () => {
     window.localStorage.removeItem("token");
     setIsAuthenticated(false);
-    window.location.reload();
+    // window.location.reload();
     // <Link to="/">Ir al inicio</Link>
   };
 
@@ -261,7 +290,8 @@ const AuthProvider = ({ children }) => {
         toast,
         setProfileImageUser,
         profileImageUser,
-        setUser
+        setUser,
+        changeRole
       }}
     >
       {children}

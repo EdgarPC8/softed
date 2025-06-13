@@ -73,6 +73,30 @@ export const getUsers = async (req, res) => {
       });
     }
   };
+  export const addUsersBulk = async (req, res) => {
+    let usuarios = req.body; // <-- antes era const
+
+
+    if (!Array.isArray(usuarios) || usuarios.length === 0) {
+      return res.status(400).json({ message: "No hay usuarios para registrar" });
+    }
+    usuarios = usuarios.map(({ id, ...rest }) => rest);
+    try {
+      const resultado = await Users.bulkCreate(usuarios, {
+        ignoreDuplicates: true, // opcional según tu BD
+        returning: true,
+      });
+  
+      res.json({
+        insertados: resultado.length,
+        detalles: resultado,
+      });
+    } catch (error) {
+      console.error("Error al insertar usuarios:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+    
+  }
   export const updateUserData = async (req, res) => {
     const data=req.body;
   
@@ -92,4 +116,6 @@ export const getUsers = async (req, res) => {
     }
   };
   
+
+
 
