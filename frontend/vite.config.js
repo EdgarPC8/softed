@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true, // Acepta conexiones desde cualquier dirección IP
-    port: 5174, // O cualquier puerto que desees
+    port: 5173, // O cualquier puerto que desees
     strictPort: true, // Asegura que se use este puerto específico
   },
   base: './', // 👈 esto cambia las rutas para que sean relativas

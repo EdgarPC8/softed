@@ -41,6 +41,23 @@ import ControlPanelPage from "./page/ControlPanel.jsx";
 import HomePageAlumni from "./page/alumni/Home.jsx";
 import Info from "./page/Info.jsx";
 import Donations from "./page/Donations.jsx";
+import AdminQuizList from "./page/quiz/admin/AdminQuizList.jsx";
+
+import QuizQuestions from "./page/quiz/admin/QuizQuestions.jsx";
+import QuizViewer from "./page/quiz/admin/QuizViewer.jsx";
+import QuizResponsesCharts from "./page/quiz/admin/QuizResponsesCharts.jsx";
+import AssignQuiz from "./page/quiz/admin/AssignQuiz.jsx";
+import QuizList from "./page/quiz/user/QuizList.jsx";
+import QuizAnswerEvaluation from "./page/quiz/user/QuizAnswerEvaluation.jsx";
+import QuizSimulatorMode from "./page/quiz/user/QuizAnswerSimulator.jsx";
+import QuizAnswerPractice from "./page/quiz/user/QuizAnswerPractice.jsx";
+
+
+
+
+
+
+
 
 function App() {
   return (
@@ -102,6 +119,18 @@ function App() {
                   <Route path="/careers" element={<CareerPage />} />
                   <Route path="/periods" element={<PeriodPage />} />
                   <Route path="/matriz" element={<MatrizPage />} />
+
+
+                  <Route path="/quizzes" element={<AdminQuizList />} />
+                  <Route path="/quizzes/manage/:id" element={<QuizQuestions />} />
+                  <Route path="/quizzes/view/:id" element={<QuizViewer/>} />
+                  <Route path="/quizzes/charts/:id" element={<QuizResponsesCharts/>} />
+                  <Route path="/quizzes/assign/:id" element={<AssignQuiz/>} />
+                  <Route path="/myQuizzes" element={<QuizList/>} />
+                  <Route path="/myQuizzes/evaluation/:id" element={<QuizAnswerEvaluation />} />
+                  <Route path="/myQuizzes/simulator/:id" element={<QuizSimulatorMode />} />
+                  <Route path="/myQuizzes/practice/:id" element={<QuizAnswerPractice />} />
+
                 </Route>
 
 

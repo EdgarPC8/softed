@@ -17,7 +17,7 @@ export default function Info() {
       <Paper elevation={3} sx={{ maxWidth: 500, p: 4, borderRadius: 3 }}>
         <Box display="flex" flexDirection="column" alignItems="center" textAlign="center">
           <img
-            src="/android-chrome-512x512.png"
+            src="./android-chrome-512x512.png"
             alt="Logo SoftEd"
             style={{ width: 100, height: 100, marginBottom: 16 }}
           />

@@ -2,7 +2,7 @@ import multer from "multer";
 import { join, extname } from "path";
 import fileDirName from "../libs/file-dirname.js";
 import { unlink } from "fs/promises";
-import { Users } from "../Models/Users.js";
+import { Users } from "../models/Users.js";
 
 const { __dirname } = fileDirName(import.meta);
 

@@ -1,28 +1,51 @@
 import { Router } from "express";
 import {
-    getQuizzes,
-    saveQuiz,
-    getOptionsQuestions,
-    updateAnswerUser,
-    addAnswerUser,
-    addAllAnswersUsers,
-} from "../controllers/QuizController.js";
+  getQuizzes,
+  createQuiz,
+  editQuiz,
+  deleteQuiz,
+  getQuestionsByQuiz,
+  addQuestionsToQuiz,
+  getQuizResponses,
+  getResponsesGroupedByUser,
+  getUsersByQuizAssign,
+deleteUsersByQuizAssign,
+assignUsersToQuiz,
+filterUsers,
+getQuizzesByUserId,
+submitQuizAnswers
+} from "../controllers/quizController.js";
+
 import { isAuthenticated } from "../middlewares/authMiddelware.js";
 
+const router = Router();
 
-const router = new Router();
+// Cuestionarios
+router.get("/", isAuthenticated, getQuizzes);
+router.post("/", isAuthenticated, createQuiz);
+router.put("/:id", isAuthenticated, editQuiz);
+router.delete("/:id", isAuthenticated, deleteQuiz);
 
-router.get("", isAuthenticated,getQuizzes);
-router.post("", isAuthenticated,saveQuiz);
-router.get("/getOptionsQuestions", isAuthenticated,getOptionsQuestions);
-router.put("/answer/:idQuestion/:idOption",isAuthenticated,updateAnswerUser);
-router.post("/answer", isAuthenticated,addAnswerUser);
-router.post("/addAllAnswersUsers", isAuthenticated,addAllAnswersUsers);
+// Preguntas de un cuestionario
+router.get("/questions/:id", isAuthenticated, getQuestionsByQuiz);
+router.put("/questions/:id", isAuthenticated, addQuestionsToQuiz);
 
-// router.put("/photo/:userId",uploadPhoto);
-// router.delete("/:userId", deleteUser);
-// router.put("/:userId",updateUserData);
-// router.get("/:userId", getOneUser);
-// router.delete("/photo/:userId", deletePhoto);
+// Respuestas de un cuestionario (estadísticas)
+router.get("/responses/:id", isAuthenticated, getQuizResponses);
+router.get("/responses/users/:quizId", getResponsesGroupedByUser);
+
+
+router.get("/assign/:quizId", getUsersByQuizAssign);
+router.delete("/assign/:quizId/:userId", deleteUsersByQuizAssign);
+router.post("/assign/filter", filterUsers);   
+router.post("/assign/:quizId", assignUsersToQuiz);       // Para asignar usuarios
+
+router.get("/assigned/:userId", getQuizzesByUserId);
+
+router.post("/submit/:quizId", isAuthenticated, submitQuizAnswers);
+
+
+
+
 
 export default router;

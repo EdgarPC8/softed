@@ -7,7 +7,7 @@ import UsersRoutes from "./src/routes/UsersRoutes.js";
 import AuthRoutes from "./src/routes/AuthRoutes.js";
 import ComandsRoutes from "./src/routes/ComandsRoutes.js";
 import AccountsRoutes from "./src/routes/AccountsRoutes.js";
-// import QuizRoutes from "./src/routes/QuizRoutes.js";
+import QuizRoutes from "./src/routes/QuizRoutes.js";
 import FormsRoutes from "./src/routes/FormsRoutes.js";
 import AlumniRoutes from "./src/routes/AlumniRoutes.js";
 import NotificationsRoutes from "./src/routes/NotificationsRoutes.js";
@@ -17,13 +17,15 @@ import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app); // 👈 solo este se usa para arrancar
-const api="api"
+const api="alumniapi"
 
 const PORT = 3000;
 const allowedOrigins = [
-  "http://localhost:5174",
+  "http://localhost:5173",
   "http://localhost:4173",
-  "http://192.169.100.109:5174",
+  "http://localhost:8888",
+  "http://192.168.137.94:8888",
+  "http://192.168.137.94:5173",
   "https://aplicaciones.marianosamaniego.edu.ec",
   "https://www.aplicaciones.marianosamaniego.edu.ec",
 ];
@@ -59,9 +61,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Rutas
-app.use(`/photos`, express.static(`src/img/photos`));
+app.use(`/${api}/photos`, express.static(`src/img/photos`));
 app.use(`/${api}/users`, UsersRoutes);
-// app.use(`/${api}/quiz`, QuizRoutes);
+app.use(`/${api}/quiz`, QuizRoutes);
 app.use(`/${api}`, AuthRoutes);
 app.use(`/${api}/comands`, ComandsRoutes);
 app.use(`/${api}`, AccountsRoutes);
@@ -74,7 +76,7 @@ initNotificationSocket(io);
 
 export async function main() {
   try {
-    // await sequelize.authenticate();
+    await sequelize.authenticate();
     // await sequelize.sync({ force: true });
     // await insertData();
 

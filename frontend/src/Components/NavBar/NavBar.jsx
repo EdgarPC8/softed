@@ -87,6 +87,16 @@ const permisos = {
       },
     },
     {
+      name: "Cuestionarios",
+      icon: <Poll />,
+      menu: {
+        items: [
+          { name: "Ver cuestionarios", link: "/quizzes", icon: <ListIcon /> },
+          { name: "Mis cuestionarios", link: "/myQuizzes", icon: <AssignmentInd /> },
+        ],
+      },
+    },
+    {
       name: "Entidades",
       icon: <AccountTree />,
       menu: {
@@ -486,7 +496,7 @@ export default function MiniDrawer({ children }) {
     {/* Logo + texto */}
     <Box display="flex" alignItems="center" gap={1}>
       <img
-        src="/android-chrome-512x512.png"
+        src="./android-chrome-512x512.png"
         alt="SoftEd Logo"
         style={{ width: 50, height: 50 }}
       />

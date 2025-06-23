@@ -9,7 +9,7 @@ import {
   Button
 } from '@mui/material';
 
-import bannerImage from '/home_istms.png'; // Ajusta esta ruta
+// import bannerImage from './home_istms.png'; // Ajusta esta ruta
 
 
 const courses = [

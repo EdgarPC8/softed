@@ -11,7 +11,7 @@ const donationData = [
     accountNumber: "2951571509",
     bank: "Banco de Loja",
     accountType: "Cuenta de ahorros",
-    qrImage: "/qr-edgar.png"
+    qrImage: "./qr-edgar.png"
   },
   {
     name: "Patricio Alexander Briceño Sarango",
@@ -19,7 +19,7 @@ const donationData = [
     accountNumber: "2904396463",
     bank: "Banco de Loja",
     accountType: "Cuenta de ahorros",
-    qrImage: "/qr-patricio.png"
+    qrImage: "./qr-patricio.png"
   }
 ];
 

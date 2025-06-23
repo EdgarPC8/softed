@@ -13,6 +13,9 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import bannerImage from "/home_istms.png"; // ajusta la ruta si está en otro lugar
+
+
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -59,7 +62,7 @@ function Login() {
     <Box
       sx={{
         height: "100vh",
-        backgroundImage: "url('/home_istms.png')",
+        backgroundImage: `url(${bannerImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

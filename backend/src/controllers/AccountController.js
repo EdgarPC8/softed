@@ -3,6 +3,17 @@ import { Roles } from "../models/Roles.js";
 import { Users } from "../models/Users.js";
 import bcrypt from "bcrypt";
 
+export const getRoles = async (req, res) => {
+  try {
+    const data = await Roles.findAll();
+    res.json(data);
+
+
+  } catch (error) {
+    console.error("Error al obtener los roles:", error);
+    res.status(500).json({ message: "Error en el servidor." });
+  }
+  };
 
 export const addAccount = async (req, res) => {
   try {
@@ -290,15 +301,6 @@ export const getAccounts = async (req, res) => {
   };
 
 
-export const getRoles = async (req, res) => {
-  try {
-    const data = await Roles.findAll();
-    res.json(data);
-  } catch (error) {
-    console.error("Error al obtener los roles:", error);
-    res.status(500).json({ message: "Error en el servidor." });
-  }
-  };
   export const getOneRol= async (req, res) => {
     const { id } = req.params;
     try {

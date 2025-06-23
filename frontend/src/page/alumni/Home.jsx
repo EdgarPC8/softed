@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 
 import bannerImage from '/home_istms.png'; // Asegúrate de que esté en /public
+
 import { getCareers } from '../../api/alumniRequest';
 
 export default function HomePageAlumni() {
@@ -39,17 +40,12 @@ export default function HomePageAlumni() {
           overflow: 'hidden'
         }}
       >
-        <Box
-          component="img"
-          src={bannerImage}
-          alt="Banner"
-          sx={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center'
-          }}
-        />
+<Box
+  component="img"
+  src={bannerImage}
+  alt="Banner"
+/>
+
         {/* Texto encima de la imagen */}
         <Box
           sx={{
