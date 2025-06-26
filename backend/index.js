@@ -11,6 +11,8 @@ import QuizRoutes from "./src/routes/QuizRoutes.js";
 import FormsRoutes from "./src/routes/FormsRoutes.js";
 import AlumniRoutes from "./src/routes/AlumniRoutes.js";
 import NotificationsRoutes from "./src/routes/NotificationsRoutes.js";
+import InventoryControlRoutes from "./src/routes/InventoryControlRoutes.js";
+import OrderRoutes from "./src/routes/OrderRoutes.js";
 import { initNotificationSocket } from "./src/sockets/notificationSocket.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
@@ -70,6 +72,8 @@ app.use(`/${api}`, AccountsRoutes);
 app.use(`/${api}/forms`, FormsRoutes);
 app.use(`/${api}/alumni`, AlumniRoutes);
 app.use(`/${api}/notifications`, NotificationsRoutes);
+app.use(`/${api}/inventory`, InventoryControlRoutes);
+app.use(`/${api}/orders`, OrderRoutes);
 
 // Socket para notificaciones
 initNotificationSocket(io);

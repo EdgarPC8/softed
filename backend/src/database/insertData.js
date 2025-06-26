@@ -22,6 +22,14 @@ Question,
   UserForm } from '../models/Forms.js';
 import { Notifications } from '../models/Notifications.js';
 
+import { 
+  InventoryCategory,
+  InventoryRecipe,
+  InventoryMovement,
+  InventoryProduct, 
+  InventoryUnit
+} from '../models/Inventory.js';
+
 
 
 
@@ -63,6 +71,11 @@ export const insertData = async () => {
     await QuizAttempts.bulkCreate(jsonData.QuizAttempts, { returning: true });
     await QuizAnswers.bulkCreate(jsonData.QuizAnswers, { returning: true });
     await QuizAssignment.bulkCreate(jsonData.QuizAssignment, { returning: true });
+    await InventoryCategory.bulkCreate(jsonData.InventoryCategory, { returning: true });
+    await InventoryUnit.bulkCreate(jsonData.InventoryUnit, { returning: true });
+    await InventoryProduct.bulkCreate(jsonData.InventoryProduct, { returning: true });
+    await InventoryRecipe.bulkCreate(jsonData.InventoryRecipe, { returning: true });
+    await InventoryMovement.bulkCreate(jsonData.InventoryMovement, { returning: true });
 
     console.log("Datos insertados correctamente desde el archivo de respaldo.");
   } catch (error) {
@@ -101,6 +114,11 @@ export const saveBackup = async () => {
     const QuizQuestionsData = await QuizQuestions.findAll();
     const QuizQuizzesData = await QuizQuizzes.findAll();
     const QuizAssignmentData = await QuizAssignment.findAll();
+    const InventoryCategoryData = await InventoryCategory.findAll();
+    const InventoryRecipeData = await InventoryRecipe.findAll();
+    const InventoryMovementData = await InventoryMovement.findAll();
+    const InventoryProductData = await InventoryProduct.findAll();
+    const InventoryUnitData = await InventoryUnit.findAll();
 
     const backupData = {
       Roles: rolesData,
@@ -124,6 +142,11 @@ export const saveBackup = async () => {
       QuizQuestions: QuizQuestionsData,
       QuizQuizzes: QuizQuizzesData,
       QuizAssignment: QuizAssignmentData,
+      InventoryCategory: InventoryCategoryData,
+      InventoryRecipe: InventoryRecipeData,
+      InventoryMovement: InventoryMovementData,
+      InventoryProduct: InventoryProductData,
+      InventoryUnit: InventoryUnitData,
     };
 
     await fs.mkdir(backups, { recursive: true });

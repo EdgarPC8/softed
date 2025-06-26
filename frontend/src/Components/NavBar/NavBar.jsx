@@ -37,6 +37,8 @@ import SimpleDialog from '../Dialogs/SimpleDialog';
 import CambiarRol from '../ViewModal/CambiarRol';
 import NotificationList from '../NotificationList';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import CategoryIcon from '@mui/icons-material/Category';
+
 
 import {
   Terminal,
@@ -65,7 +67,18 @@ import {
   Dns,
   IntegrationInstructions,
   QuestionAnswer,
+  
 } from '@mui/icons-material';
+
+import InventoryIcon from '@mui/icons-material/Inventory';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import StraightenIcon from '@mui/icons-material/Straighten';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import PeopleIcon from '@mui/icons-material/People';
+
+
 
 
 
@@ -75,6 +88,21 @@ const permisos = {
       name: "Home",
       icon: <Home />,
       link: "/"
+    },
+    {
+      name: "Inventory Control",
+      icon: <InventoryIcon />,
+      menu: {
+        items: [
+          { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
+          { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
+          { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },
+          { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
+          { name: "Categorias", link: "/inventory/categories", icon: <CategoryIcon /> },
+          { name: "Unidades", link: "/inventory/units", icon: <StraightenIcon /> },
+          { name: "Recetas", link: "/inventory/recipes", icon: <ReceiptLongIcon /> },
+        ],
+      },
     },
     {
       name: "Encuestas",

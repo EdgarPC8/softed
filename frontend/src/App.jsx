@@ -51,6 +51,13 @@ import QuizList from "./page/quiz/user/QuizList.jsx";
 import QuizAnswerEvaluation from "./page/quiz/user/QuizAnswerEvaluation.jsx";
 import QuizSimulatorMode from "./page/quiz/user/QuizAnswerSimulator.jsx";
 import QuizAnswerPractice from "./page/quiz/user/QuizAnswerPractice.jsx";
+import ProductsPage from "./page/inventoryControl/ProductsPage.jsx";
+import CategoryPage from "./page/inventoryControl/CategoryPage.jsx";
+import UnitPage from "./page/inventoryControl/UnitPage.jsx";
+import MovementPage from "./page/inventoryControl/MovementPage.jsx";
+import RecipePage from "./page/inventoryControl/RecipePage.jsx";
+import OrderPage from "./page/inventoryControl/OrderPage.jsx";
+import CustomerPage from "./page/inventoryControl/CustomerPage.jsx";
 
 
 
@@ -130,6 +137,14 @@ function App() {
                   <Route path="/myQuizzes/evaluation/:id" element={<QuizAnswerEvaluation />} />
                   <Route path="/myQuizzes/simulator/:id" element={<QuizSimulatorMode />} />
                   <Route path="/myQuizzes/practice/:id" element={<QuizAnswerPractice />} />
+
+                  <Route path="/inventory/products" element={<ProductsPage />} />
+                  <Route path="/inventory/categories" element={<CategoryPage />} />
+                  <Route path="/inventory/units" element={<UnitPage />} />
+                  <Route path="/inventory/movement" element={<MovementPage />} />
+                  <Route path="/inventory/recipes" element={<RecipePage />} />
+                  <Route path="/inventory/orders" element={<OrderPage />} />
+                  <Route path="/inventory/customers" element={<CustomerPage />} />
 
                 </Route>
 
