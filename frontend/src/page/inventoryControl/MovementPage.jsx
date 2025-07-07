@@ -39,7 +39,7 @@ function MovementPage() {
       headerName: "Producto",
       field: "product",
       width: 200,
-      renderCell: (params) => params.row.inventory_product?.name || "-",
+      renderCell: (params) => params.row.ERP_inventory_product?.name || "-",
     },
     { headerName: "Tipo", field: "type", width: 100 },
     { headerName: "Cantidad", field: "quantity", width: 100 },

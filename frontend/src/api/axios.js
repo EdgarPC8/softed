@@ -37,7 +37,7 @@ export const urlRequestsApi = {
   };
   
 
-const url =  urlRequestsApi.edgar;
+const url =  urlRequestsApi.local;
 
 const instance = axios.create({
   baseURL: `${url}`,

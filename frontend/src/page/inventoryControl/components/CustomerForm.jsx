@@ -7,8 +7,8 @@ import {
   import { useForm } from 'react-hook-form';
   import { useEffect } from 'react';
   import { useAuth } from '../../../context/AuthContext';
-import { createCustomerRequest,updateCustomerRequest } from '../../../api/ordersRequest';
- 
+import { createCustomerRequest,updateCustomerRequest } from '../../../api/ordersRequest.js';
+
   
   function CustomerForm({ isEditing = false, datos = [], onClose, reload }) {
     const { handleSubmit, register, reset, setValue } = useForm();

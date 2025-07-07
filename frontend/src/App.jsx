@@ -38,7 +38,6 @@ import NotificationsPage from "./page/Notifications.jsx";
 import PublicOnlyRoute from "./context/PublicOnlyRoute.jsx";
 import Roles from "./page/Roles.jsx";
 import ControlPanelPage from "./page/ControlPanel.jsx";
-import HomePageAlumni from "./page/alumni/Home.jsx";
 import Info from "./page/Info.jsx";
 import Donations from "./page/Donations.jsx";
 import AdminQuizList from "./page/quiz/admin/AdminQuizList.jsx";
@@ -58,6 +57,11 @@ import MovementPage from "./page/inventoryControl/MovementPage.jsx";
 import RecipePage from "./page/inventoryControl/RecipePage.jsx";
 import OrderPage from "./page/inventoryControl/OrderPage.jsx";
 import CustomerPage from "./page/inventoryControl/CustomerPage.jsx";
+import FinancePage from "./page/inventoryControl/FinancePage.jsx";
+import HomePageAlumni from "./page/alumni/Home.jsx";
+import HomePageERP from "./page/inventoryControl/HomePage.jsx";
+
+
 
 
 
@@ -77,7 +81,7 @@ function App() {
         }}
       >
         <AuthProvider>
-          <BrowserRouter basename="/alumni">
+          <BrowserRouter basename="/softed">
             <NavBar>
               <Routes>
                 <Route element={<PublicOnlyRoute />}>
@@ -88,7 +92,7 @@ function App() {
                     <ProtectedRoute requiredRol={["Estudiante", "Administrador", "Programador"]} />
                   }
                 >
-                  <Route path="/" element={<HomePageAlumni />} />
+                  <Route path="/" element={<HomePageERP />} />
                   <Route path="/perfil" element={<Profile />} />
                   <Route path="/myforms" element={<FormsList />} />
                   <Route path="/myforms/:id" element={<FormAnswer />} />
@@ -145,6 +149,7 @@ function App() {
                   <Route path="/inventory/recipes" element={<RecipePage />} />
                   <Route path="/inventory/orders" element={<OrderPage />} />
                   <Route path="/inventory/customers" element={<CustomerPage />} />
+                  <Route path="/inventory/finance" element={<FinancePage />} />
 
                 </Route>
 

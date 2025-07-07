@@ -94,6 +94,7 @@ const permisos = {
       icon: <InventoryIcon />,
       menu: {
         items: [
+          { name: "Finanzas", link: "/inventory/finance", icon: <CompareArrowsIcon /> },
           { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
           { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
           { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },

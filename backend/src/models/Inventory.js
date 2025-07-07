@@ -1,5 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../database/connection.js';
+import { Account } from './Account.js';
+
 
 
 
@@ -7,19 +9,13 @@ import { sequelize } from '../database/connection.js';
 export const InventoryMovement = sequelize.define('ERP_inventory_movements', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   productId: { type: DataTypes.INTEGER, allowNull: false },
-
-  type: {
-    type: DataTypes.ENUM('entry', 'exit', 'adjustment', 'production'),
-    allowNull: false
-  },
   quantity: { type: DataTypes.FLOAT, allowNull: false },
-  description: { type: DataTypes.TEXT },
-  date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, {
-  timestamps: false
+  type: { type: DataTypes.ENUM("entrada", "salida","ajuste","produccion"), allowNull: false },
+  referenceType: { type: DataTypes.STRING, allowNull: true }, // ej: "order"
+  referenceId: { type: DataTypes.INTEGER, allowNull: true },
+  date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+  createdBy: { type: DataTypes.INTEGER, allowNull: false }
 });
-
-
 
 
 // Tabla de recetas: define qué productos (insumos) componen un producto final
@@ -115,6 +111,9 @@ InventoryProduct.hasMany(InventoryMovement, { foreignKey: 'productId', onDelete:
 InventoryMovement.belongsTo(InventoryProduct, { foreignKey: 'productId' });
 InventoryUnit.hasMany(InventoryProduct, { foreignKey: 'unitId' });
 InventoryProduct.belongsTo(InventoryUnit, { foreignKey: 'unitId' });
+
+InventoryMovement.belongsTo(Account, { foreignKey: "createdBy" });
+
 
 
 

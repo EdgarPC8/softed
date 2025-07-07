@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../database/connection.js';
 import { InventoryProduct } from './Inventory.js';
 
@@ -18,10 +18,16 @@ export const Order = sequelize.define("ERP_orders", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   customerId: { type: DataTypes.INTEGER, allowNull: false },
   status: {
-    type: DataTypes.ENUM("pendiente", "entregado", "cancelado"),
+    type: DataTypes.ENUM("pendiente", "entregado", "pagado"),
     defaultValue: "pendiente"
   },
   notes: { type: DataTypes.TEXT },
+  date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: Sequelize.NOW
+  }
+  
 }, {
   timestamps: true,
 });
@@ -33,6 +39,15 @@ export const OrderItem = sequelize.define("ERP_order_items", {
   productId: { type: DataTypes.INTEGER, allowNull: false },
   quantity: { type: DataTypes.FLOAT, allowNull: false },
   price: { type: DataTypes.FLOAT, allowNull: false },
+  deliveredAt: {
+    type: DataTypes.DATE,
+    allowNull: true, // null means not delivered yet
+  },
+  paidAt: {
+    type: DataTypes.DATE,
+    allowNull: true, // null means not paid yet
+  },
+  
 }, {
   timestamps: false,
 });

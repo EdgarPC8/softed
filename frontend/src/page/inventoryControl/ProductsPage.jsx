@@ -83,13 +83,13 @@ function ProductsPage() {
       headerName: "Unidad",
       field: "inventory_unit.name",
       width: 100,
-      renderCell: (params) => params.row.inventory_unit?.name,
+      renderCell: (params) => params.row.ERP_inventory_unit?.name,
     },
     {
       headerName: "Categoría",
       field: "category",
       width: 150,
-      renderCell: (params) => params.row.inventory_category?.name,
+      renderCell: (params) => params.row.ERP_inventory_category?.name,
     },
     {
       headerName: "Precio",

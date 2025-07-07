@@ -82,7 +82,7 @@ const AuthProvider = ({ children }) => {
     if(info){
       let infoAttributes = {
         title: "Informacion", // Título por defecto
-        description: "Alguna descripcion", // Descripción usando el mensaje de éxito por defecto
+        description: "Alguna Descripcion", // Descripción usando el mensaje de éxito por defecto
         variant: 'warning', // Tipo de toast
         autoHideDuration: 3000 // Duración por defecto
       };

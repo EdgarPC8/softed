@@ -61,10 +61,10 @@ import {
               value={watch("type") || ""}
               {...register("type", { required: true })}
             >
-              <MenuItem value="entry">Entrada</MenuItem>
-              <MenuItem value="exit">Salida</MenuItem>
-              <MenuItem value="adjustment">Ajuste</MenuItem>
-              <MenuItem value="production">Producción</MenuItem>
+              <MenuItem value="entrada">Entrada</MenuItem>
+              <MenuItem value="salida">Salida</MenuItem>
+              <MenuItem value="ajuste">Ajuste</MenuItem>
+              <MenuItem value="produccion">Producción</MenuItem>
             </TextField>
           </Grid>
   

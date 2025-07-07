@@ -13,6 +13,7 @@ import AlumniRoutes from "./src/routes/AlumniRoutes.js";
 import NotificationsRoutes from "./src/routes/NotificationsRoutes.js";
 import InventoryControlRoutes from "./src/routes/InventoryControlRoutes.js";
 import OrderRoutes from "./src/routes/OrderRoutes.js";
+import FinanceRoutes from "./src/routes/FinanceRoutes.js";
 import { initNotificationSocket } from "./src/sockets/notificationSocket.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
@@ -74,6 +75,7 @@ app.use(`/${api}/alumni`, AlumniRoutes);
 app.use(`/${api}/notifications`, NotificationsRoutes);
 app.use(`/${api}/inventory`, InventoryControlRoutes);
 app.use(`/${api}/orders`, OrderRoutes);
+app.use(`/${api}/finance`, FinanceRoutes);
 
 // Socket para notificaciones
 initNotificationSocket(io);

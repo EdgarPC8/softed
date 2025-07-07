@@ -29,7 +29,12 @@ import {
   InventoryProduct, 
   InventoryUnit
 } from '../models/Inventory.js';
-
+import { 
+  Customer ,
+  Order,
+  OrderItem
+} from '../models/Orders.js';
+import { Expense, Income } from '../models/Finance.js';
 
 
 
@@ -76,6 +81,11 @@ export const insertData = async () => {
     await InventoryProduct.bulkCreate(jsonData.InventoryProduct, { returning: true });
     await InventoryRecipe.bulkCreate(jsonData.InventoryRecipe, { returning: true });
     await InventoryMovement.bulkCreate(jsonData.InventoryMovement, { returning: true });
+    await Customer.bulkCreate(jsonData.Customer, { returning: true });
+    await Order.bulkCreate(jsonData.Order, { returning: true });
+    await OrderItem.bulkCreate(jsonData.OrderItem, { returning: true });
+    await Expense.bulkCreate(jsonData.Expense, { returning: true });
+    await Income.bulkCreate(jsonData.Income, { returning: true });
 
     console.log("Datos insertados correctamente desde el archivo de respaldo.");
   } catch (error) {
@@ -119,6 +129,11 @@ export const saveBackup = async () => {
     const InventoryMovementData = await InventoryMovement.findAll();
     const InventoryProductData = await InventoryProduct.findAll();
     const InventoryUnitData = await InventoryUnit.findAll();
+    const CustomerData = await Customer.findAll();
+    const OrderData = await Order.findAll();
+    const OrderItemData = await OrderItem.findAll();
+    const ExpenseData = await Expense.findAll();
+    const IncomeData = await Income.findAll();
 
     const backupData = {
       Roles: rolesData,
@@ -147,6 +162,11 @@ export const saveBackup = async () => {
       InventoryMovement: InventoryMovementData,
       InventoryProduct: InventoryProductData,
       InventoryUnit: InventoryUnitData,
+      Customer: CustomerData,
+      Order: OrderData,
+      OrderItem: OrderItemData,
+      Expense: ExpenseData,
+      Income: IncomeData,
     };
 
     await fs.mkdir(backups, { recursive: true });
