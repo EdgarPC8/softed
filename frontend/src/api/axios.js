@@ -11,7 +11,7 @@ export const urlRequestsApi = {
   };
   
 
-const url =  urlRequestsApi.edgar;
+const url =  urlRequestsApi.production;
 
 const instance = axios.create({
   baseURL: `${url}`,
