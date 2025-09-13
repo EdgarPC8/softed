@@ -3,6 +3,8 @@ import { verifyJWT, getHeaderToken } from "../../libs/jwt.js";
 import { InventoryMovement, InventoryProduct } from "../../models/Inventory.js";
 import { Customer, Order, OrderItem } from "../../models/Orders.js";
 import { Income } from "../../models/Finance.js";
+import { format } from 'date-fns';
+import { de, es } from 'date-fns/locale';
 export const markItemAsPaid = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -58,7 +60,6 @@ export const markItemAsPaid = async (req, res) => {
     res.status(500).json({ message: 'Error marking item as paid', error });
   }
 };
-
 export const markItemAsDelivered = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -118,9 +119,6 @@ export const markItemAsDelivered = async (req, res) => {
     res.status(500).json({ message: 'Error delivering item', error });
   }
 };
-
-
-
 // Crear un nuevo cliente
 export const createCustomer = async (req, res) => {
   try {
@@ -134,12 +132,17 @@ export const createCustomer = async (req, res) => {
 // Crear un nuevo pedido
 export const createOrder = async (req, res) => {
   try {
-    const { customerId, notes, items } = req.body;
+    const { customerId, notes, date, items } = req.body;
+
     if (!customerId || !items || items.length === 0) {
       return res.status(400).json({ message: 'Faltan datos del pedido' });
     }
 
-    const order = await Order.create({ customerId, notes });
+    const order = await Order.create({
+      customerId,
+      notes,
+      date:date, // usa la fecha enviada, o la actual si no viene
+    });
 
     const createdItems = await Promise.all(
       items.map((item) =>
@@ -159,6 +162,7 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: 'Error al crear pedido', error });
   }
 };
+
 
 export const markOrderAsPaid = async (req, res) => {
   try {
@@ -190,66 +194,96 @@ export const deleteOrderItem = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar ítem", error });
   }
 };
-
-
+export const deleteOrder = async (req, res) => {
+  try {
+    const order = await Order.findByPk(req.params.id);
+    if (!order) return res.status(404).json({ message: "Orden no encontrado" });
+    await order.destroy();
+    res.json({ message: "Orden eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar Orden", error });
+  }
+};
 // Editar un pedido y su cliente
 export const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { customerId, notes, items } = req.body;
+    // Permitimos updates parciales solo en estos campos
+    const { customerId, notes, date } = req.body ?? {};
 
     const token = getHeaderToken(req);
     const user = await verifyJWT(token);
+
     const order = await Order.findByPk(id);
-    // ❌ Bloquea si el pedido ya está cerrado
-    if (
-      ['entregado', 'pagado'].includes(order.status) &&
-      !['Administrador', 'Programador'].includes(user.loginRol) // asumiendo que tienes acceso al rol
-    ) {
+    if (!order) {
+      return res.status(404).json({ message: 'Pedido no encontrado' });
+    }
+
+    // Bloqueo por estado si no es Admin/Programador
+    const isPrivileged = ['Administrador', 'Programador'].includes(user?.loginRol);
+    if (['entregado', 'pagado'].includes(order.status) && !isPrivileged) {
       return res.status(403).json({
         message: `No tiene permisos para editar pedidos ${order.status}`,
       });
     }
 
-    if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
+    // Construimos el payload de actualización SOLO con campos presentes
+    const updates = {};
 
+    if (typeof customerId !== 'undefined') {
+      // Validación simple
+      if (customerId === null || Number.isNaN(Number(customerId))) {
+        return res.status(400).json({ message: 'customerId inválido' });
+      }
+      updates.customerId = customerId;
+    }
 
+    if (typeof notes !== 'undefined') {
+      // Sanitizar/limitar si quieres (ej. longitud)
+      updates.notes = String(notes);
+    }
 
-    order.customerId = customerId;
-    order.notes = notes;
-    await order.save();
+    if (typeof date !== 'undefined') {
+      // Acepta Date ISO o string "YYYY-MM-DDTHH:mm:ss"
+      const parsed = new Date(date);
+      if (isNaN(parsed.getTime())) {
+        return res.status(400).json({ message: 'Formato de fecha inválido' });
+      }
+      updates.date = parsed; // Sequelize DATE/DATETIME
+    }
 
-    await OrderItem.destroy({ where: { orderId: id } });
+    // Si no hay nada que actualizar:
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No se enviaron campos válidos para actualizar' });
+    }
 
-    const updatedItems = await Promise.all(
-      items.map((item) =>
-        OrderItem.create({
-          orderId: id,
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.price,
-          statusEntrega: false,
-          statusPago: false,
-        })
-      )
-    );
+    await order.update(updates);
 
-    res.json({ message: 'Pedido actualizado', order, items: updatedItems });
+    // Opcional: vuelve a cargar asociaciones mínimas si las necesitas en el front
+    // await order.reload({ include: [Customer] });
+
+    return res.json({ message: 'Pedido actualizado', order });
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar pedido', error });
+    console.error('Error al actualizar pedido:', error);
+    return res.status(500).json({ message: 'Error al actualizar pedido', error: String(error?.message || error) });
   }
 };
+
 
 export const updateOrderItem = async (req, res) => {
   try {
     const { itemId } = req.params;
-    const { quantity, price } = req.body;
+    const { quantity, price, deliveredAt, paidAt } = req.body;
 
     const item = await OrderItem.findByPk(itemId);
     if (!item) return res.status(404).json({ message: 'Ítem no encontrado' });
 
     item.quantity = quantity;
     item.price = price;
+    item.deliveredAt = deliveredAt;
+    item.paidAt = paidAt ;
+
+    // console.log("------------------",deliveredAt,paidAt)
     await item.save();
 
     res.json({ message: 'Ítem actualizado correctamente', item });
@@ -276,6 +310,9 @@ export const updateOrderStatus = async (req, res) => {
 };
 
 // Obtener todos los pedidos con sus items y cliente
+
+
+
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.findAll({
@@ -298,9 +335,26 @@ export const getAllOrders = async (req, res) => {
       order: [["createdAt", "DESC"]]
     });
 
-    res.json(orders);
+    const formattedOrders = orders.map(order => {
+      const formattedItems = order.ERP_order_items.map(item => ({
+        ...item.toJSON(),
+        paidAt: item.paidAt ? format(new Date(item.paidAt), 'dd/MM/yyyy HH:mm:ss', { locale: es }) : null,
+        deliveredAt: item.deliveredAt ? format(new Date(item.deliveredAt), 'dd/MM/yyyy HH:mm:ss', { locale: es }) : null,
+      }));
+
+      return {
+        ...order.toJSON(),
+        date: format(new Date(order.date), 'dd/MM/yyyy HH:mm:ss', { locale: es }),
+        createdAt: format(new Date(order.createdAt), 'dd/MM/yyyy HH:mm:ss', { locale: es }),
+        updatedAt: format(new Date(order.updatedAt), 'dd/MM/yyyy HH:mm:ss', { locale: es }),
+        ERP_order_items: formattedItems,
+      };
+    });
+
+    res.json(formattedOrders);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener pedidos', error });
   }
 };
+
 

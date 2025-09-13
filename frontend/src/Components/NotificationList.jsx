@@ -20,7 +20,7 @@ import {
 } from "../api/notificationsRequest";
 import { useAuth } from "../context/AuthContext";
 
-export function getRelativeTime(dateString) {
+function getRelativeTime(dateString) {
   const now = new Date();
   const createdAt = new Date(dateString);
   const diff = Math.floor((now - createdAt) / 1000 / 60 / 60 / 24);

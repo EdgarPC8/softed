@@ -10,6 +10,7 @@ import {
   getAllOrdersRequest,
 } from "../../api/ordersRequest";
 import OrderAccordionTable from "./components/OrderAccordionTable";
+import OrderCalendaryTable from "./components/OrderCalendaryTable";
 
 
 
@@ -73,7 +74,8 @@ function OrderPage() {
         Crear Pedido
       </Button>
 
-      <OrderAccordionTable
+      {/* <OrderAccordionTable */}
+      <OrderCalendaryTable
         orders={orders}
         onReload={fetchOrders}
         onEdit={(pedido) => {

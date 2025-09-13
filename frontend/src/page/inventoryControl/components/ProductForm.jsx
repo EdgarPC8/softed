@@ -49,7 +49,7 @@ function ProductForm({ isEditing = false, datos = [], onClose, reload }) {
     toastAuth({
       promise: createProduct(formData),
       successMessage: "Producto guardado con éxito",
-      onSuccess: (data) => {
+      onSuccess: () => {
         if (onClose) onClose();
         if (reload) reload();
         resetForm();
@@ -67,7 +67,7 @@ function ProductForm({ isEditing = false, datos = [], onClose, reload }) {
       setValue("price", datos.price || 0);
       setValue("minStock", datos.minStock || 0);
       setValue("stock", datos.stock || 0);
-
+      setValue("standardWeightGrams", datos.standardWeightGrams || "");
     }
   };
 
@@ -122,11 +122,12 @@ function ProductForm({ isEditing = false, datos = [], onClose, reload }) {
             {...register("unitId", { required: true })}
             InputLabelProps={idData ? { shrink: true } : {}}
           >
-            {units.map((unit) => (
-              <MenuItem key={unit.id} value={unit.id}>
-                {unit.name} ({unit.abbreviation})
-              </MenuItem>
-            ))}
+         {Array.isArray(units) && units.map((unit) => (
+  <MenuItem key={unit.id} value={unit.id}>
+    {unit.name} ({unit.abbreviation})
+  </MenuItem>
+))}
+
           </TextField>
         </Grid>
 
@@ -140,11 +141,12 @@ function ProductForm({ isEditing = false, datos = [], onClose, reload }) {
             {...register("categoryId", { required: true })}
             InputLabelProps={idData ? { shrink: true } : {}}
           >
-            {categories.map((cat) => (
-              <MenuItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </MenuItem>
-            ))}
+         {Array.isArray(categories) && categories.map((cat) => (
+  <MenuItem key={cat.id} value={cat.id}>
+    {cat.name}
+  </MenuItem>
+))}
+
           </TextField>
         </Grid>
 
@@ -161,29 +163,45 @@ function ProductForm({ isEditing = false, datos = [], onClose, reload }) {
           />
         </Grid>
         <Grid item xs={12}>
-  <TextField
-    label="Stock actual"
-    type="number"
-    fullWidth
-    variant="standard"
-    inputProps={{ step: "any" }}
-    {...register("stock", { required: true })}
-    InputLabelProps={idData ? { shrink: true } : {}}
-  />
+
+<Grid container spacing={2}>
+  <Grid item xs={6}>
+    <TextField
+      label="Stock actual"
+      type="number"
+      fullWidth
+      variant="standard"
+      inputProps={{ step: "any" }}
+      {...register("stock", { required: true })}
+      InputLabelProps={idData ? { shrink: true } : {}}
+    />
+  </Grid>
+
+  <Grid item xs={6}>
+    <TextField
+      label="Stock mínimo"
+      type="number"
+      fullWidth
+      variant="standard"
+      {...register("minStock", { required: true })}
+      InputLabelProps={idData ? { shrink: true } : {}}
+    />
+  </Grid>
 </Grid>
-
-
-        <Grid item xs={12}>
-          <TextField
-            label="Stock mínimo"
-            type="number"
-            fullWidth
-            variant="standard"
-            {...register("minStock", { required: true })}
-            InputLabelProps={idData ? { shrink: true } : {}}
-          />
         </Grid>
 
+ 
+      <Grid item xs={12}>
+        <TextField
+          label="Peso promedio por unidad (g)"
+          type="number"
+          fullWidth
+          variant="standard"
+          inputProps={{ step: "any", min: 0 }}
+          {...register("standardWeightGrams", { required: true })}
+          InputLabelProps={idData ? { shrink: true } : {}}
+        />
+      </Grid>
         <Grid item xs={4}>
           <Button variant="contained" fullWidth type="submit">
             {!isEditing ? "Guardar" : "Editar"}

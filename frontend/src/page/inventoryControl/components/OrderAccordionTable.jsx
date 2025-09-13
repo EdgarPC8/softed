@@ -93,7 +93,7 @@ function OrderRow({ order, onReload, onEdit }) {
           </IconButton>
         </TableCell>
         <TableCell>{order.ERP_customer?.name}</TableCell>
-        <TableCell>{formatDate(order.date)}</TableCell>
+        <TableCell>{order.date}</TableCell>
         <TableCell>
           <Typography variant="body2">
             {`${entregados}/${totalItems}`} entregados
@@ -169,7 +169,7 @@ function OrderRow({ order, onReload, onEdit }) {
                           <>
                             <CheckCircleIcon color="success" fontSize="small" sx={{ mr: 1 }} />
                             <Typography variant="caption" display="inline">
-                              {formatDate(item.paidAt)}
+                              {item.paidAt}
                             </Typography>
                           </>
                         )}
@@ -186,7 +186,7 @@ function OrderRow({ order, onReload, onEdit }) {
                           <>
                             <CheckCircleIcon color="success" fontSize="small" sx={{ mr: 1 }} />
                             <Typography variant="caption" display="inline">
-                              {formatDate(item.deliveredAt)}
+                              {item.deliveredAt}
                             </Typography>
                           </>
                         )}

@@ -20,15 +20,15 @@ import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app); // 👈 solo este se usa para arrancar
-const api="alumniapi"
+const api="eddeliapi"
 
-const PORT = 3000;
+const PORT = 3001;
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
   "http://localhost:8888",
-  "http://192.168.137.94:8888",
-  "http://192.168.137.94:5173",
+  "http://192.168.137.156:8888",
+  "http://192.168.137.156:5173",
   "https://aplicaciones.marianosamaniego.edu.ec",
   "https://www.aplicaciones.marianosamaniego.edu.ec",
 ];
@@ -100,3 +100,5 @@ export async function main() {
 }
 
 main();
+
+

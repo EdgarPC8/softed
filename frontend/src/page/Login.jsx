@@ -13,7 +13,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import bannerImage from "/home_istms.png"; // ajusta la ruta si está en otro lugar
+import bannerImage from "/home_edDeli.png"; // ajusta la ruta si está en otro lugar
 
 
 

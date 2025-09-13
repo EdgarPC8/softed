@@ -38,7 +38,9 @@ import {
 import {
   registerMovement,
   getMovementsByProduct,
-  getAllMovements
+  getAllMovements,
+  registerProductionIntermediateFromPayload,
+  registerProductionFinalFromPayload
 } from '../controllers/InventoryControl/MovementController.js';
 
 
@@ -49,7 +51,7 @@ import {
   updateCustomer,
   deleteCustomer
  } from '../controllers/InventoryControl/CustomerController.js';
-
+import { simulateFromIntermediate, simulateProductionController } from '../controllers/InventoryControl/ProductionManagerController.js';
 
 
 
@@ -76,9 +78,15 @@ router.delete('/products/:id', isAuthenticated, deleteProduct);     // Eliminar 
 // ----------------------------------
 // Registrar un nuevo movimiento de inventario
 router.post('/movements', isAuthenticated, registerMovement);
+router.get("/simulate-production", isAuthenticated,simulateProductionController);
+router.get("/simulateFromIntermediate", isAuthenticated,simulateFromIntermediate);
+
 // Obtener todos los movimientos por producto
 router.get('/movements',isAuthenticated, getAllMovements);
 router.get('/movements/:productId',isAuthenticated, getMovementsByProduct);
+
+router.post("/registerProductionIntermediateFromPayload", isAuthenticated,registerProductionIntermediateFromPayload);
+router.post("/registerProductionFinalFromPayload", isAuthenticated,registerProductionFinalFromPayload);
 
 // ----------------------------------
 // 🍳 RECETAS (opcional)

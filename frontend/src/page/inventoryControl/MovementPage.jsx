@@ -9,8 +9,11 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import toast from "react-hot-toast";
 import DataTable from "../../Components/Tables/DataTable";
+import TablePro from "../../Components/Tables/TablePro";
 import SimpleDialog from "../../Components/Dialogs/SimpleDialog";
 import MovementForm from "./components/MovementForm";
+
+
 import {
   getAllProducts,
   getAllMovements,
@@ -34,23 +37,17 @@ function MovementPage() {
   };
 
   const columns = [
-    { headerName: "#", field: "#", width: 40},
     {
-      headerName: "Producto",
-      field: "product",
-      width: 200,
-      renderCell: (params) => params.row.ERP_inventory_product?.name || "-",
+      label: "Producto",
+      id: "product",
+      render: (row) => row.ERP_inventory_product?.name || "-",
     },
-    { headerName: "Tipo", field: "type", width: 100 },
-    { headerName: "Cantidad", field: "quantity", width: 100 },
-    { headerName: "Descripción", field: "description", width: 300 },
-    {
-      headerName: "Fecha",
-      field: "date",
-      width: 200,
-      renderCell: (params) => new Date(params.row.date).toLocaleString(),
-    },
+    { label: "Tipo", id: "type" },
+    { label: "Cantidad", id: "quantity" },
+    { label: "Descripción", id: "description" },
+    { label: "Fecha", id: "date" },
   ];
+
 
   useEffect(() => {
     fetchProducts();
@@ -80,7 +77,19 @@ function MovementPage() {
         Registrar Movimiento
       </Button>
 
-      <DataTable data={movements} columns={columns} />
+      {/* <DataTable data={movements} columns={columns} /> */}
+      <TablePro
+        columns={columns}
+        rows={movements}
+        showSearch={true}
+        showPagination={true}
+        defaultRowsPerPage={10}
+        title="Movimientos"
+        showIndex={true}
+        tableMaxHeight={350}     
+
+
+      />
     </Container>
   );
 }

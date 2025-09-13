@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 
 
+
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 
@@ -67,8 +68,10 @@ import {
   Dns,
   IntegrationInstructions,
   QuestionAnswer,
+  MonetizationOn,
   
 } from '@mui/icons-material';
+
 
 import InventoryIcon from '@mui/icons-material/Inventory';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
@@ -77,6 +80,8 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PeopleIcon from '@mui/icons-material/People';
+import FactoryIcon from "@mui/icons-material/Factory";
+
 
 
 
@@ -94,7 +99,8 @@ const permisos = {
       icon: <InventoryIcon />,
       menu: {
         items: [
-          { name: "Finanzas", link: "/inventory/finance", icon: <CompareArrowsIcon /> },
+          { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
+          { name: "Producción", link: "/inventory/production", icon: <FactoryIcon /> },
           { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
           { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
           { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },
@@ -170,25 +176,19 @@ const permisos = {
       icon: <Home />,
       link: "/"
     },
-    {
-      name: "Encuestas",
-      icon: <Poll />,
+        {
+      name: "Inventory Control",
+      icon: <InventoryIcon />,
       menu: {
         items: [
-          { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
-          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
-        ],
-      },
-    },
-    {
-      name: "Entidades",
-      icon: <AccountTree />,
-      menu: {
-        items: [
-          { name: "Carreras", link: "/careers", icon: <School /> },
-          { name: "Periodos", link: "/periods", icon: <CalendarMonth /> },
-          { name: "Matrices", link: "/matriz", icon: <Storage /> },
-          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+          { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
+          { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
+          { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
+          { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },
+          { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
+          { name: "Categorias", link: "/inventory/categories", icon: <CategoryIcon /> },
+          { name: "Unidades", link: "/inventory/units", icon: <StraightenIcon /> },
+          { name: "Recetas", link: "/inventory/recipes", icon: <ReceiptLongIcon /> },
         ],
       },
     },
@@ -530,7 +530,7 @@ export default function MiniDrawer({ children }) {
         style={{ width: 50, height: 50 }}
       />
       <Typography variant="h6" color="black">
-        SoftEd - Alumni
+        SoftEd
       </Typography>
     </Box>
 

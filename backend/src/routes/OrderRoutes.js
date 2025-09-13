@@ -10,7 +10,8 @@ import {
     markItemAsDelivered,
     markItemAsPaid,
     updateOrderItem,
-    deleteOrderItem
+    deleteOrderItem,
+    deleteOrder
  } from '../controllers/InventoryControl/OrderController.js';
 
 
@@ -34,6 +35,7 @@ router.delete('/customers/:id', isAuthenticated, deleteCustomer);
 router.put('/order-items/:itemId/mark-delivered', isAuthenticated, markItemAsDelivered);
 router.put('/order-items/:itemId/mark-paid', isAuthenticated, markItemAsPaid);
 router.delete('/order-items/:id', isAuthenticated, deleteOrderItem);
+router.delete('/order/:id', isAuthenticated, deleteOrder);
 
 
 router.put('/order-items/:itemId', isAuthenticated, updateOrderItem);

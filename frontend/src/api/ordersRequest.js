@@ -50,3 +50,9 @@ export const updateCustomerRequest = async (id, data) =>
 
 export const deleteCustomerRequest = async (id) =>
   await axios.delete(`/orders/customers/${id}`, { headers: { Authorization: jwt() } });
+
+export const deleteOrder = async (id) =>
+  await axios.delete(`/orders/order/${id}`, { headers: { Authorization: jwt() } });
+export const deleteOrderItem = async (id) =>
+  await axios.delete(`/orders/order-items/${id}`, { headers: { Authorization: jwt() } });
+

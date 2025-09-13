@@ -14,7 +14,7 @@ assignUsersToQuiz,
 filterUsers,
 getQuizzesByUserId,
 submitQuizAnswers
-} from "../controllers/quizController.js";
+} from "../controllers/QuizController.js";
 
 import { isAuthenticated } from "../middlewares/authMiddelware.js";
 

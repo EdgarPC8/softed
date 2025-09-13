@@ -74,7 +74,21 @@ export const insertData = async () => {
     await QuizQuestions.bulkCreate(jsonData.QuizQuestions, { returning: true });
     await QuizOptions.bulkCreate(jsonData.QuizOptions, { returning: true });
     await QuizAttempts.bulkCreate(jsonData.QuizAttempts, { returning: true });
+        jsonData.QuizAnswers = jsonData.QuizAnswers.map(row => {
+  if (typeof row.selectedOptionIds === 'string') {
+    try {
+      const parsed = JSON.parse(row.selectedOptionIds);
+      if (Array.isArray(parsed)) {
+        row.selectedOptionIds = parsed;
+      }
+    } catch (e) {
+      // Si no se puede parsear, lo dejamos como está
+    }
+  }
+  return row;
+});
     await QuizAnswers.bulkCreate(jsonData.QuizAnswers, { returning: true });
+
     await QuizAssignment.bulkCreate(jsonData.QuizAssignment, { returning: true });
     await InventoryCategory.bulkCreate(jsonData.InventoryCategory, { returning: true });
     await InventoryUnit.bulkCreate(jsonData.InventoryUnit, { returning: true });
@@ -86,6 +100,7 @@ export const insertData = async () => {
     await OrderItem.bulkCreate(jsonData.OrderItem, { returning: true });
     await Expense.bulkCreate(jsonData.Expense, { returning: true });
     await Income.bulkCreate(jsonData.Income, { returning: true });
+
 
     console.log("Datos insertados correctamente desde el archivo de respaldo.");
   } catch (error) {
@@ -174,7 +189,7 @@ export const saveBackup = async () => {
     // Fecha legible
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
-    const timestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+    const timestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
     const backupFileName = `backup-${timestamp}.json`;
     const backupPath = resolve(backups, backupFileName);
@@ -192,16 +207,19 @@ export const saveBackup = async () => {
   }
 };
 
-
-
 export const downloadBackup = async (req, res) => {
   try {
-    const backupData = await saveBackup(); // Guarda el backup y obtiene los datos
+    const backupPath = await saveBackup(); // Guarda y retorna la ruta del archivo
 
-    // Enviar los datos como respuesta JSON
-    res.status(200).json(backupData);
+    res.download(backupPath, (err) => {
+      if (err) {
+        console.error("Error al enviar el archivo:", err);
+        res.status(500).send("Error al enviar el archivo.");
+      }
+    });
   } catch (error) {
     console.error("Error al realizar el backup:", error);
     res.status(500).send("Error al realizar el backup.");
   }
 };
+

@@ -49,6 +49,31 @@ export const getMovementsByProduct = async (productId) =>
     headers: { Authorization: jwt() },
   });
 
+export const simulateProduction = async (productId, cantidad) =>
+  await axios.get("/inventory/simulate-production", {
+    params: {
+      productId,
+      cantidad,
+    },
+    headers: { Authorization: jwt() },
+  });
+  export const registerProductionIntermediateFromPayload = async (payload) =>
+  await axios.post("/inventory/registerProductionIntermediateFromPayload", payload, {
+    headers: { Authorization: jwt() },
+  });
+  export const registerProductionFinalFromPayload = async (payload) =>
+  await axios.post("/inventory/registerProductionFinalFromPayload", payload, {
+    headers: { Authorization: jwt() },
+  });
+export const simulateFromIntermediate = async (intermediateId) =>
+  await axios.get("/inventory/simulateFromIntermediate", {
+    params: {
+      intermediateId,
+    },
+    headers: { Authorization: jwt() },
+  });
+
+
 
 
 

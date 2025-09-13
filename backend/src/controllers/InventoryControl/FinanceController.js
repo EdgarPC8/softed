@@ -1,25 +1,70 @@
 // controllers/financeController.js
 import { Account } from "../../models/Account.js";
 import { Income, Expense } from "../../models/Finance.js";
-/**
- * Crear un nuevo ingreso
- * Se usa cuando se registra una venta u otro ingreso en el sistema
- */
+import { verifyJWT, getHeaderToken } from "../../libs/jwt.js";
+
+// controllers/finance.controller.js
+import { Op, fn, literal } from 'sequelize';
+import { OrderItem } from "../../models/Orders.js";
+
+
+
+export const getFinanceSummary = async (req, res) => {
+  try {
+    const [totalIncome, totalExpense, futureIncomeRow] = await Promise.all([
+      Income.sum('amount'),
+      Expense.sum('amount'),
+      // Suma de (price * quantity) de ítems NO pagados
+      OrderItem.findOne({
+        attributes: [[fn('COALESCE', fn('SUM', literal('price * quantity')), 0), 'futureIncome']],
+        where: {
+          paidAt: { [Op.is]: null },       // aún sin pago
+          // opcional: excluye eliminados/soft-delete si existe un flag
+          // deletedAt: { [Op.is]: null }
+        },
+        // opcional: si quieres EXCLUIR órdenes canceladas
+        // include: [{
+        //   model: ERPOrder,
+        //   as: 'ERP_order',
+        //   attributes: [],
+        //   required: true,
+        //   where: { status: { [Op.ne]: 'CANCELLED' } }
+        // }],
+        raw: true,
+      }),
+    ]);
+
+    const futureIncome = Number(futureIncomeRow?.futureIncome || 0);
+    const income = Number(totalIncome || 0);
+    const expense = Number(totalExpense || 0);
+
+    const balance = income - expense;
+    const projectedBalance = balance + futureIncome;
+
+    res.json({
+      totalIncome: income,
+      totalExpense: expense,
+      balance,
+      futureIncome,        // << nuevos ingresos esperados (órdenes no pagadas)
+      projectedBalance,    // << balance proyectado = balance + futuros ingresos
+    });
+  } catch (error) {
+    console.error('Error al obtener resumen financiero:', error);
+    res.status(500).json({ message: 'Error interno al obtener resumen financiero' });
+  }
+};
+
+
+
+/** Crear un nuevo ingreso */
 export const createIncome = async (req, res) => {
   try {
     const { date, amount, concept, category, referenceId, referenceType } = req.body;
-    const createdBy = req.accountId; // Se espera que el middleware de autenticación agregue accountId
 
-    const income = await Income.create({
-      date,
-      amount,
-      concept,
-      category,
-      referenceId,
-      referenceType,
-      createdBy,
-    });
-
+        const token = getHeaderToken(req);
+      const user = await verifyJWT(token); // para createdBy
+    const createdBy = user.accountId;
+    const income = await Income.create({ date, amount, concept, category, referenceId, referenceType, createdBy });
     res.status(201).json(income);
   } catch (error) {
     console.error("Error al crear ingreso:", error);
@@ -27,25 +72,15 @@ export const createIncome = async (req, res) => {
   }
 };
 
-/**
- * Crear un nuevo gasto
- * Se usa cuando se registra una compra, pago de servicios, etc.
- */
+/** Crear un nuevo gasto */
 export const createExpense = async (req, res) => {
   try {
     const { date, amount, concept, category, referenceId, referenceType } = req.body;
-    const createdBy = req.accountId;
+      const token = getHeaderToken(req);
+      const user = await verifyJWT(token); // para createdBy
+    const createdBy = user.accountId;
 
-    const expense = await Expense.create({
-      date,
-      amount,
-      concept,
-      category,
-      referenceId,
-      referenceType,
-      createdBy,
-    });
-
+    const expense = await Expense.create({ date, amount, concept, category, referenceId, referenceType, createdBy });
     res.status(201).json(expense);
   } catch (error) {
     console.error("Error al crear gasto:", error);
@@ -53,10 +88,7 @@ export const createExpense = async (req, res) => {
   }
 };
 
-/**
- * Obtener todos los ingresos registrados
- * Se puede filtrar o expandir para búsquedas avanzadas
- */
+/** Obtener todos los ingresos */
 export const getAllIncomes = async (req, res) => {
   try {
     const incomes = await Income.findAll({
@@ -70,10 +102,7 @@ export const getAllIncomes = async (req, res) => {
   }
 };
 
-/**
- * Obtener todos los gastos registrados
- * Se puede usar para mostrar el historial de egresos
- */
+/** Obtener todos los gastos */
 export const getAllExpenses = async (req, res) => {
   try {
     const expenses = await Expense.findAll({
@@ -87,24 +116,65 @@ export const getAllExpenses = async (req, res) => {
   }
 };
 
-/**
- * Obtener resumen general de finanzas
- * Devuelve total de ingresos, total de gastos y balance neto
- */
-export const getFinanceSummary = async (req, res) => {
-  try {
-    const [totalIncome, totalExpense] = await Promise.all([
-      Income.sum("amount"),
-      Expense.sum("amount"),
-    ]);
 
-    res.json({
-      totalIncome: totalIncome || 0,
-      totalExpense: totalExpense || 0,
-      balance: (totalIncome || 0) - (totalExpense || 0),
-    });
+/** Editar ingreso */
+export const updateIncome = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date, amount, concept, category, referenceId, referenceType } = req.body;
+    const income = await Income.findByPk(id);
+    if (!income) return res.status(404).json({ message: "Ingreso no encontrado" });
+
+    await income.update({ date, amount, concept, category, referenceId, referenceType });
+    res.json(income);
   } catch (error) {
-    console.error("Error al obtener resumen financiero:", error);
-    res.status(500).json({ message: "Error interno al obtener resumen financiero" });
+    console.error("Error al editar ingreso:", error);
+    res.status(500).json({ message: "Error interno al editar ingreso" });
+  }
+};
+
+/** Editar gasto */
+export const updateExpense = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date, amount, concept, category, referenceId, referenceType } = req.body;
+    const expense = await Expense.findByPk(id);
+    if (!expense) return res.status(404).json({ message: "Gasto no encontrado" });
+
+    await expense.update({ date, amount, concept, category, referenceId, referenceType });
+    res.json(expense);
+  } catch (error) {
+    console.error("Error al editar gasto:", error);
+    res.status(500).json({ message: "Error interno al editar gasto" });
+  }
+};
+
+/** Eliminar ingreso */
+export const deleteIncome = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const income = await Income.findByPk(id);
+    if (!income) return res.status(404).json({ message: "Ingreso no encontrado" });
+
+    await income.destroy();
+    res.json({ message: "Ingreso eliminado" });
+  } catch (error) {
+    console.error("Error al eliminar ingreso:", error);
+    res.status(500).json({ message: "Error interno al eliminar ingreso" });
+  }
+};
+
+/** Eliminar gasto */
+export const deleteExpense = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const expense = await Expense.findByPk(id);
+    if (!expense) return res.status(404).json({ message: "Gasto no encontrado" });
+
+    await expense.destroy();
+    res.json({ message: "Gasto eliminado" });
+  } catch (error) {
+    console.error("Error al eliminar gasto:", error);
+    res.status(500).json({ message: "Error interno al eliminar gasto" });
   }
 };

@@ -60,12 +60,9 @@ import CustomerPage from "./page/inventoryControl/CustomerPage.jsx";
 import FinancePage from "./page/inventoryControl/FinancePage.jsx";
 import HomePageAlumni from "./page/alumni/Home.jsx";
 import HomePageERP from "./page/inventoryControl/HomePage.jsx";
-
-
-
-
-
-
+import DashBoardPageERP from "./page/inventoryControl/DashBoardPage.jsx";
+import PianoPage from "./page/piano/midi.jsx";
+import ProductionManagerPage from "./page/inventoryControl/ProductionManagerPage.jsx";
 
 
 
@@ -92,7 +89,7 @@ function App() {
                     <ProtectedRoute requiredRol={["Estudiante", "Administrador", "Programador"]} />
                   }
                 >
-                  <Route path="/" element={<HomePageERP />} />
+                  <Route path="/" element={<DashBoardPageERP />} />
                   <Route path="/perfil" element={<Profile />} />
                   <Route path="/myforms" element={<FormsList />} />
                   <Route path="/myforms/:id" element={<FormAnswer />} />
@@ -107,6 +104,11 @@ function App() {
                     <ProtectedRoute requiredRol={["Administrador", "Programador"]} />
                   }
                 >
+                  <Route path="/piano" element={<PianoPage />} />
+
+
+
+
                   <Route path="/analisis" element={<Analytics />} />
                   <Route path="/reservas" element={<Reservas />} />
                   <Route path="/recepcion" element={<Recepcion />} />
@@ -150,6 +152,7 @@ function App() {
                   <Route path="/inventory/orders" element={<OrderPage />} />
                   <Route path="/inventory/customers" element={<CustomerPage />} />
                   <Route path="/inventory/finance" element={<FinancePage />} />
+                  <Route path="/inventory/production" element={<ProductionManagerPage />} />
 
                 </Route>
 

@@ -2,23 +2,42 @@
 import { Router } from "express";
 import {
   createIncome,
-  createExpense,
+  updateIncome,
+  deleteIncome,
   getAllIncomes,
+  createExpense,
+  updateExpense,
+  deleteExpense,
   getAllExpenses,
   getFinanceSummary,
 } from "../controllers/InventoryControl/FinanceController.js";
 import { isAuthenticated } from "../middlewares/authMiddelware.js";
+import { getOrderAnalytics, getWeeklySales,getTopProductsDailySales,getProductRotationAnalysis,getIncomeExpenseBreakdown,getCustomerSalesSummary } from "../controllers/InventoryControl/AnalyticsController.js";
 
 
-// Puedes agregar un middleware de autenticación si lo usas, ejemplo:
+const router = new Router();
 
-const router =new Router();
+// ✅ Ingresos
+router.post("/incomes", isAuthenticated, createIncome);
+router.get("/incomes", isAuthenticated, getAllIncomes);
+router.put("/incomes/:id", isAuthenticated, updateIncome);
+router.delete("/incomes/:id", isAuthenticated, deleteIncome);
 
-// Registrar un nuevo ingreso
-router.post("/incomes", isAuthenticated,createIncome);
-router.get("/incomes", isAuthenticated,getAllIncomes);
-router.post("/expenses", isAuthenticated,createExpense);
-router.get("/expenses", isAuthenticated,getAllExpenses);
-router.get("/summary", isAuthenticated,getFinanceSummary);
+// ✅ Gastos
+router.post("/expenses", isAuthenticated, createExpense);
+router.get("/expenses", isAuthenticated, getAllExpenses);
+router.put("/expenses/:id", isAuthenticated, updateExpense);
+router.delete("/expenses/:id", isAuthenticated, deleteExpense);
+
+// 📊 Resumen financiero
+router.get("/summary", isAuthenticated, getFinanceSummary);
+
+
+router.get("/overview",isAuthenticated, getOrderAnalytics);
+router.get("/getWeeklySales",isAuthenticated, getWeeklySales);
+router.get("/getTopProductsDailySales",isAuthenticated, getTopProductsDailySales);
+router.get("/getProductRotationAnalysis",isAuthenticated, getProductRotationAnalysis);
+router.get("/getIncomeExpenseBreakdown",isAuthenticated, getIncomeExpenseBreakdown);
+router.get("/getCustomerSalesSummary",isAuthenticated, getCustomerSalesSummary);
 
 export default router;

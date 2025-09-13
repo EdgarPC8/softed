@@ -85,12 +85,15 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
       return;
     }
 
-    const payload = {
-      customerId: selectedCustomer,
-      notes: data.notes,
-      date: data.date, // incluir la fecha
-      items,
-    };
+
+  const payload = {
+    customerId: selectedCustomer,
+    notes: data.notes,
+    date: new Date(
+  `${data.date}T${new Date().toTimeString().slice(0, 8)}`
+),
+    items,
+  };
 
     if (isEditing) {
       toastAuth({

@@ -80,6 +80,13 @@ function RecipePage() {
       width: 100,
     },
     {
+  headerName: "¿En gramos?",
+  field: "isQuantityInGrams",
+  width: 100,
+  renderCell: (params) => (params.row.isQuantityInGrams ? "Sí" : "No"),
+},
+
+    {
       headerName: "Acciones",
       field: "actions",
       width: 150,

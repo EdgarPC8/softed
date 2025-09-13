@@ -62,11 +62,7 @@ import UserForm from "../Components/Forms/UserForm.jsx";
 
     };
   
-    const fetchdata = async () => {
-      const { data } = await getRolRequest();
-      setData(data);
-    };
-  
+   
     const handleDialog = () => {
       setOpen(!open);
     };
@@ -129,6 +125,11 @@ import UserForm from "../Components/Forms/UserForm.jsx";
         ),
       },
     ];
+     const fetchdata = async () => {
+      const { data } = await getRolRequest();
+      setData(data);
+    };
+  
     useEffect(() => {
       fetchdata();
     }, []);

@@ -10,8 +10,15 @@ export const InventoryMovement = sequelize.define('ERP_inventory_movements', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   productId: { type: DataTypes.INTEGER, allowNull: false },
   quantity: { type: DataTypes.FLOAT, allowNull: false },
+  description: { type: DataTypes.TEXT},
+  price: {
+  type: DataTypes.FLOAT,
+  allowNull: true, // solo se usa para entradas normalmente
+},
+
   type: { type: DataTypes.ENUM("entrada", "salida","ajuste","produccion"), allowNull: false },
   referenceType: { type: DataTypes.STRING, allowNull: true }, // ej: "order"
+  
   referenceId: { type: DataTypes.INTEGER, allowNull: true },
   date: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   createdBy: { type: DataTypes.INTEGER, allowNull: false }
@@ -25,6 +32,7 @@ export const InventoryRecipe = sequelize.define('ERP_inventory_recipes', {
   productFinalId: { type: DataTypes.INTEGER, allowNull: false }, // Producto final
   productRawId: { type: DataTypes.INTEGER, allowNull: false },   // Insumo
   quantity: { type: DataTypes.FLOAT, allowNull: false },         // Cantidad del insumo
+  isQuantityInGrams: { type: DataTypes.BOOLEAN,defaultValue:false}       // Cantidad del insumo
 }, {
   timestamps: false
 });
@@ -82,6 +90,7 @@ export const InventoryProduct = sequelize.define('ERP_inventory_products', {
       key: 'id'
     }
   },
+  standardWeightGrams: { type: DataTypes.FLOAT, defaultValue: 0 },
   stock: { type: DataTypes.FLOAT, defaultValue: 0 },
   minStock: { type: DataTypes.FLOAT, defaultValue: 0 },
   price: { type: DataTypes.FLOAT, defaultValue: 0 },
