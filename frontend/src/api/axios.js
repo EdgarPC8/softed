@@ -9,7 +9,6 @@ export const urlRequestsApi = {
     production:`https://aplicaciones.marianosamaniego.edu.ec/${api}`,
     edgar:`http://192.168.137.156:3001/${api}`
   };
-  
 
 const url =  urlRequestsApi.production;
 
@@ -19,6 +18,7 @@ const instance = axios.create({
 });
 
 export const pathPhotos = `${url}/photos/`;
+export const pathImg = `${url}/inventory/imgEdDeli/`;
 export const socket = io(`${url}`); 
 
 

@@ -108,6 +108,7 @@ const permisos = {
           { name: "Categorias", link: "/inventory/categories", icon: <CategoryIcon /> },
           { name: "Unidades", link: "/inventory/units", icon: <StraightenIcon /> },
           { name: "Recetas", link: "/inventory/recipes", icon: <ReceiptLongIcon /> },
+          { name: "Productos destacados", link: "/inventory/productos-destacados", icon: <Inventory2Icon /> },
         ],
       },
     },

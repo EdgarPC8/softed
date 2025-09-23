@@ -172,3 +172,24 @@ export const updateCustomerRequest = async (id, data) =>
 export const deleteCustomerRequest = async (id) =>
   await axios.delete(`/inventory/customers/${id}`, { headers: { Authorization: jwt() } });
 
+
+
+// api/inventoryControlRequest.js (resumen)
+
+
+export const getHomeProductsRequest = (params) =>
+  axios.get("/inventory/homeproducts", { params ,headers: { Authorization: jwt() } });
+
+export const deleteHomeProductRequest = (id) =>
+  axios.delete(`/inventory/homeproducts/${id}`,{ headers: { Authorization: jwt() } });
+
+  export const createHomeProductRequest = (formData) =>
+  axios.post("/inventory/homeproducts", formData, {
+    headers: { "Content-Type": "multipart/form-data",Authorization: jwt() },
+  });
+
+export const updateHomeProductRequest = (id, formData) =>
+  axios.put(`/inventory/homeproducts/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data",Authorization: jwt() },
+  });
+

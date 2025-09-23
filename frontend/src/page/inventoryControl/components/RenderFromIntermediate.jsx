@@ -32,7 +32,6 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CloseIcon from "@mui/icons-material/Close";
 
-// ⚠️ Ajusta esta ruta a tu proyecto
 import {
   getAllProducts,
   simulateFromIntermediate,
@@ -57,7 +56,7 @@ const buildBackendPayload = ({ resultadoEditable, cart, insumosAggregatedMap }) 
     id: it.id,
     nombre: it.nombre,
     cantidad: numberOrZero(it.cantidad),
-    gramosPorUnidadIntermedio: numberOrZero(it.gramosPorUnidad), // 0 si es transformación
+    gramosPorUnidadIntermedio: numberOrZero(it.gramosPorUnidad),
     tipo: "final",
   }));
 
@@ -165,7 +164,7 @@ function CartSummary({
               }
             />
             <Tooltip title="Quitar 1">
-              <IconButton edge="end" onClick={() => onRemove(it)}>
+              <IconButton edge="end" onMouseDown={(e)=>e.preventDefault()} onClick={() => onRemove(it)}>
                 <RemoveCircleOutlineIcon />
               </IconButton>
             </Tooltip>
@@ -212,8 +211,20 @@ export default function RenderFromIntermediate({fetchData}) {
 
   // Drawer móvil para carrito
   const [cartOpen, setCartOpen] = React.useState(false);
-    const { toast: toastAuth } = useAuth();
-  
+  const { toast: toastAuth } = useAuth();
+
+  // 🔎 refs para inputs de cantidad (clave → ref)
+  const qtyRefs = React.useRef({});
+  const getQtyRef = React.useCallback((key) => {
+    if (!qtyRefs.current[key]) qtyRefs.current[key] = React.createRef();
+    return qtyRefs.current[key];
+  }, []);
+  const refocusQty = (key) => {
+    // Re-enfoca en el próximo frame
+    requestAnimationFrame(() => {
+      qtyRefs.current[key]?.current?.focus?.();
+    });
+  };
 
   /* ---------- Init: cargar intermedios ---------- */
   React.useEffect(() => {
@@ -222,7 +233,6 @@ export default function RenderFromIntermediate({fetchData}) {
         const res = await getAllProducts();
         const list = res?.data?.data ?? res?.data ?? [];
         const arr = Array.isArray(list) ? list : [];
-        // Solo intermedios para este flujo
         const inters = arr.filter((p) => p.type === "intermediate" || p.esIntermedio);
         setProducts(inters);
         if (inters.length) setIntermediateId(String(inters[0].id));
@@ -254,14 +264,13 @@ export default function RenderFromIntermediate({fetchData}) {
       if (!Array.isArray(arr)) return;
       for (const item of arr) {
         const esIntermedio = !!item.esIntermedio;
-        if (!esIntermedio) mergeInsumo(map, item, factor); // solo insumos
+        if (!esIntermedio) mergeInsumo(map, item, factor);
         if (item.requiere) walkRequiere(item.requiere, factor, map);
       }
     },
     [mergeInsumo]
   );
 
-  // Acumula insumos para producto final sumando (o restando) 1..n unidades
   const accumulateInsumosForFinal = React.useCallback(
     async (productId, deltaUnits) => {
       if (!deltaUnits) return;
@@ -275,7 +284,6 @@ export default function RenderFromIntermediate({fetchData}) {
         setInsumosAggMap((prev) => {
           const map = { ...prev };
           walkRequiere(req, sign, map);
-          // limpiar ceros
           Object.keys(map).forEach((k) => {
             const v = map[k];
             if (Math.abs(numberOrZero(v.gramos)) < 1e-9) delete v.gramos;
@@ -320,7 +328,7 @@ export default function RenderFromIntermediate({fetchData}) {
   const handleAddToCart = async (producto, cantidad = 1, gramosOverride, opts = {}) => {
     if (!resultado) return;
 
-    // Transformación: consume unidades del padre, NO masa
+    // Transformación (consume unidades del padre, no masa)
     if (opts.mode === "transform") {
       const unitsPerChild = numberOrZero(opts.unitsPerChild) || 1;
       const needUnits = unitsPerChild * numberOrZero(cantidad);
@@ -332,7 +340,6 @@ export default function RenderFromIntermediate({fetchData}) {
       const deficit = Math.max(0, needUnits - haveUnits);
       const gramsNeededFromMass = deficit * parentGrams;
 
-      // Autoproducir unidades del padre con masa si hace falta
       if (deficit > 0 && numberOrZero(masaRestante) < gramsNeededFromMass) {
         console.warn("No hay masa suficiente para producir unidades del padre requeridas.");
         return;
@@ -341,7 +348,6 @@ export default function RenderFromIntermediate({fetchData}) {
       setCart((prev) => {
         let next = [...prev];
 
-        // 1) Si falta padre, producirlo (consume masa más abajo)
         if (deficit > 0) {
           const existingParent = next.find((c) => c.id === parentId);
           if (existingParent) existingParent.cantidad += deficit;
@@ -355,14 +361,12 @@ export default function RenderFromIntermediate({fetchData}) {
             });
         }
 
-        // 2) Descontar unidades del padre
         const parentLine = next.find((c) => c.id === parentId);
         if (parentLine) {
           parentLine.cantidad -= needUnits;
           if (parentLine.cantidad <= 0) next = next.filter((c) => c.id !== parentId);
         }
 
-        // 3) Agregar el hijo transformado (consumo 0 g/u)
         const childExisting = next.find((c) => c.id === producto.id);
         if (childExisting) {
           childExisting.cantidad += cantidad;
@@ -386,15 +390,12 @@ export default function RenderFromIntermediate({fetchData}) {
         return next;
       });
 
-      // 4) Descontar masa solo si se autoprodujo el padre
       if (deficit > 0) setMasaRestante((prev) => numberOrZero(prev) - gramsNeededFromMass);
-
-      // 5) Acumular insumos del hijo
       await accumulateInsumosForFinal(producto.id, +cantidad);
       return;
     }
 
-    // Caso normal: consume masa directamente
+    // Consumo normal (usa masa)
     const gramosPorUnidad = numberOrZero(gramosOverride ?? producto.consumoPorUnidad);
     if (gramosPorUnidad <= 0) return;
 
@@ -415,7 +416,7 @@ export default function RenderFromIntermediate({fetchData}) {
           id: producto.id,
           nombre: producto.producto ?? producto.name ?? "Producto",
           cantidad: cantidadAgregable,
-          gramosPorUnidad, // consumo de masa por unidad
+          gramosPorUnidad,
           tipo: "final",
         },
       ];
@@ -431,20 +432,17 @@ export default function RenderFromIntermediate({fetchData}) {
       typeof itemOrId === "object" ? itemOrId : cart.find((c) => c.id === productoId);
     if (!itemActual) return;
 
-    // Si es transformación: devolver unidades al padre (no tocar masa)
     if (itemActual.transformOfParentId) {
       const parentId = itemActual.transformOfParentId;
       const unitsPerChild = numberOrZero(itemActual.unitsPerChild) || 1;
 
       setCart((prev) => {
         let next = prev.map((c) => ({ ...c }));
-        // 1) Reducir 1 del hijo
         const child = next.find((c) => c.id === itemActual.id);
         if (!child) return prev;
         child.cantidad -= 1;
         if (child.cantidad <= 0) next = next.filter((c) => c.id !== child.id);
 
-        // 2) Devolver al padre
         const parent = next.find((c) => c.id === parentId);
         if (parent) {
           parent.cantidad += unitsPerChild;
@@ -460,12 +458,10 @@ export default function RenderFromIntermediate({fetchData}) {
         return next;
       });
 
-      // Ajustar insumos del hijo (-1)
       await accumulateInsumosForFinal(itemActual.id, -1);
       return;
     }
 
-    // Caso normal: devolver masa correspondiente a 1 unidad
     setCart((prev) => {
       const current = prev.find((c) => c.id === productoId);
       if (!current) return prev;
@@ -476,7 +472,7 @@ export default function RenderFromIntermediate({fetchData}) {
     });
 
     setMasaRestante((prev) => numberOrZero(prev) + numberOrZero(itemActual.gramosPorUnidad));
-    await accumulateInsumosForFinal(productoId, -1);
+  await accumulateInsumosForFinal(productoId, -1);
   };
 
   const handleDistributeRemainingMass = () => {
@@ -499,23 +495,22 @@ export default function RenderFromIntermediate({fetchData}) {
       cart,
       insumosAggregatedMap: insumosAggMap,
     });
-       toastAuth({
-          promise: registerProductionIntermediateFromPayload(payload),
-          onSuccess: () => {
-            fetchData()
-       
-            return {
-              title: "Producción",
-              description: "Producción Intermedia registrada correctamente",
-            };
-          },
-        });
-
+    toastAuth({
+      promise: registerProductionIntermediateFromPayload(payload),
+      onSuccess: () => {
+        fetchData?.();
+        return {
+          title: "Producción",
+          description: "Producción Intermedia registrada correctamente",
+        };
+      },
+    });
   };
 
   /* ----------------- UI: Tarjetas y derivados (recursivo) ----------------- */
   const [cantidades, setCantidades] = React.useState({});
   const [openMap, setOpenMap] = React.useState({});
+
   const getCantidadInt = React.useCallback(
     (k) => {
       const v = Number(cantidades[k] ?? 1);
@@ -569,6 +564,7 @@ export default function RenderFromIntermediate({fetchData}) {
                   <IconButton
                     size="small"
                     color="primary"
+                    onMouseDown={(e)=>e.preventDefault()}
                     disabled={
                       isTransform
                         ? inputCantidad > maxAddable
@@ -599,6 +595,7 @@ export default function RenderFromIntermediate({fetchData}) {
                 <span>
                   <IconButton
                     size="small"
+                    onMouseDown={(e)=>e.preventDefault()}
                     disabled={isTransform ? maxAddable <= 0 : gramosPorUnidad <= 0 || maxAddable <= 0}
                     onClick={() =>
                       handleAddToCart(
@@ -630,6 +627,7 @@ export default function RenderFromIntermediate({fetchData}) {
                 {hasChildren && (
                   <IconButton
                     size="small"
+                    onMouseDown={(e)=>e.preventDefault()}
                     onClick={() => toggleOpen(k)}
                     sx={{ mr: 0.5, transform: openMap[k] ? "rotate(180deg)" : "none", transition: "0.15s" }}
                   >
@@ -653,9 +651,15 @@ export default function RenderFromIntermediate({fetchData}) {
                   size="small"
                   label="Cantidad"
                   value={cantidades[k] ?? 1}
-                  onChange={(e) => setCantidades((prev) => ({ ...prev, [k]: e.target.value }))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCantidades((prev) => ({ ...prev, [k]: val }));
+                    refocusQty(k);
+                  }}
                   inputProps={{ step: 1, min: 1 }}
                   sx={{ width: 120 }}
+                  inputRef={getQtyRef(k)}
+                  onWheel={(e)=>e.target.blur()}
                 />
                 {isTransform && sinPadre && (
                   <Typography variant="caption" color="error">
@@ -690,7 +694,7 @@ export default function RenderFromIntermediate({fetchData}) {
   const CardsGrid = () => (
     <Grid container spacing={2} alignItems="flex-start">
       {resultado?.puedeProducir?.map((producto) => {
-        const gramosBase = numberOrZero(producto.consumoPorUnidad); // g/u
+        const gramosBase = numberOrZero(producto.consumoPorUnidad);
         const gramosPorUnidad = gramosBase;
 
         const enCarrito = cart.find((c) => c.id === producto.id);
@@ -700,7 +704,7 @@ export default function RenderFromIntermediate({fetchData}) {
         const keyTop = `${producto.id}::top`;
 
         return (
-          <Grid item xs={12}lg={6} key={keyTop} sx={{ alignSelf: "flex-start" }}>
+          <Grid item xs={12} lg={6} key={keyTop} sx={{ alignSelf: "flex-start" }}>
             <Card elevation={3} sx={{ display: "flex", flexDirection: "column", overflow: "visible" }}>
               <CardContent sx={{ pb: 1 }}>
                 <Typography
@@ -730,14 +734,21 @@ export default function RenderFromIntermediate({fetchData}) {
                     size="small"
                     label="Cantidad"
                     value={cantidades[keyTop] ?? 1}
-                    onChange={(e) => setCantidades((p) => ({ ...p, [keyTop]: e.target.value }))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCantidades((p) => ({ ...p, [keyTop]: val }));
+                      refocusQty(keyTop);
+                    }}
                     inputProps={{ step: 1, min: 1 }}
                     sx={{ width: 140 }}
+                    inputRef={getQtyRef(keyTop)}
+                    onWheel={(e)=>e.target.blur()}
                   />
                   <Tooltip title="Agregar cantidad indicada">
                     <span>
                       <IconButton
                         color="primary"
+                        onMouseDown={(e)=>e.preventDefault()}
                         disabled={
                           gramosPorUnidad <= 0 ||
                           numberOrZero(masaRestante) < gramosPorUnidad * getCantidadInt(keyTop)
@@ -758,6 +769,7 @@ export default function RenderFromIntermediate({fetchData}) {
                   <Tooltip title="Agregar 1">
                     <span>
                       <IconButton
+                        onMouseDown={(e)=>e.preventDefault()}
                         disabled={maxAddable <= 0}
                         onClick={() =>
                           handleAddToCart({ ...producto, producto: producto.producto }, 1, gramosPorUnidad, {})
@@ -807,21 +819,20 @@ export default function RenderFromIntermediate({fetchData}) {
       {/* Controles */}
       <Paper sx={{ p: 2, mb: 2 }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-end">
-   <TextField
-  label="Intermedio"
-  select
-  fullWidth
-  variant="standard"
-  value={intermediateId}
-  onChange={(e) => setIntermediateId(String(e.target.value))}
->
-  {products.map((p) => (
-    <MenuItem key={p.id} value={String(p.id)}>
-      {p.name}
-    </MenuItem>
-  ))}
-</TextField>
-
+          <TextField
+            label="Intermedio"
+            select
+            fullWidth
+            variant="standard"
+            value={intermediateId}
+            onChange={(e) => setIntermediateId(String(e.target.value))}
+          >
+            {products.map((p) => (
+              <MenuItem key={p.id} value={String(p.id)}>
+                {p.name}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <Button
             variant="contained"

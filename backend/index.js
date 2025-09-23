@@ -18,6 +18,12 @@ import { initNotificationSocket } from "./src/sockets/notificationSocket.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 
+
+
+
+
+
+
 const app = express();
 const httpServer = createServer(app); // 👈 solo este se usa para arrancar
 const api="eddeliapi"
@@ -41,7 +47,6 @@ const io = new Server(httpServer, {
   }
 });
 
-
 // Middleware
 app.use(express.json());
 app.use(loggerMiddleware);
@@ -64,7 +69,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Rutas
+
+
+
 app.use(`/${api}/photos`, express.static(`src/img/photos`));
+app.use(`/${api}/inventory/imgEdDeli`, express.static(`src/img/EdDeli`));
+// Endpoints de subida/borrado
 app.use(`/${api}/users`, UsersRoutes);
 app.use(`/${api}/quiz`, QuizRoutes);
 app.use(`/${api}`, AuthRoutes);

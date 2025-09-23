@@ -28,7 +28,6 @@ import {
 } from "../../../api/inventoryControlRequest";
 import { useAuth } from "../../../context/AuthContext";
 
-
 /* ---------------- Utils ---------------- */
 const numberOrZero = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 
@@ -61,43 +60,61 @@ function applyAtPath(rootArray, path, updater) {
 }
 
 /* ---------- Editor de Árbol (integrado) ---------- */
+/* ---------- Editor de Árbol (integrado) ---------- */
 function TreeEditor({ requiere = [], level = 0, onChange }) {
   const [editValues, setEditValues] = React.useState({});
-  const arr = toArray(requiere);
+  const inputRefs = React.useRef({}); // refs por campo
 
-  const handleEditClick = (pathKey, initial) =>
+  // Siempre trabajar sobre el array raíz actual
+  const rootArray = React.useMemo(() => toArray(requiere), [requiere]);
+
+  const getInputRef = (pathKey) => {
+    if (!inputRefs.current[pathKey]) {
+      inputRefs.current[pathKey] = React.createRef();
+    }
+    return inputRefs.current[pathKey];
+  };
+
+  const handleEditClick = (pathKey, initial) => {
     setEditValues((p) => ({ ...p, [pathKey]: { editing: true, ...initial } }));
+    requestAnimationFrame(() => {
+      inputRefs.current[pathKey]?.current?.focus?.();
+    });
+  };
 
-  const handleValueChange = (pathKey, field, value) =>
+  const handleValueChange = (pathKey, field, value) => {
     setEditValues((p) => ({ ...p, [pathKey]: { ...p[pathKey], [field]: value } }));
+    requestAnimationFrame(() => {
+      inputRefs.current[pathKey]?.current?.focus?.();
+    });
+  };
 
-  const stopEditing = (pathKey) =>
+  const stopEditing = (pathKey) => {
     setEditValues((p) => ({ ...p, [pathKey]: { ...p[pathKey], editing: false } }));
+  };
 
   const handleSaveClick = React.useCallback(
     (path, pathKey) => {
       const st = editValues[pathKey];
       if (!st) return;
 
-      const updated = applyAtPath(arr, path, (item) => {
+      // ✅ Aplicar sobre el ARREGLO RAÍZ completo
+      const updatedRoot = applyAtPath(rootArray, path, (item) => {
         const draft = { ...item };
-
         const qty = Number.parseFloat(st.cantidad ?? "");
         if (Number.isFinite(qty)) {
           if (draft.cantidadGramos !== undefined) draft.cantidadGramos = qty;
           else if (draft.cantidadUnidades !== undefined) draft.cantidadUnidades = qty;
         }
-
         const sobr = Number.parseFloat(st.sobrante ?? "");
         if (Number.isFinite(sobr)) draft.sobrante = sobr;
-
         return draft;
       });
 
-      onChange?.(updated);
+      onChange?.(updatedRoot);
       stopEditing(pathKey);
     },
-    [arr, editValues, onChange]
+    [editValues, onChange, rootArray]
   );
 
   const RenderNode = ({ items, level, pathPrefix = [] }) => {
@@ -122,7 +139,7 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
 
           return (
             <Box
-              key={pathKey}
+              key={item.id ?? pathKey}
               sx={{
                 mb: 1,
                 borderLeft: level > 0 ? "2px solid #ccc" : "none",
@@ -132,11 +149,15 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
               <ListItem
                 secondaryAction={
                   editing ? (
-                    <IconButton onClick={() => handleSaveClick(path, pathKey)}>
+                    <IconButton
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => handleSaveClick(path, pathKey)}
+                    >
                       <SaveIcon />
                     </IconButton>
                   ) : (
                     <IconButton
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={() =>
                         handleEditClick(pathKey, {
                           cantidad: cantidadOriginal,
@@ -163,6 +184,9 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
                             onChange={(e) => handleValueChange(pathKey, "cantidad", e.target.value)}
                             sx={{ width: 110, mr: 1 }}
                             inputProps={{ step: "0.01", min: 0 }}
+                            inputRef={getInputRef(pathKey)}
+                            autoFocus
+                            onWheel={(e) => e.target.blur()}
                           />
                           {item.sobrante !== undefined && (
                             <TextField
@@ -170,9 +194,12 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
                               size="small"
                               label="Sobrante"
                               value={editState.sobrante ?? ""}
-                              onChange={(e) => handleValueChange(pathKey, "sobrante", e.target.value)}
+                              onChange={(e) =>
+                                handleValueChange(pathKey, "sobrante", e.target.value)
+                              }
                               sx={{ width: 110 }}
                               inputProps={{ step: "0.01", min: 0 }}
+                              onWheel={(e) => e.target.blur()}
                             />
                           )}
                         </>
@@ -220,12 +247,12 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
     );
   };
 
-  return <RenderNode items={arr} level={level} pathPrefix={[]} />;
+  return <RenderNode items={rootArray} level={level} pathPrefix={[]} />;
 }
 
+
 /* ======================= Componente: RenderFromFinal ======================= */
-/* --- dentro de RenderFromFinal --- */
-export default function RenderFromFinal({fetchData}) {
+export default function RenderFromFinal({ fetchData }) {
   const [products, setProducts] = React.useState([]);
   const [productId, setProductId] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
@@ -280,7 +307,7 @@ export default function RenderFromFinal({fetchData}) {
     toastAuth({
       promise: registerProductionFinalFromPayload(payload),
       onSuccess: () => {
-        fetchData()
+        fetchData?.();
 
         // ✅ resetear estados → limpia UI y cierra árbol
         setResultado(null);
@@ -326,6 +353,7 @@ export default function RenderFromFinal({fetchData}) {
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               inputProps={{ step: "0.01", min: 0 }}
+              onWheel={(e) => e.target.blur()} // evita cambios al hacer scroll
             />
           </Grid>
 
@@ -352,7 +380,9 @@ export default function RenderFromFinal({fetchData}) {
             <Chip
               size="small"
               color="primary"
-              label={`Cantidad: ${numberOrZero(resultado.cantidadDeseada)} ${resultado.unidad || "u"}`}
+              label={`Cantidad: ${numberOrZero(
+                resultado.cantidadDeseada
+              )} ${resultado.unidad || "u"}`}
             />
           </Stack>
 
@@ -372,9 +402,6 @@ export default function RenderFromFinal({fetchData}) {
           </Stack>
         </Paper>
       )}
-
-   
     </Box>
   );
 }
-

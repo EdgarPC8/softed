@@ -63,6 +63,9 @@ import HomePageERP from "./page/inventoryControl/HomePage.jsx";
 import DashBoardPageERP from "./page/inventoryControl/DashBoardPage.jsx";
 import PianoPage from "./page/piano/midi.jsx";
 import ProductionManagerPage from "./page/inventoryControl/ProductionManagerPage.jsx";
+import BasicMap from "./page/mapa/BasicMap.jsx";
+import ProMap from "./page/mapa/ProMap.jsx";
+import HomeProductPage from "./page/inventoryControl/HomeProduct.jsx";
 
 
 
@@ -105,6 +108,7 @@ function App() {
                   }
                 >
                   <Route path="/piano" element={<PianoPage />} />
+                  <Route path="/mapa" element={<BasicMap />} />
 
 
 
@@ -153,6 +157,8 @@ function App() {
                   <Route path="/inventory/customers" element={<CustomerPage />} />
                   <Route path="/inventory/finance" element={<FinancePage />} />
                   <Route path="/inventory/production" element={<ProductionManagerPage />} />
+                  <Route path="/inventory/productos-destacados" element={<HomeProductPage />} />
+
 
                 </Route>
 

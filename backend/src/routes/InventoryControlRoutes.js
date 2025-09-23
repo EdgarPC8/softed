@@ -52,10 +52,27 @@ import {
   deleteCustomer
  } from '../controllers/InventoryControl/CustomerController.js';
 import { simulateFromIntermediate, simulateProductionController } from '../controllers/InventoryControl/ProductionManagerController.js';
-
-
+import { 
+  getHomeProducts,
+  getHomeProductById,
+createHomeProduct,
+updateHomeProduct,
+deleteHomeProduct,
+ } from '../controllers/InventoryControl/HomeProductController.js';   
+import { edDeliUploadSingle } from '../middlewares/uploadEddDeliMiddleware.js';
 
 const router = express.Router();
+
+// ----------------------------------
+// 🔁 Home Products
+// ----------------------------------
+
+router.get('/homeproducts', getHomeProducts);
+router.post("/homeproducts", isAuthenticated, edDeliUploadSingle, createHomeProduct);
+router.put("/homeproducts/:id", isAuthenticated, edDeliUploadSingle, updateHomeProduct);
+router.delete("/homeproducts/:id", isAuthenticated, deleteHomeProduct);
+
+
 
 // ----------------------------------
 // 🔁 CLIENTES

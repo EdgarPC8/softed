@@ -51,10 +51,10 @@ export const registerProductionIntermediateFromPayload = async (req, res) => {
   const transformaciones = Array.isArray(payload.transformaciones) ? payload.transformaciones : [];
   const insumos = Array.isArray(payload.insumos) ? payload.insumos : [];
 
-  if (!intermedio.id || !num(intermedio.gramos)) {
-    return res.status(400).json({ message: "intermedio.id y intermedio.gramos son requeridos" });
-  }
 
+   if (!intermedio.id || intermedio.gramos === undefined || intermedio.gramos === null) {
+       return res.status(400).json({ message: "intermedio.id y intermedio.gramos son requeridos" });
+     }
   const opId = `PR-${Date.now()}-${Math.floor(Math.random() * 1e5)}`;
 
   try {

@@ -45,7 +45,7 @@ export const markItemAsPaid = async (req, res) => {
           date: new Date(),
           amount: total,
           concept: `Order #${order.id} payment`,
-          category: 'Sales',
+          category: 'Venta',
           referenceId: order.id,
           referenceType: 'order',
           createdBy: user.accountId,

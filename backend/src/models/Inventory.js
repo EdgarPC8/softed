@@ -98,6 +98,46 @@ export const InventoryProduct = sequelize.define('ERP_inventory_products', {
   timestamps: true
 });
 
+export const HomeProduct = sequelize.define("ERP_home_products", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+
+  // FK al producto "real" del inventario (puede ser NULL si es puramente visual)
+  productId: { type: DataTypes.INTEGER, allowNull: true },
+
+  // Campos “desacoplados” para mostrar en el Home (pueden diferir del producto base)
+  name: { type: DataTypes.STRING, allowNull: false },          // título que se muestra
+  description: { type: DataTypes.TEXT, allowNull: true },      // descripción corta
+  imageUrl: { type: DataTypes.STRING(500), allowNull: true },  // imagen para el home
+  priceOverride: { type: DataTypes.FLOAT, allowNull: true },   // precio opcional para mostrar (si difiere)
+
+  // Meta para vitrina
+  section: {
+    type: DataTypes.ENUM("home", "offers", "recommended", "new"),
+    allowNull: false,
+    defaultValue: "home",
+  },
+  badge: { type: DataTypes.STRING(50), allowNull: true },      // ej. “-20%”, “Nuevo”
+  position: { type: DataTypes.INTEGER, defaultValue: 0 },      // orden en la sección
+  isActive: { type: DataTypes.BOOLEAN, defaultValue: true },   // visible en el home
+
+  // Auditoría opcional
+  createdBy: { type: DataTypes.INTEGER, allowNull: true },
+}, {
+  timestamps: true,
+});
+
+// === Asociaciones ===
+HomeProduct.belongsTo(InventoryProduct, {
+  foreignKey: "productId",
+  as: "product",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
+InventoryProduct.hasMany(HomeProduct, {
+  foreignKey: "productId",
+  as: "homeEntries",
+});
+
 
 InventoryCategory.hasMany(InventoryProduct, {
   foreignKey: "categoryId",

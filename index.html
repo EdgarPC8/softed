@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Carrusel 3D tipo rueda · Bootstrap (CDN)</title>
+
+  <!-- Bootstrap 5 (solo con links, sin instalar) -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+
+  <style>
+    :root{
+      /* Tamaños base de las tarjetas */
+      --card-w: clamp(180px, 28vw, 300px);
+      --card-h: clamp(220px, 35vw, 360px);
+      /* Radio de la rueda y perspectiva */
+      --radius: 520px;
+      --persp: 1200px;
+      --duration: 600ms;
+      /* Paleta panadería futurista (cremas/dorados) */
+      --crema-100: #fff6de;
+      --crema-200: #f9e8c7;
+      --dorado-300: #f6c445;
+      --dorado-400: #ffd78c;
+      --dorado-500: #ffe7a1;
+      --marron-900: #2d1c05;
+      --fondo-900: #0b0703;
+    }
+
+    *{ box-sizing:border-box }
+
+    body{
+      margin:0;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(1200px 700px at 60% 30%, #1a1308 0%, #120d05 40%, var(--fondo-900) 100%);
+      color: var(--crema-200);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .wrap{
+      width: min(95vw, 1200px);
+      display:grid;
+      gap: 14px;
+    }
+
+    .title{
+      text-align:center;
+      font-weight:700;
+      letter-spacing:.4px;
+      color: var(--dorado-500);
+    }
+
+    /* Escenario adaptable en altura (svh responde a barras móviles) */
+    .stage{
+      position:relative;
+      height: min(70svh, 540px);
+      perspective: var(--persp);
+    }
+
+    .wheel{
+      position:absolute;
+      inset:0;
+      transform-style: preserve-3d;
+      transition: transform var(--duration) cubic-bezier(.22,.61,.36,1);
+      will-change: transform;
+    }
+    /* Capa de imagen de fondo (cover, centrada) */
+.card3d .thumb{
+  position:absolute;
+  inset:0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  filter: saturate(1.05) contrast(1.02);
+  opacity: .98;
+}
+
+/* Velo para mejorar legibilidad del texto */
+.card3d .scrim{
+  position:absolute;
+  inset:0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35) 70%, rgba(0,0,0,.45));
+}
+
+/* Asegura que el texto quede por encima de la imagen */
+.card3d header,
+.card3d footer{
+  position: relative;
+  z-index: 2;
+}
+
+.card3d header { position: relative; }
+
+.chip-badge{
+  position:absolute; top:12px; right:12px;
+  padding: 4px 10px; border-radius:999px;
+  background: rgba(246,196,69,.92); /* dorado */
+  color: #2d1c05; font-weight:700; font-size:12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+
+.price{
+  color: var(--dorado-500);
+  font-size: clamp(14px, 2vw, 18px);
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+}
+
+
+
+    .card3d{
+      position:absolute;
+      top:50%; left:50%;
+      width: var(--card-w);
+      height: var(--card-h);
+      transform-style: preserve-3d;
+      translate: -50% -50%;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 235, 180, .12), rgba(255,255,255,.02)),
+        radial-gradient(800px 320px at 50% 0%, rgba(255, 215, 140, .16), transparent 60%);
+      border: 1px solid rgba(255, 224, 180,.25);
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.35),
+        inset 0 0 0 1px rgba(255,255,255,.06);
+      display:grid;
+      grid-template-rows: 1fr auto;
+      overflow:hidden;
+      transition:
+        transform var(--duration) cubic-bezier(.22,.61,.36,1),
+        opacity var(--duration) linear,
+        filter var(--duration) linear;
+      backface-visibility: hidden;
+      filter: blur(.4px) brightness(.9);
+      opacity:.75;
+    }
+
+    .card3d header{
+      padding:16px;
+      display:grid;
+      align-content:end;
+      gap:10px;
+      background: linear-gradient(180deg, rgba(255, 219, 143, .2), rgba(255, 219, 143, 0));
+    }
+
+    .card3d h3{
+      margin:0; font-size: clamp(16px, 2.4vw, 20px);
+      color: var(--dorado-500);
+    }
+    .card3d p{
+      margin:0; opacity:.88; font-size: clamp(12px, 1.8vw, 14px);
+    }
+
+    .card3d footer{
+      padding: 14px 16px 16px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+
+    /* Botón propio sin pisar .btn de Bootstrap */
+    .cbtn{
+      appearance:none; border:0;
+      padding:10px 14px;
+      border-radius: .6rem;
+      background: var(--dorado-300);
+      color: var(--marron-900);
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .15s ease, filter .2s ease, background .2s ease;
+    }
+    .cbtn:hover{ filter: brightness(1.08) }
+    .cbtn:active{ transform: scale(.98) }
+
+    .controls{
+      display:flex; gap:12px; justify-content:center; align-items:center;
+    }
+
+    /* Usamos .btn de Bootstrap para controles, con un estilo translúcido */
+    .ctrl{
+      border:1px solid rgba(255, 224, 180,.25) !important;
+      background: rgba(255, 224, 180,.08) !important;
+      color: var(--dorado-500) !important;
+      backdrop-filter: blur(6px);
+      font-weight:700 !important;
+      transition: background .2s ease, transform .12s ease;
+    }
+    .ctrl:hover{ background: rgba(255, 224, 180,.16) !important; }
+    .ctrl:active{ transform: scale(.97); }
+
+    .card3d.is-front{
+      filter: none; opacity:1;
+      box-shadow:
+        0 18px 40px rgba(0,0,0,.45),
+        inset 0 0 0 1px rgba(255,255,255,.1);
+      outline: 2px solid rgba(255, 215, 140, .45);
+      transform: translateZ(var(--radius)) scale(1.05) !important;
+    }
+
+    /* Responsivo: ajustamos radio con breakpoints */
+    @media (max-width: 900px){
+      :root{ --radius: 420px; }
+    }
+    @media (max-width: 600px){
+      :root{ --radius: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap container-xxl">
+    <h1 class="title display-6">Carrusel 3D (estilo rueda)</h1>
+
+    <div class="stage" id="stage">
+      <div class="wheel" id="wheel"><!-- Tarjetas inyectadas desde JS --></div>
+    </div>
+
+    <div class="controls mt-2">
+      <button class="btn btn-outline-warning ctrl" id="prev" aria-label="Anterior">⟵</button>
+      <button class="btn btn-outline-warning ctrl" id="next" aria-label="Siguiente">⟶</button>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle (JS + Popper) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+
+  <script>
+ // === Config ===
+const FMT = new Intl.NumberFormat("es-EC", { style: "currency", currency: "USD" });
+
+const url="https://aplicaciones.marianosamaniego.edu.ec"
+const urlPrueba="http://192.168.137.156:3001"
+
+const API_URL  = `${url}/eddeliapi/inventory/homeproducts`;
+const PATH_IMG = `${url}/eddeliapi/inventory/imgEdDeli/`;
+
+// === Utils ===
+function getRadius(){
+  const css = getComputedStyle(document.documentElement);
+  const raw = parseFloat(css.getPropertyValue("--radius"));
+  return Math.round(isNaN(raw) ? 520 : raw);
+}
+
+// === DOM ===
+const wheel   = document.getElementById("wheel");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+
+// === Estado carrusel ===
+let index = 0;
+let N = 0;
+let angleStep = 0;
+let cards = [];
+
+// === Render ===
+function render(){
+  const radius = getRadius();
+  cards.forEach((card, i) => {
+    const offset = (i - index);
+    const angle  = offset * angleStep;
+    card.style.transform = `rotateY(${angle}deg) translateZ(${radius - 1}px)`;
+    card.classList.toggle("is-front", (i === index));
+    card.style.zIndex = String(1000 - Math.abs(offset));
+  });
+  wheel.style.transform = `translateZ(0) rotateY(0deg)`;
+}
+
+function next(){ index = (index + 1 + N) % N; render(); }
+function prev(){ index = (index - 1 + N) % N; render(); }
+
+// === Eventos navegación ===
+nextBtn.addEventListener("click", next);
+prevBtn.addEventListener("click", prev);
+window.addEventListener("keydown", (e)=>{
+  if(e.key === "ArrowRight") next();
+  if(e.key === "ArrowLeft")  prev();
+});
+let wheelCooldown = false;
+window.addEventListener("wheel", (e)=>{
+  if (wheelCooldown || N <= 0) return;
+  wheelCooldown = true;
+  if(e.deltaY > 0 || e.deltaX > 0) next(); else prev();
+  setTimeout(()=> wheelCooldown = false, 220);
+}, { passive:true });
+window.addEventListener("resize", render);
+
+// === Carga de datos ===
+async function loadItems(){
+  const res = await fetch(API_URL);
+  if (!res.ok) throw new Error("No se pudo cargar la vitrina");
+  const data = await res.json();
+
+  return (Array.isArray(data) ? data : []).map((r) => ({
+    title: r.name ?? "Producto",
+    desc:  r.description ?? "",
+    img:   r.imageUrl ? (PATH_IMG + r.imageUrl) : null,
+    price: (typeof r.priceOverride === "number" ? r.priceOverride : null),
+    badge: r.badge ?? null,
+  }));
+}
+
+
+// === Construcción de tarjetas ===
+function buildCards(items){
+  wheel.innerHTML = "";
+  cards = items.map((it, i) => {
+    const el = document.createElement("article");
+    el.className = "card3d";
+ el.innerHTML = `
+  ${it.img ? `<div class="thumb" style="background-image:url('${it.img.replace(/'/g, "\\'")}')"></div>` : ""}
+  <div class="scrim"></div>
+  <header>
+    ${it.badge ? `<span class="chip-badge">${it.badge}</span>` : ""}
+    <h3 class="fw-bold">${it.title}</h3>
+    ${it.desc ? `<p>${it.desc}</p>` : ""}
+  </header>
+  <footer>
+    ${typeof it.price === "number" ? `<strong class="price">${FMT.format(it.price)}</strong>` : `<span></span>`}
+    <small class="text-muted">${i+1}/${items.length}</small>
+  </footer>
+`;
+
+    wheel.appendChild(el);
+    return el;
+  });
+}
+
+// === Init ===
+(async function init(){
+  try {
+    const items = await loadItems();
+    N = items.length;
+    if (N === 0) {
+      wheel.innerHTML = "<p class='text-center mt-3'>Sin elementos para mostrar.</p>";
+      return;
+    }
+    angleStep = 360 / N;
+    buildCards(items);
+    index = 0;
+    render();
+  } catch (err) {
+    console.error(err);
+    wheel.innerHTML = "<p class='text-center mt-3'>Error cargando la vitrina.</p>";
+  }
+})();
+
+  </script>
+</body>
+</html>
