@@ -85,6 +85,18 @@ export const getRecipeByProduct = async (productFinalId) =>
     headers: { Authorization: jwt() },
   });
 
+// api/inventoryControlRequest.js
+export const getRecipeCosting = (
+  productFinalId,
+  { extrasPercent = 0, laborPercent = 0, producedQty = 0 } = {}
+) => {
+  return axios.get(`/inventory/recipes/getRecipeCosting/${productFinalId}`, {
+    headers: { Authorization: jwt() },
+    params: { extrasPercent, laborPercent, producedQty }, // ← aquí van los query params
+  });
+};
+
+
 // Crear receta (uno o varios ingredientes)
 export const createRecipeRequest = async (data) =>
   await axios.post(`/inventory/recipes`, data, {
@@ -192,4 +204,41 @@ export const updateHomeProductRequest = (id, formData) =>
   axios.put(`/inventory/homeproducts/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data",Authorization: jwt() },
   });
+
+  // Obtener lista de stores
+export const getStoresRequest = (params) =>
+axios.get("/inventory/stores", {
+  params,
+  headers: { Authorization: jwt() },
+});
+
+// Obtener un store por ID
+export const getStoreByIdRequest = (id) =>
+axios.get(`/inventory/stores/${id}`, {
+  headers: { Authorization: jwt() },
+});
+
+// Crear nuevo store (con imagen)
+export const createStoreRequest = (formData) =>
+axios.post("/inventory/stores", formData, {
+  headers: {
+    "Content-Type": "multipart/form-data",
+    Authorization: jwt(),
+  },
+});
+
+// Actualizar store existente
+export const updateStoreRequest = (id, formData) =>
+axios.put(`/inventory/stores/${id}`, formData, {
+  headers: {
+    "Content-Type": "multipart/form-data",
+    Authorization: jwt(),
+  },
+});
+
+// Eliminar store
+export const deleteStoreRequest = (id) =>
+axios.delete(`/inventory/stores/${id}`, {
+  headers: { Authorization: jwt() },
+});
 

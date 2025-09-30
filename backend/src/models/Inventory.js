@@ -32,7 +32,12 @@ export const InventoryRecipe = sequelize.define('ERP_inventory_recipes', {
   productFinalId: { type: DataTypes.INTEGER, allowNull: false }, // Producto final
   productRawId: { type: DataTypes.INTEGER, allowNull: false },   // Insumo
   quantity: { type: DataTypes.FLOAT, allowNull: false },         // Cantidad del insumo
-  isQuantityInGrams: { type: DataTypes.BOOLEAN,defaultValue:false}       // Cantidad del insumo
+  isQuantityInGrams: { type: DataTypes.BOOLEAN,defaultValue:false},       // Cantidad del insumo
+  itemType: { 
+    type: DataTypes.ENUM('insumo', 'material'), 
+    allowNull: false, 
+    defaultValue: 'insumo' 
+  }
 }, {
   timestamps: false
 });
@@ -70,6 +75,7 @@ export const InventoryProduct = sequelize.define('ERP_inventory_products', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 
   name: { type: DataTypes.STRING, allowNull: false },
+  desc: { type: DataTypes.TEXT,defaultValue:null},
   type: {
     type: DataTypes.ENUM('raw', 'intermediate','final'),
     defaultValue: 'raw'
@@ -94,6 +100,7 @@ export const InventoryProduct = sequelize.define('ERP_inventory_products', {
   stock: { type: DataTypes.FLOAT, defaultValue: 0 },
   minStock: { type: DataTypes.FLOAT, defaultValue: 0 },
   price: { type: DataTypes.FLOAT, defaultValue: 0 },
+  netWeight: { type: DataTypes.FLOAT, defaultValue: 0 },
 }, {
   timestamps: true
 });
@@ -125,6 +132,50 @@ export const HomeProduct = sequelize.define("ERP_home_products", {
 }, {
   timestamps: true,
 });
+// models/Store.js
+
+export const Store = sequelize.define(
+  "ERP_stores",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+
+    // Datos visibles en la vitrina
+    name: { type: DataTypes.STRING(120), allowNull: false },       // Ej: "Sucursal Centro"
+    address: { type: DataTypes.STRING(250), allowNull: false },    // Dirección corta/mostrable
+    description: { type: DataTypes.TEXT, allowNull: true },        // (opcional) texto ampliado
+    imageUrl: { type: DataTypes.STRING(500), allowNull: true },    // Imagen de portada (StoresPanel usa este campo)
+
+    // Contacto (opcional)
+    phone: { type: DataTypes.STRING(40), allowNull: true },        // Ej: "+593 99 999 9999"
+    email: { type: DataTypes.STRING(120), allowNull: true },
+
+    // Ubicación (opcional, útil si luego quieres mapa)
+    city: { type: DataTypes.STRING(100), allowNull: true },
+    province: { type: DataTypes.STRING(100), allowNull: true },
+    latitude: { type: DataTypes.FLOAT, allowNull: true, defaultValue: null },
+    longitude: { type: DataTypes.FLOAT, allowNull: true, defaultValue: null },
+
+    // Meta UI / ordenamiento y visibilidad
+    position: { type: DataTypes.INTEGER, defaultValue: 0 },        // orden en lista
+    isActive: { type: DataTypes.BOOLEAN, defaultValue: true },     // visible en home/lista
+
+    // Auditoría
+    createdBy: { type: DataTypes.INTEGER, allowNull: true },       // FK -> Account.id
+  },
+  {
+    timestamps: true, // createdAt, updatedAt
+    indexes: [
+      { fields: ["isActive"] },
+      { fields: ["position"] },
+      { fields: ["city"] },
+      { fields: ["province"] },
+    ],
+  }
+);
+
+// === Asociaciones ===
+Store.belongsTo(Account, { foreignKey: "createdBy" });
+// (Si luego quieres relación con pedidos o inventario, aquí añades más asociaciones)
 
 // === Asociaciones ===
 HomeProduct.belongsTo(InventoryProduct, {

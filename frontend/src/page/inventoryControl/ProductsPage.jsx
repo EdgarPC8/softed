@@ -13,13 +13,13 @@ import {
   Inventory,
 } from "@mui/icons-material";
 import toast from "react-hot-toast";
-import DataTable from "../../Components/Tables/DataTable";
 import SimpleDialog from "../../Components/Dialogs/SimpleDialog";
 import ProductForm from "./components/ProductForm";
 import {
   getAllProducts,
   deleteProduct
 } from "../../api/inventoryControlRequest";
+import TablePro from "../../Components/Tables/TablePro";
 
 function ProductsPage() {
   const [data, setData] = useState([]);
@@ -59,65 +59,67 @@ function ProductsPage() {
 
   const columns = [
     {
-      headerName: "#",
-      field: "#",
+      label: "Nombre",
+      id: "name",
       width: 40,
-      sortable: false,
-      renderCell: (params, index) => index,
     },
     {
-      headerName: "Nombre",
-      field: "name",
-      width: 120,
-    },
-    {
-      headerName: "Tipo",
-      field: "type",
-      width: 120,
-      renderCell: (params) => {
-        const type = params.row.type;
+      label: "Tipo",
+      id: "type",
+      width: 80,
+      render: (params) => {
+        const type = params.type;
         return type === "raw" ? "Materia Prima" : type === "intermediate" ? "Producto Intermedio" : "Producto Final";
       }
     },
     {
-      headerName: "Unidad",
-      field: "inventory_unit.name",
+      label: "Descripcion",
+      id: "desc",
+      width: 40,
+    },
+    {
+      label: "Unidad",
+      id: "inventory_unit.name",
       width: 100,
-      renderCell: (params) => params.row.ERP_inventory_unit?.name,
+      render: (params) => params.ERP_inventory_unit?.name,
     },
     {
-      headerName: "Categoría",
-      field: "category",
+      label: "Categoría",
+      id: "category",
       width: 150,
-      renderCell: (params) => params.row.ERP_inventory_category?.name,
+      render: (params) => params.ERP_inventory_category?.name,
     },
     {
-      headerName: "Precio",
-      field: "price",
+      label: "Precio",
+      id: "price",
       width: 60,
     },
     {
-      headerName: "Stock",
-      field: "stock",
+      label: "Peso Neto",
+      id: "netWeight",
       width: 60,
     },
     {
-      headerName: "Stock Mínimo",
-      field: "minStock",
+      label: "Stock",
+      id: "stock",
+      width: 60,
+    },
+    {
+      label: "Stock Mínimo",
+      id: "minStock",
       width: 100,
     },
     {
-      headerName: "Acciones",
-      field: "actions",
+      label: "Acciones",
+      id: "actions",
       width: 150,
-      sortable: false,
-      renderCell: (params) => (
+      render: (params) => (
         <>
           <Tooltip title="Editar Producto">
             <IconButton
          onClick={() => {
 
-          setDatos(params.row);
+          setDatos(params);
           setIsEditing(true);
           settitleUserDialog("Editar Producto");
           handleDialogUser();
@@ -132,7 +134,7 @@ function ProductsPage() {
             <IconButton
               onClick={() => {
                 handleDialog();
-                setDataToDelete(params.row);
+                setDataToDelete(params);
               }}
             >
               <Delete />
@@ -186,7 +188,15 @@ function ProductsPage() {
         Crear Producto
       </Button>
 
-      <DataTable data={data} columns={columns} />
+       
+      <TablePro
+            rows={data}
+            columns={columns}
+            defaultRowsPerPage={10}
+            title="PRODUCTOS"
+            tableMaxHeight={380}
+            showIndex={true}
+          />
     </Container>
   );
 }

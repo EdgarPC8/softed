@@ -81,10 +81,13 @@ import StraightenIcon from '@mui/icons-material/Straighten';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PeopleIcon from '@mui/icons-material/People';
 import FactoryIcon from "@mui/icons-material/Factory";
-
-
-
-
+import StarRounded from "@mui/icons-material/StarRounded";
+import StorefrontRounded from "@mui/icons-material/StorefrontRounded";
+// Alternativas (opcional):
+// import StarsRounded from "@mui/icons-material/StarsRounded";
+// import FeaturedPlayListRounded from "@mui/icons-material/FeaturedPlayListRounded";
+// import StoreMallDirectoryRounded from "@mui/icons-material/StoreMallDirectoryRounded";
+// import PlaceRounded from "@mui/icons-material/PlaceRounded";
 
 
 const permisos = {
@@ -108,7 +111,8 @@ const permisos = {
           { name: "Categorias", link: "/inventory/categories", icon: <CategoryIcon /> },
           { name: "Unidades", link: "/inventory/units", icon: <StraightenIcon /> },
           { name: "Recetas", link: "/inventory/recipes", icon: <ReceiptLongIcon /> },
-          { name: "Productos destacados", link: "/inventory/productos-destacados", icon: <Inventory2Icon /> },
+          { name: "Productos Destacados", link: "/inventory/productos-destacados", icon: <StarRounded /> },
+          { name: "Puntos de Venta", link: "/inventory/puntos-venta", icon: <StorefrontRounded /> },
         ],
       },
     },

@@ -10,7 +10,7 @@ export const urlRequestsApi = {
     edgar:`http://192.168.137.156:3001/${api}`
   };
 
-const url =  urlRequestsApi.production;
+const url =  urlRequestsApi.edgar;
 
 const instance = axios.create({
   baseURL: `${url}`,

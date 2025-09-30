@@ -27,8 +27,10 @@ function RecipeForm({ isEditing = false, datos = [], onClose, reload, productFin
     defaultValues: {
       productRawId: "",
       quantity: "",
-      isQuantityInGrams: "false", // por defecto en unidades
+      isQuantityInGrams: "false",
+      itemType: "insumo",   // valor por defecto
     },
+    
   });
 
   const idData = datos?.id;
@@ -40,7 +42,9 @@ function RecipeForm({ isEditing = false, datos = [], onClose, reload, productFin
       productRawId: "",
       quantity: "",
       isQuantityInGrams: "false",
+      itemType: "insumo",
     });
+    
   };
 
   const submitForm = async (formData) => {
@@ -79,12 +83,13 @@ function RecipeForm({ isEditing = false, datos = [], onClose, reload, productFin
   const loadData = async () => {
     const { data } = await getAllProducts();
     setRawOptions(data.filter((p) => p.id !== productFinalId));
-
     if (isEditing && datos) {
       setValue("productRawId", datos.productRawId);
       setValue("quantity", datos.quantity);
       setValue("isQuantityInGrams", datos.isQuantityInGrams ? "true" : "false");
+      setValue("itemType", datos.itemType || "insumo"); // por si no está definido
     }
+    
   };
 
   useEffect(() => {
@@ -141,6 +146,21 @@ function RecipeForm({ isEditing = false, datos = [], onClose, reload, productFin
     />
   </FormControl>
 </Grid>
+<Grid item xs={12}>
+  <TextField
+    label="Tipo de Item"
+    select
+    fullWidth
+    variant="standard"
+    value={watch("itemType")}
+    {...register("itemType", { required: true })}
+    InputLabelProps={idData ? { shrink: true } : {}}
+  >
+    <MenuItem value="insumo">Insumo</MenuItem>
+    <MenuItem value="material">Material</MenuItem>
+  </TextField>
+</Grid>
+
 
 
 

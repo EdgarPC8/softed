@@ -16,6 +16,7 @@ import {
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  getRecipeCosting,
 } from '../controllers/InventoryControl/RecipeController.js';
 
 // Category Controllers
@@ -60,8 +61,23 @@ updateHomeProduct,
 deleteHomeProduct,
  } from '../controllers/InventoryControl/HomeProductController.js';   
 import { edDeliUploadSingle } from '../middlewares/uploadEddDeliMiddleware.js';
-
+import {
+  getStores,
+  getStoreById,
+  createStore,
+  updateStore,
+  deleteStore,
+} from "../controllers/InventoryControl/StoresController.js";
 const router = express.Router();
+
+
+
+
+router.get("/stores/", getStores);
+router.get("/stores/:id", getStoreById);
+router.post("/stores/", edDeliUploadSingle, createStore);
+router.put("/stores/:id", edDeliUploadSingle, updateStore);
+router.delete("/stores/:id", deleteStore);
 
 // ----------------------------------
 // 🔁 Home Products
@@ -112,6 +128,7 @@ router.post("/registerProductionFinalFromPayload", isAuthenticated,registerProdu
 
 // Obtener receta de un producto final
 router.get('/recipes/:productFinalId', isAuthenticated, getRecipe);
+router.get('/recipes/getRecipeCosting/:productFinalId', getRecipeCosting);
 
 // Crear receta completa (uno o varios insumos)
 router.post('/recipes', isAuthenticated, createRecipe);

@@ -48,7 +48,7 @@ const TablePro = ({
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 1 }}>
         {title && <Typography variant="h6" gutterBottom>{title}</Typography>}
         {showSearch && (
           <TextField
@@ -57,7 +57,6 @@ const TablePro = ({
             placeholder="Buscar..."
             value={searchText}
             onChange={handleSearchChange}
-            sx={{ mb: 2 }}
           />
         )}
 

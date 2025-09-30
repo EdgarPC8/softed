@@ -47,6 +47,8 @@ const numberOrZero = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 const buildBackendPayload = ({ resultadoEditable, cart, insumosAggregatedMap }) => {
   const intermedioId = resultadoEditable?.id;
   const intermedioNombre = resultadoEditable?.producto;
+
+  // g consumidos por finales (cada final consume gramos del intermedio)
   const masaConsumidaTotal = cart.reduce(
     (acc, it) => acc + numberOrZero(it.gramosPorUnidad) * numberOrZero(it.cantidad),
     0
@@ -77,7 +79,13 @@ const buildBackendPayload = ({ resultadoEditable, cart, insumosAggregatedMap }) 
       unidadesPadrePorUnidadHijo: it.unitsPerChild,
     }));
 
-  const insumos = Object.values(insumosAggregatedMap || {});
+  // ⬅️ FORMATO QUE ESPERA EL BACKEND: usa `gramos` o `unidades`
+  const insumos = Object.values(insumosAggregatedMap || {}).map((n) => {
+    const out = { id: n.id, nombre: n.nombre };
+    if (n.gramos != null && Number(n.gramos) > 0) out.gramos = Number(n.gramos);
+    if (n.unidades != null && Number(n.unidades) > 0) out.unidades = Number(n.unidades);
+    return out;
+  });
 
   return {
     intermedio: intermedioConsumido,
@@ -194,6 +202,61 @@ function CartSummary({
   );
 }
 
+/* ====== Panel de Insumos consumidos ====== */
+function InsumosConsumidos({ insumosAggMap }) {
+  const insumos = Object.values(insumosAggMap || {});
+  if (!insumos.length) {
+    return (
+      <Paper elevation={0} sx={{ mt: 1.5, p: 1.5, border: "1px dashed #e0e0e0", bgcolor: "grey.50" }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+          Insumos consumidos de la receta
+        </Typography>
+        <Typography variant="body2" color="text.secondary">Sin insumos aún.</Typography>
+      </Paper>
+    );
+  }
+
+  insumos.sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
+  const totalGr = insumos.reduce((s, it) => s + (numberOrZero(it.gramos) || 0), 0);
+  const totalUn = insumos.reduce((s, it) => s + (numberOrZero(it.unidades) || 0), 0);
+
+  return (
+    <Paper elevation={0} sx={{ mt: 1.5, p: 1.5, border: "1px dashed #e0e0e0", bgcolor: "grey.50" }}>
+      <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+        Insumos consumidos de la receta
+      </Typography>
+
+      <List dense disablePadding>
+        {insumos.map((it) => (
+          <ListItem key={it.id} sx={{ px: 0, py: 0.5 }}>
+            <ListItemText
+              primary={
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ gap: 1 }}>
+                  <Typography sx={{ fontWeight: 500, flex: 1, pr: 1 }}>{it.nombre}</Typography>
+                  <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+                    {it.gramos != null && (
+                      <Chip size="small" label={`${numberOrZero(it.gramos).toFixed(2)} g`} />
+                    )}
+                    {it.unidades != null && (
+                      <Chip size="small" variant="outlined" label={`${numberOrZero(it.unidades)} u`} />
+                    )}
+                  </Stack>
+                </Stack>
+              }
+            />
+          </ListItem>
+        ))}
+      </List>
+
+      <Divider sx={{ my: 1 }} />
+      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+        {totalGr > 0 && <Chip size="small" color="primary" label={`Total: ${totalGr.toFixed(2)} g`} />}
+        {totalUn > 0 && <Chip size="small" variant="outlined" label={`Total: ${totalUn} u`} />}
+      </Stack>
+    </Paper>
+  );
+}
+
 /* =================== COMPONENTE INDEPENDIENTE =================== */
 export default function RenderFromIntermediate({fetchData}) {
   // Productos (solo intermedios para el selector)
@@ -205,22 +268,27 @@ export default function RenderFromIntermediate({fetchData}) {
   const [resultado, setResultado] = React.useState(null);
   const [masaRestante, setMasaRestante] = React.useState(0);
 
-  // Carrito y agregación de insumos
+  // Lotes y masa base
+  const [lotes, setLotes] = React.useState(1); // 0.5, 1, 1.5...
+  const [baseProducedGrams, setBaseProducedGrams] = React.useState(0); // producedGrams por 1 lote
+  const [totalMasaProducida, setTotalMasaProducida] = React.useState(0); // tracking para ajustar restante
+
+  // Carrito e insumos
   const [cart, setCart] = React.useState([]);
   const [insumosAggMap, setInsumosAggMap] = React.useState({});
+  const [insumosIntermedioBase, setInsumosIntermedioBase] = React.useState({}); // insumos del intermedio por 1 lote
 
   // Drawer móvil para carrito
   const [cartOpen, setCartOpen] = React.useState(false);
   const { toast: toastAuth } = useAuth();
 
-  // 🔎 refs para inputs de cantidad (clave → ref)
+  // refs para inputs de cantidad
   const qtyRefs = React.useRef({});
   const getQtyRef = React.useCallback((key) => {
     if (!qtyRefs.current[key]) qtyRefs.current[key] = React.createRef();
     return qtyRefs.current[key];
   }, []);
   const refocusQty = (key) => {
-    // Re-enfoca en el próximo frame
     requestAnimationFrame(() => {
       qtyRefs.current[key]?.current?.focus?.();
     });
@@ -242,17 +310,34 @@ export default function RenderFromIntermediate({fetchData}) {
     })();
   }, []);
 
-  /* ---------- Helpers de insumos agregados ---------- */
+  /* ---------- Helpers de insumos (formato backend-compatible) ---------- */
   const mergeInsumo = React.useCallback((map, node, factor = 1) => {
     const id = node.id;
     const nombre = node.producto || node.nombre || "Insumo";
+    const unidad = node.unidad; // "gramos" | "unidad" | etc.
+
+    // formato nuevo
+    const cantStd = node.cantidad != null ? numberOrZero(node.cantidad) : null;
+    const isGramsFlag = node.isQuantityInGrams === true || unidad === "gramos";
+
+    // compat. formato antiguo
+    const cantGrOld = node.cantidadGramos != null ? numberOrZero(node.cantidadGramos) : null;
+    const cantUnOld = node.cantidadUnidades != null ? numberOrZero(node.cantidadUnidades) : null;
+
     const prev = map[id] || { id, nombre, gramos: 0, unidades: 0 };
 
-    if (node.cantidadGramos !== undefined) {
-      prev.gramos = numberOrZero(prev.gramos) + factor * numberOrZero(node.cantidadGramos);
-    } else if (node.cantidadUnidades !== undefined) {
-      prev.unidades = numberOrZero(prev.unidades) + factor * numberOrZero(node.cantidadUnidades);
+    if (cantStd != null) {
+      if (isGramsFlag) {
+        prev.gramos = numberOrZero(prev.gramos) + factor * cantStd;
+      } else {
+        prev.unidades = numberOrZero(prev.unidades) + factor * cantStd;
+      }
+    } else if (cantGrOld != null) {
+      prev.gramos = numberOrZero(prev.gramos) + factor * cantGrOld;
+    } else if (cantUnOld != null) {
+      prev.unidades = numberOrZero(prev.unidades) + factor * cantUnOld;
     }
+
     map[id] = prev;
     return map;
   }, []);
@@ -264,39 +349,12 @@ export default function RenderFromIntermediate({fetchData}) {
       if (!Array.isArray(arr)) return;
       for (const item of arr) {
         const esIntermedio = !!item.esIntermedio;
+        // Acumula SOLO insumos no-intermedios
         if (!esIntermedio) mergeInsumo(map, item, factor);
         if (item.requiere) walkRequiere(item.requiere, factor, map);
       }
     },
     [mergeInsumo]
-  );
-
-  const accumulateInsumosForFinal = React.useCallback(
-    async (productId, deltaUnits) => {
-      if (!deltaUnits) return;
-      const abs = Math.abs(deltaUnits);
-      const sign = Math.sign(deltaUnits);
-      try {
-        const res = await simulateProduction(Number(productId), Number(abs));
-        const resultado = res?.data?.resultado ?? res?.data ?? null;
-        const req = resultado?.requiere;
-        if (!req) return;
-        setInsumosAggMap((prev) => {
-          const map = { ...prev };
-          walkRequiere(req, sign, map);
-          Object.keys(map).forEach((k) => {
-            const v = map[k];
-            if (Math.abs(numberOrZero(v.gramos)) < 1e-9) delete v.gramos;
-            if (Math.abs(numberOrZero(v.unidades)) < 1e-9) delete v.unidades;
-            if (!("gramos" in v) && !("unidades" in v)) delete map[k];
-          });
-          return map;
-        });
-      } catch (e) {
-        console.error("Error acumulando insumos:", e);
-      }
-    },
-    [walkRequiere]
   );
 
   /* ---------- Simular desde intermedio ---------- */
@@ -313,9 +371,21 @@ export default function RenderFromIntermediate({fetchData}) {
           unidad: r.unidad ?? "gramos",
         };
         setResultado(formatted);
-        setMasaRestante(numberOrZero(formatted.producedGrams));
+
+        const baseG = numberOrZero(formatted.producedGrams);
+        setBaseProducedGrams(baseG);
+        setLotes(1);
+        setTotalMasaProducida(baseG);
+        setMasaRestante(baseG);
+
+        // Insumos del intermedio por 1 lote (NO intermedios)
+        const baseMap = {};
+        walkRequiere(r?.requiere, 1, baseMap);
+        setInsumosIntermedioBase(baseMap);
+
+        // reset
         setCart([]);
-        setInsumosAggMap({});
+        setInsumosAggMap(baseMap); // por defecto 1 lote
       }
     } catch (err) {
       console.error("Simulación intermedio error:", err);
@@ -324,11 +394,45 @@ export default function RenderFromIntermediate({fetchData}) {
     }
   };
 
+  /* ---------- Lotes (paso 0.5) ---------- */
+  const trySetLotes = (val) => {
+    const v = Math.max(0.5, Number(val) || 0.5);
+    const norm = Number((Math.round(v * 2) / 2).toFixed(1)); // normaliza a 0.5
+    const newTotal = numberOrZero(baseProducedGrams) * norm;
+    const delta = newTotal - numberOrZero(totalMasaProducida);
+    setMasaRestante((prev) => numberOrZero(prev) + delta); // ajusta disponible para finales
+    setTotalMasaProducida(newTotal);
+    setLotes(norm);
+  };
+
+  /* ---------- Escala insumos del intermedio por lotes (sin sumar finales) ---------- */
+  React.useEffect(() => {
+    const scaled = {};
+    Object.values(insumosIntermedioBase || {}).forEach((n) => {
+      scaled[n.id] = {
+        id: n.id,
+        nombre: n.nombre,
+        gramos: n.gramos != null ? numberOrZero(n.gramos) * numberOrZero(lotes) : undefined,
+        unidades: n.unidades != null ? numberOrZero(n.unidades) * numberOrZero(lotes) : undefined,
+      };
+    });
+
+    // Limpieza de ceros
+    Object.keys(scaled).forEach((k) => {
+      const v = scaled[k];
+      if (Math.abs(numberOrZero(v.gramos)) < 1e-9) delete v.gramos;
+      if (Math.abs(numberOrZero(v.unidades)) < 1e-9) delete v.unidades;
+      if (v.gramos == null && v.unidades == null) delete scaled[k];
+    });
+
+    setInsumosAggMap(scaled);
+  }, [insumosIntermedioBase, lotes]);
+
   /* ---------- Carrito: add / remove / distribuir ---------- */
   const handleAddToCart = async (producto, cantidad = 1, gramosOverride, opts = {}) => {
     if (!resultado) return;
 
-    // Transformación (consume unidades del padre, no masa)
+    // Transformación: consume unidades del padre, no masa
     if (opts.mode === "transform") {
       const unitsPerChild = numberOrZero(opts.unitsPerChild) || 1;
       const needUnits = unitsPerChild * numberOrZero(cantidad);
@@ -348,6 +452,7 @@ export default function RenderFromIntermediate({fetchData}) {
       setCart((prev) => {
         let next = [...prev];
 
+        // si falta padre, lo fabricamos desde masa
         if (deficit > 0) {
           const existingParent = next.find((c) => c.id === parentId);
           if (existingParent) existingParent.cantidad += deficit;
@@ -361,12 +466,14 @@ export default function RenderFromIntermediate({fetchData}) {
             });
         }
 
+        // descontar unidades de padre usadas
         const parentLine = next.find((c) => c.id === parentId);
         if (parentLine) {
           parentLine.cantidad -= needUnits;
           if (parentLine.cantidad <= 0) next = next.filter((c) => c.id !== parentId);
         }
 
+        // agregar hijo (no usa masa)
         const childExisting = next.find((c) => c.id === producto.id);
         if (childExisting) {
           childExisting.cantidad += cantidad;
@@ -391,8 +498,7 @@ export default function RenderFromIntermediate({fetchData}) {
       });
 
       if (deficit > 0) setMasaRestante((prev) => numberOrZero(prev) - gramsNeededFromMass);
-      await accumulateInsumosForFinal(producto.id, +cantidad);
-      return;
+      return; // ⬅️ ya NO acumulamos insumos de finales
     }
 
     // Consumo normal (usa masa)
@@ -423,7 +529,7 @@ export default function RenderFromIntermediate({fetchData}) {
     });
 
     setMasaRestante((prev) => numberOrZero(prev) - gramosPorUnidad * cantidadAgregable);
-    await accumulateInsumosForFinal(producto.id, +cantidadAgregable);
+    // ⬅️ ya NO acumulamos insumos de finales
   };
 
   const handleRemoveFromCart = async (itemOrId) => {
@@ -458,8 +564,7 @@ export default function RenderFromIntermediate({fetchData}) {
         return next;
       });
 
-      await accumulateInsumosForFinal(itemActual.id, -1);
-      return;
+      return; // ⬅️ no tocar insumos
     }
 
     setCart((prev) => {
@@ -472,7 +577,6 @@ export default function RenderFromIntermediate({fetchData}) {
     });
 
     setMasaRestante((prev) => numberOrZero(prev) + numberOrZero(itemActual.gramosPorUnidad));
-  await accumulateInsumosForFinal(productoId, -1);
   };
 
   const handleDistributeRemainingMass = () => {
@@ -493,8 +597,9 @@ export default function RenderFromIntermediate({fetchData}) {
     const payload = buildBackendPayload({
       resultadoEditable: resultado,
       cart,
-      insumosAggregatedMap: insumosAggMap,
+      insumosAggregatedMap: insumosAggMap, // <-- sólo intermedio × lotes
     });
+    // console.log("payload enviado:", payload);
     toastAuth({
       promise: registerProductionIntermediateFromPayload(payload),
       onSuccess: () => {
@@ -843,6 +948,45 @@ export default function RenderFromIntermediate({fetchData}) {
             {loadingIntermediate ? <CircularProgress size={20} /> : "Simular"}
           </Button>
         </Stack>
+
+        {/* Control de lotes */}
+        {resultado && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+              Lotes de masa (pasos de 0.5)
+            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: "wrap" }}>
+              <Tooltip title="− 0.5 lote">
+                <span>
+                  <IconButton size="small" onClick={() => trySetLotes(lotes - 0.5)}>
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <TextField
+                type="number"
+                size="small"
+                value={lotes}
+                onChange={(e) => trySetLotes(e.target.value)}
+                inputProps={{ step: 0.5, min: 0.5 }}
+                sx={{ width: 120 }}
+                onWheel={(e)=>e.target.blur()}
+              />
+              <Tooltip title="+ 0.5 lote">
+                <span>
+                  <IconButton size="small" onClick={() => trySetLotes(lotes + 0.5)}>
+                    <AddIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Chip
+                size="small"
+                color="primary"
+                label={`Producido: ${(numberOrZero(baseProducedGrams) * numberOrZero(lotes)).toFixed(2)} g`}
+              />
+            </Stack>
+          </Box>
+        )}
       </Paper>
 
       {/* Resultado */}
@@ -858,16 +1002,17 @@ export default function RenderFromIntermediate({fetchData}) {
                 <Chip
                   size="small"
                   color="primary"
-                  label={`Masa total: ${numberOrZero(resultado.producedGrams).toFixed(2)} g`}
+                  label={`Masa total: ${(numberOrZero(baseProducedGrams) * numberOrZero(lotes)).toFixed(2)} g`}
                 />
                 <Chip size="small" label={`Restante: ${numberOrZero(masaRestante).toFixed(2)} g`} />
+                <Chip size="small" variant="outlined" label={`Lotes: ${lotes.toFixed(1)}`} />
               </Stack>
 
               <CardsGrid />
             </Paper>
           </Grid>
 
-          {/* Derecha: carrito */}
+          {/* Derecha: carrito + insumos */}
           <Grid item xs={12} md={4} sx={{ display: { xs: "none", md: "block" } }}>
             <Typography variant="h6" sx={{ mb: 1, fontWeight: 700 }}>
               Carrito
@@ -881,6 +1026,8 @@ export default function RenderFromIntermediate({fetchData}) {
               onDistribute={handleDistributeRemainingMass}
               onProcess={handleProcess}
             />
+            {/* Insumos debajo del carrito (desktop) */}
+            <InsumosConsumidos insumosAggMap={insumosAggMap} />
           </Grid>
         </Grid>
       )}
@@ -915,6 +1062,8 @@ export default function RenderFromIntermediate({fetchData}) {
                 onDistribute={handleDistributeRemainingMass}
                 onProcess={handleProcess}
               />
+              {/* Insumos debajo del carrito (móvil) */}
+              <InsumosConsumidos insumosAggMap={insumosAggMap} />
             </Box>
           </Drawer>
         </>

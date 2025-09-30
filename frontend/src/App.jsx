@@ -66,6 +66,8 @@ import ProductionManagerPage from "./page/inventoryControl/ProductionManagerPage
 import BasicMap from "./page/mapa/BasicMap.jsx";
 import ProMap from "./page/mapa/ProMap.jsx";
 import HomeProductPage from "./page/inventoryControl/HomeProduct.jsx";
+import StoresPage from "./page/inventoryControl/StoresPage.jsx";
+
 
 
 
@@ -158,7 +160,7 @@ function App() {
                   <Route path="/inventory/finance" element={<FinancePage />} />
                   <Route path="/inventory/production" element={<ProductionManagerPage />} />
                   <Route path="/inventory/productos-destacados" element={<HomeProductPage />} />
-
+                  <Route path="/inventory/puntos-venta" element={<StoresPage />} />
 
                 </Route>
 

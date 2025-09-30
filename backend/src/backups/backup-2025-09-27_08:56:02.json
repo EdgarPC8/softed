@@ -121926,392 +121926,343 @@
       "productFinalId": 9,
       "productRawId": 7,
       "quantity": 2.43,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 2,
       "productFinalId": 9,
       "productRawId": 3,
       "quantity": 2.81,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 3,
       "productFinalId": 10,
       "productRawId": 1,
       "quantity": 1000,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 4,
       "productFinalId": 10,
       "productRawId": 2,
       "quantity": 150,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 5,
       "productFinalId": 10,
       "productRawId": 3,
       "quantity": 120,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 6,
       "productFinalId": 10,
       "productRawId": 4,
       "quantity": 3,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 7,
       "productFinalId": 10,
       "productRawId": 5,
       "quantity": 30,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 8,
       "productFinalId": 10,
       "productRawId": 6,
       "quantity": 350,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 10,
       "productFinalId": 11,
       "productRawId": 9,
       "quantity": 4.05,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 11,
       "productFinalId": 11,
       "productRawId": 8,
       "quantity": 0.28,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 12,
       "productFinalId": 16,
       "productRawId": 10,
       "quantity": 18,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 13,
       "productFinalId": 11,
       "productRawId": 16,
       "quantity": 1,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 14,
       "productFinalId": 12,
       "productRawId": 10,
       "quantity": 50,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 15,
       "productFinalId": 12,
       "productRawId": 9,
       "quantity": 7,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 16,
       "productFinalId": 12,
       "productRawId": 19,
       "quantity": 15,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 17,
       "productFinalId": 12,
       "productRawId": 8,
       "quantity": 0.75,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 18,
       "productFinalId": 21,
       "productRawId": 3,
       "quantity": 600,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 19,
       "productFinalId": 21,
       "productRawId": 2,
       "quantity": 720,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 20,
       "productFinalId": 21,
       "productRawId": 4,
       "quantity": 18,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 21,
       "productFinalId": 21,
       "productRawId": 22,
       "quantity": 300,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 22,
       "productFinalId": 21,
       "productRawId": 1,
       "quantity": 1000,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 23,
       "productFinalId": 21,
       "productRawId": 23,
       "quantity": 60,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 24,
       "productFinalId": 26,
       "productRawId": 21,
       "quantity": 325,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 26,
       "productFinalId": 25,
       "productRawId": 21,
       "quantity": 900,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 27,
       "productFinalId": 18,
       "productRawId": 25,
       "quantity": 1,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 28,
       "productFinalId": 14,
       "productRawId": 24,
       "quantity": 1,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 29,
       "productFinalId": 17,
       "productRawId": 26,
       "quantity": 1,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 30,
       "productFinalId": 24,
       "productRawId": 21,
       "quantity": 500,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 31,
       "productFinalId": 30,
       "productRawId": 1,
       "quantity": 2250,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 32,
       "productFinalId": 30,
       "productRawId": 4,
       "quantity": 10,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 37,
       "productFinalId": 30,
       "productRawId": 3,
       "quantity": 900,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 38,
       "productFinalId": 30,
       "productRawId": 31,
       "quantity": 1500,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 39,
       "productFinalId": 30,
       "productRawId": 32,
       "quantity": 450,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 40,
       "productFinalId": 30,
       "productRawId": 33,
       "quantity": 2250,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 41,
       "productFinalId": 30,
       "productRawId": 34,
       "quantity": 5,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 42,
       "productFinalId": 29,
       "productRawId": 30,
       "quantity": 31,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 43,
       "productFinalId": 35,
       "productRawId": 29,
       "quantity": 7,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 44,
       "productFinalId": 38,
       "productRawId": 2,
       "quantity": 340,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 45,
       "productFinalId": 38,
       "productRawId": 3,
       "quantity": 340,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 46,
       "productFinalId": 38,
       "productRawId": 4,
       "quantity": 5,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 47,
       "productFinalId": 38,
       "productRawId": 37,
       "quantity": 50,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 48,
       "productFinalId": 38,
       "productRawId": 6,
       "quantity": 950,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 49,
       "productFinalId": 38,
       "productRawId": 5,
       "quantity": 30,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 50,
       "productFinalId": 38,
       "productRawId": 1,
       "quantity": 900,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 51,
       "productFinalId": 38,
       "productRawId": 36,
       "quantity": 1350,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 52,
       "productFinalId": 40,
       "productRawId": 38,
       "quantity": 22,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     },
     {
       "id": 53,
       "productFinalId": 39,
       "productRawId": 40,
       "quantity": 7,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 54,
       "productFinalId": 42,
       "productRawId": 41,
       "quantity": 1,
-      "isQuantityInGrams": false,
-      "itemType": "insumo"
+      "isQuantityInGrams": false
     },
     {
       "id": 55,
       "productFinalId": 41,
       "productRawId": 21,
       "quantity": 1790,
-      "isQuantityInGrams": true,
-      "itemType": "insumo"
+      "isQuantityInGrams": true
     }
   ],
   "InventoryMovement": [
@@ -139016,808 +138967,155 @@
       "createdBy": 1,
       "createdAt": "2025-09-27T05:07:13.000Z",
       "updatedAt": "2025-09-27T05:07:13.000Z"
-    },
-    {
-      "id": 1194,
-      "productId": 42,
-      "quantity": 1,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 213,
-      "date": "2025-09-27T18:17:40.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-27T18:17:40.000Z",
-      "updatedAt": "2025-09-27T18:17:40.000Z"
-    },
-    {
-      "id": 1195,
-      "productId": 7,
-      "quantity": 800,
-      "description": "2 cocoas de 400 gr",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-28T21:59:05.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-28T21:59:05.000Z",
-      "updatedAt": "2025-09-28T21:59:05.000Z"
-    },
-    {
-      "id": 1196,
-      "productId": 8,
-      "quantity": 450,
-      "description": "Una libra de grajeas ",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-28T22:04:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-28T22:04:43.000Z",
-      "updatedAt": "2025-09-28T22:04:43.000Z"
-    },
-    {
-      "id": 1197,
-      "productId": 7,
-      "quantity": 590.49,
-      "description": "Consumo de insumo Cocoa para Chocolate Liquido",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1198,
-      "productId": 3,
-      "quantity": 682.83,
-      "description": "Consumo de insumo Mantequilla para Chocolate Liquido",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1199,
-      "productId": 9,
-      "quantity": 1275.75,
-      "description": "Producción intermedia de Chocolate Liquido",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1200,
-      "productId": 9,
-      "quantity": 1275.75,
-      "description": "Consumo de Chocolate Liquido para Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1201,
-      "productId": 8,
-      "quantity": 88.2,
-      "description": "Consumo de insumo Grajeas para Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1202,
-      "productId": 1,
-      "quantity": 3000,
-      "description": "Consumo de insumo Harina para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1203,
-      "productId": 2,
-      "quantity": 450,
-      "description": "Consumo de insumo Azucar para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1204,
-      "productId": 3,
-      "quantity": 360,
-      "description": "Consumo de insumo Mantequilla para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1205,
-      "productId": 4,
-      "quantity": 10,
-      "description": "Consumo de insumo Huevos para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1206,
-      "productId": 5,
-      "quantity": 55,
-      "description": "Consumo de insumo Levadura para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1207,
-      "productId": 6,
-      "quantity": 1050,
-      "description": "Consumo de insumo Agua para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1208,
-      "productId": 10,
-      "quantity": 3,
-      "description": "Producción intermedia de Masa de Dona",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1209,
-      "productId": 10,
-      "quantity": 3,
-      "description": "Consumo de Masa de Dona para Dona Cruda",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1210,
-      "productId": 16,
-      "quantity": 315,
-      "description": "Producción intermedia de Dona Cruda",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1211,
-      "productId": 16,
-      "quantity": 315,
-      "description": "Consumo de Dona Cruda para Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1212,
-      "productId": 11,
-      "quantity": 315,
-      "description": "Producción final de Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "produccion",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-29T00:47:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T00:47:43.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
-    },
-    {
-      "id": 1213,
-      "productId": 11,
-      "quantity": 60,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 218,
-      "date": "2025-09-29T13:22:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:00.000Z",
-      "updatedAt": "2025-09-29T13:22:00.000Z"
-    },
-    {
-      "id": 1214,
-      "productId": 11,
-      "quantity": 75,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 217,
-      "date": "2025-09-29T13:22:05.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:05.000Z",
-      "updatedAt": "2025-09-29T13:22:05.000Z"
-    },
-    {
-      "id": 1215,
-      "productId": 11,
-      "quantity": 25,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 216,
-      "date": "2025-09-29T13:22:08.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:08.000Z",
-      "updatedAt": "2025-09-29T13:22:08.000Z"
-    },
-    {
-      "id": 1216,
-      "productId": 11,
-      "quantity": 50,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 215,
-      "date": "2025-09-29T13:22:11.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:11.000Z",
-      "updatedAt": "2025-09-29T13:22:11.000Z"
-    },
-    {
-      "id": 1217,
-      "productId": 11,
-      "quantity": 20,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 214,
-      "date": "2025-09-29T13:22:15.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:15.000Z",
-      "updatedAt": "2025-09-29T13:22:15.000Z"
-    },
-    {
-      "id": 1218,
-      "productId": 11,
-      "quantity": 10,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 219,
-      "date": "2025-09-29T15:33:32.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T15:33:32.000Z",
-      "updatedAt": "2025-09-29T15:33:32.000Z"
-    },
-    {
-      "id": 1219,
-      "productId": 7,
-      "quantity": 470.205,
-      "description": "Consumo de insumo Cocoa para Chocolate Liquido",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1220,
-      "productId": 3,
-      "quantity": 543.735,
-      "description": "Consumo de insumo Mantequilla para Chocolate Liquido",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1221,
-      "productId": 9,
-      "quantity": 1012.5,
-      "description": "Producción intermedia de Chocolate Liquido",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1222,
-      "productId": 9,
-      "quantity": 1012.5,
-      "description": "Consumo de Chocolate Liquido para Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1223,
-      "productId": 8,
-      "quantity": 70,
-      "description": "Consumo de insumo Grajeas para Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1224,
-      "productId": 1,
-      "quantity": 2500,
-      "description": "Consumo de insumo Harina para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1225,
-      "productId": 2,
-      "quantity": 375,
-      "description": "Consumo de insumo Azucar para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1226,
-      "productId": 3,
-      "quantity": 300,
-      "description": "Consumo de insumo Mantequilla para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1227,
-      "productId": 4,
-      "quantity": 8,
-      "description": "Consumo de insumo Huevos para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1228,
-      "productId": 5,
-      "quantity": 75,
-      "description": "Consumo de insumo Levadura para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1229,
-      "productId": 6,
-      "quantity": 875,
-      "description": "Consumo de insumo Agua para Masa de Dona",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1230,
-      "productId": 10,
-      "quantity": 2.5,
-      "description": "Producción intermedia de Masa de Dona",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1231,
-      "productId": 10,
-      "quantity": 2.5,
-      "description": "Consumo de Masa de Dona para Dona Cruda",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1232,
-      "productId": 16,
-      "quantity": 250,
-      "description": "Producción intermedia de Dona Cruda",
-      "price": null,
-      "type": "entrada",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1233,
-      "productId": 16,
-      "quantity": 250,
-      "description": "Consumo de Dona Cruda para Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "salida",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1234,
-      "productId": 11,
-      "quantity": 250,
-      "description": "Producción final de Dona Normal Decorada de Chocolate",
-      "price": null,
-      "type": "produccion",
-      "referenceType": null,
-      "referenceId": null,
-      "date": "2025-09-30T02:11:00.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T02:11:00.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
-    },
-    {
-      "id": 1235,
-      "productId": 11,
-      "quantity": 25,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 223,
-      "date": "2025-09-30T13:38:14.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T13:38:14.000Z",
-      "updatedAt": "2025-09-30T13:38:14.000Z"
-    },
-    {
-      "id": 1236,
-      "productId": 11,
-      "quantity": 50,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 222,
-      "date": "2025-09-30T13:38:18.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T13:38:18.000Z",
-      "updatedAt": "2025-09-30T13:38:18.000Z"
-    },
-    {
-      "id": 1237,
-      "productId": 11,
-      "quantity": 20,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 225,
-      "date": "2025-09-30T13:38:43.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T13:38:43.000Z",
-      "updatedAt": "2025-09-30T13:38:43.000Z"
-    },
-    {
-      "id": 1238,
-      "productId": 11,
-      "quantity": 6,
-      "description": null,
-      "price": null,
-      "type": "salida",
-      "referenceType": "order",
-      "referenceId": 226,
-      "date": "2025-09-30T15:39:20.000Z",
-      "createdBy": 1,
-      "createdAt": "2025-09-30T15:39:20.000Z",
-      "updatedAt": "2025-09-30T15:39:20.000Z"
     }
   ],
   "InventoryProduct": [
     {
       "id": 1,
       "name": "Harina",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
       "standardWeightGrams": 0,
-      "stock": 16600,
+      "stock": 22100,
       "minStock": 1500,
       "price": 41,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:14:50.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 2,
       "name": "Azucar",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
       "standardWeightGrams": 0,
-      "stock": 13885,
+      "stock": 14710,
       "minStock": 300,
       "price": 10,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:15:14.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 3,
       "name": "Mantequilla",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
       "standardWeightGrams": 0,
-      "stock": 18408,
+      "stock": 20294.5,
       "minStock": 500,
       "price": 33.3,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:15:58.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 4,
       "name": "Huevos",
-      "desc": null,
       "type": "raw",
       "unitId": 1,
       "categoryId": 1,
       "standardWeightGrams": 50,
-      "stock": 131,
+      "stock": 149,
       "minStock": 5,
       "price": 3.5,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:16:38.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 5,
       "name": "Levadura",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
       "standardWeightGrams": 0,
-      "stock": 395,
+      "stock": 525,
       "minStock": 50,
       "price": 4,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:17:05.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-26T13:20:12.000Z"
     },
     {
       "id": 6,
       "name": "Agua",
-      "desc": null,
       "type": "raw",
       "unitId": 4,
       "categoryId": 4,
       "standardWeightGrams": 0,
-      "stock": 101175,
+      "stock": 103100,
       "minStock": 500,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:18:40.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-26T13:20:12.000Z"
     },
     {
       "id": 7,
       "name": "Cocoa",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
       "standardWeightGrams": 0,
-      "stock": 428.165,
+      "stock": 688.86,
       "minStock": 0,
       "price": 3,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:18:54.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-26T13:20:12.000Z"
     },
     {
       "id": 8,
       "name": "Grajeas",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
       "standardWeightGrams": 0,
-      "stock": 1900.6,
+      "stock": 1608.8,
       "minStock": 200,
       "price": 2.6,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:21:53.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-26T13:20:12.000Z"
     },
     {
       "id": 9,
       "name": "Chocolate Liquido",
-      "desc": null,
       "type": "intermediate",
       "unitId": 2,
       "categoryId": 2,
       "standardWeightGrams": 0,
-      "stock": 1.47,
+      "stock": 2.46,
       "minStock": 100,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:22:41.000Z",
-      "updatedAt": "2025-09-30T02:11:00.000Z"
+      "updatedAt": "2025-09-26T13:20:12.000Z"
     },
     {
       "id": 10,
       "name": "Masa de Dona",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
       "standardWeightGrams": 1800,
-      "stock": 730,
+      "stock": 1000,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:23:13.000Z",
-      "updatedAt": "2025-09-29T00:47:43.000Z"
+      "updatedAt": "2025-09-26T13:20:35.000Z"
     },
     {
       "id": 11,
       "name": "Dona Normal Decorada de Chocolate",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
       "standardWeightGrams": 0,
-      "stock": 224,
+      "stock": 0,
       "minStock": 0,
       "price": 0.15,
-      "netWeight": 0,
       "createdAt": "2025-06-24T00:28:43.000Z",
-      "updatedAt": "2025-09-30T15:39:20.000Z"
+      "updatedAt": "2025-09-26T13:20:54.000Z"
     },
     {
       "id": 12,
       "name": "Dona Grande con Manjar",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
@@ -139825,14 +139123,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 0.3,
-      "netWeight": 0,
       "createdAt": "2025-07-06T18:28:39.000Z",
       "updatedAt": "2025-09-06T14:31:59.000Z"
     },
     {
       "id": 13,
       "name": "Aceite Aisol",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -139840,14 +139136,12 @@
       "stock": 23000,
       "minStock": 0,
       "price": 1.75,
-      "netWeight": 0,
       "createdAt": "2025-07-06T19:08:20.000Z",
       "updatedAt": "2025-09-24T17:40:08.000Z"
     },
     {
       "id": 14,
       "name": "Pastel Pequeño Decorado",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
@@ -139855,14 +139149,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 3.5,
-      "netWeight": 0,
       "createdAt": "2025-07-09T03:40:13.000Z",
       "updatedAt": "2025-09-27T05:07:13.000Z"
     },
     {
       "id": 15,
       "name": "Pastel Pequeño de Naranja",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
@@ -139870,14 +139162,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 1.5,
-      "netWeight": 0,
       "createdAt": "2025-07-10T13:43:51.000Z",
       "updatedAt": "2025-09-05T15:49:55.000Z"
     },
     {
       "id": 16,
       "name": "Dona Cruda",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -139885,14 +139175,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-07-12T15:47:49.000Z",
       "updatedAt": "2025-07-12T15:47:49.000Z"
     },
     {
       "id": 17,
       "name": "Pastel Mini Torta Decorado",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
@@ -139900,14 +139188,12 @@
       "stock": 1,
       "minStock": 0,
       "price": 2.25,
-      "netWeight": 0,
       "createdAt": "2025-07-15T21:42:30.000Z",
       "updatedAt": "2025-09-27T05:07:07.000Z"
     },
     {
       "id": 18,
       "name": "Pastel Mediano Decorado",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
@@ -139915,14 +139201,12 @@
       "stock": 1,
       "minStock": 0,
       "price": 7,
-      "netWeight": 0,
       "createdAt": "2025-07-15T21:43:07.000Z",
       "updatedAt": "2025-09-27T05:07:10.000Z"
     },
     {
       "id": 19,
       "name": "Manjar",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -139930,14 +139214,12 @@
       "stock": 7685,
       "minStock": 500,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-07-31T03:14:56.000Z",
       "updatedAt": "2025-09-08T18:44:37.000Z"
     },
     {
       "id": 20,
       "name": "Crema de leche Masscream",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 4,
@@ -139945,14 +139227,12 @@
       "stock": 6000,
       "minStock": 1000,
       "price": 3.95,
-      "netWeight": 0,
       "createdAt": "2025-07-31T20:44:58.000Z",
       "updatedAt": "2025-08-13T19:24:17.000Z"
     },
     {
       "id": 21,
       "name": "Masa de Pastel",
-      "desc": null,
       "type": "intermediate",
       "unitId": 2,
       "categoryId": 3,
@@ -139960,14 +139240,12 @@
       "stock": -500,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-08-04T21:54:54.000Z",
       "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 22,
       "name": "Leche",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 4,
@@ -139975,14 +139253,12 @@
       "stock": 3150,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-08-04T21:57:17.000Z",
       "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 23,
       "name": "Royal",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 3,
@@ -139990,14 +139266,12 @@
       "stock": 320,
       "minStock": 200,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-08-04T21:59:02.000Z",
       "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 24,
       "name": "Pastel Pequeño",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -140005,14 +139279,12 @@
       "stock": 1,
       "minStock": 0,
       "price": 2.25,
-      "netWeight": 0,
       "createdAt": "2025-08-06T21:23:58.000Z",
       "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 25,
       "name": "Pastel Mediano",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -140020,14 +139292,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 3.5,
-      "netWeight": 0,
       "createdAt": "2025-08-06T21:26:12.000Z",
       "updatedAt": "2025-08-06T21:26:12.000Z"
     },
     {
       "id": 26,
       "name": "Pastel MiniTorta",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -140035,14 +139305,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 1,
-      "netWeight": 0,
       "createdAt": "2025-08-06T21:27:49.000Z",
       "updatedAt": "2025-08-06T21:27:49.000Z"
     },
     {
       "id": 27,
       "name": "Pastel mini Torta de Naranja",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -140050,14 +139318,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 1.25,
-      "netWeight": 0,
       "createdAt": "2025-08-06T21:29:45.000Z",
       "updatedAt": "2025-09-05T15:48:41.000Z"
     },
     {
       "id": 28,
       "name": "Pastel Mediano de Naranja",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -140065,14 +139331,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 7.25,
-      "netWeight": 0,
       "createdAt": "2025-08-06T21:37:18.000Z",
       "updatedAt": "2025-09-05T15:48:35.000Z"
     },
     {
       "id": 29,
       "name": "Masapan - Tortilla de Maiz",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 3,
@@ -140080,14 +139344,12 @@
       "stock": -252,
       "minStock": 0,
       "price": 0.1,
-      "netWeight": 0,
       "createdAt": "2025-09-08T14:43:45.000Z",
       "updatedAt": "2025-09-23T22:24:09.000Z"
     },
     {
       "id": 30,
       "name": "Masa del MasaPan - Torilla de Maiz",
-      "desc": null,
       "type": "intermediate",
       "unitId": 2,
       "categoryId": 3,
@@ -140095,14 +139357,12 @@
       "stock": -43,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-09-08T14:44:28.000Z",
       "updatedAt": "2025-09-23T22:24:09.000Z"
     },
     {
       "id": 31,
       "name": "Miel",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -140110,14 +139370,12 @@
       "stock": -9000,
       "minStock": 0,
       "price": 0.5,
-      "netWeight": 0,
       "createdAt": "2025-09-08T14:46:23.000Z",
       "updatedAt": "2025-09-23T22:24:09.000Z"
     },
     {
       "id": 32,
       "name": "Bicarbonato",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -140125,14 +139383,12 @@
       "stock": -2025,
       "minStock": 50,
       "price": 2,
-      "netWeight": 0,
       "createdAt": "2025-09-08T14:47:50.000Z",
       "updatedAt": "2025-09-23T22:24:09.000Z"
     },
     {
       "id": 33,
       "name": "Harina de Maiz",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -140140,14 +139396,12 @@
       "stock": -9000,
       "minStock": 450,
       "price": 1,
-      "netWeight": 0,
       "createdAt": "2025-09-08T14:48:18.000Z",
       "updatedAt": "2025-09-23T22:24:09.000Z"
     },
     {
       "id": 34,
       "name": "Naranja Fruta",
-      "desc": null,
       "type": "raw",
       "unitId": 1,
       "categoryId": 1,
@@ -140155,14 +139409,12 @@
       "stock": -20,
       "minStock": 0,
       "price": 0.1,
-      "netWeight": 0,
       "createdAt": "2025-09-08T14:48:59.000Z",
       "updatedAt": "2025-09-23T22:24:09.000Z"
     },
     {
       "id": 35,
       "name": "Pack de Masapan Toritlla de Trigo",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 1,
@@ -140170,14 +139422,12 @@
       "stock": 0,
       "minStock": 0,
       "price": 0.8,
-      "netWeight": 0,
       "createdAt": "2025-09-09T13:30:23.000Z",
       "updatedAt": "2025-09-25T00:03:16.000Z"
     },
     {
       "id": 36,
       "name": "Harina Integral",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -140185,14 +139435,12 @@
       "stock": 2900,
       "minStock": 0,
       "price": 0.6,
-      "netWeight": 0,
       "createdAt": "2025-09-23T21:07:23.000Z",
       "updatedAt": "2025-09-24T23:52:11.000Z"
     },
     {
       "id": 37,
       "name": "Sal",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -140200,14 +139448,12 @@
       "stock": 1950,
       "minStock": 0,
       "price": 0.85,
-      "netWeight": 0,
       "createdAt": "2025-09-23T21:10:18.000Z",
       "updatedAt": "2025-09-24T23:52:11.000Z"
     },
     {
       "id": 38,
       "name": "Masa  de pan integral",
-      "desc": null,
       "type": "intermediate",
       "unitId": 2,
       "categoryId": 3,
@@ -140215,14 +139461,12 @@
       "stock": -206,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-09-23T21:12:01.000Z",
       "updatedAt": "2025-09-24T23:52:11.000Z"
     },
     {
       "id": 39,
       "name": "Pack de Rosca Integral",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 3,
@@ -140230,14 +139474,12 @@
       "stock": 3,
       "minStock": 0,
       "price": 0.8,
-      "netWeight": 0,
       "createdAt": "2025-09-24T23:28:33.000Z",
       "updatedAt": "2025-09-25T18:41:14.000Z"
     },
     {
       "id": 40,
       "name": "Rosca Integral",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 3,
@@ -140245,14 +139487,12 @@
       "stock": -180,
       "minStock": 0,
       "price": 0.1,
-      "netWeight": 0,
       "createdAt": "2025-09-24T23:29:40.000Z",
       "updatedAt": "2025-09-24T23:52:11.000Z"
     },
     {
       "id": 41,
       "name": "Pastel Grande ",
-      "desc": null,
       "type": "intermediate",
       "unitId": 1,
       "categoryId": 2,
@@ -140260,29 +139500,25 @@
       "stock": 0,
       "minStock": 0,
       "price": 0,
-      "netWeight": 0,
       "createdAt": "2025-09-25T19:57:18.000Z",
       "updatedAt": "2025-09-25T19:57:18.000Z"
     },
     {
       "id": 42,
       "name": "Pastel Grande Decorado ",
-      "desc": null,
       "type": "final",
       "unitId": 1,
       "categoryId": 2,
       "standardWeightGrams": 0,
-      "stock": 0,
+      "stock": 1,
       "minStock": 0,
       "price": 15,
-      "netWeight": 0,
       "createdAt": "2025-09-25T19:57:48.000Z",
-      "updatedAt": "2025-09-27T18:17:40.000Z"
+      "updatedAt": "2025-09-27T05:06:23.000Z"
     },
     {
       "id": 43,
       "name": "Azúcar impalpable",
-      "desc": null,
       "type": "raw",
       "unitId": 2,
       "categoryId": 1,
@@ -140290,39 +139526,8 @@
       "stock": 500,
       "minStock": 0,
       "price": 0.85,
-      "netWeight": 0,
       "createdAt": "2025-09-26T19:48:20.000Z",
       "updatedAt": "2025-09-26T19:49:14.000Z"
-    },
-    {
-      "id": 44,
-      "name": "Funda de Relampago",
-      "desc": "",
-      "type": "final",
-      "unitId": 1,
-      "categoryId": 3,
-      "standardWeightGrams": 0,
-      "stock": 0,
-      "minStock": 0,
-      "price": 0.75,
-      "netWeight": 0,
-      "createdAt": "2025-09-29T17:14:30.000Z",
-      "updatedAt": "2025-09-29T17:14:30.000Z"
-    },
-    {
-      "id": 45,
-      "name": "Funda de Suspiros Grandes",
-      "desc": "",
-      "type": "final",
-      "unitId": 1,
-      "categoryId": 3,
-      "standardWeightGrams": 0,
-      "stock": 0,
-      "minStock": 0,
-      "price": 0.8,
-      "netWeight": 0,
-      "createdAt": "2025-09-29T17:16:07.000Z",
-      "updatedAt": "2025-09-29T17:16:07.000Z"
     }
   ],
   "InventoryUnit": [
@@ -142285,11 +141490,11 @@
     {
       "id": 200,
       "customerId": 16,
-      "status": "pagado",
+      "status": "entregado",
       "notes": "",
       "date": "2025-09-24T22:54:05.000Z",
       "createdAt": "2025-09-24T22:54:06.000Z",
-      "updatedAt": "2025-09-27T18:17:57.000Z"
+      "updatedAt": "2025-09-24T22:54:12.000Z"
     },
     {
       "id": 201,
@@ -142384,128 +141589,11 @@
     {
       "id": 213,
       "customerId": 14,
-      "status": "entregado",
+      "status": "pendiente",
       "notes": "Paty Condolo",
       "date": "2025-09-26T08:37:44.000Z",
       "createdAt": "2025-09-27T03:37:44.000Z",
-      "updatedAt": "2025-09-27T18:17:40.000Z"
-    },
-    {
-      "id": 214,
-      "customerId": 1,
-      "status": "entregado",
-      "notes": "",
-      "date": "2025-09-28T09:14:13.000Z",
-      "createdAt": "2025-09-29T04:14:13.000Z",
-      "updatedAt": "2025-09-29T13:22:15.000Z"
-    },
-    {
-      "id": 215,
-      "customerId": 3,
-      "status": "pagado",
-      "notes": "",
-      "date": "2025-09-28T09:14:45.000Z",
-      "createdAt": "2025-09-29T04:14:45.000Z",
-      "updatedAt": "2025-09-29T17:23:14.000Z"
-    },
-    {
-      "id": 216,
-      "customerId": 4,
-      "status": "pagado",
-      "notes": "",
-      "date": "2025-09-28T09:15:16.000Z",
-      "createdAt": "2025-09-29T04:15:16.000Z",
-      "updatedAt": "2025-09-29T15:34:12.000Z"
-    },
-    {
-      "id": 217,
-      "customerId": 9,
-      "status": "pagado",
-      "notes": "",
-      "date": "2025-09-28T09:15:41.000Z",
-      "createdAt": "2025-09-29T04:15:41.000Z",
-      "updatedAt": "2025-09-29T13:22:06.000Z"
-    },
-    {
-      "id": 218,
-      "customerId": 11,
-      "status": "pagado",
-      "notes": "",
-      "date": "2025-09-28T09:16:21.000Z",
-      "createdAt": "2025-09-29T04:16:22.000Z",
-      "updatedAt": "2025-09-29T13:22:02.000Z"
-    },
-    {
-      "id": 219,
-      "customerId": 14,
-      "status": "pagado",
-      "notes": "Dos dolares de donas",
-      "date": "2025-09-28T15:33:28.000Z",
-      "createdAt": "2025-09-29T15:33:28.000Z",
-      "updatedAt": "2025-09-29T15:33:56.000Z"
-    },
-    {
-      "id": 220,
-      "customerId": 16,
-      "status": "pendiente",
-      "notes": "",
-      "date": "2025-09-27T17:17:04.000Z",
-      "createdAt": "2025-09-29T17:17:04.000Z",
-      "updatedAt": "2025-09-29T17:17:04.000Z"
-    },
-    {
-      "id": 221,
-      "customerId": 15,
-      "status": "pendiente",
-      "notes": "",
-      "date": "2025-09-29T22:06:31.000Z",
-      "createdAt": "2025-09-29T22:06:31.000Z",
-      "updatedAt": "2025-09-29T22:06:31.000Z"
-    },
-    {
-      "id": 222,
-      "customerId": 3,
-      "status": "entregado",
-      "notes": "",
-      "date": "2025-09-29T07:11:38.000Z",
-      "createdAt": "2025-09-30T02:11:38.000Z",
-      "updatedAt": "2025-09-30T13:38:18.000Z"
-    },
-    {
-      "id": 223,
-      "customerId": 4,
-      "status": "entregado",
-      "notes": "",
-      "date": "2025-09-29T13:37:56.000Z",
-      "createdAt": "2025-09-30T13:37:56.000Z",
-      "updatedAt": "2025-09-30T13:38:14.000Z"
-    },
-    {
-      "id": 224,
-      "customerId": 7,
-      "status": "pendiente",
-      "notes": "",
-      "date": "2025-09-29T13:38:08.000Z",
-      "createdAt": "2025-09-30T13:38:09.000Z",
-      "updatedAt": "2025-09-30T13:38:09.000Z"
-    },
-    {
-      "id": 225,
-      "customerId": 1,
-      "status": "entregado",
-      "notes": "",
-      "date": "2025-09-29T13:38:38.000Z",
-      "createdAt": "2025-09-30T13:38:38.000Z",
-      "updatedAt": "2025-09-30T13:38:43.000Z"
-    },
-    {
-      "id": 227,
-      "customerId": 15,
-      "status": "pendiente",
-      "notes": "",
-      "date": "2025-09-30T15:39:50.000Z",
-      "createdAt": "2025-09-30T15:39:51.000Z",
-      "updatedAt": "2025-09-30T15:39:51.000Z"
+      "updatedAt": "2025-09-27T03:38:04.000Z"
     }
   ],
   "OrderItem": [
@@ -144403,10 +143491,10 @@
       "id": 218,
       "orderId": 200,
       "productId": 35,
-      "quantity": 10,
+      "quantity": 12,
       "price": 1,
-      "deliveredAt": "2025-09-25T03:54:12.000Z",
-      "paidAt": "2025-09-27T18:17:57.000Z"
+      "deliveredAt": "2025-09-24T22:54:12.000Z",
+      "paidAt": null
     },
     {
       "id": 219,
@@ -144549,159 +143637,6 @@
       "productId": 42,
       "quantity": 1,
       "price": 15,
-      "deliveredAt": "2025-09-27T18:17:40.000Z",
-      "paidAt": null
-    },
-    {
-      "id": 237,
-      "orderId": 214,
-      "productId": 11,
-      "quantity": 20,
-      "price": 0.15,
-      "deliveredAt": "2025-09-29T13:22:15.000Z",
-      "paidAt": null
-    },
-    {
-      "id": 238,
-      "orderId": 215,
-      "productId": 11,
-      "quantity": 50,
-      "price": 0.15,
-      "deliveredAt": "2025-09-29T13:22:11.000Z",
-      "paidAt": "2025-09-29T17:23:14.000Z"
-    },
-    {
-      "id": 239,
-      "orderId": 216,
-      "productId": 11,
-      "quantity": 30,
-      "price": 0.15,
-      "deliveredAt": "2025-09-29T18:22:08.000Z",
-      "paidAt": "2025-09-29T20:34:12.000Z"
-    },
-    {
-      "id": 240,
-      "orderId": 217,
-      "productId": 11,
-      "quantity": 75,
-      "price": 0.15,
-      "deliveredAt": "2025-09-29T13:22:05.000Z",
-      "paidAt": "2025-09-29T13:22:06.000Z"
-    },
-    {
-      "id": 241,
-      "orderId": 218,
-      "productId": 11,
-      "quantity": 60,
-      "price": 0.15,
-      "deliveredAt": "2025-09-29T13:22:00.000Z",
-      "paidAt": "2025-09-29T13:22:02.000Z"
-    },
-    {
-      "id": 242,
-      "orderId": 219,
-      "productId": 11,
-      "quantity": 10,
-      "price": 0.2,
-      "deliveredAt": "2025-09-29T01:33:32.000Z",
-      "paidAt": "2025-09-28T20:33:56.000Z"
-    },
-    {
-      "id": 243,
-      "orderId": 220,
-      "productId": 45,
-      "quantity": 1,
-      "price": 1,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 244,
-      "orderId": 220,
-      "productId": 44,
-      "quantity": 5,
-      "price": 0.75,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 245,
-      "orderId": 220,
-      "productId": 35,
-      "quantity": 10,
-      "price": 0.8,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 246,
-      "orderId": 220,
-      "productId": 44,
-      "quantity": 1,
-      "price": 1,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 247,
-      "orderId": 221,
-      "productId": 44,
-      "quantity": 6,
-      "price": 0.75,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 248,
-      "orderId": 221,
-      "productId": 39,
-      "quantity": 4,
-      "price": 0.75,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 249,
-      "orderId": 222,
-      "productId": 11,
-      "quantity": 50,
-      "price": 0.15,
-      "deliveredAt": "2025-09-30T13:38:18.000Z",
-      "paidAt": null
-    },
-    {
-      "id": 250,
-      "orderId": 223,
-      "productId": 11,
-      "quantity": 25,
-      "price": 0.15,
-      "deliveredAt": "2025-09-30T13:38:14.000Z",
-      "paidAt": null
-    },
-    {
-      "id": 251,
-      "orderId": 224,
-      "productId": 11,
-      "quantity": 250,
-      "price": 0.15,
-      "deliveredAt": null,
-      "paidAt": null
-    },
-    {
-      "id": 252,
-      "orderId": 225,
-      "productId": 11,
-      "quantity": 20,
-      "price": 0.15,
-      "deliveredAt": "2025-09-30T13:38:43.000Z",
-      "paidAt": null
-    },
-    {
-      "id": 254,
-      "orderId": 227,
-      "productId": 39,
-      "quantity": 6,
-      "price": 0.75,
       "deliveredAt": null,
       "paidAt": null
     }
@@ -146146,66 +145081,6 @@
       "createdBy": 1,
       "createdAt": "2025-09-26T21:13:13.000Z",
       "updatedAt": "2025-09-26T21:13:13.000Z"
-    },
-    {
-      "id": 121,
-      "date": "2025-09-27",
-      "amount": "1.50",
-      "concept": "Fundas folifan de 7x11",
-      "category": "Otro",
-      "referenceId": null,
-      "referenceType": null,
-      "createdBy": 1,
-      "createdAt": "2025-09-27T19:32:33.000Z",
-      "updatedAt": "2025-09-27T19:32:33.000Z"
-    },
-    {
-      "id": 122,
-      "date": "2025-09-28",
-      "amount": "8.00",
-      "concept": "Cuatro jarras una grande, una mediana y dos pequeñas",
-      "category": "Otro",
-      "referenceId": null,
-      "referenceType": null,
-      "createdBy": 1,
-      "createdAt": "2025-09-28T01:49:30.000Z",
-      "updatedAt": "2025-09-28T01:49:30.000Z"
-    },
-    {
-      "id": 123,
-      "date": "2025-09-28",
-      "amount": "5.50",
-      "concept": "Dos cogedores de harina ",
-      "category": "Otro",
-      "referenceId": null,
-      "referenceType": null,
-      "createdBy": 1,
-      "createdAt": "2025-09-28T01:56:19.000Z",
-      "updatedAt": "2025-09-28T01:56:19.000Z"
-    },
-    {
-      "id": 124,
-      "date": "2025-09-28",
-      "amount": "6.40",
-      "concept": "Compra de Cocoa",
-      "category": "Compras",
-      "referenceId": 7,
-      "referenceType": "inventory_entry",
-      "createdBy": 1,
-      "createdAt": "2025-09-28T21:59:05.000Z",
-      "updatedAt": "2025-09-28T21:59:05.000Z"
-    },
-    {
-      "id": 125,
-      "date": "2025-09-28",
-      "amount": "1.50",
-      "concept": "Compra de Grajeas",
-      "category": "Compras",
-      "referenceId": 8,
-      "referenceType": "inventory_entry",
-      "createdBy": 1,
-      "createdAt": "2025-09-28T22:04:43.000Z",
-      "updatedAt": "2025-09-28T22:04:43.000Z"
     }
   ],
   "Income": [
@@ -148968,90 +147843,6 @@
       "createdBy": 1,
       "createdAt": "2025-09-26T18:43:52.000Z",
       "updatedAt": "2025-09-26T18:43:52.000Z"
-    },
-    {
-      "id": 231,
-      "date": "2025-09-27",
-      "amount": "10.00",
-      "concept": "Order #200 payment",
-      "category": "Venta",
-      "referenceId": 200,
-      "referenceType": "order",
-      "createdBy": 1,
-      "createdAt": "2025-09-27T18:17:57.000Z",
-      "updatedAt": "2025-09-27T18:17:57.000Z"
-    },
-    {
-      "id": 232,
-      "date": "2025-09-29",
-      "amount": "9.00",
-      "concept": "Order #218 payment",
-      "category": "Venta",
-      "referenceId": 218,
-      "referenceType": "order",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:02.000Z",
-      "updatedAt": "2025-09-29T13:22:02.000Z"
-    },
-    {
-      "id": 233,
-      "date": "2025-09-29",
-      "amount": "11.25",
-      "concept": "Order #217 payment",
-      "category": "Venta",
-      "referenceId": 217,
-      "referenceType": "order",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T13:22:06.000Z",
-      "updatedAt": "2025-09-29T13:22:06.000Z"
-    },
-    {
-      "id": 234,
-      "date": "2025-09-29",
-      "amount": "2.00",
-      "concept": "Order #219 payment",
-      "category": "Venta",
-      "referenceId": 219,
-      "referenceType": "order",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T15:33:56.000Z",
-      "updatedAt": "2025-09-29T15:33:56.000Z"
-    },
-    {
-      "id": 235,
-      "date": "2025-09-29",
-      "amount": "3.75",
-      "concept": "Order #216 payment",
-      "category": "Venta",
-      "referenceId": 216,
-      "referenceType": "order",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T15:34:12.000Z",
-      "updatedAt": "2025-09-29T15:34:12.000Z"
-    },
-    {
-      "id": 236,
-      "date": "2025-09-29",
-      "amount": "0.75",
-      "concept": "De 5 donas más que se le dio a la chile",
-      "category": "Venta",
-      "referenceId": null,
-      "referenceType": null,
-      "createdBy": 1,
-      "createdAt": "2025-09-29T15:35:54.000Z",
-      "updatedAt": "2025-09-29T15:35:54.000Z"
-    },
-    {
-      "id": 237,
-      "date": "2025-09-29",
-      "amount": "7.50",
-      "concept": "Order #215 payment",
-      "category": "Venta",
-      "referenceId": 215,
-      "referenceType": "order",
-      "createdBy": 1,
-      "createdAt": "2025-09-29T17:23:14.000Z",
-      "updatedAt": "2025-09-29T17:23:14.000Z"
     }
   ],
   "HomeProduct": [
@@ -149064,125 +147855,20 @@
       "priceOverride": 1,
       "section": "home",
       "badge": "Disponible",
-      "position": 5,
+      "position": 0,
       "isActive": true,
       "createdBy": null,
       "createdAt": "2025-09-27T03:25:08.000Z",
-      "updatedAt": "2025-09-27T21:55:38.000Z"
-    },
-    {
-      "id": 2,
-      "productId": null,
-      "name": "Relámpago",
-      "description": "Rosca Pequeña blanca",
-      "imageUrl": "relampago-vzn1k.jpg",
-      "priceOverride": 1,
-      "section": "home",
-      "badge": "Nuevo",
-      "position": 6,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:05:25.000Z",
-      "updatedAt": "2025-09-27T21:55:46.000Z"
-    },
-    {
-      "id": 3,
-      "productId": 39,
-      "name": "Rosca Integral",
-      "description": "Fundas de Rosca Integral ",
-      "imageUrl": "roscaintegral-is0q3.jpg",
-      "priceOverride": 1,
-      "section": "home",
-      "badge": "Disponible",
-      "position": 1,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:38:50.000Z",
-      "updatedAt": "2025-09-27T21:38:50.000Z"
-    },
-    {
-      "id": 4,
-      "productId": null,
-      "name": "Suspiro",
-      "description": "Funda de Suspiros con grajeas",
-      "imageUrl": "suspirograndegrajeas-o7x6m.jpg",
-      "priceOverride": 1,
-      "section": "home",
-      "badge": "Nuevo",
-      "position": 2,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:39:50.000Z",
-      "updatedAt": "2025-09-27T22:06:22.000Z"
-    },
-    {
-      "id": 5,
-      "productId": 17,
-      "name": "Mini Torta",
-      "description": "4 a 5 Porciones",
-      "imageUrl": "pastelminitortadecorado-r1kqn.jpg",
-      "priceOverride": 3.5,
-      "section": "home",
-      "badge": "Bajo Pedido",
-      "position": 3,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:50:30.000Z",
-      "updatedAt": "2025-09-27T22:05:17.000Z"
-    },
-    {
-      "id": 6,
-      "productId": null,
-      "name": "Torta Pequeña",
-      "description": "8 a 9 Porciones",
-      "imageUrl": "tortapequena-8a9my.jpg",
-      "priceOverride": 7,
-      "section": "home",
-      "badge": "Bajo Pedido",
-      "position": 4,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:55:25.000Z",
-      "updatedAt": "2025-09-27T21:55:25.000Z"
-    },
-    {
-      "id": 7,
-      "productId": 18,
-      "name": "Torta Mediana",
-      "description": "10 a 12 Porciones",
-      "imageUrl": "tortamediana-4cyrb.jpg",
-      "priceOverride": 10,
-      "section": "home",
-      "badge": "Bajo Pedido",
-      "position": 7,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:56:59.000Z",
-      "updatedAt": "2025-09-27T21:56:59.000Z"
-    },
-    {
-      "id": 8,
-      "productId": 42,
-      "name": "Torta Grande",
-      "description": "20 a 22 Porciones",
-      "imageUrl": "torta-grande-nqqch.jpg",
-      "priceOverride": 15,
-      "section": "home",
-      "badge": "Bajo Pedido",
-      "position": 8,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:58:17.000Z",
-      "updatedAt": "2025-09-27T22:04:04.000Z"
+      "updatedAt": "2025-09-27T03:35:06.000Z"
     }
   ],
   "Store": [
     {
       "id": 1,
-      "name": "Comercial ServiHogar",
-      "address": "Direccion: Calle 24 de Mayo y Eloy Alfaro",
+      "name": "El puente",
+      "address": "deded",
       "description": "edede",
-      "imageUrl": "el-puente-r63v7.jpg",
+      "imageUrl": "el-puente-daye6.jpg",
       "phone": "0969236901",
       "email": "edgartorrrespc8@gmail.com",
       "city": "CARIAMANGA",
@@ -149193,25 +147879,7 @@
       "isActive": true,
       "createdBy": null,
       "createdAt": "2025-09-27T03:10:09.000Z",
-      "updatedAt": "2025-09-27T21:44:57.000Z"
-    },
-    {
-      "id": 2,
-      "name": "Tienda La Cuevita",
-      "address": "Salida Amaluza",
-      "description": null,
-      "imageUrl": "tienda-la-cuevita-9xups.jpg",
-      "phone": null,
-      "email": null,
-      "city": "Cariamanga",
-      "province": "Loja",
-      "latitude": null,
-      "longitude": null,
-      "position": 2,
-      "isActive": true,
-      "createdBy": null,
-      "createdAt": "2025-09-27T21:40:47.000Z",
-      "updatedAt": "2025-09-30T14:07:06.000Z"
+      "updatedAt": "2025-09-27T03:10:09.000Z"
     }
   ]
 }
