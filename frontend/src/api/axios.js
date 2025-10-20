@@ -7,10 +7,10 @@ const api = "eddeliapi"
 export const urlRequestsApi = {
     local: `http://localhost:3001/${api}`,
     production:`https://aplicaciones.marianosamaniego.edu.ec/${api}`,
-    edgar:`http://192.168.137.156:3001/${api}`
+    edgar:`http://192.168.137.31:3001/${api}`
   };
 
-const url =  urlRequestsApi.production;
+const url =  urlRequestsApi.edgar;
 
 const instance = axios.create({
   baseURL: `${url}`,

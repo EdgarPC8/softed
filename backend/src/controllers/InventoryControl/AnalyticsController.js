@@ -9,6 +9,51 @@ import { Income, Expense } from "../../models/Finance.js";
 
 // controllers/OrdersController.js (o donde tengas tus controladores)
 
+// controllers/OrdersController.js
+
+export const getOrdersForCharts = async (req, res) => {
+  try {
+    // filtros opcionales ?start=YYYY-MM-DD&end=YYYY-MM-DD
+    const { start, end } = req.query;
+
+    const where = {};
+    if (start || end) {
+      const s = start ? startOfDay(parseISO(start)) : undefined;
+      const e = end ? endOfDay(parseISO(end)) : undefined;
+      if (s && e) where.createdAt = { $between: [s, e] };
+      else if (s) where.createdAt = { $gte: s };
+      else if (e) where.createdAt = { $lte: e };
+    }
+
+    const orders = await Order.findAll({
+      where,
+      include: [
+        { model: Customer, as: "ERP_customer", attributes: ["name"] },
+        { model: OrderItem, as: "ERP_order_items" },
+      ],
+      order: [["createdAt", "ASC"]],
+    });
+
+    const shaped = orders.map((o) => ({
+      id: o.id,
+      date: format(new Date(o.createdAt), 'dd/MM/yyyy HH:mm:ss'),
+      ERP_customer: { name: o.ERP_customer?.name ?? "Cliente" },
+      ERP_order_items: (o.ERP_order_items || []).map((it) => ({
+        id: it.id,
+        quantity: Number(it.quantity ?? 0),
+        price: Number(it.price ?? 0),
+        paidAt: it.paidAt ? format(new Date(it.paidAt), 'dd/MM/yyyy HH:mm:ss') : null,
+        deliveredAt: it.deliveredAt ? format(new Date(it.deliveredAt), 'dd/MM/yyyy HH:mm:ss') : null,
+      })),
+    }));
+
+    res.json(shaped);
+  } catch (err) {
+    console.error("getOrdersForCharts error:", err);
+    res.status(500).json({ message: "Error al obtener órdenes para gráficos" });
+  }
+};
+
 
 
 export const getCustomerSalesSummary = async (req, res) => {
@@ -48,14 +93,13 @@ export const getCustomerSalesSummary = async (req, res) => {
     const data = customers.map((c) => {
       const orders = Array.isArray(c.ERP_orders) ? c.ERP_orders : [];
 
-      let totalQuantity = 0; // suma de quantity (todas las líneas)
-      let totalPrice = 0;    // suma de la columna price (como viene en OrderItem)
-      let totalAmount = 0;   // suma de quantity * price
-      let paidFromOrders = 0; // suma de paidAmount en órdenes (si existe)
-      let totalOrdersNoPaid=0
-      let totalAmountDeuda=0
+      let totalQuantity = 0;
+      let totalPrice = 0;
+      let totalAmount = 0;
+      let paidFromOrders = 0;
+      let totalOrdersNoPaid = 0;
+      let totalAmountDeuda = 0;
 
-      // Agregación por producto
       const productMap = new Map();
 
       orders.forEach((o) => {
@@ -70,9 +114,11 @@ export const getCustomerSalesSummary = async (req, res) => {
           totalQuantity += qty;
           totalPrice += price;
           totalAmount += amt;
-          
-          item.paidAt==null?totalOrdersNoPaid++:0
-          item.paidAt==null?totalAmountDeuda+=item.quantity*item.price:0
+
+          if (!item.paidAt) {
+            totalOrdersNoPaid += 1;
+            totalAmountDeuda += amt; // deuda por ítems no pagados
+          }
 
           const p = item.ERP_inventory_product || {};
           const productId = p?.id ?? item.productId ?? null;
@@ -83,8 +129,8 @@ export const getCustomerSalesSummary = async (req, res) => {
               productId,
               name: p?.name ?? '(sin nombre)',
               totalQuantity: 0,
-              totalPrice: 0,   // suma de la columna price
-              totalAmount: 0,  // suma de (quantity * price)
+              totalPrice: 0,
+              totalAmount: 0,
             });
           }
           const agg = productMap.get(key);
@@ -97,6 +143,9 @@ export const getCustomerSalesSummary = async (req, res) => {
       const productSummary = Array.from(productMap.values())
         .sort((a, b) => b.totalAmount - a.totalAmount);
 
+      // Opciones de deuda:
+      // - revenuePending = totalAmount - paidFromOrders (global por orden)
+      // - totalAmountDeuda = suma de ítems no pagados (más estricto)
       const revenuePending = Math.max(0, totalAmount - paidFromOrders);
 
       const lastOrderAt =
@@ -117,14 +166,50 @@ export const getCustomerSalesSummary = async (req, res) => {
         totalAmount,
         totalOrdersNoPaid,
         totalAmountDeuda,
-        revenuePending,  // lo que deben (no pagado)
-        lastOrderAt,     // útil para mostrar en la tabla
-        orders,          // por si quieres revisar detalle
-        productSummary,  // para el accordion de productos
+        revenuePending,  // deuda estimada global
+        lastOrderAt,
+        orders,
+        productSummary,
       };
     });
 
-    return res.json(data);
+    // ===== ORDEN REQUERIDO =====
+    // Prioridad:
+    // 1) Clientes con deuda primero (de mayor a menor)
+    // 2) Si ambos tienen deuda: desempatar por mayor totalAmount
+    // 3) Si ninguno tiene deuda: ordenar por mayor totalAmount
+    const sorted = [...data].sort((a, b) => {
+      // Elige la métrica de deuda que prefieras:
+      // const debtA = toNum(a.totalAmountDeuda);
+      // const debtB = toNum(b.totalAmountDeuda);
+      const debtA = toNum(a.revenuePending); // ← usando revenuePending
+      const debtB = toNum(b.revenuePending);
+
+      const hasDebtA = debtA > 0;
+      const hasDebtB = debtB > 0;
+
+      // 1) deudores arriba
+      if (hasDebtA !== hasDebtB) return hasDebtB - hasDebtA;
+
+      if (hasDebtA && hasDebtB) {
+        // 2) ambos con deuda: más deuda primero
+        if (debtB !== debtA) return debtB - debtA;
+        // luego mayor "ganancia"
+        const gainDiff = toNum(b.totalAmount) - toNum(a.totalAmount);
+        if (gainDiff !== 0) return gainDiff;
+      }
+
+      // 3) ninguno con deuda: mayor "ganancia" primero
+      const gainDiff = toNum(b.totalAmount) - toNum(a.totalAmount);
+      if (gainDiff !== 0) return gainDiff;
+
+      // desempate final opcional por fecha del último pedido (más reciente primero)
+      const tA = a.lastOrderAt ? new Date(a.lastOrderAt).getTime() : 0;
+      const tB = b.lastOrderAt ? new Date(b.lastOrderAt).getTime() : 0;
+      return tB - tA;
+    });
+
+    return res.json(sorted);
   } catch (error) {
     console.error('Error en getCustomerSalesSummary:', error);
     return res.status(500).json({
@@ -133,6 +218,9 @@ export const getCustomerSalesSummary = async (req, res) => {
     });
   }
 };
+
+
+
 
 
 export const getIncomeExpenseBreakdown = async (req, res) => {

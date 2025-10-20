@@ -3,8 +3,9 @@ import {
   TextField,
   Box,
   Button,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
-
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -14,16 +15,19 @@ import {
   updateCategoryRequest,
 } from "../../../api/inventoryControlRequest";
 
-function CategoryForm({ isEditing = false, datos = [], onClose, reload }) {
-  const { handleSubmit, register, reset, setValue } = useForm();
-  const idData = datos.id;
+function CategoryForm({ isEditing = false, datos = {}, onClose, reload }) {
+  const { handleSubmit, register, reset, setValue, watch } = useForm();
+  const idData = datos?.id;
   const { toast: toastAuth } = useAuth();
 
-  const resetForm = () => {
-    reset();
-  };
+  // 🔹 Reset del formulario
+  const resetForm = () => reset();
 
+  // 🔹 Envío del formulario
   const submitForm = async (formData) => {
+    // Convertir el valor del switch a booleano real
+    formData.isPublic = Boolean(formData.isPublic);
+
     if (isEditing) {
       toastAuth({
         promise: updateCategoryRequest(datos.id, formData),
@@ -52,20 +56,24 @@ function CategoryForm({ isEditing = false, datos = [], onClose, reload }) {
     });
   };
 
-  const loadData = async () => {
+  // 🔹 Cargar datos al editar
+  const loadData = () => {
     if (isEditing && datos) {
       setValue("name", datos.name || "");
       setValue("description", datos.description || "");
+      setValue("isPublic", Boolean(datos.isPublic));
+    } else {
+      setValue("isPublic", true);
     }
   };
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [isEditing, datos]);
 
   return (
     <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit(submitForm)}>
-      <Grid spacing={2} container>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
             label="Nombre"
@@ -85,6 +93,20 @@ function CategoryForm({ isEditing = false, datos = [], onClose, reload }) {
             rows={3}
             {...register("description")}
             InputLabelProps={idData ? { shrink: true } : {}}
+          />
+        </Grid>
+
+        {/* 🔹 Switch de visibilidad pública */}
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={
+              <Switch
+                {...register("isPublic")}
+                checked={watch("isPublic") || false}
+                onChange={(e) => setValue("isPublic", e.target.checked)}
+              />
+            }
+            label="Visible al público"
           />
         </Grid>
 

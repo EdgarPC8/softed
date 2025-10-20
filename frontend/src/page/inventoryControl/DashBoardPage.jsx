@@ -15,6 +15,7 @@ import {
     getTopProductsDailySales,
     getProductRotationAnalysis,
     getIncomeExpenseBreakdown,
+    getOrdersForCharts,
 } from "../../api/financeRequest";
 import { getAllOrdersRequest } from "../../api/ordersRequest";
 import TablePro from "../../Components/Tables/TablePro";
@@ -29,6 +30,10 @@ import LineChartMonth from "./components/Charts/LineChartMonth";
 import DoblePieChart from "../../Components/Charts/DoblePieChart";
 import OrderAccordionTable from "./components/OrderAccordionTable";
 import CustomersAccordionTable from "./components/CustomersAccordionTable";
+import BarChartOp from "./components/Charts/BarChartOp";
+import ChartCalendaryInfo from "./components/Charts/ChartCalendaryInfo";
+
+
 
 const paperStyle = {
     padding: "5px",
@@ -45,6 +50,7 @@ export const DashBoardPage = () => {
     const [productsAgotados, setProductsAgotados] = useState([]);
     const [productsPorAgotarse, setProductsPorAgotarse] = useState([]);
     const [overView, setOverView] = useState([]);
+    const [ordersForCharts, setOrdersForCharts] = useState([]);
     const [productRotationAnalysis, setProductRotationAnalysis] = useState([]);
     const [incomeExpenseBreakdown, setIncomeExpenseBreakdown] = useState([]);
     const [weeklySales, setWeeklySales] = useState({});
@@ -71,7 +77,17 @@ export const DashBoardPage = () => {
         fetchProducts();
         const fetchData = async () => {
             try {
-                const [resSummary, resIncomes, resExpenses, resOrders, resOverViews, resWeeklySales, resTopProductsDailySales, resProductRotationAnalysis, resIncomeExpenseBreakdown] = await Promise.all([
+                const [resSummary,
+                     resIncomes,
+                     resExpenses,
+                     resOrders,
+                     resOverViews,
+                     resWeeklySales,
+                     resTopProductsDailySales,
+                     resProductRotationAnalysis,
+                     resIncomeExpenseBreakdown,
+                     resOrdersForCharts
+                    ] = await Promise.all([
                     getFinanceSummaryRequest(),
                     getAllIncomesRequest(),
                     getAllExpensesRequest(),
@@ -81,6 +97,7 @@ export const DashBoardPage = () => {
                     getTopProductsDailySales(),
                     getProductRotationAnalysis(),
                     getIncomeExpenseBreakdown(),
+                    getOrdersForCharts()
                 ]);
                 setDataOrders(resOrders.data);
                 setSummary(resSummary.data);
@@ -89,6 +106,7 @@ export const DashBoardPage = () => {
                 setTopProductsDailySales(resTopProductsDailySales.data);
                 setProductRotationAnalysis(resProductRotationAnalysis.data)
                 setIncomeExpenseBreakdown(resIncomeExpenseBreakdown.data)
+                setOrdersForCharts(resOrdersForCharts.data)
 
                 const combined = [
                     ...resIncomes.data.map((i) => ({
@@ -261,10 +279,28 @@ export const DashBoardPage = () => {
                     </Grid>
                     <Grid item xs={12} md={7}>
                         <Paper style={paperStyle}>
-                            <LineChartMonth data={topProductsDailySales.dataset} seriesName={topProductsDailySales.products} />
+                                                <ChartCalendaryInfo orders={ordersForCharts}/>
 
                         </Paper>
                     </Grid>
+                </Grid>
+                        <Grid container xs={12} md={12}>
+                    <Grid item xs={12} md={7}>
+                        <Paper style={paperStyle}>
+                            <LineChartMonth data={topProductsDailySales.dataset} seriesName={topProductsDailySales.products} />
+
+                        </Paper>
+
+
+                    </Grid>
+                    <Grid item xs={12} md={5}>
+                        <Paper style={paperStyle}>
+                            <BarChartOp orders={ordersForCharts}/>
+                        </Paper>
+
+
+                    </Grid>
+                  
                 </Grid>
                    <Grid container xs={12} md={12}>
                     <Grid item xs={12} md={12}>

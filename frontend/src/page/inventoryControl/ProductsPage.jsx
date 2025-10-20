@@ -3,22 +3,21 @@ import {
   IconButton,
   Button,
   Tooltip,
+  Box,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Edit,
-  Delete,
-  Inventory,
-} from "@mui/icons-material";
+import { Edit, Delete, Inventory } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import SimpleDialog from "../../Components/Dialogs/SimpleDialog";
 import ProductForm from "./components/ProductForm";
 import {
   getAllProducts,
-  deleteProduct
+  deleteProduct,
 } from "../../api/inventoryControlRequest";
+import { pathImg } from "../../api/axios"; // 👈 importa el path base de imágenes
 import TablePro from "../../Components/Tables/TablePro";
 
 function ProductsPage() {
@@ -34,7 +33,7 @@ function ProductsPage() {
 
   const fecthData = async () => {
     const { data } = await getAllProducts();
-    setData(data);
+    setData(data || []);
   };
 
   const handleDialog = () => setOpen(!open);
@@ -48,66 +47,104 @@ function ProductsPage() {
         success: "Producto eliminado con éxito",
         error: "Ocurrió un error",
       },
-      {
-        position: "top-right",
-        style: { fontFamily: "roboto" },
-      }
+      { position: "top-right", style: { fontFamily: "roboto" } }
     );
-    setData(data.filter((item) => item.id !== dataToDelete.id));
+    setData((prev) => prev.filter((item) => item.id !== dataToDelete.id));
     handleDialog();
   };
 
   const columns = [
+    // 👇 NUEVA COLUMNA: Imagen principal del producto
+    {
+      label: "Imagen",
+      id: "primaryImageUrl",
+      width: 90,
+      render: (row) => {
+        const filename = row?.primaryImageUrl;
+        const src = filename ? `${pathImg}${filename}` : null;
+        return src ? (
+          <img
+            src={src}
+            alt={row?.name || "img"}
+            style={{
+              width: 60,
+              height: 60,
+              objectFit: "cover",
+              borderRadius: 8,
+              display: "block",
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              width: 60,
+              height: 60,
+              borderRadius: 1,
+              bgcolor: "action.hover",
+            }}
+          />
+        );
+      },
+    },
     {
       label: "Nombre",
       id: "name",
-      width: 40,
+      width: 180,
     },
     {
       label: "Tipo",
       id: "type",
-      width: 80,
+      width: 140,
       render: (params) => {
         const type = params.type;
-        return type === "raw" ? "Materia Prima" : type === "intermediate" ? "Producto Intermedio" : "Producto Final";
-      }
+        return type === "raw"
+          ? "Materia Prima"
+          : type === "intermediate"
+          ? "Producto Intermedio"
+          : "Producto Final";
+      },
     },
     {
-      label: "Descripcion",
+      label: "Descripción",
       id: "desc",
-      width: 40,
+      width: 220,
+      render: (row) => (
+        <Typography variant="body2" noWrap title={row?.desc || ""}>
+          {row?.desc || "—"}
+        </Typography>
+      ),
     },
     {
       label: "Unidad",
       id: "inventory_unit.name",
-      width: 100,
+      width: 140,
       render: (params) => params.ERP_inventory_unit?.name,
     },
     {
       label: "Categoría",
       id: "category",
-      width: 150,
+      width: 160,
       render: (params) => params.ERP_inventory_category?.name,
     },
     {
       label: "Precio",
       id: "price",
-      width: 60,
+      width: 100,
     },
     {
       label: "Peso Neto",
       id: "netWeight",
-      width: 60,
+      width: 100,
     },
     {
       label: "Stock",
       id: "stock",
-      width: 60,
+      width: 90,
     },
     {
       label: "Stock Mínimo",
       id: "minStock",
-      width: 100,
+      width: 120,
     },
     {
       label: "Acciones",
@@ -117,14 +154,12 @@ function ProductsPage() {
         <>
           <Tooltip title="Editar Producto">
             <IconButton
-         onClick={() => {
-
-          setDatos(params);
-          setIsEditing(true);
-          settitleUserDialog("Editar Producto");
-          handleDialogUser();
-        }}
-        
+              onClick={() => {
+                setDatos(params);
+                setIsEditing(true);
+                settitleUserDialog("Editar Producto");
+                handleDialogUser();
+              }}
             >
               <Edit />
             </IconButton>
@@ -167,13 +202,12 @@ function ProductsPage() {
         onClose={handleDialogUser}
         tittle={titleUserDialog}
       >
-  <ProductForm
-  onClose={handleDialogUser}
-  isEditing={isEditing}
-  datos={datos}
-  reload={fecthData}
-/>
-
+        <ProductForm
+          onClose={handleDialogUser}
+          isEditing={isEditing}
+          datos={datos}
+          reload={fecthData}
+        />
       </SimpleDialog>
 
       <Button
@@ -181,22 +215,23 @@ function ProductsPage() {
         endIcon={<Inventory />}
         onClick={() => {
           setIsEditing(false);
+          setDatos({});
           settitleUserDialog("Agregar Producto");
           handleDialogUser();
         }}
+        sx={{ mb: 1 }}
       >
         Crear Producto
       </Button>
 
-       
       <TablePro
-            rows={data}
-            columns={columns}
-            defaultRowsPerPage={10}
-            title="PRODUCTOS"
-            tableMaxHeight={380}
-            showIndex={true}
-          />
+        rows={data}
+        columns={columns}
+        defaultRowsPerPage={10}
+        title="PRODUCTOS"
+        tableMaxHeight={380}
+        showIndex={true}
+      />
     </Container>
   );
 }

@@ -17,6 +17,56 @@ import { getAllProducts } from "../../../api/inventoryControlRequest";
 import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
 
+/* ========= Utils de fecha en LOCAL (sin UTC) ========= */
+const pad2 = (n) => String(n).padStart(2, "0");
+
+// yyyy-MM-dd en hora local (para <input type="date">)
+const localISODate = () => {
+  const d = new Date();
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+};
+
+// HH:mm:ss actual en local
+const localHMS = () => {
+  const d = new Date();
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+};
+
+// Convierte un Date a ISO con offset local (no Z)
+const toLocalISOWithOffset = (d) => {
+  const off = -d.getTimezoneOffset(); // minutos respecto a UTC
+  const sign = off >= 0 ? "+" : "-";
+  const hhOff = pad2(Math.floor(Math.abs(off) / 60));
+  const mmOff = pad2(Math.abs(off) % 60);
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}${sign}${hhOff}:${mmOff}`;
+};
+
+// Intenta normalizar cualquier forma de fecha recibida en datos.* a yyyy-MM-dd
+const normalizeToYYYYMMDD = (datos) => {
+  if (!datos) return localISODate();
+  // 1) dateMs (epoch)
+  if (datos.dateMs) {
+    const d = new Date(Number(datos.dateMs));
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+  // 2) ISO con T (con o sin Z)
+  if (typeof datos.date === "string" && datos.date.includes("T")) {
+    const d = new Date(datos.date);
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+  // 3) Formato "dd/MM/yyyy HH:mm:ss" o "dd/MM/yyyy"
+  if (typeof datos.date === "string" && datos.date.includes("/")) {
+    const [datePart] = datos.date.split(" ");
+    const [dd, mm, yyyy] = datePart.split("/");
+    if (dd && mm && yyyy) return `${yyyy}-${mm}-${dd}`;
+  }
+  // Fallback
+  return localISODate();
+};
+
 function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
   const { handleSubmit, register, reset, setValue, watch } = useForm();
   const [products, setProducts] = useState([]);
@@ -44,7 +94,7 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
     if (isEditing && item.id) {
       try {
         await axios.delete(`/order-items/${item.id}`, {
-          headers: { Authorization: jwt() },
+          headers: { Authorization: jwt() }, // asumiendo que jwt() existe en tu proyecto
         });
       } catch (err) {
         toast.error("Error al eliminar ítem del pedido");
@@ -85,15 +135,17 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
       return;
     }
 
+    // Construye un Date local a partir de la fecha seleccionada + hora actual local
+    const localDT = new Date(`${data.date}T${localHMS()}`);
 
-  const payload = {
-    customerId: selectedCustomer,
-    notes: data.notes,
-    date: new Date(
-  `${data.date}T${new Date().toTimeString().slice(0, 8)}`
-),
-    items,
-  };
+    // Payload compatible: enviamos epoch y cadena con offset local
+    const payload = {
+      customerId: selectedCustomer,
+      notes: data.notes,
+      dateMs: localDT.getTime(),                 // ✅ estable y sin ambigüedad de zona
+      date: toLocalISOWithOffset(localDT),       // ✅ por compatibilidad si el backend espera string
+      items,
+    };
 
     if (isEditing) {
       toastAuth({
@@ -109,6 +161,10 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
             description: "Pedido actualizado Correctamente",
           };
         },
+        onError: (res) => ({
+          title: "Pedido",
+          description: res?.response?.data?.message || "Error al actualizar pedido",
+        }),
       });
       return;
     }
@@ -123,6 +179,10 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
         setItems([]);
         setSelectedCustomer("");
       },
+      onError: (res) => ({
+        title: "Pedido",
+        description: res?.response?.data?.message || "Error al registrar pedido",
+      }),
     });
   };
 
@@ -130,19 +190,20 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
     fetchProducts();
     fetchCustomers();
 
-    // Valores por defecto
-    const today = new Date().toISOString().split("T")[0];
-    setValue("date", today); // valor inicial por defecto
+    // Valor por defecto para fecha en LOCAL (no UTC)
+    setValue("date", localISODate());
 
     if (isEditing && datos) {
       setSelectedCustomer(datos.customerId);
-      setValue("notes", datos.notes);
-      setValue("date", datos.date?.split("T")[0]); // si viene con hora
-      const loadedItems = datos.ERP_order_items.map((item) => ({
+      setValue("notes", datos.notes || "");
+      // Normaliza fecha entrante a yyyy-MM-dd para el input date
+      setValue("date", normalizeToYYYYMMDD(datos));
+
+      const loadedItems = (datos.ERP_order_items || []).map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
         price: item.price,
-        name: item.ERP_inventory_product?.name || ""
+        name: item.ERP_inventory_product?.name || "",
       }));
       setItems(loadedItems);
     }
@@ -211,7 +272,7 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
           <ul>
             {items.map((item, index) => (
               <li key={index}>
-                {item.name} - {item.quantity} × ${item.price.toFixed(2)}
+                {item.name} - {item.quantity} × ${Number(item.price).toFixed(2)}
                 <Button
                   color="error"
                   size="small"

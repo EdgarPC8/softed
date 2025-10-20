@@ -7,7 +7,6 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./context/ProtectedRoute.jsx";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
 import Login from "./page/Login";
 import Comandos from "./page/Comandos";
 import Analytics from "./page/hotel/Analytics.jsx";
@@ -66,9 +65,12 @@ import ProductionManagerPage from "./page/inventoryControl/ProductionManagerPage
 import BasicMap from "./page/mapa/BasicMap.jsx";
 import ProMap from "./page/mapa/ProMap.jsx";
 import HomeProductPage from "./page/inventoryControl/HomeProduct.jsx";
+import StoresManagerPage from "./page/inventoryControl/StoresManagerPage.jsx";
 import StoresPage from "./page/inventoryControl/StoresPage.jsx";
-
-
+import HomeLogout from "./page/inventoryControl/HomeLogout.jsx";
+import PanaderiaPage from "./page/eddeli/PanaderiaPage.jsx";
+import CatalogManagerPage from "./page/inventoryControl/CatalogManagerPage.jsx";
+import CatalogoPage from "./page/eddeli/CatalogPage.jsx";
 
 
 
@@ -83,11 +85,15 @@ function App() {
         }}
       >
         <AuthProvider>
-          <BrowserRouter basename="/softed">
+          <BrowserRouter basename="/eddeli">
             <NavBar>
+
               <Routes>
                 <Route element={<PublicOnlyRoute />}>
                   <Route path="/login" element={<Login />} />
+                  <Route path="/home" element={<HomeLogout />} />
+                  <Route path="/catalogo" element={<CatalogoPage />} />
+                  <Route path="/punto_venta" element={<StoresPage />} />
                 </Route>
                 <Route
                   element={
@@ -112,6 +118,9 @@ function App() {
                   <Route path="/piano" element={<PianoPage />} />
                   <Route path="/mapa" element={<BasicMap />} />
 
+                  <Route path="/backery" element={<CatalogoPage />} />
+                  <Route path="/catalog_manager" element={<CatalogManagerPage />} />
+                  
 
 
 
@@ -160,7 +169,7 @@ function App() {
                   <Route path="/inventory/finance" element={<FinancePage />} />
                   <Route path="/inventory/production" element={<ProductionManagerPage />} />
                   <Route path="/inventory/productos-destacados" element={<HomeProductPage />} />
-                  <Route path="/inventory/puntos-venta" element={<StoresPage />} />
+                  <Route path="/inventory/puntos-venta" element={<StoresManagerPage />} />
 
                 </Route>
 

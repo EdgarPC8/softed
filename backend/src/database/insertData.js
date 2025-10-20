@@ -29,7 +29,8 @@ import {
   InventoryProduct, 
   InventoryUnit,
   HomeProduct,
-  Store
+  Store,
+  Catalog
 } from '../models/Inventory.js';
 import { 
   Customer ,
@@ -37,6 +38,8 @@ import {
   OrderItem
 } from '../models/Orders.js';
 import { Expense, Income } from '../models/Finance.js';
+
+
 
 
 
@@ -104,6 +107,7 @@ export const insertData = async () => {
     await Income.bulkCreate(jsonData.Income, { returning: true });
     await Store.bulkCreate(jsonData.Store, { returning: true });
     await HomeProduct.bulkCreate(jsonData.HomeProduct, { returning: true });
+    await Catalog.bulkCreate(jsonData.Catalog, { returning: true });
 
     console.log("Datos insertados correctamente desde el archivo de respaldo.");
   } catch (error) {
@@ -154,6 +158,7 @@ export const saveBackup = async () => {
     const IncomeData = await Income.findAll();
     const HomeProductData = await HomeProduct.findAll();
     const StoreData = await Store.findAll();
+    const CatalogData= await Catalog.findAll();
 
     const backupData = {
       Roles: rolesData,
@@ -189,6 +194,7 @@ export const saveBackup = async () => {
       Income: IncomeData,
       HomeProduct:HomeProductData,
       Store:StoreData,
+      Catalog:CatalogData,
     };
 
     await fs.mkdir(backups, { recursive: true });

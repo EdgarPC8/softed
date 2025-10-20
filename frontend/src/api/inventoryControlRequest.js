@@ -1,5 +1,68 @@
 import axios, { jwt } from './axios.js';
 
+
+export const getPopularProducts = (params = {}) =>
+  axios.get(`inventory/getPopularProducts`, {
+    params, // ej: { days:30, limit:20, orderBy:'sold30', type:'final', activeOnly:true }
+    headers: { Authorization: jwt() },
+  });
+
+export const getAutoCatalogSeed = (params = {}) =>
+  axios.get(`inventory/getAutoCatalogSeed`, {
+    params, // ej: { days:30, limit:20, section:'home', onlyActive:true }
+    headers: { Authorization: jwt() },
+  });
+
+
+// src/api/inventoryControlRequest.js  (añade/expórtalos aquí)
+
+// Listar items del catálogo (puedes pasar filtros por query)
+export const getCatalogEntries = (params = {}) =>
+  axios.get("/inventory/catalog", {
+    params, // ej: { section: 'home', isActive: true, q: 'pan', limit: 50, offset: 0 }
+    headers: { Authorization: jwt() },
+  });
+
+// Crear un item de catálogo (JSON, sin archivos)
+export const createCatalogEntry = (payload) =>
+  axios.post("/inventory/catalog", payload, {
+    headers: {
+      Authorization: jwt(),
+      "Content-Type": "application/json",
+    },
+  });
+
+// Actualizar un item de catálogo
+export const updateCatalogEntry = (id, payload) =>
+  axios.put(`/inventory/catalog/${id}`, payload, {
+    headers: {
+      Authorization: jwt(),
+      "Content-Type": "application/json",
+    },
+  });
+
+// Eliminar un item de catálogo
+export const deleteCatalogEntry = (id) =>
+  axios.delete(`/inventory/catalog/${id}`, {
+    headers: { Authorization: jwt() },
+  });
+// Obtener catálogo por sección (formato consumidor)
+export const getCatalogBySection = (section, params = {}) =>
+  axios.get(`/inventory/catalog/section/${section}`, {
+    params, // opcional: { storeId, onlyActive }
+  });
+// Obtener varias secciones del catálogo
+export const getCatalogBySections = (sections = [], params = {}) => {
+  const query = {
+    sections: Array.isArray(sections) ? sections.join(",") : sections,
+    ...params, // opcional: { storeId, onlyActive }
+  };
+  return axios.get("/inventory/catalog/sections", { params: query });
+};
+
+
+
+
 // 🟢 PRODUCTOS
 
 // Obtener todos los productos con categoría y unidad asociadas
@@ -120,8 +183,9 @@ export const deleteRecipeRequest = async (id) =>
 // 🏷️ CATEGORÍAS
 
 // Obtener todas las categorías
-export const getCategories = async () =>
-  await axios.get('/inventory/categories', {
+export const getCategories = (params = {}) =>
+  axios.get("/inventory/categories", {
+    params, // ej: { public: true } o { isActive: true }
     headers: { Authorization: jwt() },
   });
 
@@ -205,6 +269,40 @@ export const updateHomeProductRequest = (id, formData) =>
     headers: { "Content-Type": "multipart/form-data",Authorization: jwt() },
   });
 
+  
+/* ===== Productos por tienda (nuevo) ===== */
+export const getStoreProductsRequest = (storeId, params) =>
+  axios.get(`/inventory/stores/${storeId}/products`, {
+    params, // { activeOnly, q }
+    headers: { Authorization: jwt() },
+  });
+
+export const addProductsToStoreRequest = (storeId, productIds) =>
+  axios.post(
+    `/inventory/stores/${storeId}/products`,
+    { productIds }, // array de IDs
+    { headers: { Authorization: jwt() } }
+  );
+
+export const removeProductFromStoreRequest = (storeId, productId) =>
+  axios.delete(`/inventory/stores/${storeId}/products/${productId}`, {
+    headers: { Authorization: jwt() },
+  });
+
+export const toggleStoreProductRequest = (storeId, productId, isActive) =>
+  axios.patch(
+    `/inventory/stores/${storeId}/products/${productId}`,
+    { isActive },
+    { headers: { Authorization: jwt() } }
+  );
+
+// Catálogo de productos finales para el selector
+export const getFinalProductsRequest = (params) =>
+  axios.get("/inventory/products", {
+    // el backend debe soportar filtros: type='final', q
+    params: { type: "final", isActive: true, ...params },
+    headers: { Authorization: jwt() },
+  });
   // Obtener lista de stores
 export const getStoresRequest = (params) =>
 axios.get("/inventory/stores", {

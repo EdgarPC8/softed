@@ -68,6 +68,14 @@ function CategoryPage() {
       field: "description",
       width: 300,
     },
+       {
+      headerName: "Publico?",
+      field: "isPublic",
+      width: 200,
+      renderCell: (params) => {
+        return params.row.isPublic?"Si":"No"
+      }
+    },
     {
       headerName: "Acciones",
       field: "actions",

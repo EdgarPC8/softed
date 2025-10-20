@@ -11,15 +11,26 @@ export const createCategory = async (req, res) => {
   }
 };
 
-// Obtener todas las categorías
+// controllers/categoryController.js
 export const getAllCategories = async (req, res) => {
   try {
-    const categories = await InventoryCategory.findAll();
+    // Si viene ?public=true, solo devolver las categorías públicas
+    const onlyPublic = req.query.public === "true";
+
+    const where = {};
+    if (onlyPublic) {
+      // ⚠️ Suponiendo que tienes una columna booleana "isPublic"
+      where.isPublic = true;
+    }
+
+    const categories = await InventoryCategory.findAll({ where });
     res.json(categories);
   } catch (err) {
-    res.status(500).json({ message: 'Error al obtener categorías', error: err });
+    console.error("Error al obtener categorías:", err);
+    res.status(500).json({ message: "Error al obtener categorías", error: err });
   }
 };
+
 
 // Editar categoría
 export const updateCategory = async (req, res) => {

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Collapse, IconButton, Typography, Box, TablePagination,
-  Tooltip, TextField, Stack, Chip
+  Tooltip, TextField, Stack, Chip, TableSortLabel, Alert, CircularProgress,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon   from "@mui/icons-material/KeyboardArrowUp";
@@ -15,19 +15,47 @@ import { es } from "date-fns/locale";
 import { getCustomerSalesSummary } from "../../../api/financeRequest";
 
 /* ---------------------- Utils ---------------------- */
+// -> Devuelve número o def (0). NO trata 0 como falsy. Soporta "7,50".
 const toNum = (v, def = 0) => {
+  if (v === null || v === undefined) return def;
+  if (typeof v === "number") return Number.isFinite(v) ? v : def;
+  if (typeof v === "string") {
+    const s = v.trim().replace(/\s+/g, "");
+    const normalized = s.replace(",", ".");
+    const n = Number(normalized);
+    return Number.isFinite(n) ? n : def;
+  }
   const n = Number(v);
   return Number.isFinite(n) ? n : def;
 };
+// -> Devuelve número o null (para detectar “no vino”)
+const numOrNull = (v) => {
+  if (v === null || v === undefined) return null;
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v === "string") {
+    const s = v.trim().replace(/\s+/g, "");
+    const normalized = s.replace(",", ".");
+    const n = Number(normalized);
+    return Number.isFinite(n) ? n : null;
+  }
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+};
+// -> Toma totalAmountDeuda si existe, si no revenuePending; 0 si nada vino.
+const getDebt = (row) => {
+  const d1 = numOrNull(row?.totalAmountDeuda);
+  if (d1 !== null) return d1;
+  const d2 = numOrNull(row?.revenuePending);
+  return d2 ?? 0;
+};
 
 const money = (n) =>
-  new Intl.NumberFormat("es-EC", { style: "currency", currency: "USD" }).format(
-    toNum(n)
-  );
+  new Intl.NumberFormat("es-EC", { style: "currency", currency: "USD" })
+    .format(toNum(n));
 
 const safeArray = (v) => (Array.isArray(v) ? v : []);
 
-/** Normaliza el JSON crudo (como tu ejemplo) y calcula pendientes por producto */
+/** Normaliza el JSON crudo y calcula pendientes por producto (si no vienen) */
 function normalizeRows(rawList) {
   return safeArray(rawList).map((r) => {
     const orders = safeArray(r.orders);
@@ -72,9 +100,6 @@ function normalizeRows(rawList) {
     }
 
     const productSummary = Array.from(productMap.values());
-
-    // Si tu backend ya manda totalQuantity / totalAmount / totalAmountDeuda los usamos,
-    // caso contrario tomamos los calculados.
     const computedTotalAmount = productSummary.reduce((s, p) => s + toNum(p.totalAmount), 0);
     const computedPendingAmount = productSummary.reduce((s, p) => s + toNum(p.pendingAmount), 0);
 
@@ -86,7 +111,8 @@ function normalizeRows(rawList) {
       units: toNum(r.totalQuantity) || unitsFromItems,
       unitsDelivered,
       revenueTotal: toNum(r.totalAmount) || computedTotalAmount,
-      totalAmountDeuda: toNum(r.totalAmountDeuda) || computedPendingAmount,
+      totalAmountDeuda: numOrNull(r.totalAmountDeuda), // preserva null si no viene
+      revenuePending: numOrNull(r.revenuePending),      // preserva null si no viene
       lastOrderAt: r.lastOrderAt ?? r.updatedAt ?? null,
       productSummary,
       _raw: r,
@@ -102,6 +128,8 @@ function CustomerRow({ row }) {
     ? format(new Date(row.lastOrderAt), "dd/MM/yyyy HH:mm", { locale: es })
     : "—";
 
+  const debt = getDebt(row);
+
   return (
     <>
       <TableRow hover>
@@ -116,9 +144,7 @@ function CustomerRow({ row }) {
             <Typography variant="subtitle2">
               {row?.customer?.name ?? `Cliente #${row?.customerId ?? "—"}`}
             </Typography>
-            {row?.customer?.email && (
-              <Chip size="small" label={row.customer.email} />
-            )}
+            {row?.customer?.email && <Chip size="small" label={row.customer.email} />}
           </Stack>
         </TableCell>
 
@@ -139,7 +165,7 @@ function CustomerRow({ row }) {
         </TableCell>
 
         <TableCell align="right">
-          <Chip icon={<PendingIcon />} color="warning" size="small" label={money(row?.totalAmountDeuda)} />
+          <Chip icon={<PendingIcon />} color="warning" size="small" label={money(debt)} />
         </TableCell>
 
         <TableCell>{lastOrderLabel}</TableCell>
@@ -148,7 +174,7 @@ function CustomerRow({ row }) {
       <TableRow>
         <TableCell colSpan={8} sx={{ p: 0 }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ p: 2, bgcolor: "#fafafa", borderTop: "1px solid #eee" }}>
+            <Box sx={{ p: 2, bgcolor: "#111", borderTop: "1px solid #333" }}>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
                 Productos pedidos por este cliente
               </Typography>
@@ -171,32 +197,16 @@ function CustomerRow({ row }) {
                       return (
                         <TableRow key={p.productId ?? p.name}>
                           <TableCell>{p.name}</TableCell>
-                          <TableCell align="right">
-                            {toNum(p.totalQuantity).toLocaleString()}
-                          </TableCell>
+                          <TableCell align="right">{toNum(p.totalQuantity).toLocaleString()}</TableCell>
                           <TableCell align="right">{money(p.totalAmount)}</TableCell>
-                          <TableCell align="right">
-                            {pq > 0 ? (
-                              <Chip color="warning" size="small" label={pq.toLocaleString()} />
-                            ) : (
-                              0
-                            )}
-                          </TableCell>
-                          <TableCell align="right">
-                            {pa > 0 ? (
-                              <Chip color="warning" size="small" label={money(pa)} />
-                            ) : (
-                              money(0)
-                            )}
-                          </TableCell>
+                          <TableCell align="right">{pq > 0 ? <Chip color="warning" size="small" label={pq.toLocaleString()} /> : 0}</TableCell>
+                          <TableCell align="right">{pa > 0 ? <Chip color="warning" size="small" label={money(pa)} /> : money(0)}</TableCell>
                         </TableRow>
                       );
                     })}
                     {safeArray(row?.productSummary).length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={5} align="center">
-                          Sin productos
-                        </TableCell>
+                        <TableCell colSpan={5} align="center">Sin productos</TableCell>
                       </TableRow>
                     )}
                   </TableBody>
@@ -217,13 +227,18 @@ export default function CustomersAccordionTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState(null);
+
+  // sort state
+  const [sortBy, setSortBy] = useState("priority"); // prioridad: deuda>0 (desc), luego total (desc), luego fecha (desc)
+  const [sortDir, setSortDir] = useState("desc");
 
   useEffect(() => {
     let active = true;
     (async () => {
       try {
         setLoading(true);
-        // Debe devolver el JSON como tu ejemplo (array) o { data: array }
+        setErr(null);
         const { data } = await getCustomerSalesSummary();
 
         const raw =
@@ -234,10 +249,11 @@ export default function CustomersAccordionTable() {
         const normalized = normalizeRows(raw);
         if (!active) return;
         setRows(normalized);
-      } catch (err) {
-        console.error("Error cargando resumen de clientes:", err);
+      } catch (e) {
+        console.error("Error cargando resumen de clientes:", e);
         if (!active) return;
         setRows([]);
+        setErr(e?.message || "Error");
       } finally {
         if (active) setLoading(false);
       }
@@ -245,6 +261,7 @@ export default function CustomersAccordionTable() {
     return () => { active = false; };
   }, []);
 
+  // --- búsqueda
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
     if (!s) return rows;
@@ -257,10 +274,105 @@ export default function CustomersAccordionTable() {
     });
   }, [rows, search]);
 
+  // --- helpers de comparación
+  const cmpNumber = (a, b, dir = "asc") => (dir === "asc" ? a - b : b - a);
+  const cmpString = (a, b, dir = "asc") => {
+    const A = (a ?? "").toString().toLowerCase();
+    const B = (b ?? "").toString().toLowerCase();
+    if (A < B) return dir === "asc" ? -1 : 1;
+    if (A > B) return dir === "asc" ? 1 : -1;
+    return 0;
+  };
+
+  // === Regla de prioridad por defecto ===
+  // Deudores (>0) arriba, ordenados DESC por deuda;
+  // luego los de deuda = 0, ordenados DESC por total; desempate por fecha DESC.
+  const priorityComparator = (a, b) => {
+    const debtA = getDebt(a);
+    const debtB = getDebt(b);
+
+    const posA = debtA > 0 ? 0 : 1; // 0 = grupo deudores, 1 = grupo cero
+    const posB = debtB > 0 ? 0 : 1;
+
+    if (posA !== posB) return posA - posB; // deudores primero SIEMPRE
+
+    if (posA === 0) {
+      // ambos con deuda: DESC por deuda (ignora sortDir para mantener la lógica)
+      if (debtA !== debtB) return debtB - debtA;
+      const totA = toNum(a.revenueTotal);
+      const totB = toNum(b.revenueTotal);
+      if (totA !== totB) return totB - totA;
+      const tA = a.lastOrderAt ? new Date(a.lastOrderAt).getTime() : 0;
+      const tB = b.lastOrderAt ? new Date(b.lastOrderAt).getTime() : 0;
+      return tB - tA;
+    }
+
+    // ambos sin deuda: DESC por total, desempate fecha DESC
+    const totA = toNum(a.revenueTotal);
+    const totB = toNum(b.revenueTotal);
+    if (totA !== totB) return totB - totA;
+    const tA = a.lastOrderAt ? new Date(a.lastOrderAt).getTime() : 0;
+    const tB = b.lastOrderAt ? new Date(b.lastOrderAt).getTime() : 0;
+    return tB - tA;
+  };
+
+  // === Comparador por columna (con regla de “0 al final” en Deuda) ===
+  const columnComparator = useMemo(() => {
+    switch (sortBy) {
+      case "customer":
+        return (a, b) => cmpString(a?.customer?.name, b?.customer?.name, sortDir);
+      case "ordersCount":
+        return (a, b) => cmpNumber(toNum(a.ordersCount), toNum(b.ordersCount), sortDir);
+      case "lineItems":
+        return (a, b) => cmpNumber(toNum(a.lineItems), toNum(b.lineItems), sortDir);
+      case "units":
+        return (a, b) => cmpNumber(toNum(a.units), toNum(b.units), sortDir);
+      case "revenueTotal":
+        return (a, b) => cmpNumber(toNum(a.revenueTotal), toNum(b.revenueTotal), sortDir);
+      case "debt":
+        return (a, b) => {
+          const dA = getDebt(a);
+          const dB = getDebt(b);
+          const posA = dA > 0 ? 0 : 1;
+          const posB = dB > 0 ? 0 : 1;
+
+          // deudores primero SIEMPRE; ceros al final
+          if (posA !== posB) return posA - posB;
+
+          // dentro del grupo deudores: respeta flecha (asc/desc) por monto
+          if (posA === 0 && dA !== dB) return sortDir === "asc" ? dA - dB : dB - dA;
+
+          // desempate por Total y luego por fecha (respeta flecha también)
+          const totA = toNum(a.revenueTotal);
+          const totB = toNum(b.revenueTotal);
+          if (totA !== totB) return sortDir === "asc" ? totA - totB : totB - totA;
+
+          const tA = a.lastOrderAt ? new Date(a.lastOrderAt).getTime() : 0;
+          const tB = b.lastOrderAt ? new Date(b.lastOrderAt).getTime() : 0;
+          return sortDir === "asc" ? tA - tB : tB - tA;
+        };
+      case "lastOrderAt":
+        return (a, b) =>
+          cmpNumber(
+            a.lastOrderAt ? new Date(a.lastOrderAt).getTime() : 0,
+            b.lastOrderAt ? new Date(b.lastOrderAt).getTime() : 0,
+            sortDir
+          );
+      case "priority":
+      default:
+        return priorityComparator;
+    }
+  }, [sortBy, sortDir]);
+
+  const filteredSorted = useMemo(() => {
+    return [...filtered].sort(columnComparator);
+  }, [filtered, columnComparator]);
+
+  // --- paginación
   const paginated = useMemo(() => {
     const start = page * rowsPerPage;
-    return filtered.slice(start, start + rowsPerPage);
-  }, [filtered, page, rowsPerPage]);
+    return filteredSorted.slice(start, start + rowsPerPage);
+  }, [filteredSorted, page, rowsPerPage]);
 
   const handleChangePage = (_, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (e) => {
@@ -268,9 +380,23 @@ export default function CustomersAccordionTable() {
     setPage(0);
   };
 
+  const requestSort = (columnKey) => {
+    setPage(0);
+    setSortBy((prevKey) => {
+      if (prevKey === columnKey) {
+        setSortDir((prevDir) => (prevDir === "asc" ? "desc" : "asc"));
+        return prevKey;
+      }
+      // por defecto: asc para texto, desc para números/fechas
+      if (columnKey === "customer") setSortDir("asc");
+      else setSortDir("desc");
+      return columnKey;
+    });
+  };
+
   return (
     <Box>
-      <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
         Clientes — Ventas y Pedidos
       </Typography>
 
@@ -284,25 +410,93 @@ export default function CustomersAccordionTable() {
         />
       </Stack>
 
+      {err && <Alert severity="error" sx={{ mb: 2 }}>Error: {err}</Alert>}
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell>Cliente</TableCell>
-              <TableCell align="right"># Pedidos</TableCell>
-              <TableCell align="right">Líneas</TableCell>
-              <TableCell align="right">Unidades</TableCell>
-              <TableCell align="right">Total</TableCell>
-              <TableCell align="right">Deuda</TableCell>
-              <TableCell>Último pedido</TableCell>
+              <TableCell sortDirection={sortBy === "customer" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "customer"}
+                  direction={sortBy === "customer" ? sortDir : "asc"}
+                  onClick={() => requestSort("customer")}
+                >
+                  Cliente
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="right" sortDirection={sortBy === "ordersCount" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "ordersCount"}
+                  direction={sortBy === "ordersCount" ? sortDir : "desc"}
+                  onClick={() => requestSort("ordersCount")}
+                >
+                  # Pedidos
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="right" sortDirection={sortBy === "lineItems" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "lineItems"}
+                  direction={sortBy === "lineItems" ? sortDir : "desc"}
+                  onClick={() => requestSort("lineItems")}
+                >
+                  Líneas
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="right" sortDirection={sortBy === "units" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "units"}
+                  direction={sortBy === "units" ? sortDir : "desc"}
+                  onClick={() => requestSort("units")}
+                >
+                  Unidades
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="right" sortDirection={sortBy === "revenueTotal" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "revenueTotal"}
+                  direction={sortBy === "revenueTotal" ? sortDir : "desc"}
+                  onClick={() => requestSort("revenueTotal")}
+                >
+                  Total
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="right" sortDirection={sortBy === "debt" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "debt"}
+                  direction={sortBy === "debt" ? sortDir : "desc"}
+                  onClick={() => requestSort("debt")}
+                >
+                  Deuda
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell sortDirection={sortBy === "lastOrderAt" ? sortDir : false}>
+                <TableSortLabel
+                  active={sortBy === "lastOrderAt"}
+                  direction={sortBy === "lastOrderAt" ? sortDir : "desc"}
+                  onClick={() => requestSort("lastOrderAt")}
+                >
+                  Último pedido
+                </TableSortLabel>
+              </TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {loading && (
               <TableRow>
-                <TableCell colSpan={8} align="center">Cargando…</TableCell>
+                <TableCell colSpan={8} align="center">
+                  <Box sx={{ py: 3 }}>
+                    <CircularProgress size={24} />
+                  </Box>
+                </TableCell>
               </TableRow>
             )}
 
@@ -320,7 +514,7 @@ export default function CustomersAccordionTable() {
 
         <TablePagination
           component="div"
-          count={filtered.length}
+          count={filteredSorted.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}

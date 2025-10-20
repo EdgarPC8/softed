@@ -68,8 +68,57 @@ import {
   updateStore,
   deleteStore,
 } from "../controllers/InventoryControl/StoresController.js";
+// routes/inventory/catalog.routes.js
+import {
+  getCatalogEntries,
+  createCatalogEntry,
+  updateCatalogEntry,
+  deleteCatalogEntry,
+  reorderCatalogEntries,
+  getCatalogBySection,
+  getCatalogBySections,
+  getPopularProducts,
+getAutoCatalogSeed,
+} from "../controllers/InventoryControl/catalogController.js";
+
+import {
+  getProductsByStore,
+  addProductsToStore,
+  removeProductFromStore,
+  toggleStoreProduct,
+  getStoresByProduct,
+} 
+from '../controllers/InventoryControl/StoreProductsController.js';
+
 const router = express.Router();
 
+
+// productos de una tienda
+router.get("/stores/:storeId/products", getProductsByStore);
+router.post("/stores/:storeId/products", addProductsToStore);
+router.delete("/stores/:storeId/products/:productId", removeProductFromStore);
+router.patch("/stores/:storeId/products/:productId", toggleStoreProduct);
+
+// tiendas que tienen un producto (opcional)
+// router.get("/products/:productId/stores", getStoresByProduct);
+
+
+// Listado general con filtros
+router.get("/getPopularProducts", getPopularProducts);
+router.get("/getAutoCatalogSeed", getAutoCatalogSeed);
+router.get("/catalog", getCatalogEntries);
+// Alias por sección (ej: /inventory/catalog/home)
+// CRUD
+router.post("/catalog", isAuthenticated, createCatalogEntry);
+router.put("/catalog/:id", isAuthenticated, updateCatalogEntry);
+router.delete("/catalog/:id", isAuthenticated, deleteCatalogEntry);
+
+// Opcional: reordenar por sección
+router.post("/catalog/reorder", isAuthenticated, reorderCatalogEntries);
+
+
+router.get("/catalog/section/:section", getCatalogBySection);
+router.get("/catalog/sections", getCatalogBySections);
 
 
 
@@ -101,9 +150,9 @@ router.delete('/customers/:id', isAuthenticated, deleteCustomer);
 // ----------------------------------
 // 📦 PRODUCTOS
 // ----------------------------------
-router.post('/products', isAuthenticated, createProduct);            // Crear producto
+router.post('/products', isAuthenticated, edDeliUploadSingle, createProduct);            // Crear producto
 router.get('/products', isAuthenticated, getAllProducts);           // Obtener todos los productos
-router.put('/products/:id', isAuthenticated, updateProduct);        // Editar producto
+router.put('/products/:id', isAuthenticated, edDeliUploadSingle, updateProduct);        // Editar producto
 router.delete('/products/:id', isAuthenticated, deleteProduct);     // Eliminar producto
 
 // ----------------------------------
@@ -143,7 +192,7 @@ router.delete('/recipes/:id', isAuthenticated, deleteRecipe);
 // 🏷️ CATEGORÍAS
 // ----------------------------------
 router.post('/categories', isAuthenticated, createCategory);        // Crear categoría
-router.get('/categories', isAuthenticated, getAllCategories);       // Listar categorías
+router.get('/categories', getAllCategories);       // Listar categorías
 router.put('/categories/:id', isAuthenticated, updateCategory);     // Editar categoría
 router.delete('/categories/:id', isAuthenticated, deleteCategory);  // Eliminar categoría
 

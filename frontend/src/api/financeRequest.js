@@ -98,3 +98,8 @@ export const getCustomerSalesSummary = async () => {
     headers: { Authorization: jwt() },
   });
 };
+export const getOrdersForCharts = async () => {
+  return await axios.get("/finance/getOrdersForCharts", {
+    headers: { Authorization: jwt() },
+  });
+};

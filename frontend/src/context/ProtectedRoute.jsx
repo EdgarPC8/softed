@@ -26,7 +26,7 @@ function ProtectedRoute({ requiredRol }) {
 
   // Si no está autenticado, redirige al login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   // Si el usuario está autenticado pero no tiene el rol requerido, mostrar acceso denegado

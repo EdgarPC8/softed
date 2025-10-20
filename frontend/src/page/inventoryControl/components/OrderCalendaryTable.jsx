@@ -29,6 +29,7 @@ import {
 import { useAuth } from '../../../context/AuthContext';
 import SimpleDialog from '../../../Components/Dialogs/SimpleDialog';
 
+
 /* ---------------- Utils ---------------- */
 function chunkArray(array, size) {
   const result = [];

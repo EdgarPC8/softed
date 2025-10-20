@@ -1,34 +1,14 @@
+// MiniDrawer.jsx
 import React, { useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { 
-  Box, 
-  CssBaseline, 
-  Toolbar, 
-  Typography, 
-  IconButton, 
-  Tooltip, 
-  Divider, 
-  List, 
-  ListItem, 
-  ListItemButton, 
-  ListItemIcon, 
-  ListItemText, 
-  Accordion, 
-  AccordionSummary, 
-  AccordionDetails, 
-  Popover, 
-  Button, 
-  Avatar, 
-  Badge, 
-  Menu, 
-  MenuItem 
+  Box, CssBaseline, Toolbar, Typography, IconButton, Tooltip, Divider, List,
+  ListItem, ListItemButton, ListItemIcon, ListItemText, Accordion, AccordionSummary,
+  AccordionDetails, Popover, Button, Avatar, Badge, Menu, MenuItem
 } from '@mui/material';
-
-
 
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
-
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import { useNotificationSocket } from '../../hooks/useNotificationSocket';
@@ -40,38 +20,13 @@ import NotificationList from '../NotificationList';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import CategoryIcon from '@mui/icons-material/Category';
 
-
 import {
-  Terminal,
-  Home,
-  Settings,
-  Poll,
-  AssignmentInd,
-  School,
-  CalendarMonth,
-  AccountTree,
-  Info,
-  Layers,
-  ViewModule,
-  Quiz,
-  VpnKey,
-  Notifications as NotificationsIcon,
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-  Menu as MenuIcon,
-  ExpandMore as ExpandMoreIcon,
-  AccountBox,
-  PeopleAlt,
-  List as ListIcon,
-  Workspaces,
-  Storage,
-  Dns,
-  IntegrationInstructions,
-  QuestionAnswer,
-  MonetizationOn,
-  
+  Terminal, Home, Settings, Poll, AssignmentInd, School, CalendarMonth, AccountTree,
+  Info, ViewModule, VpnKey, Notifications as NotificationsIcon, ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon, Menu as MenuIcon, ExpandMore as ExpandMoreIcon, AccountBox,
+  PeopleAlt, List as ListIcon, Workspaces, Storage, Dns, IntegrationInstructions,
+  QuestionAnswer, MonetizationOn,
 } from '@mui/icons-material';
-
 
 import InventoryIcon from '@mui/icons-material/Inventory';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
@@ -83,24 +38,32 @@ import PeopleIcon from '@mui/icons-material/People';
 import FactoryIcon from "@mui/icons-material/Factory";
 import StarRounded from "@mui/icons-material/StarRounded";
 import StorefrontRounded from "@mui/icons-material/StorefrontRounded";
-// Alternativas (opcional):
-// import StarsRounded from "@mui/icons-material/StarsRounded";
-// import FeaturedPlayListRounded from "@mui/icons-material/FeaturedPlayListRounded";
-// import StoreMallDirectoryRounded from "@mui/icons-material/StoreMallDirectoryRounded";
-// import PlaceRounded from "@mui/icons-material/PlaceRounded";
+import ThemeSwitcher from '../ThemeSwitcher';
 
+// Íconos públicos
+import HomeIcon from "@mui/icons-material/Home";
+import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import CakeIcon from "@mui/icons-material/Cake";
+import LocalCafeIcon from "@mui/icons-material/LocalCafe";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import { activeApp } from '../../../appConfig';
+import ViewModuleIcon from "@mui/icons-material/ViewModule";
+
+
+const PUBLIC_NAV = [
+  { label: "Inicio", icon: <HomeIcon fontSize="small" />, to: "/" },
+  { label: "Catalogo", icon: <BakeryDiningIcon fontSize="small" />, to: "/catalogo" },
+  { label: "Puntos de Venta", icon: <StorefrontIcon fontSize="small" />, to: "/punto_venta" },
+
+];
 
 const permisos = {
   Programador: [
+    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Panaderia", icon: <BakeryDiningIcon />, link: "/backery" },
+    { name: "Catalogo Config", icon: <ViewModuleIcon />, link: "/catalog_manager" },
     {
-      name: "Home",
-      icon: <Home />,
-      link: "/"
-    },
-    {
-      name: "Inventory Control",
-      icon: <InventoryIcon />,
-      menu: {
+      name: "Inventory Control", icon: <InventoryIcon />, menu: {
         items: [
           { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
           { name: "Producción", link: "/inventory/production", icon: <FactoryIcon /> },
@@ -117,9 +80,7 @@ const permisos = {
       },
     },
     {
-      name: "Encuestas",
-      icon: <Poll />,
-      menu: {
+      name: "Encuestas", icon: <Poll />, menu: {
         items: [
           { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
           { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
@@ -127,9 +88,7 @@ const permisos = {
       },
     },
     {
-      name: "Cuestionarios",
-      icon: <Poll />,
-      menu: {
+      name: "Cuestionarios", icon: <Poll />, menu: {
         items: [
           { name: "Ver cuestionarios", link: "/quizzes", icon: <ListIcon /> },
           { name: "Mis cuestionarios", link: "/myQuizzes", icon: <AssignmentInd /> },
@@ -137,9 +96,7 @@ const permisos = {
       },
     },
     {
-      name: "Entidades",
-      icon: <AccountTree />,
-      menu: {
+      name: "Entidades", icon: <AccountTree />, menu: {
         items: [
           { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
           { name: "Roles", link: "/roles", icon: <Workspaces /> },
@@ -151,9 +108,7 @@ const permisos = {
       },
     },
     {
-      name: "Configuracion",
-      icon: <Settings />,
-      menu: {
+      name: "Configuracion", icon: <Settings />, menu: {
         items: [
           { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
           { name: "Info", link: "/info", icon: <Info /> },
@@ -162,9 +117,7 @@ const permisos = {
       },
     },
     {
-      name: "Programador",
-      icon: <Terminal />,
-      menu: {
+      name: "Programador", icon: <Terminal />, menu: {
         items: [
           { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
           { name: "Logs", link: "/logs", icon: <ListIcon /> },
@@ -176,15 +129,9 @@ const permisos = {
     },
   ],
   Administrador: [
+    { name: "Home", icon: <Home />, link: "/" },
     {
-      name: "Home",
-      icon: <Home />,
-      link: "/"
-    },
-        {
-      name: "Inventory Control",
-      icon: <InventoryIcon />,
-      menu: {
+      name: "Inventory Control", icon: <InventoryIcon />, menu: {
         items: [
           { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
           { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
@@ -198,9 +145,7 @@ const permisos = {
       },
     },
     {
-      name: "Configuracion",
-      icon: <Settings />,
-      menu: {
+      name: "Configuracion", icon: <Settings />, menu: {
         items: [
           { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
           { name: "Información", link: "/info", icon: <Info /> },
@@ -209,33 +154,19 @@ const permisos = {
     },
   ],
   Estudiante: [
+    { name: "Home", icon: <Home />, link: "/" },
     {
-      name: "Home",
-      icon: <Home />,
-      link: "/"
-    },
-    {
-      name: "Encuestas",
-      icon: <Poll />,
-      menu: {
-        items: [
-          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
-        ],
+      name: "Encuestas", icon: <Poll />, menu: {
+        items: [{ name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> }],
       },
     },
     {
-      name: "Configuracion",
-      icon: <Settings />,
-      menu: {
-        items: [
-          { name: "Información", link: "/info", icon: <Info /> },
-
-        ],
+      name: "Configuracion", icon: <Settings />, menu: {
+        items: [{ name: "Información", link: "/info", icon: <Info /> }],
       },
     },
   ],
 };
-
 
 const drawerWidth = 240;
 
@@ -261,45 +192,33 @@ const closedMixin = (theme) => ({
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
+  display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+  padding: theme.spacing(0, 1), ...theme.mixins.toolbar,
 }));
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
+      duration: theme.transitions.duration.leavingScreen,
     }),
-  }),
-}));
+    ...(open && {
+      marginLeft: drawerWidth,
+      width: `calc(100% - ${drawerWidth}px)`,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    }),
+  })
+);
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
+    width: drawerWidth, flexShrink: 0, whiteSpace: 'nowrap', boxSizing: 'border-box',
+    ...(open && { ...openedMixin(theme), '& .MuiDrawer-paper': openedMixin(theme) }),
+    ...(!open && { ...closedMixin(theme), '& .MuiDrawer-paper': closedMixin(theme) }),
   })
 );
 
@@ -308,360 +227,302 @@ export default function MiniDrawer({ children }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { isAuthenticated, logout, user, isLoading, profileImageUser } = useAuth();
-  const [expandedAccordion, setExpandedAccordion] = useState(null); // Estado para controlar qué Accordion está abierto
+  const { isAuthenticated, logout, user, profileImageUser } = useAuth();
+  const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [openChangeRol, setOpenChangeRol] = useState(false);
-  const [anchorMenu, setAnchorMenu] = useState(null);
-  const [anchorElNotif, setAnchorElNotif] = useState(null); // para popover de notificaciones
+  const [anchorElNotif, setAnchorElNotif] = useState(null);
   const location = useLocation();
-  const [tooltipOpen, setTooltipOpen] = useState(null);
+  const [title, setTitle] = useState(activeApp.alias || activeApp.name || "App");
+  const [logo, setLogo] = useState(activeApp.logo || "Logo");
 
+
+
+  
 
   const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState([]);
 
-
-  useNotificationSocket(user?.userId, (notif) => {
-    // console.log("Notificación recibida:", notif);
-    // setNotifications((prev) => [notif, ...prev]);
-    setUnreadCount((count) => count + 1); // aumenta solo si llega una nueva
+  useNotificationSocket(isAuthenticated ? user?.userId : null, () => {
+    if (isAuthenticated) setUnreadCount((c) => c + 1);
   });
-
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      if (!user?.userId) return;
+      if (!isAuthenticated || !user?.userId) return;
       try {
-        const res = await getNotificationsByUser(user.userId); // deberías tener esta función
-        setNotifications(res.data);
+        const res = await getNotificationsByUser(user.userId);
         setUnreadCount(res.data.filter(n => !n.seen).length);
       } catch (error) {
         console.error("Error al obtener notificaciones:", error);
       }
     };
     fetchNotifications();
-  }, [user?.userId]);
-
-
-
+  }, [isAuthenticated, user?.userId]);
 
   const openNotif = Boolean(anchorElNotif);
 
-  const handleNotifClick = (event) => {
-    setAnchorElNotif(event.currentTarget);
-  };
-  const handleNotifClose = () => {
-    setAnchorElNotif(null);
-  };
+  const handleNotifClick = (event) => setAnchorElNotif(event.currentTarget);
+  const handleNotifClose = () => setAnchorElNotif(null);
 
-  const handleMenuClose = () => {
-    setAnchorMenu(null);
-  };
+  const handleDialogChangeRol = () => setOpenChangeRol((v) => !v);
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => { setOpen(false); setExpandedAccordion(null); };
+  const handleNavigation = (link) => navigate(link);
+  const handleMenu = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+  const handleAccordionChange = (panel) => (_e, isExp) => setExpandedAccordion(isExp ? panel : null);
 
-  const handleDialogChangeRol = () => {
-    setOpenChangeRol(!openChangeRol);
-  };
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  const pagesToShow = isAuthenticated ? (permisos[user.loginRol] || []) : [];
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-    setExpandedAccordion(null); // Cierra los Accordion cuando se cierre el Drawer
-  };
+  const showDrawer = isAuthenticated;
+  const showUserActions = isAuthenticated;
 
-  const handleNavigation = (link) => {
-    navigate(link);
-  };
+  // ====== MENÚ PÚBLICO EN APPBAR (cuando NO está logeado) ======
+  const [publicAnchorEl, setPublicAnchorEl] = useState(null);
+  const [publicActive, setPublicActive] = useState(null);
+  const openPublicMenu = Boolean(publicAnchorEl);
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleOpenPublicMenu = (e, item) => {
+    if (!item.children || item.children.length === 0) {
+      if (item.to) navigate(item.to);
+      return;
+    }
+    setPublicActive(item);
+    setPublicAnchorEl(e.currentTarget);
   };
-  
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleClosePublicMenu = () => {
+    setPublicAnchorEl(null);
+    setPublicActive(null);
   };
-
-  const handleAccordionChange = (panel) => (event, isExpanded) => {
-    setExpandedAccordion(isExpanded ? panel : null); // Abre/cierra el Accordion
+  const handleClickPublicChild = (to) => {
+    handleClosePublicMenu();
+    if (to) navigate(to);
   };
-
-  const pagesToShow = permisos[user.loginRol] || [];
-
-  if (!isAuthenticated) {
-    return <Box component="main" sx={{ flexGrow: 1 }}>{children}</Box>;
-  }
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+
+      {/* AppBar SIEMPRE visible */}
+      <AppBar position="fixed" open={showDrawer && open}>
         <Toolbar>
-  
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {/* Botón menú solo si hay Drawer (logueado) */}
+          {showDrawer && !open && (
+            <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} edge="start" sx={{ mr: 2 }}>
+              <MenuIcon />
+            </IconButton>
+          )}
 
           <Typography variant="h4" noWrap component="div">
-            {user.loginRol}
+            {showUserActions ? user.loginRol : title}
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            size="large"
-            aria-label="ver notificaciones"
-            color={location.pathname === "/notifications" ? "secondary" : "inherit"}
-            onClick={handleNotifClick}
-            disabled={location.pathname === "/notifications"}
-          >
-            <Badge
-              badgeContent={unreadCount}
-              color="error"
-              overlap="circular"
-            >
-              <NotificationsIcon />
-            </Badge>
 
-          </IconButton>
-
-          <Popover
-            open={openNotif}
-            anchorEl={anchorElNotif}
-            onClose={handleNotifClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-          >
-            <Box sx={{ width: 400, maxHeight: 500, display: "flex", flexDirection: "column" }}>
-
-              <Box sx={{ overflowY: "auto", flexGrow: 1, px: 2 }}>
-                <NotificationList
-                  setCount={setUnreadCount}
-                />
-
-              </Box>
-
-              {/* Botón Ver todo */}
-              <Box textAlign="center" p={1}>
+          {/* Navegación pública (Panadería / Pastelería / Repostería / Puntos de Venta) SOLO si NO está logeado */}
+          {!showUserActions && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
+              {PUBLIC_NAV.map((item) => (
                 <Button
-                  variant="text"
-                  onClick={() => {
-                    handleNotifClose();
-                    navigate("/notifications");
-                  }}
-                  sx={{ textTransform: "none", fontWeight: "bold" }}
+                  key={item.label}
+                  color="inherit"
+                  onClick={(e) => handleOpenPublicMenu(e, item)}
+                  startIcon={item.icon || null}
+                  sx={{ textTransform: "none", fontWeight: 600 }}
                 >
-                  Ver todo
+                  {item.label}
                 </Button>
-              </Box>
+              ))}
             </Box>
-          </Popover>
+          )}
 
+          <Box sx={{ flexGrow: 1 }} />
 
-          {user.firstName} {user.firstLastName}
-          <IconButton
-  size="large"
-  aria-controls="menu-appbar"
-  aria-haspopup="true"
-  onClick={handleMenu}
-  color="inherit"
->
-  <Avatar alt={user.firstName} src={profileImageUser} />
-</IconButton>
+          {/* ThemeSwitcher siempre */}
+          <ThemeSwitcher />
 
-          <Menu
-  id="menu-appbar"
-  anchorEl={anchorEl}
-  open={Boolean(anchorEl)}
-  onClose={handleClose}
-  anchorOrigin={{
-    vertical: 'bottom',
-    horizontal: 'right',
-  }}
-  transformOrigin={{
-    vertical: 'top',
-    horizontal: 'right',
-  }}
->
-
-            <MenuItem onClick={() => handleNavigation("/perfil") & handleClose()}>Perfil</MenuItem>
-            <MenuItem onClick={handleDialogChangeRol}>Cambiar Rol</MenuItem>
-            <MenuItem
-  onClick={() => {
-    handleClose(); // 👈 Cierra el menú antes de cerrar sesión
-    logout();      // 👈 Luego cierra sesión
-  }}
->
-  Cerrar Sesión
-</MenuItem>
-
-            <SimpleDialog
-              open={openChangeRol}
-              onClose={handleDialogChangeRol}
-              tittle={""}
+          {/* Si NO está logeado → botón Iniciar sesión */}
+          {!showUserActions && (
+            <Button
+              variant="outlined"
+              color="inherit"
+              sx={{ ml: 2, textTransform: "none", fontWeight: 700 }}
+              onClick={() => navigate("/login")}
             >
-              <CambiarRol />
-            </SimpleDialog>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-      <DrawerHeader>
-  <Box
-    display="flex"
-    alignItems="center"
-    justifyContent="space-between"
-    width="100%"
-    px={2}
-  >
-    {/* Logo + texto */}
-    <Box display="flex" alignItems="center" gap={1}>
-      <img
-        src="./android-chrome-512x512.png"
-        alt="SoftEd Logo"
-        style={{ width: 50, height: 50 }}
-      />
-      <Typography variant="h6" color="black">
-        SoftEd
-      </Typography>
-    </Box>
+              Iniciar sesión
+            </Button>
+          )}
 
-    {/* Botón de cerrar */}
-    <IconButton onClick={handleDrawerClose}>
-      {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-    </IconButton>
-  </Box>
-</DrawerHeader>
-
-        <Divider />
-        <List>
-          {pagesToShow.map((page, index) => {
-            if (page.menu) {
-              return (
-                <Accordion
-                  key={page.name}
-                  expanded={expandedAccordion === page.name}
-                  onChange={handleAccordionChange(page.name)}
-                  sx={{
-                    boxShadow: 'none',
-                    backgroundColor: 'transparent',
-                    '&:before': { display: 'none' },
-                    paddingLeft: open ? 0 : 0, // sin indentación lateral innecesaria
-                  }}
-                >
-                  <AccordionSummary
-                    onClick={() => {
-                      if (!open) handleDrawerOpen();
-                    }}
-                    expandIcon={open ? <ExpandMoreIcon /> : null}
-                    sx={{
-                      padding: 0,
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      cursor: 'pointer',
-                    }}
-                  >
-
-                    <ListItemButton
-                      sx={{
-                        minHeight: 38,
-                        justifyContent: 'center',
-                        px: 0,
-                      }}
-                    >
-
-                      <Tooltip title={page.name} placement="right" disableHoverListener={open}>
-                        <ListItemIcon
-                          sx={{
-                            minWidth: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {page.icon}
-                        </ListItemIcon>
-                      </Tooltip>
-
-
-                      {open && (
-                        <ListItemText
-                          primary={page.name}
-                          sx={{ marginLeft: 1 }}
-                        />
-                      )}
-
-                    </ListItemButton>
-                  </AccordionSummary>
-                  {open && (
-                   <AccordionDetails sx={{ padding: 0 }}>
-                   <List component="div" disablePadding>
-                     {page.menu.items.map((subItem) => (
-                       <ListItem
-                         key={subItem.name}
-                         disablePadding
-                         onClick={() => handleNavigation(subItem.link)}
-                         sx={{ pl: 4 }}
-                       >
-                         <ListItemButton>
-                           <ListItemIcon>
-                             {subItem.icon}
-                           </ListItemIcon>
-                           <ListItemText primary={subItem.name} />
-                         </ListItemButton>
-                       </ListItem>
-                     ))}
-                   </List>
-                 </AccordionDetails>
-                 
-                  )}
-                </Accordion>
-
-              );
-            }
-            return (
-              <ListItem
-                key={page.name}
-                disablePadding
-                sx={{ display: 'block' }}
-                onClick={() => handleNavigation(page.link)}
+          {/* Si está logeado → notificaciones + menú usuario */}
+          {showUserActions && (
+            <>
+              <IconButton
+                size="large"
+                aria-label="ver notificaciones"
+                color={location.pathname === "/notifications" ? "secondary" : "inherit"}
+                onClick={handleNotifClick}
+                disabled={location.pathname === "/notifications"}
               >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center',
-                    }}
+                <Badge badgeContent={unreadCount} color="error" overlap="circular">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+
+              <Popover
+                open={openNotif}
+                anchorEl={anchorElNotif}
+                onClose={handleNotifClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                <Box sx={{ width: 400, maxHeight: 500, display: "flex", flexDirection: "column" }}>
+                  <Box sx={{ overflowY: "auto", flexGrow: 1, px: 2 }}>
+                    <NotificationList setCount={setUnreadCount} />
+                  </Box>
+                  <Box textAlign="center" p={1}>
+                    <Button
+                      variant="text"
+                      onClick={() => { handleNotifClose(); navigate("/notifications"); }}
+                      sx={{ textTransform: "none", fontWeight: "bold" }}
+                    >
+                      Ver todo
+                    </Button>
+                  </Box>
+                </Box>
+              </Popover>
+
+              <Typography sx={{ mx: 1 }}>
+                {user.firstName} {user.firstLastName}
+              </Typography>
+
+              <IconButton size="large" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu} color="inherit">
+                <Avatar alt={user.firstName} src={profileImageUser} />
+              </IconButton>
+
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
+                <MenuItem onClick={() => { handleNavigation("/perfil"); handleClose(); }}>Perfil</MenuItem>
+                <MenuItem onClick={handleDialogChangeRol}>Cambiar Rol</MenuItem>
+                <MenuItem onClick={() => { handleClose(); logout(); }}>Cerrar Sesión</MenuItem>
+
+                <SimpleDialog open={openChangeRol} onClose={handleDialogChangeRol} tittle={""}>
+                  <CambiarRol />
+                </SimpleDialog>
+              </Menu>
+            </>
+          )}
+        </Toolbar>
+
+        {/* Menú desplegable PÚBLICO */}
+        <Menu
+          anchorEl={publicAnchorEl}
+          open={openPublicMenu}
+          onClose={handleClosePublicMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: "top", horizontal: "left" }}
+        >
+          {publicActive?.children?.map((child, idx) => (
+            <Box key={child.label}>
+              <MenuItem onClick={() => handleClickPublicChild(child.to)}>
+                {child.label}
+              </MenuItem>
+              {(idx + 1) % 4 === 0 && idx !== publicActive.children.length - 1 && (
+                <Divider sx={{ my: 0.5 }} />
+              )}
+            </Box>
+          ))}
+        </Menu>
+      </AppBar>
+
+      {/* Drawer solo si está logeado */}
+      {showDrawer && (
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <Box display="flex" alignItems="center" justifyContent="space-between" width="100%" px={2}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <img
+  src={logo}
+  alt="Logo"
+  style={{
+    width: 50,
+    height: 50,
+    borderRadius: "50%",   // 👈 lo hace circular
+    objectFit: "cover",    // 👈 recorta sin deformar
+  }}
+/>
+
+                <Typography variant="h6" color="black">{title}</Typography>
+              </Box>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </IconButton>
+            </Box>
+          </DrawerHeader>
+
+          <Divider />
+
+          <List>
+            {(pagesToShow || []).map((page) => {
+              if (page.menu) {
+                return (
+                  <Accordion
+                    key={page.name}
+                    expanded={expandedAccordion === page.name}
+                    onChange={handleAccordionChange(page.name)}
+                    sx={{ boxShadow: 'none', backgroundColor: 'transparent', '&:before': { display: 'none' } }}
                   >
-                    {page.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-      </Drawer>
+                    <AccordionSummary
+                      onClick={() => { if (!open) handleDrawerOpen(); }}
+                      expandIcon={open ? <ExpandMoreIcon /> : null}
+                      sx={{ p: 0, minHeight: 48, justifyContent: open ? 'initial' : 'center', cursor: 'pointer' }}
+                    >
+                      <ListItemButton sx={{ minHeight: 38, justifyContent: 'center', px: 0 }}>
+                        <Tooltip title={page.name} placement="right" disableHoverListener={open}>
+                          <ListItemIcon sx={{ minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {page.icon}
+                          </ListItemIcon>
+                        </Tooltip>
+                        {open && <ListItemText primary={page.name} sx={{ ml: 1 }} />}
+                      </ListItemButton>
+                    </AccordionSummary>
+
+                    {open && (
+                      <AccordionDetails sx={{ p: 0 }}>
+                        <List component="div" disablePadding>
+                          {page.menu.items.map((sub) => (
+                            <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
+                              <ListItemButton>
+                                <ListItemIcon>{sub.icon}</ListItemIcon>
+                                <ListItemText primary={sub.name} />
+                              </ListItemButton>
+                            </ListItem>
+                          ))}
+                        </List>
+                      </AccordionDetails>
+                    )}
+                  </Accordion>
+                );
+              }
+
+              return (
+                <ListItem key={page.name} disablePadding sx={{ display: 'block' }} onClick={() => handleNavigation(page.link)}>
+                  <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
+                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                      {page.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Drawer>
+      )}
+
+      {/* Contenido principal */}
       <Box component="main" sx={{ flexGrow: 1 }}>
         <DrawerHeader />
         {children}

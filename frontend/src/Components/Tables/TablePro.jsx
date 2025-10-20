@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  TablePagination, Paper, TextField, Typography, Box
+  TablePagination, Paper, TextField, Typography, Box, TableSortLabel
 } from '@mui/material';
 
 const TablePro = ({
@@ -12,13 +12,15 @@ const TablePro = ({
   showPagination = true,
   rowsPerPageOptions = [5, 10, 25],
   defaultRowsPerPage = 5,
-  showIndex = false,            // 👈 muestra columna #
-  indexHeader = '#',            // 👈 texto encabezado de la columna índice
-  tableMaxHeight = 150,         // 👈 alto máximo del contenedor (scroll)
+  showIndex = false,
+  indexHeader = '#',
+  tableMaxHeight = 150,
 }) => {
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
+  const [orderBy, setOrderBy] = useState(null);
+  const [orderDirection, setOrderDirection] = useState('asc');
 
   const handleSearchChange = (e) => {
     setSearchText(e.target.value.toLowerCase());
@@ -32,12 +34,47 @@ const TablePro = ({
     setPage(0);
   };
 
-  // Filtrado: usa column.getSearchValue(row) si existe; si no, row[column.id]
-  const filteredRows = rows.filter((row) =>
+  // --- Ordenamiento ---
+  const handleSort = (columnId) => {
+    if (orderBy === columnId) {
+      setOrderDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setOrderBy(columnId);
+      setOrderDirection('asc');
+    }
+  };
+
+  const sortedRows = React.useMemo(() => {
+    if (!orderBy) return rows;
+    const column = columns.find((c) => c.id === orderBy);
+    const getValue = (r) =>
+      column?.getSortValue
+        ? column.getSortValue(r)
+        : typeof r[orderBy] === 'string'
+        ? r[orderBy].toLowerCase()
+        : r[orderBy];
+
+    return [...rows].sort((a, b) => {
+      const va = getValue(a);
+      const vb = getValue(b);
+      if (va == null && vb == null) return 0;
+      if (va == null) return orderDirection === 'asc' ? 1 : -1;
+      if (vb == null) return orderDirection === 'asc' ? -1 : 1;
+      if (va < vb) return orderDirection === 'asc' ? -1 : 1;
+      if (va > vb) return orderDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [rows, orderBy, orderDirection, columns]);
+
+  // --- Filtro de búsqueda ---
+  const filteredRows = sortedRows.filter((row) =>
     columns.some((column) => {
       const raw = column.getSearchValue ? column.getSearchValue(row) : row[column.id];
       if (raw == null) return false;
-      const val = typeof raw === 'string' || typeof raw === 'number' ? String(raw).toLowerCase() : '';
+      const val =
+        typeof raw === 'string' || typeof raw === 'number'
+          ? String(raw).toLowerCase()
+          : '';
       return val.includes(searchText);
     })
   );
@@ -66,7 +103,19 @@ const TablePro = ({
               <TableRow>
                 {showIndex && <TableCell sx={{ width: 56 }}>{indexHeader}</TableCell>}
                 {columns.map((column) => (
-                  <TableCell key={column.id}>{column.label}</TableCell>
+                  <TableCell
+                    key={column.id}
+                    sortDirection={orderBy === column.id ? orderDirection : false}
+                    onClick={() => handleSort(column.id)}
+                    sx={{ cursor: 'pointer', userSelect: 'none' }}
+                  >
+                    <TableSortLabel
+                      active={orderBy === column.id}
+                      direction={orderBy === column.id ? orderDirection : 'asc'}
+                    >
+                      {column.label}
+                    </TableSortLabel>
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
