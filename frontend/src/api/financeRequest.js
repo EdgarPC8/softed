@@ -103,3 +103,8 @@ export const getOrdersForCharts = async () => {
     headers: { Authorization: jwt() },
   });
 };
+export const getExpensesForChart = async () => {
+  return await axios.get("/finance/getExpensesForChart", {
+    headers: { Authorization: jwt() },
+  });
+};

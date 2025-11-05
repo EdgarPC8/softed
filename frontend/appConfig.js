@@ -17,7 +17,7 @@ const appsInfo = {
   },
 
   eddeli: {
-    logo: "./logo.jpeg",
+    logo: "./eddeli/logo.jpeg",
     name: "EdDeli - Panadería, Pastelería y Repostería",
     alias: "EdDeli",
     version: "1.0.0",

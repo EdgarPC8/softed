@@ -94,7 +94,7 @@ function ProductsPage() {
     {
       label: "Tipo",
       id: "type",
-      width: 140,
+      width: 100,
       render: (params) => {
         const type = params.type;
         return type === "raw"
@@ -117,24 +117,24 @@ function ProductsPage() {
     {
       label: "Unidad",
       id: "inventory_unit.name",
-      width: 140,
+      width: 100,
       render: (params) => params.ERP_inventory_unit?.name,
     },
     {
       label: "Categoría",
       id: "category",
-      width: 160,
+      width: 100,
       render: (params) => params.ERP_inventory_category?.name,
     },
     {
       label: "Precio",
       id: "price",
-      width: 100,
+      width: 50,
     },
     {
       label: "Peso Neto",
       id: "netWeight",
-      width: 100,
+      width: 50,
     },
     {
       label: "Stock",

@@ -205,13 +205,13 @@ const [wholesaleRules, setWholesaleRules] = useState(() => {
 
 const loadData = async () => {
   if (!isEditing || !datos) return;
-
   setValue("name", datos.name || "");
   setValue("desc", datos.desc || "");
   setValue("type", datos.type || "raw");
   setValue("unitId", datos.unitId || "");
   setValue("categoryId", datos.categoryId || "");
   setValue("price", datos.price || 0);
+  setValue("distributorPrice", datos.distributorPrice || 0);
   setValue("minStock", datos.minStock || 0);
   setValue("stock", datos.stock || 0);
   setValue("netWeight", datos.netWeight || 0);
@@ -256,6 +256,7 @@ const loadData = async () => {
     fd.append("unitId", String(data.unitId));
     if (data.categoryId) fd.append("categoryId", String(data.categoryId));
     if (data.price != null) fd.append("price", String(data.price));
+    if (data.distributorPrice != null) fd.append("distributorPrice", String(data.distributorPrice));
     if (data.netWeight != null) fd.append("netWeight", String(data.netWeight));
     if (data.minStock != null) fd.append("minStock", String(data.minStock));
     if (data.stock != null) fd.append("stock", String(data.stock));
@@ -301,15 +302,21 @@ const loadData = async () => {
           <TextField multiline rows={3} label="Descripción" fullWidth variant="standard"
             {...register("desc")} />
         </Grid>
+<Grid item xs={12} sm={4}>
+  <TextField
+    label="Tipo"
+    select
+    fullWidth
+    variant="standard"
+    value={watch("type") ?? "raw"}
+    {...register("type", { required: true })}
+  >
+    <MenuItem value="raw">Materia Prima</MenuItem>
+    <MenuItem value="intermediate">Producto Intermedio</MenuItem>
+    <MenuItem value="final">Producto Final</MenuItem>
+  </TextField>
+</Grid>
 
-        <Grid item xs={12} sm={4}>
-          <TextField label="Tipo" select fullWidth variant="standard"
-            defaultValue="raw" {...register("type", { required: true })}>
-            <MenuItem value="raw">Materia Prima</MenuItem>
-            <MenuItem value="intermediate">Producto Intermedio</MenuItem>
-            <MenuItem value="final">Producto Final</MenuItem>
-          </TextField>
-        </Grid>
 
         <Grid item xs={12} sm={4}>
           <TextField label="Unidad" select fullWidth variant="standard"
@@ -348,8 +355,12 @@ const loadData = async () => {
           <TextField label="Stock actual" type="number" fullWidth variant="standard"
             {...register("stock", { required: true })} />
         </Grid>
+           <Grid item xs={12} sm={6}>
+          <TextField label="Precio Distribuidor" type="number" fullWidth variant="standard"
+            inputProps={{ step: "any" }} {...register("distributorPrice", { required: true })} />
+        </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6}>
           <TextField label="Peso promedio por unidad (g)" type="number" fullWidth variant="standard"
             inputProps={{ step: "any", min: 0 }}
             {...register("standardWeightGrams", { required: true })} />

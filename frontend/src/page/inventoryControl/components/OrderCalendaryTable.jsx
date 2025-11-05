@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box, Button, Typography, Grid, Paper, Collapse, TextField, IconButton, Tooltip,
-  Accordion, AccordionSummary, AccordionDetails, Divider
+  Accordion, AccordionSummary, AccordionDetails, Divider,
+  useTheme
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+
 import {
   format, addMonths, startOfMonth, endOfMonth,
   eachDayOfInterval, startOfWeek, endOfWeek,
@@ -39,15 +42,26 @@ function chunkArray(array, size) {
   return result;
 }
 
-function getColorByStatus(orderItems) {
-  const allPaid = orderItems.every(item => item.paidAt);
-  const allDelivered = orderItems.every(item => item.deliveredAt);
+// Devuelve el color base (success/error/warning/info) según el estado de los ítems
+function getStatusBaseColor(items, theme) {
+  const allPaid = items.every(i => i.paidAt);
+  const allDelivered = items.every(i => i.deliveredAt);
+  const somePaid = items.some(i => i.paidAt);
+  const someDelivered = items.some(i => i.deliveredAt);
+  const { palette } = theme;
 
-  if (allPaid && allDelivered) return '#d0f8ce';
-  if (!orderItems.some(item => item.paidAt || item.deliveredAt)) return '#ffcccc';
-  if (orderItems.some(item => item.deliveredAt && !item.paidAt)) return '#fff9c4';
-  if (orderItems.some(item => item.paidAt && !item.deliveredAt)) return '#ffe0b2';
-  return 'white';
+  if (allPaid && allDelivered) return palette.success.main;   // ✓ pagado + entregado
+  if (!somePaid && !someDelivered) return palette.error.main; // ✗ nada pagado/entregado
+  if (someDelivered && !allPaid) return palette.warning.main; // entregado, falta pago
+  if (somePaid && !allDelivered) return palette.info.main;    // pagado, falta entrega
+  return null; // neutro
+}
+
+// Fondo por estado usando una tonalidad variable (alpha) unificada
+function getColorByStatus(items, theme, tone) {
+  const base = getStatusBaseColor(items, theme);
+  if (base) return alpha(base, tone);
+  return theme.palette.mode === 'dark' ? theme.palette.background.paper : 'white';
 }
 
 const toNumber = (v, fallback = 0) => {
@@ -68,6 +82,18 @@ export default function OrderCalendarView({ orders, onReload }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [fields, setFields] = useState({});
   const [editMode, setEditMode] = useState({});
+
+  const theme = useTheme();
+
+  // 🔸 Tonalidades centralizadas (ajusta aquí y se refleja en todo)
+  const tones = {
+    state: theme.palette.mode === 'dark' ? 0.4 : 0.2,       // fondos por estado (success/error/info/warning)
+    stateHover: theme.palette.mode === 'dark' ? 0.18 : 0.48,  // hover del mismo estado (un poco más intenso)
+    hoverNeutral: theme.palette.mode === 'dark' ? 0.14 : 0.10,// hover cuando no hay estado (fallback primario)
+    selected: theme.palette.mode === 'dark' ? 0.25 : 0.5,    // día seleccionado
+    outOfMonth: theme.palette.mode === 'dark' ? 0.40 : 0.10,  // días fuera de mes
+    border: 0.6,                                              // opacidad de bordes
+  };
 
   // Edición de orden (date y notes)
   const [orderEditMode, setOrderEditMode] = useState({});
@@ -306,9 +332,15 @@ export default function OrderCalendarView({ orders, onReload }) {
                   isSameDay(parse(order.date, 'dd/MM/yyyy HH:mm:ss', new Date()), date)
                 );
                 const isSelected = selectedDate && isSameDay(date, selectedDate);
-                const colorByStatus = dailyOrders.length > 0
-                  ? getColorByStatus(dailyOrders.flatMap(order => order.ERP_order_items))
-                  : isSameMonth(date, currentDate) ? 'white' : '#f5f5f5';
+
+                const itemsOfDay = dailyOrders.flatMap(o => o.ERP_order_items);
+                const statusBase = getStatusBaseColor(itemsOfDay, theme);
+                const statusBg = getColorByStatus(itemsOfDay, theme, tones.state);
+
+                const isOutOfMonth = !isSameMonth(date, currentDate);
+                const dayBg = isOutOfMonth
+                  ? alpha(theme.palette.action.disabledBackground, tones.outOfMonth)
+                  : statusBg;
 
                 return (
                   <Grid item xs={12 / 7} key={date.toISOString()}>
@@ -318,13 +350,24 @@ export default function OrderCalendarView({ orders, onReload }) {
                       sx={{
                         minHeight: 100,
                         p: 1,
-                        backgroundColor: isSelected ? '#d0f0ff' : colorByStatus,
+                        backgroundColor: isSelected
+                          ? alpha(theme.palette.primary.main, tones.selected)
+                          : dayBg,
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.divider, tones.border),
                         cursor: 'pointer',
-                        transition: '0.2s',
-                        '&:hover': { backgroundColor: '#e3f2fd' },
+                        transition: 'background-color 0.2s ease',
+                        '&:hover': {
+                          backgroundColor: isSelected
+                            ? alpha(theme.palette.primary.main, Math.min(1, tones.selected + 0.05))
+                            : (statusBase
+                                ? alpha(statusBase, tones.stateHover) // mismo color del estado
+                                : alpha(theme.palette.primary.main, tones.hoverNeutral) // fallback
+                              ),
+                        },
                       }}
                     >
-                      <Typography variant="caption" color="textSecondary">
+                      <Typography variant="caption" color="text.secondary">
                         {format(date, 'd')}
                       </Typography>
 
@@ -348,21 +391,39 @@ export default function OrderCalendarView({ orders, onReload }) {
             </Grid>
 
             <Collapse in={shouldShowCollapse} timeout="auto" unmountOnExit>
-              <Box sx={{ mt: 1, mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, backgroundColor: '#fafafa' }}>
+              <Box
+                sx={{
+                  mt: 1,
+                  mb: 2,
+                  p: 2,
+                  border: '1px solid',
+                  borderColor: theme.palette.divider,
+                  borderRadius: 2,
+                }}
+              >
                 <Typography variant="h6" gutterBottom>
                   Pedidos del {selectedDate && format(selectedDate, 'dd/MM/yyyy')}
                 </Typography>
                 {selectedOrders.length === 0 && (
-                  <Typography variant="body2" color="textSecondary">No hay pedidos este día.</Typography>
+                  <Typography variant="body2" color="text.secondary">No hay pedidos este día.</Typography>
                 )}
 
                 {selectedOrders.map((order) => {
                   const orderItems = order.ERP_order_items;
-                  const orderColor = getColorByStatus(orderItems);
+                  const orderColor = getColorByStatus(orderItems, theme, tones.state);
                   const isProgrammer = user?.loginRol === 'Programador';
 
                   return (
-                    <Accordion key={order.id} sx={{ mb: 1, backgroundColor: orderColor }}>
+                    <Accordion
+                      key={order.id}
+                      sx={{
+                        mb: 1,
+                        backgroundColor: orderColor,
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.divider, tones.border),
+                        '&:before': { display: 'none' }
+                      }}
+                    >
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         sx={{ alignItems: 'center' }}
@@ -372,7 +433,7 @@ export default function OrderCalendarView({ orders, onReload }) {
                             <Typography variant="subtitle1">
                               Cliente: {order.ERP_customer?.name}
                             </Typography>
-                            <Typography variant="caption">
+                            <Typography variant="caption" color="text.secondary">
                               Pedido #{order.id} – Total: $
                               {orderItems.reduce((acc, i) => acc + i.price * i.quantity, 0).toFixed(2)}
                             </Typography>
@@ -415,18 +476,19 @@ export default function OrderCalendarView({ orders, onReload }) {
 
                       <AccordionDetails>
                         {/* Bloque de edición de la ORDEN */}
-                     {orderEditMode[order.id] && (
-  <Box
-    sx={{
-      mb: 2,
-      p: 1.5,
-      border: '1px dashed',
-      borderColor: 'rgba(0,0,0,0.2)',
-      borderRadius: 1,
-      backgroundColor: orderColor, // <- usa el color del estado (verde/amarillo/rojo)
-    }}
-  >
-
+                        {orderEditMode[order.id] && (
+                          <Box
+                            sx={{
+                              mb: 2,
+                              p: 1.5,
+                              border: '1px dashed',
+                              borderColor: theme.palette.divider,
+                              borderRadius: 1,
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? alpha(theme.palette.background.paper, 0.6)
+                                : orderColor,
+                            }}
+                          >
                             <Typography variant="subtitle2" gutterBottom>Editar orden</Typography>
 
                             <Grid container spacing={1} alignItems="flex-end">
@@ -544,8 +606,26 @@ export default function OrderCalendarView({ orders, onReload }) {
                             const livePrice = isEditing ? toNumber(f?.price, item.price) : item.price;
                             const liveTotal = (liveQty * livePrice).toFixed(2);
 
+                            const itemBase = getStatusBaseColor([item], theme);
+
                             return (
-                              <Box key={idx} sx={{ mb: 2, p: 1, border: '1px solid #eee', borderRadius: 1 }}>
+                              <Box
+                                key={idx}
+                                sx={{
+                                  mb: 2,
+                                  p: 1,
+                                  border: '1px solid',
+                                  borderColor: alpha(theme.palette.divider, tones.border),
+                                  borderRadius: 1,
+                                  backgroundColor: getColorByStatus([item], theme, tones.state),
+                                  transition: 'background-color 0.2s ease',
+                                  '&:hover': {
+                                    backgroundColor: itemBase
+                                      ? alpha(itemBase, tones.stateHover) // mismo color del estado
+                                      : alpha(theme.palette.primary.main, tones.hoverNeutral),
+                                  },
+                                }}
+                              >
                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
                                   <Box>
                                     <Typography variant="body2"><strong>{item.ERP_inventory_product?.name}</strong></Typography>

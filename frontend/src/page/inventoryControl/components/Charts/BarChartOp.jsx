@@ -163,38 +163,58 @@ export default function BarChartOp({
       </Stack>
 
       {/* === Gráfico === */}
-      <BarChart
-        dataset={dataset}
-        {...chartSetting}
-        series={[
-          { dataKey: 's_ordersCount', label: 'Pedidos (#)', stack: 'orders' },
-          { dataKey: 's_ordersAmount', label: 'Pedidos ($)', stack: 'orders' },
-          { dataKey: 's_paidCount', label: 'Pagados (#)', stack: 'paid' },
-          { dataKey: 's_paidAmount', label: 'Pagados ($)', stack: 'paid' },
-        ]}
-        slotProps={{
-          legend: { hidden: false },
-          tooltip: {
-            trigger: 'axis',
-            renderer: (params) => {
-              if (!params?.series?.length) return '';
-              const idx = params.series[0]?.dataIndex ?? 0;
-              const d = rows[idx];
-              return `
-                <div style="padding:8px 10px">
-                  <div><b>${d.day}</b></div>
-                  <div style="margin-top:6px"><u>Pedidos</u></div>
-                  <div>• Cantidad: ${intFmt(d.ordersCount)}</div>
-                  <div>• Dinero: ${moneyFmt(d.ordersAmount)}</div>
-                  <div style="margin-top:6px"><u>Pagados</u></div>
-                  <div>• Cantidad: ${intFmt(d.paidOrdersCount)}</div>
-                  <div>• Dinero: ${moneyFmt(d.paidAmount)}</div>
-                </div>
-              `;
-            },
-          },
-        }}
-      />
+<BarChart
+  dataset={rows}
+  height={360}
+  xAxis={[{ dataKey: 'day', scaleType: 'band' }]}
+  yAxis={[
+    { id: 'count', label: 'Cantidad (#)' },
+    { id: 'money', label: 'Dinero (USD)' },
+  ]}
+  margin={{ left: 60, right: 60, top: 16, bottom: 28 }}
+  barCategoryGap={12}
+  series={[
+    {
+      dataKey: 'ordersCount',
+      label: 'Pedidos (#)',
+      stack: 'orders',
+      yAxisKey: 'count',
+    },
+    {
+      dataKey: 'paidOrdersCount',
+      label: 'Pagados (#)',
+      stack: 'orders',
+      yAxisKey: 'count',
+    },
+    {
+      dataKey: 'ordersAmount',
+      label: 'Pedidos ($)',
+      stack: 'money',
+      yAxisKey: 'money',
+      valueFormatter: (v) => moneyFmt(v),
+    },
+    {
+      dataKey: 'paidAmount',
+      label: 'Pagados ($)',
+      stack: 'money',
+      yAxisKey: 'money',
+      valueFormatter: (v) => moneyFmt(v),
+    },
+  ]}
+  slotProps={{
+    legend: { hidden: false },
+    tooltip: {
+      trigger: 'axis',
+      itemContent: ({ series, item }) =>
+        `${series.label}: ${
+          series.yAxisKey === 'money'
+            ? moneyFmt(item.value)
+            : intFmt(item.value)
+        }`,
+    },
+  }}
+/>
+
 
       {/* Totales semanales */}
       <Box sx={{ mt: 1.5, display: 'flex', justifyContent: 'flex-end' }}>

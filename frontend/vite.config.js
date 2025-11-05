@@ -9,6 +9,6 @@ export default defineConfig({
     port: 5173, // O cualquier puerto que desees
     strictPort: true, // Asegura que se use este puerto específico
   },
-  base: '/softed/', // 👈 esto cambia las rutas para que sean relativas
+  base: '/eddeli/', // 👈 esto cambia las rutas para que sean relativas
 })
 

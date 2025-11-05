@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /softed/
+  RewriteBase /eddeli/
 
   # No tocar si es archivo o directorio real
   RewriteCond %{REQUEST_FILENAME} -f [OR]

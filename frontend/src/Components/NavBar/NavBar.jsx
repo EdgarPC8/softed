@@ -6,6 +6,9 @@ import {
   ListItem, ListItemButton, ListItemIcon, ListItemText, Accordion, AccordionSummary,
   AccordionDetails, Popover, Button, Avatar, Badge, Menu, MenuItem
 } from '@mui/material';
+import { useMediaQuery } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+
 
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -23,7 +26,7 @@ import CategoryIcon from '@mui/icons-material/Category';
 import {
   Terminal, Home, Settings, Poll, AssignmentInd, School, CalendarMonth, AccountTree,
   Info, ViewModule, VpnKey, Notifications as NotificationsIcon, ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon, Menu as MenuIcon, ExpandMore as ExpandMoreIcon, AccountBox,
+  ChevronRight as ChevronRightIcon, Menu as MenuIconBar, ExpandMore as ExpandMoreIcon, AccountBox,
   PeopleAlt, List as ListIcon, Workspaces, Storage, Dns, IntegrationInstructions,
   QuestionAnswer, MonetizationOn,
 } from '@mui/icons-material';
@@ -130,24 +133,12 @@ const permisos = {
   ],
   Administrador: [
     { name: "Home", icon: <Home />, link: "/" },
-    {
-      name: "Inventory Control", icon: <InventoryIcon />, menu: {
-        items: [
+    { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
           { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
-          { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
-          { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
-          { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },
-          { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
-          { name: "Categorias", link: "/inventory/categories", icon: <CategoryIcon /> },
-          { name: "Unidades", link: "/inventory/units", icon: <StraightenIcon /> },
-          { name: "Recetas", link: "/inventory/recipes", icon: <ReceiptLongIcon /> },
-        ],
-      },
-    },
+
     {
       name: "Configuracion", icon: <Settings />, menu: {
         items: [
-          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
           { name: "Información", link: "/info", icon: <Info /> },
         ],
       },
@@ -234,6 +225,12 @@ export default function MiniDrawer({ children }) {
   const location = useLocation();
   const [title, setTitle] = useState(activeApp.alias || activeApp.name || "App");
   const [logo, setLogo] = useState(activeApp.logo || "Logo");
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+const [mobileAnchorEl, setMobileAnchorEl] = useState(null);
+const openMobileMenu = Boolean(mobileAnchorEl);
+const handleOpenMobileMenu = (e) => setMobileAnchorEl(e.currentTarget);
+const handleCloseMobileMenu = () => setMobileAnchorEl(null);
+
 
 
 
@@ -308,7 +305,7 @@ export default function MiniDrawer({ children }) {
           {/* Botón menú solo si hay Drawer (logueado) */}
           {showDrawer && !open && (
             <IconButton color="inherit" aria-label="open drawer" onClick={handleDrawerOpen} edge="start" sx={{ mr: 2 }}>
-              <MenuIcon />
+              <MenuIconBar />
             </IconButton>
           )}
 
@@ -317,21 +314,63 @@ export default function MiniDrawer({ children }) {
           </Typography>
 
           {/* Navegación pública (Panadería / Pastelería / Repostería / Puntos de Venta) SOLO si NO está logeado */}
-          {!showUserActions && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
-              {PUBLIC_NAV.map((item) => (
-                <Button
-                  key={item.label}
-                  color="inherit"
-                  onClick={(e) => handleOpenPublicMenu(e, item)}
-                  startIcon={item.icon || null}
-                  sx={{ textTransform: "none", fontWeight: 600 }}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </Box>
-          )}
+    {/* Navegación pública SOLO si NO está logeado (responsiva) */}
+{!showUserActions && (
+  <>
+    {isMdUp ? (
+      // ✅ Vista desktop/tablet: botones en línea
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, ml: 2 }}>
+        {PUBLIC_NAV.map((item) => (
+          <Button
+            key={item.label}
+            color="inherit"
+            onClick={() => navigate(item.to)}
+            startIcon={item.icon || null}
+            sx={{ textTransform: "none", fontWeight: 600, whiteSpace: "nowrap" }}
+          >
+            {item.label}
+          </Button>
+        ))}
+      </Box>
+    ) : (
+      // ✅ Vista móvil: menú hamburguesa
+      <Box sx={{ ml: 1 }}>
+        <IconButton
+          color="inherit"
+          aria-label="abrir menú"
+          onClick={handleOpenMobileMenu}
+          edge="start"
+        >
+          <MenuIcon />
+        </IconButton>
+
+        <Menu
+          anchorEl={mobileAnchorEl}
+          open={openMobileMenu}
+          onClose={handleCloseMobileMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          transformOrigin={{ vertical: "top", horizontal: "left" }}
+          PaperProps={{ sx: { minWidth: 220 } }}
+        >
+          {PUBLIC_NAV.map((item) => (
+            <MenuItem
+              key={item.label}
+              onClick={() => {
+                handleCloseMobileMenu();
+                navigate(item.to);
+              }}
+              sx={{ gap: 1 }}
+            >
+              {item.icon || null}
+              <ListItemText primary={item.label} />
+            </MenuItem>
+          ))}
+        </Menu>
+      </Box>
+    )}
+  </>
+)}
+
 
           <Box sx={{ flexGrow: 1 }} />
 
@@ -454,7 +493,7 @@ export default function MiniDrawer({ children }) {
   }}
 />
 
-                <Typography variant="h6" color="black">{title}</Typography>
+                <Typography variant="h6" >{title}</Typography>
               </Box>
               <IconButton onClick={handleDrawerClose}>
                 {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}

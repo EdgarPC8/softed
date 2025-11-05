@@ -16,6 +16,7 @@ import {
     getProductRotationAnalysis,
     getIncomeExpenseBreakdown,
     getOrdersForCharts,
+    getExpensesForChart,
 } from "../../api/financeRequest";
 import { getAllOrdersRequest } from "../../api/ordersRequest";
 import TablePro from "../../Components/Tables/TablePro";
@@ -32,6 +33,8 @@ import OrderAccordionTable from "./components/OrderAccordionTable";
 import CustomersAccordionTable from "./components/CustomersAccordionTable";
 import BarChartOp from "./components/Charts/BarChartOp";
 import ChartCalendaryInfo from "./components/Charts/ChartCalendaryInfo";
+import ExpenseByDateLine from "./components/Charts/ExpenseByDateLine";
+import ExpensePurchaseStats from "./components/Charts/ExpensePurchaseStats";
 
 
 
@@ -51,6 +54,7 @@ export const DashBoardPage = () => {
     const [productsPorAgotarse, setProductsPorAgotarse] = useState([]);
     const [overView, setOverView] = useState([]);
     const [ordersForCharts, setOrdersForCharts] = useState([]);
+    const [expensesForChart, setExpensesForChart] = useState([]);
     const [productRotationAnalysis, setProductRotationAnalysis] = useState([]);
     const [incomeExpenseBreakdown, setIncomeExpenseBreakdown] = useState([]);
     const [weeklySales, setWeeklySales] = useState({});
@@ -86,7 +90,8 @@ export const DashBoardPage = () => {
                      resTopProductsDailySales,
                      resProductRotationAnalysis,
                      resIncomeExpenseBreakdown,
-                     resOrdersForCharts
+                     resOrdersForCharts,
+                     resExpensesForChart,
                     ] = await Promise.all([
                     getFinanceSummaryRequest(),
                     getAllIncomesRequest(),
@@ -97,7 +102,8 @@ export const DashBoardPage = () => {
                     getTopProductsDailySales(),
                     getProductRotationAnalysis(),
                     getIncomeExpenseBreakdown(),
-                    getOrdersForCharts()
+                    getOrdersForCharts(),
+                    getExpensesForChart()
                 ]);
                 setDataOrders(resOrders.data);
                 setSummary(resSummary.data);
@@ -107,6 +113,7 @@ export const DashBoardPage = () => {
                 setProductRotationAnalysis(resProductRotationAnalysis.data)
                 setIncomeExpenseBreakdown(resIncomeExpenseBreakdown.data)
                 setOrdersForCharts(resOrdersForCharts.data)
+                setExpensesForChart(resExpensesForChart.data)
 
                 const combined = [
                     ...resIncomes.data.map((i) => ({
@@ -305,8 +312,28 @@ export const DashBoardPage = () => {
                    <Grid container xs={12} md={12}>
                     <Grid item xs={12} md={12}>
                         <Paper style={paperStyle}>
+                        
+                        <ExpenseByDateLine sampleExpenses={expensesForChart}/>
+
+                        </Paper>
+
+                    </Grid>
+                  
+                </Grid>
+                   <Grid container xs={12} md={12}>
+                    <Grid item xs={12} md={12}>
+                        <Paper style={paperStyle}>
                         Tabla de clientes y sus pedidos y ganancias
                         <CustomersAccordionTable/>
+                        </Paper>
+
+                    </Grid>
+                  
+                </Grid>
+                   <Grid container xs={12} md={12}>
+                    <Grid item xs={12} md={12}>
+                        <Paper style={paperStyle}>
+                        <ExpensePurchaseStats sampleExpenses={expensesForChart}/>
                         </Paper>
 
                     </Grid>

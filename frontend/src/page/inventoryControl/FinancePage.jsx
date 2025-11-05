@@ -64,44 +64,57 @@ function FinancePage() {
     handleDialogDelete();
   };
 
-  const commonColumns = [
-    { label: "Fecha", id: "date" },
-    { label: "Concepto", id: "concept" },
-    { label: "Categoría", id: "category" },
-    { label: "Monto", id: "amount" },
-    {
-      label: "Acciones",
-      id: "actions",
-      render: (params) => (
+// 1) commonColumns: maneja params y stopPropagation
+const commonColumns = [
+  { label: "Fecha", id: "date" },
+  { label: "Concepto", id: "concept" },
+  { label: "Categoría", id: "category" },
+  { label: "Monto", id: "amount" },
+  {
+    label: "Acciones",
+    id: "actions",
+    // Si tu TablePro usa 'renderCell', pásalo también/además:
+    render: (params) => {
+      const row = params?.row ?? params; // tolera ambas formas
+      if (!row) return null;
+      return (
         <>
           <Tooltip title="Editar">
             <IconButton
-              onClick={() => {
-                setFormType(params.row.type || "income");
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation(); // 🔒 no dejes que la fila consuma el click
+                setFormType(row.type || "income");
                 setIsEditing(true);
-                setDataToEdit(params.row);
-                setTitleUserDialog("Editar " + (params.row.type === "expense" ? "Gasto" : "Ingreso"));
-                handleDialogUser();
+                setDataToEdit(row);
+                setTitleUserDialog("Editar " + (row.type === "expense" ? "Gasto" : "Ingreso"));
+                setOpenDialog(true);
               }}
             >
               <MonetizationOn />
             </IconButton>
           </Tooltip>
+
           <Tooltip title="Eliminar">
             <IconButton
-              onClick={() => {
-                setFormType(params.row.type || "income");
-                setDataToDelete(params.row);
-                handleDialogDelete();
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation(); // 🔒
+                setFormType(row.type || "income");
+                setDataToDelete(row);
+                setOpenDeleteDialog(true);
               }}
             >
               <MoneyOff />
             </IconButton>
           </Tooltip>
         </>
-      ),
+      );
     },
-  ];
+    // renderCell: ... // si tu TablePro usa esta prop, duplica el mismo contenido aquí
+  },
+];
+
 
   return (
     <Container>

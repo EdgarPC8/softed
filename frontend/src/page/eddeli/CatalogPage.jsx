@@ -1,4 +1,4 @@
-// CatalogoPage.jsx (catálogo general, con backend)
+// CatalogoPage.jsx (catálogo general, responsivo con Tabs → Select en móvil)
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
@@ -11,25 +11,25 @@ import {
   Card,
   CardContent,
   CardMedia,
-  CardActions,
-  Button,
-  Divider,
-  Tooltip,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Stack,
   Paper,
   Tabs,
   Tab,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Stack,
+  Tooltip,
+  useMediaQuery,
+  Accordion, AccordionSummary, AccordionDetails,
+
 } from "@mui/material";
+import { useTheme,alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import StarIcon from "@mui/icons-material/Star";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
@@ -39,10 +39,19 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { getCatalogBySection, getCategories } from "../../api/inventoryControlRequest";
 import { pathImg } from "../../api/axios";
 
+
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+// asumo que ya existen en tu proyecto:
+/// import SmartProductImage from "./SmartProductImage";
+/// import PriceDisplay from "./PriceDisplay";
+/// import WholesaleCalculator from "./WholesaleCalculator";
+/// import { toImageSrc } from "../utils/toImageSrc";
+
 // -------------------- Utilidades --------------------
 const currency = (n) => `$${Number(n || 0).toFixed(2)}`;
 
-// aplicar reglas mayoristas: toma descuento más alto cuyo minQty <= qty
 const applyWholesale = (basePrice, qty, tiers = []) => {
   if (!qty || qty <= 0) return { unitPrice: basePrice, discountApplied: 0 };
   let discount = 0;
@@ -112,9 +121,9 @@ function WholesaleCalculator({ product }) {
   const total = unitPrice * qty;
 
   return (
-    <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2 }}>
+    <Paper variant="outlined" sx={{ p: { xs: 1.25, sm: 1.5 }, borderRadius: 2 }}>
       <Stack spacing={1}>
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
           <CalculateIcon fontSize="small" />
           <Typography variant="subtitle2" fontWeight={700}>
             Calculadora mayorista
@@ -130,7 +139,8 @@ function WholesaleCalculator({ product }) {
           label="Cantidad"
           value={qty}
           onChange={(e) => setQty(Math.max(0, parseInt(e.target.value || 0, 10)))}
-          inputProps={{ min: 0, step: 1 }}
+          inputProps={{ min: 0, step: 1, inputMode: "numeric", pattern: "[0-9]*" }}
+          fullWidth
         />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -166,7 +176,120 @@ const toImageSrc = (maybeFilenameOrUrl) => {
   return `${pathImg}${maybeFilenameOrUrl}`;
 };
 
-function ProductCard({ entry }) {
+
+function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }) {
+  const [imgSrc, setImgSrc] = React.useState(src || "");
+  const [mode, setMode] = React.useState("unknown"); // 'cover-16-9' | 'contain-blur' | 'empty'
+
+  const fallbackSvg = (txt) =>
+    "data:image/svg+xml;charset=UTF-8," +
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
+         <defs>
+           <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+             <stop offset='0%' stop-color='#e0e0e0'/>
+             <stop offset='100%' stop-color='#f5f5f5'/>
+           </linearGradient>
+         </defs>
+         <rect width='100%' height='100%' fill='url(#g)'/>
+         <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
+               font-family='Arial' font-size='42' fill='#9e9e9e' opacity='0.8'>
+           ${txt || "Sin imagen"}
+         </text>
+       </svg>`
+    );
+
+  React.useEffect(() => {
+    if (!src) {
+      setImgSrc("");
+      setMode("empty");
+    } else {
+      setImgSrc(src);
+      setMode("unknown");
+    }
+  }, [src]);
+
+  const handleLoad = (e) => {
+    const el = e.currentTarget;
+    if (!el || !el.naturalWidth || !el.naturalHeight) return;
+    const ar = el.naturalWidth / el.naturalHeight;
+    const is16x9 = Math.abs(ar - 16 / 9) <= 0.06;
+    setMode(is16x9 ? "cover-16-9" : "contain-blur");
+  };
+
+  const showAspect16x9 =
+    mode === "cover-16-9" || mode === "unknown" || mode === "empty";
+
+  // Fuente final para el <img>: SIEMPRE renderizamos imagen (tu src o el fallback)
+  const finalSrc = imgSrc || fallbackSvg(alt);
+
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        width: "100%",
+        overflow: "hidden",
+        borderTopLeftRadius: (t) => t.shape.borderRadius * 3,
+        borderTopRightRadius: (t) => t.shape.borderRadius * 3,
+        // Mantener 16:9 en empty/unknown/16:9; para otros, usamos alturas responsivas
+        ...(showAspect16x9
+          ? { aspectRatio: "16 / 9" }
+          : { height: heights }),
+        bgcolor: "background.default",
+      }}
+    >
+      {/* Blur de fondo SOLO cuando no es 16:9 */}
+      {mode === "contain-blur" && (
+        <Box
+          aria-hidden
+          sx={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${finalSrc})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(22px)",
+            transform: "scale(1.15)",
+            opacity: 0.6,
+          }}
+        />
+      )}
+
+      {/* Imagen principal — SIEMPRE visible */}
+      <Box
+        component="img"
+        src={finalSrc}
+        alt={alt}
+        onLoad={handleLoad}
+        onError={() => {
+          // Si falla tu imagen, caemos al fallback pero mantenemos el <img>
+          setImgSrc("");
+          setMode("empty");
+        }}
+        sx={{
+          position: "relative",
+          display: "block",
+          width: "100%",
+          height: "100%",
+          // 16:9 → cover; otros → contain (centrado)
+          objectFit: showAspect16x9 ? "cover" : "contain",
+          objectPosition: "center",
+        }}
+        loading="lazy"
+        decoding="async"
+      />
+    </Box>
+  );
+}
+
+
+
+
+
+ function ProductCard({ entry }) {
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+
   const p = entry.product || {};
   const overrideImg = toImageSrc(entry.imageUrl);
   const productImg = toImageSrc(p.primaryImageUrl);
@@ -185,24 +308,20 @@ function ProductCard({ entry }) {
   const weight = p.standardWeightGrams > 0 ? `${p.standardWeightGrams} g` : undefined;
   const [qtyCalc, setQtyCalc] = useState(0);
 
+  // 🔻 Descripción
+  const hasDesc = Boolean(p.desc && String(p.desc).trim().length > 0);
+  const [openDesc, setOpenDesc] = useState(false);
+
   return (
     <Card sx={{ borderRadius: 3, height: "100%", display: "flex", flexDirection: "column" }}>
-      <CardMedia
-        component="img"
-        image={img}
+      <SmartProductImage
+        src={img}
         alt={p.name}
-        height="160"
-        onError={(e) => {
-          e.currentTarget.src =
-            "data:image/svg+xml;charset=UTF-8," +
-            encodeURIComponent(
-              `<svg xmlns='http://www.w3.org/2000/svg' width='480' height='320'><rect width='100%' height='100%' fill='#eee'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='16' fill='#777'>${p.name || "Producto"}</text></svg>`
-            );
-        }}
+        heights={{ xs: 160, sm: 180, md: 200 }}
       />
 
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Stack direction="row" spacing={1} alignItems="center" mb={1} flexWrap="wrap">
+      <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 } }}>
+        <Stack direction="row" spacing={1} alignItems="center" mb={1} flexWrap="wrap" rowGap={0.5}>
           {entry.badge && (
             <Chip size="small" color="primary" label={entry.badge} sx={{ fontWeight: 700 }} />
           )}
@@ -215,14 +334,18 @@ function ProductCard({ entry }) {
               sx={{ fontWeight: 700 }}
             />
           )}
-          <StatusBadge status={p.status} />
         </Stack>
 
-        <Typography variant="h6" fontWeight={800} gutterBottom>
+        <Typography
+          variant={isXs ? "subtitle1" : "h6"}
+          fontWeight={800}
+          gutterBottom
+          sx={{ lineHeight: 1.2 }}
+        >
           {entry.title || p.name}
         </Typography>
 
-        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" mb={1}>
+        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" mb={1} rowGap={0.5}>
           {p.unitAbbr && <Chip size="small" icon={<BakeryDiningIcon />} label={p.unitAbbr} />}
           {weight && <Chip size="small" icon={<Inventory2Icon />} label={weight} />}
           {p.tags?.map((t) => (
@@ -230,33 +353,70 @@ function ProductCard({ entry }) {
           ))}
         </Stack>
 
-        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1}
+          alignItems={{ xs: "stretch", sm: "center" }}
+          mb={1}
+        >
           <TextField
             type="number"
             size="small"
             label="Cant. para cálculo"
             value={qtyCalc}
             onChange={(e) => setQtyCalc(Math.max(0, parseInt(e.target.value || 0, 10)))}
-            inputProps={{ min: 0, step: 1 }}
-            sx={{ width: 150 }}
+            inputProps={{ min: 0, step: 1, inputMode: "numeric", pattern: "[0-9]*" }}
+            sx={{ width: { xs: "100%", sm: 160 } }}
           />
           <PriceDisplay product={{ ...p, wholesaleTiers }} qty={qtyCalc} />
         </Stack>
 
         <WholesaleCalculator product={{ ...p, wholesaleTiers }} />
+
+        {/* 👉 Acordeón de descripción */}
+        {hasDesc && (
+          <Accordion
+            expanded={openDesc}
+            onChange={(_, v) => setOpenDesc(v)}
+            disableGutters
+            elevation={0}
+            sx={{
+              mt: 1,
+              bgcolor: "transparent",
+              borderTop: "1px dashed",
+              borderColor: alpha(theme.palette.divider, 0.6),
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="product-desc-content"
+              id="product-desc-header"
+              sx={{
+                minHeight: 40,
+                "& .MuiAccordionSummary-content": { my: 0.5 },
+              }}
+            >
+              <Typography variant="subtitle2" fontWeight={700}>
+                {openDesc ? "Ocultar descripción" : "Ver descripción"}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ pt: 0, pb: 1 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ whiteSpace: "pre-wrap", lineHeight: 1.4 }}
+              >
+                {p.desc}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        )}
       </CardContent>
-
-      <Divider />
-
-      <CardActions sx={{ p: 2, pt: 1 }}>
-        <Button variant="contained" startIcon={<AddShoppingCartIcon />}>
-          Agregar
-        </Button>
-        <Button variant="text">Detalles</Button>
-      </CardActions>
     </Card>
   );
 }
+
 
 // -------------------- Secciones de catálogo --------------------
 const SECTIONS = [
@@ -273,30 +433,30 @@ const SECTIONS = [
 ];
 
 export default function CatalogoPage() {
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("todas"); // slug de categoría o "todas"
+  const [category, setCategory] = useState("todas");
   const [sort, setSort] = useState("default");
   const [section, setSection] = useState("home");
 
-  const [categories, setCategories] = useState([{ value: "todas", label: "Todas" }]); // viene de BD
+  const [categories, setCategories] = useState([{ value: "todas", label: "Todas" }]);
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Cargar categorías desde la BD
+  // Cargar categorías
   const fetchCategories = async () => {
     try {
       const { data } = await getCategories({ public: true });
-      
-
-      const opts =
-        Array.isArray(data)
-          ? [{ value: "todas", label: "Todas" }].concat(
-              data.map((c) => ({
-                value: slugify(c.name || String(c.id)),
-                label: c.name,
-              }))
-            )
-          : [{ value: "todas", label: "Todas" }];
+      const opts = Array.isArray(data)
+        ? [{ value: "todas", label: "Todas" }].concat(
+            data.map((c) => ({
+              value: slugify(c.name || String(c.id)),
+              label: c.name,
+            }))
+          )
+        : [{ value: "todas", label: "Todas" }];
       setCategories(opts);
     } catch (e) {
       console.error("Error cargando categorías:", e);
@@ -331,12 +491,10 @@ export default function CatalogoPage() {
   const filtered = useMemo(() => {
     let list = [...entries];
 
-    // filtra por categoría usando el slug que ya prepara el backend en product.categorySlug
     if (category !== "todas") {
       list = list.filter((e) => e.product?.categorySlug === category);
     }
 
-    // filtro por búsqueda (nombre, título o tags)
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter(
@@ -347,7 +505,6 @@ export default function CatalogoPage() {
       );
     }
 
-    // orden
     if (sort === "priceAsc") {
       list.sort((a, b) => Number(a.product?.price) - Number(b.product?.price));
     } else if (sort === "priceDesc") {
@@ -363,43 +520,91 @@ export default function CatalogoPage() {
   const regularList = filtered;
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: 1400, mx: "auto" }}>
+    <Box sx={{ p: { xs: 1.5, sm: 3 }, maxWidth: 1400, mx: "auto" }}>
       {/* Header */}
-      <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        flexWrap="wrap"
+        gap={2}
+        sx={{ mb: { xs: 1.5, sm: 2 } }}
+      >
         <Stack direction="row" spacing={1} alignItems="center">
           <BakeryDiningIcon />
-          <Typography variant="h5" fontWeight={800}>Catálogo</Typography>
+          <Typography variant={isXs ? "h6" : "h5"} fontWeight={800}>
+            Catálogo
+          </Typography>
         </Stack>
       </Stack>
 
-      {/* Secciones (ERP_catalog.section) */}
-      <Paper variant="outlined" sx={{ borderRadius: 3, mb: 2 }}>
-        <Tabs
-          value={section}
-          onChange={(_, val) => setSection(val)}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{ px: 1 }}
-        >
-          {SECTIONS.map((s) => (
-            <Tab key={s.value} label={s.label} value={s.value} />
-          ))}
-        </Tabs>
-      </Paper>
+      {/* Secciones: en móvil (xs) => Select; en sm+ => Tabs compactas */}
+      {isXs ? (
+        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+          <InputLabel>Sección</InputLabel>
+          <Select
+            value={section}
+            label="Sección"
+            onChange={(e) => setSection(e.target.value)}
+            MenuProps={{ PaperProps: { style: { maxHeight: 360 } } }}
+          >
+            {SECTIONS.map((s) => (
+              <MenuItem key={s.value} value={s.value}>
+                {s.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ) : (
+        <Paper variant="outlined" sx={{ borderRadius: 3, mb: 2, overflow: "hidden" }}>
+          <Tabs
+            value={section}
+            onChange={(_, val) => setSection(val)}
+            variant="scrollable"
+            allowScrollButtonsMobile
+            scrollButtons="auto"
+            textColor="primary"
+            indicatorColor="primary"
+            sx={{
+              px: 1,
+              minHeight: 36,
+              "& .MuiTabs-indicator": { height: 3 },
+              "& .MuiTab-root": {
+                minHeight: 36,
+                minWidth: 112,
+                px: 1.5,
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: { sm: 13, md: 14 },
+              },
+            }}
+            TabIndicatorProps={{ style: { borderRadius: 2 } }}
+          >
+            {SECTIONS.map((s) => (
+              <Tab key={s.value} label={s.label} value={s.value} />
+            ))}
+          </Tabs>
+        </Paper>
+      )}
 
       {/* Filtros */}
-      <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, mb: 3 }}>
-        <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
+      <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 }, borderRadius: 3, mb: { xs: 2, sm: 3 } }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          alignItems={{ xs: "stretch", md: "center" }}
+          gap={1.25}
+          flexWrap="wrap"
+        >
           <TextField
             placeholder="Buscar producto o etiqueta…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             size="small"
-            sx={{ minWidth: 260 }}
+            fullWidth
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <IconButton size="small">
+                  <IconButton size="small" edge="start" aria-label="buscar">
                     <SearchIcon />
                   </IconButton>
                 </InputAdornment>
@@ -407,12 +612,13 @@ export default function CatalogoPage() {
             }}
           />
 
-          <FormControl size="small" sx={{ minWidth: 160 }}>
+          <FormControl size="small" sx={{ minWidth: { xs: "100%", md: 160 } }}>
             <InputLabel>Categoría</InputLabel>
             <Select
               value={category}
               label="Categoría"
               onChange={(e) => setCategory(e.target.value)}
+              fullWidth
             >
               {categories.map((c) => (
                 <MenuItem key={c.value} value={c.value}>
@@ -422,9 +628,9 @@ export default function CatalogoPage() {
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 180 }}>
+          <FormControl size="small" sx={{ minWidth: { xs: "100%", md: 180 } }}>
             <InputLabel>Ordenar</InputLabel>
-            <Select value={sort} label="Ordenar" onChange={(e) => setSort(e.target.value)}>
+            <Select value={sort} label="Ordenar" onChange={(e) => setSort(e.target.value)} fullWidth>
               <MenuItem value="default">Recomendados</MenuItem>
               <MenuItem value="uniqueFirst">Únicos primero</MenuItem>
               <MenuItem value="priceAsc">Precio ↑</MenuItem>
@@ -436,12 +642,14 @@ export default function CatalogoPage() {
 
       {/* Únicos del día */}
       {uniqueToday.length > 0 && (
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: { xs: 2, sm: 3 } }}>
           <Stack direction="row" alignItems="center" spacing={1} mb={1}>
             <StarIcon color="warning" />
-            <Typography variant="h6" fontWeight={800}>Únicos del día</Typography>
+            <Typography variant={isXs ? "subtitle1" : "h6"} fontWeight={800}>
+              Únicos del día
+            </Typography>
           </Stack>
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 1.5, sm: 2 }}>
             {uniqueToday.map((e) => (
               <Grid key={e.id} item xs={12} sm={6} md={4} lg={3}>
                 <ProductCard entry={e} />
@@ -454,33 +662,33 @@ export default function CatalogoPage() {
       {/* Catálogo por sección */}
       <Stack direction="row" alignItems="center" spacing={1} mb={1}>
         <LocalOfferIcon />
-        <Typography variant="h6" fontWeight={800}>
+        <Typography variant={isXs ? "subtitle1" : "h6"} fontWeight={800}>
           {SECTIONS.find((s) => s.value === section)?.label || "Catálogo"}
         </Typography>
       </Stack>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={{ xs: 1.5, sm: 2 }}>
         {(loading ? Array.from({ length: 8 }) : regularList).map((e, idx) => (
           <Grid key={e?.id || idx} item xs={12} sm={6} md={4} lg={3}>
             {loading ? (
-              <Paper sx={{ height: 320, borderRadius: 3, bgcolor: "action.hover" }} />
+              <Paper
+                sx={{
+                  height: { xs: 260, sm: 300, md: 320 },
+                  borderRadius: 3,
+                  bgcolor: "action.hover",
+                }}
+              />
             ) : (
               <ProductCard entry={e} />
             )}
           </Grid>
         ))}
       </Grid>
-
-      <Box sx={{ mt: 4, textAlign: "center", color: "text.secondary" }}>
-        <Typography variant="body2">
-          Tip: usa la calculadora mayorista dentro de cada producto para cotizar cantidades grandes al instante.
-        </Typography>
-      </Box>
     </Box>
   );
 }
 
-// Pequeño helper para “slugificar” nombres de categoría en el cliente
+// Helper slugify
 function slugify(s = "") {
   return String(s)
     .normalize("NFD")

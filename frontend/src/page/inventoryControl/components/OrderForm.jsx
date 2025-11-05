@@ -81,8 +81,8 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
   useEffect(() => {
     if (!selectedProductId) return;
     const product = products.find((p) => p.id === Number(selectedProductId));
-    if (product && product.price) {
-      setValue("price", product.price);
+    if (product && product.distributorPrice) {
+      setValue("price", product.distributorPrice);
     }
   }, [selectedProductId, products, setValue]);
 
@@ -202,7 +202,7 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
       const loadedItems = (datos.ERP_order_items || []).map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
-        price: item.price,
+        price: item.distributorPrice,
         name: item.ERP_inventory_product?.name || "",
       }));
       setItems(loadedItems);
@@ -272,7 +272,7 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
           <ul>
             {items.map((item, index) => (
               <li key={index}>
-                {item.name} - {item.quantity} × ${Number(item.price).toFixed(2)}
+                {item.name} - {item.quantity} × ${Number(item.distributorPrice).toFixed(2)}
                 <Button
                   color="error"
                   size="small"
