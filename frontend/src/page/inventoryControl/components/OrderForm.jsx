@@ -16,6 +16,8 @@ import {
 import { getAllProducts } from "../../../api/inventoryControlRequest";
 import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
+import SearchableSelect from "../../../Components/SearchableSelect";
+
 
 /* ========= Utils de fecha en LOCAL (sin UTC) ========= */
 const pad2 = (n) => String(n).padStart(2, "0");
@@ -72,6 +74,8 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
   const [products, setProducts] = useState([]);
   const [items, setItems] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState("");
+
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const { toast: toastAuth } = useAuth();
 
@@ -213,7 +217,7 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
     <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit(submitOrder)}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField
+          {/* <TextField
             select
             label="Seleccionar Cliente"
             fullWidth
@@ -226,11 +230,18 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
                 {c.name} - {c.phone}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
+<SearchableSelect
+  label="Seleccionar Cliente"
+  items={customers}
+  value={selectedCustomer}
+  onChange={setSelectedCustomer} // 👌 esto también sirve
+/>
+
         </Grid>
 
-        <Grid item xs={4}>
-          <TextField
+        <Grid item xs={6}>
+          {/* <TextField
             label="Producto"
             select
             fullWidth
@@ -242,9 +253,15 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
                 {product.name}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
+<SearchableSelect
+  label="Seleccionar Producto"
+  items={products}
+  value={selectedProduct}
+  onChange={setSelectedProduct} // 👌 esto también sirve
+/>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <TextField
             label="Cantidad"
             type="number"
@@ -253,7 +270,7 @@ function OrderForm({ onClose, reload, isEditing = false, datos = null }) {
             {...register("quantity")}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <TextField
             label="Precio"
             type="number"

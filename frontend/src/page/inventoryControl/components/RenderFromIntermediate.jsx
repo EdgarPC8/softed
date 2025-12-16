@@ -32,6 +32,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CloseIcon from "@mui/icons-material/Close";
 
+
 import {
   getAllProducts,
   simulateFromIntermediate,
@@ -39,6 +40,7 @@ import {
   registerProductionIntermediateFromPayload,
 } from "../../../api/inventoryControlRequest";
 import { useAuth } from "../../../context/AuthContext";
+import SearchableSelect from "../../../Components/SearchableSelect";
 
 /* --- Utils --- */
 const numberOrZero = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
@@ -924,7 +926,7 @@ export default function RenderFromIntermediate({fetchData}) {
       {/* Controles */}
       <Paper sx={{ p: 2, mb: 2 }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-end">
-          <TextField
+          {/* <TextField
             label="Intermedio"
             select
             fullWidth
@@ -937,7 +939,14 @@ export default function RenderFromIntermediate({fetchData}) {
                 {p.name}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
+
+          <SearchableSelect
+  label="Seleccionar Producto Intermedio"
+  items={products}
+  value={intermediateId}
+  onChange={(e) => setIntermediateId(String(e))}
+/>
 
           <Button
             variant="contained"

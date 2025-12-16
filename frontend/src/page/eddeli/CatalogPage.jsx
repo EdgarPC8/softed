@@ -92,11 +92,17 @@ function StatusBadge({ status }) {
 
 function PriceDisplay({ product, qty = 0 }) {
   const base = Number(product.price || 0);
-  const { unitPrice, discountApplied } = applyWholesale(base, qty, product.wholesaleTiers);
+  const { unitPrice, discountApplied } = applyWholesale(
+    base,
+    qty,
+    product.wholesaleTiers
+  );
   const hasDiscount = discountApplied > 0;
+  const total = unitPrice * (qty || 0);
 
   return (
     <Stack spacing={0.5}>
+      {/* Precio unitario */}
       <Stack direction="row" alignItems="center" spacing={1}>
         <Typography variant="h6" fontWeight={800}>
           {currency(unitPrice)}
@@ -105,14 +111,24 @@ function PriceDisplay({ product, qty = 0 }) {
           <Chip size="small" color="success" label={`-${discountApplied}% mayorista`} />
         )}
       </Stack>
+
       {hasDiscount && (
         <Typography variant="caption" color="text.secondary">
           Precio base: {currency(base)}
         </Typography>
       )}
+
+      {/* 🔹 Total estimado en función de la cantidad */}
+      {qty > 0 && (
+        <Typography variant="body2" color="text.secondary">
+          Total estimado ({qty} {qty === 1 ? "unidad" : "unidades"}):{" "}
+          <strong>{currency(total)}</strong>
+        </Typography>
+      )}
     </Stack>
   );
 }
+
 
 function WholesaleCalculator({ product }) {
   const [qty, setQty] = useState(12);
@@ -285,8 +301,7 @@ function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }
 
 
 
-
- function ProductCard({ entry }) {
+function ProductCard({ entry, onPreview }) {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -295,7 +310,6 @@ function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }
   const productImg = toImageSrc(p.primaryImageUrl);
   const img = overrideImg || productImg || "";
 
-  // 🔹 Reglas efectivas catálogo > producto
   const wholesaleTiers =
     entry.wholesaleOverrideRules && entry.wholesaleOverrideRules.length > 0
       ? entry.wholesaleOverrideRules
@@ -305,25 +319,50 @@ function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }
       ? JSON.parse(p.wholesaleRules || "[]")
       : [];
 
-  const weight = p.standardWeightGrams > 0 ? `${p.standardWeightGrams} g` : undefined;
-  const [qtyCalc, setQtyCalc] = useState(0);
+  const weight =
+    p.standardWeightGrams > 0 ? `${p.standardWeightGrams} g` : undefined;
 
-  // 🔻 Descripción
+  // 🔹 Mínimo por pedido (si viene null/0, usamos 1)
+  const minOrderQty =
+    typeof entry.minOrderQty === "number" && entry.minOrderQty > 0
+      ? entry.minOrderQty
+      : 1;
+
+  // 🔹 Iniciamos el cálculo con el mínimo sugerido
+  const [qtyCalc, setQtyCalc] = useState(minOrderQty);
+
   const hasDesc = Boolean(p.desc && String(p.desc).trim().length > 0);
   const [openDesc, setOpenDesc] = useState(false);
 
   return (
-    <Card sx={{ borderRadius: 3, height: "100%", display: "flex", flexDirection: "column" }}>
-      <SmartProductImage
-        src={img}
-        alt={p.name}
-        heights={{ xs: 160, sm: 180, md: 200 }}
-      />
+    <Card
+      sx={{ borderRadius: 3, height: "100%", display: "flex", flexDirection: "column" }}
+    >
+      {/* Imagen clickeable */}
+      <Box onClick={() => onPreview && onPreview(entry)} sx={{ cursor: "pointer" }}>
+        <SmartProductImage
+          src={img}
+          alt={p.name}
+          heights={{ xs: 160, sm: 180, md: 200 }}
+        />
+      </Box>
 
       <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 } }}>
-        <Stack direction="row" spacing={1} alignItems="center" mb={1} flexWrap="wrap" rowGap={0.5}>
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          mb={1}
+          flexWrap="wrap"
+          rowGap={0.5}
+        >
           {entry.badge && (
-            <Chip size="small" color="primary" label={entry.badge} sx={{ fontWeight: 700 }} />
+            <Chip
+              size="small"
+              color="primary"
+              label={entry.badge}
+              sx={{ fontWeight: 700 }}
+            />
           )}
           {p.isUniqueToday && (
             <Chip
@@ -345,14 +384,26 @@ function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }
           {entry.title || p.name}
         </Typography>
 
-        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" mb={1} rowGap={0.5}>
-          {p.unitAbbr && <Chip size="small" icon={<BakeryDiningIcon />} label={p.unitAbbr} />}
-          {weight && <Chip size="small" icon={<Inventory2Icon />} label={weight} />}
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          flexWrap="wrap"
+          mb={1}
+          rowGap={0.5}
+        >
+          {p.unitAbbr && (
+            <Chip size="small" icon={<BakeryDiningIcon />} label={p.unitAbbr} />
+          )}
+          {weight && (
+            <Chip size="small" icon={<Inventory2Icon />} label={weight} />
+          )}
           {p.tags?.map((t) => (
             <Chip key={t} size="small" label={t} />
           ))}
         </Stack>
 
+        {/* 🔹 Cantidad para cálculo + Precio, respetando el mínimo */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1}
@@ -364,16 +415,28 @@ function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }
             size="small"
             label="Cant. para cálculo"
             value={qtyCalc}
-            onChange={(e) => setQtyCalc(Math.max(0, parseInt(e.target.value || 0, 10)))}
-            inputProps={{ min: 0, step: 1, inputMode: "numeric", pattern: "[0-9]*" }}
+            onChange={(e) => {
+              const val = parseInt(e.target.value || 0, 10);
+              // Nunca bajar del mínimo
+              setQtyCalc(Math.max(minOrderQty, Number.isNaN(val) ? minOrderQty : val));
+            }}
+            inputProps={{
+              min: minOrderQty,
+              step: 1,
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+            }}
             sx={{ width: { xs: "100%", sm: 160 } }}
+            helperText={`Pedido mínimo: ${minOrderQty} ${
+              minOrderQty === 1 ? "unidad" : "unidades"
+            }`}
           />
           <PriceDisplay product={{ ...p, wholesaleTiers }} qty={qtyCalc} />
         </Stack>
 
+        {/* 🔹 Calculadora mayorista (sigue igual, solo usando reglas) */}
         <WholesaleCalculator product={{ ...p, wholesaleTiers }} />
 
-        {/* 👉 Acordeón de descripción */}
         {hasDesc && (
           <Accordion
             expanded={openDesc}
@@ -416,6 +479,7 @@ function SmartProductImage({ src, alt, heights = { xs: 160, sm: 180, md: 200 } }
     </Card>
   );
 }
+
 
 
 // -------------------- Secciones de catálogo --------------------

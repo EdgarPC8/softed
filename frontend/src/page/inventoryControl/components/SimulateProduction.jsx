@@ -1,5 +1,5 @@
 // RenderFromFinal.jsx
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Box,
@@ -27,7 +27,7 @@ import {
   registerProductionFinalFromPayload,
 } from "../../../api/inventoryControlRequest";
 import { useAuth } from "../../../context/AuthContext";
-
+import SearchableSelect from "../../../Components/SearchableSelect";
 /* ---------------- Utils ---------------- */
 const numberOrZero = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 
@@ -258,6 +258,8 @@ export default function RenderFromFinal({ fetchData }) {
   const [quantity, setQuantity] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [resultado, setResultado] = React.useState(null);
+  const [selectedProduct, setSelectedProduct] = useState("");
+
 
   const { toast: toastAuth } = useAuth();
 
@@ -328,7 +330,7 @@ export default function RenderFromFinal({ fetchData }) {
       <Paper sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2} alignItems="flex-end">
           <Grid item xs={12} md={7}>
-            <TextField
+            {/* <TextField
               label="Producto final"
               select
               fullWidth
@@ -342,7 +344,14 @@ export default function RenderFromFinal({ fetchData }) {
                   {p.name}
                 </MenuItem>
               ))}
-            </TextField>
+            </TextField> */}
+<SearchableSelect
+  label="Seleccionar Producto Final"
+  items={products}
+  value={productId}
+  onChange={(e) => setProductId(String(e))}
+/>
+
           </Grid>
 
           <Grid item xs={12} md={3}>

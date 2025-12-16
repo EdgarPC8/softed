@@ -10,17 +10,15 @@ import {
   useTheme,
   Tooltip,
 } from "@mui/material";
-import { reloadBD, saveBackup, downloadBackup } from '../api/comandsRequest';
+import { reloadBD, saveBackup, downloadBackup, uploadBackup } from '../api/comandsRequest';
 import BackupIcon from '@mui/icons-material/Backup';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SaveIcon from '@mui/icons-material/Save';
-import Person from '@mui/icons-material/Person';
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useState } from "react";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import BackupViewerModal from '../Components/ViewModal/BackupViewerModal';
 import StudentViewerModal from '../Components/ViewModal/StudentViewerModal';
-
+import { useAuth } from "../context/AuthContext";   // 👈 IMPORTANTE
 
 
 export default function Comandos() {
@@ -31,28 +29,73 @@ export default function Comandos() {
   const [studentsData, setStudentsData] = useState([]);
   const [openStudentsDialog, setOpenStudentsDialog] = useState(false);
 
+  const { toast } = useAuth(); // 👈 USAMOS EL MISMO TOAST QUE EN Accounts
+
   const arrayComands = [
+    {
+      name: "Subir backup.json (reemplazar original)",
+      info: "Reemplaza el archivo backup.json original usado para recargar la BD",
+      icon: <BackupIcon sx={{ fontSize: 50 }} />,
+      function: () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json";
+  
+        input.onchange = (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+  
+          const formData = new FormData();
+          formData.append("backup", file); // 👈 nombre del campo igual al de multer
+  
+          toast({
+            promise: uploadBackup(formData),
+            successMessage: "Backup original reemplazado con éxito",
+            onSuccess: (res) => {
+              console.log("Upload backup result:", res.data);
+            },
+          });
+        };
+  
+        input.click();
+      },
+    },
     {
       name: "Descargar backup.json",
       info: "Descarga la base de datos en formato JSON",
       icon: <BackupIcon sx={{ fontSize: 50 }} />,
-      function: downloadBackup
+      function: () => {
+        toast({
+          promise: downloadBackup(),
+          successMessage: "Backup descargado con éxito",
+        });
+      },
     },
     {
       name: "Recargar BD",
       info: "Recarga el contenido actual de la base de datos",
       icon: <RefreshIcon sx={{ fontSize: 50 }} />,
-      function: reloadBD
+      function: () => {
+        toast({
+          promise: reloadBD(),
+          successMessage: "Base de datos recargada con éxito",
+        });
+      },
     },
     {
       name: "Guardar una copia backup.json",
       info: "Guarda una copia local de la base de datos",
       icon: <SaveIcon sx={{ fontSize: 50 }} />,
-      function: saveBackup
+      function: () => {
+        toast({
+          promise: saveBackup(),
+          successMessage: "Copia de seguridad guardada con éxito",
+        });
+      },
     },
     {
       name: "Cargar Matriculados backup.json",
-      info: "Carga un archivo JSON de Matriculados del istms",
+      info: "Carga un archivo JSON de Matriculados del ISTMS",
       icon: <BackupIcon sx={{ fontSize: 50 }} />,
       function: () => {
         const input = document.createElement("input");
@@ -70,7 +113,10 @@ export default function Comandos() {
                 settitleDialog("Vista del Backup");
                 setOpenDialog(true);
               } catch (err) {
-                toast.error("Archivo inválido o corrupto", { position: "top-right" });
+                // 👇 ahora usando el mismo toast del contexto
+                toast.error("Archivo inválido o corrupto", {
+                  position: "top-right",
+                });
               }
             };
             reader.readAsText(file);
@@ -78,12 +124,11 @@ export default function Comandos() {
         };
 
         input.click();
-      }
-
+      },
     },
     {
       name: "Cargar Estudiantes backup.json",
-      info: "Carga un archivo JSON de los Estudiantes del istms",
+      info: "Carga un archivo JSON de los Estudiantes del ISTMS",
       icon: <BackupIcon sx={{ fontSize: 50 }} />,
       function: () => {
         const input = document.createElement("input");
@@ -101,7 +146,9 @@ export default function Comandos() {
                 settitleDialog("Vista del Backup Estudiantes");
                 setOpenStudentsDialog(true);
               } catch (err) {
-                toast.error("Archivo inválido o corrupto", { position: "top-right" });
+                toast.error("Archivo inválido o corrupto", {
+                  position: "top-right",
+                });
               }
             };
             reader.readAsText(file);
@@ -109,16 +156,18 @@ export default function Comandos() {
         };
 
         input.click();
-      }
-
+      },
     },
   ];
+
   const handleDialog = () => {
     setOpenDialog(!openDialog);
   };
+
   const handleDialog2 = () => {
     setOpenStudentsDialog(!openStudentsDialog);
   };
+
   return (
     <Box>
       <SimpleDialog
@@ -128,8 +177,12 @@ export default function Comandos() {
         maxWidth="xl"
         fullWidth
       >
-        <BackupViewerModal jsonData={backupData} onClose={() => setOpenDialog(false)} />
+        <BackupViewerModal
+          jsonData={backupData}
+          onClose={() => setOpenDialog(false)}
+        />
       </SimpleDialog>
+
       <SimpleDialog
         open={openStudentsDialog}
         onClose={handleDialog2}
@@ -137,11 +190,10 @@ export default function Comandos() {
         maxWidth="xl"
         fullWidth
       >
-        <StudentViewerModal jsonData={studentsData}  />
+        <StudentViewerModal jsonData={studentsData} />
       </SimpleDialog>
 
-
-      <Grid container spacing={3} sx={{ mt: 4, justifyContent: 'center' }}>
+      <Grid container spacing={3} sx={{ mt: 4, justifyContent: "center" }}>
         {arrayComands.map((comand, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card
@@ -149,38 +201,50 @@ export default function Comandos() {
               sx={{
                 backgroundColor: theme.palette.primary.dark,
                 borderRadius: 3,
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                '&:hover': {
-                  transform: 'scale(1.03)',
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.03)",
                   boxShadow: `0 4px 20px ${theme.palette.primary.light}`,
                 },
               }}
             >
               <CardContent>
-                <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  mb={2}
+                >
                   <Tooltip title={comand.name}>
-                    <Box sx={{ color: theme.palette.primary.main }}>{comand.icon}</Box>
+                    <Box sx={{ color: theme.palette.primary.main }}>
+                      {comand.icon}
+                    </Box>
                   </Tooltip>
                 </Box>
-                <Typography variant="h6" align="center" color="colors.gray" gutterBottom>
+                <Typography
+                  variant="h6"
+                  align="center"
+                  color="colors.gray"
+                  gutterBottom
+                >
                   {comand.name}
                 </Typography>
                 <Typography variant="body2" align="center" color="colors.gray">
                   {comand.info}
                 </Typography>
               </CardContent>
-              <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
+              <CardActions sx={{ justifyContent: "center", pb: 2 }}>
                 <Button
                   variant="contained"
                   color="secondary"
                   onClick={comand.function}
                   sx={{
-                    fontWeight: 'bold',
+                    fontWeight: "bold",
                     color: theme.palette.secondary.contrastText,
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                    '&:hover': {
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                    "&:hover": {
                       backgroundColor: theme.palette.secondary.dark,
-                    }
+                    },
                   }}
                 >
                   Ejecutar
@@ -191,6 +255,5 @@ export default function Comandos() {
         ))}
       </Grid>
     </Box>
-
   );
 }

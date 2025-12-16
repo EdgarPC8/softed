@@ -9,7 +9,7 @@ export const sendBackUpRequest = async (back) =>
   });
 
   export const reloadBD = async () =>
-  await axios.get("/reloadBD", {
+  await axios.get("/comands/reloadBD", {
     headers: {
       Authorization: jwt(),
     },
@@ -53,4 +53,13 @@ export const sendBackUpRequest = async (back) =>
       console.error('Error al descargar el backup:', error);
     }
   };
+
+
+export const uploadBackup = (formData) =>
+  axios.post("/comands/upload-backup", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    Authorization: jwt(), // Ajusta esto según tu lógica de autenticación
+
+  });
+
   

@@ -330,35 +330,66 @@ function RecipePage() {
 
             {/* Resumen (plano) */}
             {costSummary && (
-              <Box sx={{ mt: 1 }}>
-                <Typography variant="subtitle2">Resumen</Typography>
-                <Grid container spacing={1}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2">
-                      Subtotal de insumos (valor): <b>{fmt(t.subtotalInsumos)}</b>
-                    </Typography>
-                    <Typography variant="body2">
-                      Subtotal en gramos (insumos): <b>{fmt(acc.totalPesoEnMasaGr, 2)} g</b>
-                    </Typography>
-                  </Grid>
+  <Box sx={{ mt: 1 }}>
+    <Typography variant="subtitle2">Resumen</Typography>
+    <Grid container spacing={1}>
+      <Grid item xs={12} sm={6}>
+        <Typography variant="body2">
+          Subtotal de insumos (valor): <b>{fmt(t.subtotalInsumos)}</b>
+        </Typography>
+        <Typography variant="body2">
+          Subtotal en gramos (insumos): <b>{fmt(acc.totalPesoEnMasaGr, 2)} g</b>
+        </Typography>
+      </Grid>
 
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2">
-                      Extras ({t.extrasPercentInt ?? 0}%): <b>{fmt(t.extras)}</b>
-                    </Typography>
-                    <Typography variant="body2">
-                      Mano de obra ({t.laborPercentInt ?? 0}%): <b>{fmt(t.labor)}</b>
-                    </Typography>
-                    <Typography variant="body2">
-                      Total del lote: <b>{fmt(t.totalLote)}</b>
-                    </Typography>
-                    <Typography variant="body2">
-                      Costo unitario (/{t.producedQty ?? 0}): <b>{fmt(t.costoUnitario, 4)}</b>
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            )}
+      <Grid item xs={12} sm={6}>
+        <Typography variant="body2">
+          Extras ({t.extrasPercentInt ?? 0}%): <b>{fmt(t.extras)}</b>
+        </Typography>
+        <Typography variant="body2">
+          Mano de obra ({t.laborPercentInt ?? 0}%): <b>{fmt(t.labor)}</b>
+        </Typography>
+        <Typography variant="body2">
+          Total del lote: <b>{fmt(t.totalLote)}</b>
+        </Typography>
+        <Typography variant="body2">
+          Costo unitario (/{t.producedQty ?? 0}):{" "}
+          <b>{fmt(t.costoUnitario, 4)}</b>
+        </Typography>
+      </Grid>
+    </Grid>
+
+    {/* 🔹 NUEVA SECCIÓN: con esta cantidad, ¿qué puedo producir? */}
+    {Array.isArray(costSummary.yieldInfo) &&
+      costSummary.yieldInfo.length > 0 && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle2">
+            Con este lote puedes producir:
+          </Typography>
+
+          {costSummary.yieldInfo.map((y) => (
+            <Typography key={y.parentId} variant="body2">
+              •{" "}
+              <b>
+                {y.unidad === "unidad"
+                  ? // redondeo a 2 decimales; si quieres solo enteros usa Math.floor
+                    y.unidadesPosiblesParent.toFixed(2)
+                  : `${y.unidadesPosiblesParent.toFixed(2)} g`}
+              </b>{" "}
+              de {y.parentName}
+            </Typography>
+          ))}
+
+          {/* Si quieres mostrar también los gramos de este producto base que se usaron */}
+          <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
+            Basado en {costSummary.yieldInfo[0].totalGramosDisponibles.toFixed(2)} g del
+            producto actual.
+          </Typography>
+        </Box>
+      )}
+  </Box>
+)}
+
 
 
             {/* Árbol de costos con acordeones */}
