@@ -241,12 +241,32 @@ export default function CustomersAccordionTable() {
         setErr(null);
         const { data } = await getCustomerSalesSummary();
 
-        const raw =
+          const raw =
           Array.isArray(data?.data) ? data.data :
           Array.isArray(data)       ? data :
           [];
+          const normalized = normalizeRows(raw);
+        
+        /* ================= DEBUG TABLA ================= */
+        // const debugTable = normalized.map((r) => ({
+        //   Cliente: r?.customer?.name ?? `Cliente #${r?.customerId ?? "—"}`,
+        //   Total: toNum(r?.revenueTotal),
+        //   Deuda: getDebt(r),
+        //   Pedidos: toNum(r?.ordersCount),
+        //   Lineas: toNum(r?.lineItems),
+        //   Unidades: toNum(r?.units),
+        //   Entregadas: toNum(r?.unitsDelivered),
+        //   UltimoPedido: r?.lastOrderAt
+        //     ? format(new Date(r.lastOrderAt), "dd/MM/yyyy HH:mm", { locale: es })
+        //     : "—",
+        // }));
+        
+        // console.groupCollapsed(`📊 DEBUG CLIENTES (${debugTable.length})`);
+        // console.table(debugTable);
+        // console.groupEnd();
+        /* =============================================== */
+        
 
-        const normalized = normalizeRows(raw);
         if (!active) return;
         setRows(normalized);
       } catch (e) {

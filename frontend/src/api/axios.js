@@ -7,7 +7,7 @@ const api = "eddeliapi"
 export const urlRequestsApi = {
     local: `http://localhost:3001/${api}`,
     production:`https://aplicaciones.marianosamaniego.edu.ec/${api}`,
-    edgar:`http://192.168.1.104:3001/${api}`
+    edgar:`http://192.168.1.101:3001/${api}`
   };
 
 const url =  urlRequestsApi.edgar;
@@ -18,7 +18,8 @@ const instance = axios.create({
 });
 
 export const pathPhotos = `${url}/photos/`;
-export const pathImg = `${url}/inventory/imgEdDeli/`;
+// export const pathImg = `${url}/inventory/imgEdDeli/`;
+export const pathImg = `${url}/img/`;
 export const socket = io(`${url}`); 
 
 

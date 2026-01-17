@@ -1,5 +1,5 @@
 // src/Components/SearchableSelect.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import {
   Box,
   TextField,
@@ -16,11 +16,13 @@ function SearchableSelect({
   items = [],
   value = "",
   onChange,
-  getOptionLabel = (item) => item.name, // cómo mostrar texto
-  getOptionValue = (item) => item.id,   // valor que devuelve (id normalmente)
+  getOptionLabel = (item) => item.name,
+  getOptionValue = (item) => item.id,
   placeholder = "Buscar...",
+  clearSearchOnClose = true, // opcional
 }) {
   const [search, setSearch] = useState("");
+  const searchRef = useRef(null);
 
   const filtered = useMemo(() => {
     const q = (search || "").toLowerCase();
@@ -35,6 +37,17 @@ function SearchableSelect({
     if (onChange) onChange(val);
   };
 
+  const handleOpen = () => {
+    // Enfoca el buscador cuando se abre el menú
+    setTimeout(() => {
+      searchRef.current?.focus();
+    }, 0);
+  };
+
+  const handleClose = () => {
+    if (clearSearchOnClose) setSearch("");
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <FormControl fullWidth size="small">
@@ -44,7 +57,22 @@ function SearchableSelect({
           label={label}
           value={value ?? ""}
           onChange={handleChange}
+          onOpen={handleOpen}
+          onClose={handleClose}
           MenuProps={{
+            // ✅ CLAVE: evita que MUI robe el foco del TextField al tipear
+            autoFocus: false,
+            disableAutoFocusItem: true,
+            MenuListProps: {
+              autoFocusItem: false,
+              // evita que key events del menú interfieran con el input
+              onKeyDown: (e) => {
+                // si el foco está en el buscador, no dejes que el menú capture teclas
+                if (document.activeElement === searchRef.current) {
+                  e.stopPropagation();
+                }
+              },
+            },
             PaperProps: {
               sx: {
                 maxHeight: 360,
@@ -61,18 +89,18 @@ function SearchableSelect({
           {/* 🔍 Buscador dentro del menú */}
           <ListSubheader disableSticky>
             <TextField
+              inputRef={searchRef}
               size="small"
               placeholder={placeholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               fullWidth
-              autoFocus
-              // 👇 muy importante para que NO se cierre el menú
+              // ❌ quita autoFocus aquí (lo manejamos en handleOpen)
+              // autoFocus
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
-                if (e.key !== "Escape") {
-                  e.stopPropagation();
-                }
+                // ✅ evita que el menú capture teclas mientras escribes
+                e.stopPropagation();
               }}
             />
           </ListSubheader>

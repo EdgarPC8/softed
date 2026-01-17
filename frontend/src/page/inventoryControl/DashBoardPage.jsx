@@ -195,12 +195,6 @@ export const DashBoardPage = () => {
                                 <Typography variant="h5">${summary.totalExpense.toFixed(2)}</Typography>
                             </Paper>
                         </Grid>
-                        {/* <Grid item xs={12} md={3}>
-                            <Paper style={paperStyle}>
-                                <Typography variant="h6">📦 Total Pedidos</Typography>
-                                <Typography variant="h5">{dataOrders.length} pedidos</Typography>
-                            </Paper>
-                        </Grid> */}
                         <Grid item xs={12} md={3}>
                             <Paper style={paperStyle}>
                                 <Typography variant="h6">💰 Dinero Esperado</Typography>

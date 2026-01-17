@@ -12,7 +12,7 @@ import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import UserForm from "../Components/Forms/UserForm";
-import { pathPhotos } from "../api/axios";
+import { pathImg } from "../api/axios";
 
 
 function Users() {
@@ -109,7 +109,7 @@ function Users() {
       renderCell: (params) => (
         <>
              <Avatar
-          src={`${pathPhotos}${params.row.photo}`} // Imagen del estado
+          src={`${pathImg}${params.row.photo}`} // Imagen del estado
           alt={params.row.firstName}
         />
         </>

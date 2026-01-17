@@ -55,4 +55,84 @@ export const deleteOrder = async (id) =>
   await axios.delete(`/orders/order/${id}`, { headers: { Authorization: jwt() } });
 export const deleteOrderItem = async (id) =>
   await axios.delete(`/orders/order-items/${id}`, { headers: { Authorization: jwt() } });
+// ===============================
+// 🟣 FINANCE WORKBENCH (COBRANZAS)
+// ===============================
 
+/**
+ * 🔹 Cargar TODO el módulo de cobranzas
+ * Clientes + pedidos + grupos + pagos
+ * GET /orders/workbench/all
+ */
+export const getFinanceWorkbenchAllRequest = async () =>
+  await axios.get("/orders/workbench/all", {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Crear grupo por ITEMS
+ * POST /orders/workbench/item-groups
+ * data: { customerId, itemIds: [], concept? }
+ */
+export const createItemGroupRequest = async (data) =>
+  await axios.post("/orders/workbench/item-groups", data, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Editar grupo (concept/status)
+ * PUT /orders/workbench/item-groups/:groupId
+ * data: { concept?, status? }  // "open" | "closed" | "cancelled"
+ */
+export const updateItemGroupRequest = async (groupId, data) =>
+  await axios.put(`/orders/workbench/item-groups/${groupId}`, data, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Eliminar grupo
+ * DELETE /orders/workbench/item-groups/:groupId
+ */
+export const deleteItemGroupRequest = async (groupId) =>
+  await axios.delete(`/orders/workbench/item-groups/${groupId}`, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Mover / quitar / agregar item a grupo
+ * POST /orders/workbench/item-groups/move-item
+ * data: { orderItemId, toGroupId }  // toGroupId = null => quitar del grupo
+ */
+export const moveItemBetweenGroupsRequest = async (data) =>
+  await axios.post("/orders/workbench/item-groups/move-item", data, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Abonar / pagar a un grupo (crea Payment + Income)
+ * POST /orders/workbench/item-groups/:groupId/pay
+ * data: { amount, date?, note?, method? }
+ */
+export const payItemGroupRequest = async (groupId, data) =>
+  await axios.post(`/orders/workbench/item-groups/${groupId}/pay`, data, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Editar un pago (sincroniza el Income asociado)
+ * PUT /orders/workbench/payments/:paymentId
+ * data: { amount?, date?, note?, method?, status? }
+ */
+export const updateGroupPaymentRequest = async (paymentId, data) =>
+  await axios.put(`/orders/workbench/payments/${paymentId}`, data, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
+ * 🔹 Eliminar un pago (borra Payment + Applications + Income asociado)
+ * DELETE /orders/workbench/payments/:paymentId
+ */
+export const deleteGroupPaymentRequest = async (paymentId) =>
+  await axios.delete(`/orders/workbench/payments/${paymentId}`, {
+    headers: { Authorization: jwt() },
+  });

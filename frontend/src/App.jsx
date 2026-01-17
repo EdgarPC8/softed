@@ -71,6 +71,9 @@ import HomeLogout from "./page/inventoryControl/HomeLogout.jsx";
 import PanaderiaPage from "./page/eddeli/PanaderiaPage.jsx";
 import CatalogManagerPage from "./page/inventoryControl/CatalogManagerPage.jsx";
 import CatalogoPage from "./page/eddeli/CatalogPage.jsx";
+import ImgManagerPage from "./page/ImgManagerPage.jsx";
+
+
 
 
 
@@ -119,6 +122,7 @@ function App() {
                   <Route path="/mapa" element={<BasicMap />} />
 
                   <Route path="/backery" element={<CatalogoPage />} />
+                  <Route path="/img" element={<ImgManagerPage />} />
                   <Route path="/catalog_manager" element={<CatalogManagerPage />} />
                   
 

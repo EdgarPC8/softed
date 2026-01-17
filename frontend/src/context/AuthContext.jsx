@@ -7,7 +7,7 @@ import {
 
 
 
-import { jwt, pathPhotos } from "../api/axios.js";
+import { jwt, pathImg } from "../api/axios.js";
 import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack"; // Importa useSnackbar
 import { getAccount } from "../api/accountRequest.js";
@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
 
       if (session.data) {
         setUser(userData);
-        setProfileImageUser(`${pathPhotos}${data.user.photo}`)
+        setProfileImageUser(`${pathImg}${data.user.photo}`)
       }
     } catch (error) {
       console.log(error);
