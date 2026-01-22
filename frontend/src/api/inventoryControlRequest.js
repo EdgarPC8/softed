@@ -22,6 +22,15 @@ export const getCatalogEntries = (params = {}) =>
     params, // ej: { section: 'home', isActive: true, q: 'pan', limit: 50, offset: 0 }
     headers: { Authorization: jwt() },
   });
+  export const getCatalogTemplateItems = (params = {}) => {
+    return axios.get("/inventory/catalog/template-items", {
+      params: {
+        onlyActive: true,
+        onlyValidNow: true,
+        ...params, // storeId, q, etc.
+      },
+    });
+  };
 
 // Crear un item de catálogo (JSON, sin archivos)
 export const createCatalogEntry = (payload) =>

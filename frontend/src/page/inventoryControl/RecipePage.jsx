@@ -24,6 +24,8 @@ import {
   getRecipeCosting,
 } from "../../api/inventoryControlRequest";
 import CostingAccordionTable from "./components/CostingAccordionTable";
+import SearchableSelect from "../../Components/SearchableSelect";
+
 
 function RecipePage() {
   const [products, setProducts] = useState([]);
@@ -233,19 +235,15 @@ function RecipePage() {
       <Grid container spacing={2}>
         {/* Fila 1: Select de producto final */}
         <Grid item xs={12} mt={2}>
-          <TextField
-            label="Seleccionar Producto Final"
-            select
-            fullWidth
+        <SearchableSelect
+            label="Seleccionar Elemento"
+            items={products}
             value={selectedProduct}
-            onChange={(e) => setSelectedProduct(e.target.value)}
-          >
-            {products.map((prod) => (
-              <MenuItem key={prod.id} value={prod.id}>
-                {prod.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            onChange={(val) => {
+              // asume que val es ID
+              setSelectedProduct(val);
+            }}
+          />
         </Grid>
 
         {/* Fila 2: dos columnas */}

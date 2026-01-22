@@ -20,6 +20,9 @@ import {
 } from "../../../api/inventoryControlRequest";
 
 import { useForm, Controller } from "react-hook-form";
+import SearchableSelect from "../../../Components/SearchableSelect";
+
+
 
 
 function RecipeForm({ isEditing = false, datos = [], onClose, reload, productFinalId }) {
@@ -99,23 +102,17 @@ function RecipeForm({ isEditing = false, datos = [], onClose, reload, productFin
   return (
     <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit(submitForm)}>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            label="Materia Prima"
-            select
-            fullWidth
-            variant="standard"
-            value={watch("productRawId")}
-            {...register("productRawId", { required: true })}
-            InputLabelProps={idData ? { shrink: true } : {}}
-          >
-            {rawOptions.map((opt) => (
-              <MenuItem key={opt.id} value={opt.id}>
-                {opt.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
+      <Grid item xs={12}>
+  <SearchableSelect
+    label="Materia Prima"
+    items={rawOptions}
+    value={watch("productRawId")}
+    onChange={(val) => {
+      // val debe ser el ID (igual que en RecipePage)
+      setValue("productRawId", val, { shouldValidate: true, shouldDirty: true });
+    }}
+  />
+</Grid>
 
         <Grid item xs={12}>
           <TextField

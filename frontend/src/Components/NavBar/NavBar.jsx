@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-
+import ImageIcon from "@mui/icons-material/Image";
 
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -124,6 +124,10 @@ const permisos = {
         items: [
           { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
           { name: "Logs", link: "/logs", icon: <ListIcon /> },
+          { name: "Control de Imagenes", link: "/img", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <ImageIcon /> },
+          { name: "Editor de Publicidad", link: "/editor", icon: <ImageIcon /> },
+          { name: "Control Publicidad", link: "/publicidad", icon: <ImageIcon /> },
           { name: "Componentes", link: "/componentes", icon: <ViewModule /> },
           { name: "Preguntas", link: "/quiz", icon: <QuestionAnswer /> },
           { name: "Tokens", link: "/tokens", icon: <VpnKey /> },

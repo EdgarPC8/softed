@@ -44,11 +44,14 @@ export const uploadImageRequest = async ({
   replace = false,
 } = {}) => {
   const formData = new FormData();
-  formData.append("file", file);
 
+  // ✅ 1) primero los campos (texto)
   if (folder) formData.append("folder", folder);
   if (name) formData.append("name", name);
   formData.append("replace", String(!!replace));
+
+  // ✅ 2) al final el archivo
+  formData.append("file", file);
 
   return await axios.post("/img/upload", formData, {
     headers: {
@@ -57,6 +60,7 @@ export const uploadImageRequest = async ({
     },
   });
 };
+
 
 // =========================
 // DELETE

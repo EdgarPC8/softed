@@ -22,6 +22,8 @@ import {
   Tooltip,
   useMediaQuery,
   Accordion, AccordionSummary, AccordionDetails,
+  Divider,
+  Button,
 
 } from "@mui/material";
 import { useTheme,alpha } from "@mui/material/styles";
@@ -42,6 +44,7 @@ import { pathImg } from "../../api/axios";
 
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SimpleDialog from "../../Components/Dialogs/SimpleDialog";
 
 // asumo que ya existen en tu proyecto:
 /// import SmartProductImage from "./SmartProductImage";
@@ -509,6 +512,21 @@ export default function CatalogoPage() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
 
+// ✅ Preview (SimpleDialog)
+const [previewOpen, setPreviewOpen] = useState(false);
+const [previewEntry, setPreviewEntry] = useState(null);
+
+const handlePreview = (entry) => {
+  setPreviewEntry(entry);
+  setPreviewOpen(true);
+};
+
+const handleClosePreview = () => {
+  setPreviewOpen(false);
+  setPreviewEntry(null);
+};
+
+
   // Cargar categorías
   const fetchCategories = async () => {
     try {
@@ -594,6 +612,110 @@ export default function CatalogoPage() {
         gap={2}
         sx={{ mb: { xs: 1.5, sm: 2 } }}
       >
+        <SimpleDialog
+  open={previewOpen}
+  onClose={handleClosePreview}
+  title={previewEntry?.title || previewEntry?.product?.name || "Producto"}
+>
+  {(() => {
+    const p = previewEntry?.product || {};
+
+    const img =
+      toImageSrc(previewEntry?.imageUrl) ||
+      toImageSrc(p?.primaryImageUrl) ||
+      "";
+
+    const wholesaleTiers =
+      previewEntry?.wholesaleOverrideRules?.length > 0
+        ? previewEntry.wholesaleOverrideRules
+        : Array.isArray(p.wholesaleRules)
+        ? p.wholesaleRules
+        : typeof p.wholesaleRules === "string"
+        ? JSON.parse(p.wholesaleRules || "[]")
+        : [];
+
+    const weight =
+      p.standardWeightGrams > 0 ? `${p.standardWeightGrams} g` : null;
+
+    const minOrderQty =
+      typeof previewEntry?.minOrderQty === "number" && previewEntry.minOrderQty > 0
+        ? previewEntry.minOrderQty
+        : 1;
+
+    return (
+      <Stack spacing={2} sx={{ p: 1 }}>
+        <SmartProductImage
+          src={img}
+          alt={p.name}
+          heights={{ xs: 220, sm: 260, md: 280 }}
+        />
+
+        <Stack direction="row" spacing={1} flexWrap="wrap" rowGap={0.5}>
+          {previewEntry?.badge && (
+            <Chip
+              size="small"
+              color="primary"
+              label={previewEntry.badge}
+              sx={{ fontWeight: 700 }}
+            />
+          )}
+
+          {p.isUniqueToday && (
+            <Chip
+              size="small"
+              color="warning"
+              icon={<StarIcon />}
+              label="ÚNICO del día"
+              sx={{ fontWeight: 700 }}
+            />
+          )}
+
+          {p.unitAbbr && (
+            <Chip size="small" icon={<BakeryDiningIcon />} label={p.unitAbbr} />
+          )}
+
+          {weight && (
+            <Chip size="small" icon={<Inventory2Icon />} label={weight} />
+          )}
+
+          {minOrderQty > 1 && (
+            <Chip
+              size="small"
+              color="info"
+              label={`Pedido mínimo: ${minOrderQty}`}
+              sx={{ fontWeight: 700 }}
+            />
+          )}
+        </Stack>
+
+        {p.desc && String(p.desc).trim().length > 0 && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ whiteSpace: "pre-wrap", lineHeight: 1.5 }}
+          >
+            {p.desc}
+          </Typography>
+        )}
+
+        <Divider />
+
+        {/* Precio unitario */}
+        <PriceDisplay product={{ ...p, wholesaleTiers }} qty={0} />
+
+        {/* Calculadora mayorista */}
+        <WholesaleCalculator product={{ ...p, wholesaleTiers }} />
+
+        <Stack direction="row" justifyContent="flex-end">
+          <Button variant="outlined" onClick={handleClosePreview}>
+            Cerrar
+          </Button>
+        </Stack>
+      </Stack>
+    );
+  })()}
+</SimpleDialog>
+
         <Stack direction="row" spacing={1} alignItems="center">
           <BakeryDiningIcon />
           <Typography variant={isXs ? "h6" : "h5"} fontWeight={800}>
@@ -716,7 +838,9 @@ export default function CatalogoPage() {
           <Grid container spacing={{ xs: 1.5, sm: 2 }}>
             {uniqueToday.map((e) => (
               <Grid key={e.id} item xs={12} sm={6} md={4} lg={3}>
-                <ProductCard entry={e} />
+                <ProductCard entry={e} onPreview={handlePreview} />
+                
+
               </Grid>
             ))}
           </Grid>
@@ -743,7 +867,7 @@ export default function CatalogoPage() {
                 }}
               />
             ) : (
-              <ProductCard entry={e} />
+              <ProductCard entry={e} onPreview={handlePreview} />
             )}
           </Grid>
         ))}

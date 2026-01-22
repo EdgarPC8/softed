@@ -68,10 +68,14 @@ import HomeProductPage from "./page/inventoryControl/HomeProduct.jsx";
 import StoresManagerPage from "./page/inventoryControl/StoresManagerPage.jsx";
 import StoresPage from "./page/inventoryControl/StoresPage.jsx";
 import HomeLogout from "./page/inventoryControl/HomeLogout.jsx";
-import PanaderiaPage from "./page/eddeli/PanaderiaPage.jsx";
+
 import CatalogManagerPage from "./page/inventoryControl/CatalogManagerPage.jsx";
 import CatalogoPage from "./page/eddeli/CatalogPage.jsx";
 import ImgManagerPage from "./page/ImgManagerPage.jsx";
+import AdTemplateEditor from "./page/eddeli/AdTemplateEditor.jsx";
+import EditorPage from "./page/eddeli/photoshop/EditorPage.jsx";
+import ProductTemplateStudio from "./page/eddeli/photoshop/ProductTemplateStudio.jsx";
+import FilesManagerPage from "./page/FileManager.jsx";
 
 
 
@@ -123,10 +127,12 @@ function App() {
 
                   <Route path="/backery" element={<CatalogoPage />} />
                   <Route path="/img" element={<ImgManagerPage />} />
+                  <Route path="/file" element={<FilesManagerPage />} />
                   <Route path="/catalog_manager" element={<CatalogManagerPage />} />
+                  <Route path="/publicity_edit" element={<AdTemplateEditor />} />
+                  <Route path="/publicidad" element={<ProductTemplateStudio />} />
+                  <Route path="/editor" element={<EditorPage />} />
                   
-
-
 
                   <Route path="/analisis" element={<Analytics />} />
                   <Route path="/reservas" element={<Reservas />} />
