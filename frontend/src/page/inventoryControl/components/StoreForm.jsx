@@ -1,4 +1,4 @@
-// ProductForm.jsx
+// StoreForm.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Grid,
@@ -18,10 +18,8 @@ import Cropper from "react-easy-crop";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../context/AuthContext";
 import {
-  createProduct as apiCreateProduct,
-  updateProduct as apiUpdateProduct,
-  getCategories,
-  getUnits,
+  createStoreRequest,
+  updateStoreRequest,
 } from "../../../api/inventoryControlRequest.js";
 import { pathImg } from "../../../api/axios";
 
@@ -65,6 +63,14 @@ function blobToFile(blob, originalName = "image", mime = "image/jpeg") {
     mime === "image/png" ? ".png" : mime === "image/webp" ? ".webp" : ".jpg";
   return new File([blob], base + ext, { type: mime });
 }
+
+const normalize = (p = "") =>
+  String(p || "")
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "")
+    .replace(/\/{2,}/g, "/");
 
 /* ================= CropperDialog ================= */
 function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
@@ -171,36 +177,10 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
   );
 }
 
-/* ===================== FORM DE PRODUCTO ===================== */
-function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
+/* ===================== FORM DE STORE ===================== */
+function StoreForm({ isEditing = false, datos = {}, onClose, reload }) {
   const { handleSubmit, register, reset, setValue, watch } = useForm();
   const { toast: toastAuth } = useAuth();
-
-  const [categories, setCategories] = useState([]);
-  const [units, setUnits] = useState([]);
-
-  // ------- Reglas Mayoristas -------
-  const [wholesaleRules, setWholesaleRules] = useState(() => {
-    try {
-      if (Array.isArray(datos?.wholesaleRules)) return datos.wholesaleRules;
-      if (typeof datos?.wholesaleRules === "string") {
-        const parsed = JSON.parse(datos.wholesaleRules);
-        return Array.isArray(parsed) ? parsed : [];
-      }
-      return [];
-    } catch {
-      return [];
-    }
-  });
-
-  const addTier = () =>
-    setWholesaleRules((prev) => [...prev, { minQty: 12, discountPercent: 5 }]);
-  const removeTier = (idx) =>
-    setWholesaleRules((prev) => prev.filter((_, i) => i !== idx));
-  const updateTier = (idx, key, val) =>
-    setWholesaleRules((prev) =>
-      prev.map((t, i) => (i === idx ? { ...t, [key]: val } : t))
-    );
 
   // ------- Imagen -------
   const [selectedFile, setSelectedFile] = useState(null);
@@ -210,18 +190,16 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
   const [lastMeta, setLastMeta] = useState(null);
   const fileRef = useRef(null);
 
-  // ✅ Input manual: el usuario puede escribir "EdDeli", "EdDeli/products", "EdDeli/products/donas"
-  // El submit lo normaliza para mandar "subfolder" correcto al middleware.
-  const [imageSubfolder, setImageSubfolder] = useState("EdDeli/products");
+  const [imageSubfolder, setImageSubfolder] = useState("EdDeli/stores");
 
   const currentImage = useMemo(() => {
     if (previewUrl) return previewUrl;
-    if (datos?.primaryImageUrl) return `${pathImg}${datos.primaryImageUrl}`;
+    if (datos?.imageUrl) return `${pathImg}${datos.imageUrl}`;
     return null;
-  }, [previewUrl, datos?.primaryImageUrl]);
+  }, [previewUrl, datos?.imageUrl]);
 
   const ASPECTS = { "1:1": 1, "4:3": 4 / 3, "16:9": 16 / 9, free: undefined };
-  const [aspectKey, setAspectKey] = useState("1:1");
+  const [aspectKey, setAspectKey] = useState("16:9");
 
   const chooseFile = () => fileRef.current?.click();
 
@@ -235,7 +213,7 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
   };
 
   const onCropConfirm = async (blob, meta) => {
-    const file = blobToFile(blob, "image", meta?.mime || "image/jpeg");
+    const file = blobToFile(blob, "store", meta?.mime || "image/jpeg");
     setSelectedFile(file);
 
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -269,129 +247,84 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
   }, [previewUrl, imageSrc]);
 
   // ------- cargar datos base -------
-  const resetForm = () => reset();
-
   const loadData = async () => {
     if (!isEditing || !datos) return;
 
     setValue("name", datos.name || "");
-    setValue("desc", datos.desc || "");
-    setValue("type", datos.type || "raw");
-    setValue("unitId", datos.unitId || "");
-    setValue("categoryId", datos.categoryId || "");
-    setValue("price", datos.price || 0);
-    setValue("distributorPrice", datos.distributorPrice || 0);
-    setValue("minStock", datos.minStock || 0);
-    setValue("stock", datos.stock || 0);
-    setValue("netWeight", datos.netWeight || 0);
-    setValue("standardWeightGrams", datos.standardWeightGrams || 0);
+    setValue("address", datos.address || "");
+    setValue("description", datos.description || "");
+    setValue("phone", datos.phone || "");
+    setValue("email", datos.email || "");
+    setValue("city", datos.city || "");
+    setValue("province", datos.province || "");
+    setValue("position", datos.position ?? 0);
+    setValue("isActive", String(datos.isActive ?? true) ? "true" : "false");
 
-    try {
-      if (Array.isArray(datos.wholesaleRules)) {
-        setWholesaleRules(datos.wholesaleRules);
-      } else if (
-        typeof datos.wholesaleRules === "string" &&
-        datos.wholesaleRules.trim() !== ""
-      ) {
-        const parsed = JSON.parse(datos.wholesaleRules);
-        setWholesaleRules(Array.isArray(parsed) ? parsed : []);
-      } else {
-        setWholesaleRules([]);
-      }
-    } catch (err) {
-      console.warn("Error parsing wholesaleRules:", err);
-      setWholesaleRules([]);
-    }
-
-    // ✅ sugerir la carpeta a partir de la ruta guardada
-    // primaryImageUrl: "EdDeli/products/dona.png" => input "EdDeli/products"
-    if (datos?.primaryImageUrl?.startsWith("EdDeli/")) {
-      const parts = datos.primaryImageUrl.split("/");
-      parts.pop(); // quita el archivo
+    // ✅ sugerir carpeta según imageUrl guardado
+    // imageUrl: "EdDeli/stores/loja.png" => input "EdDeli/stores"
+    if (datos?.imageUrl?.startsWith("EdDeli/")) {
+      const parts = datos.imageUrl.split("/");
+      parts.pop();
       const folderFull = parts.join("/") || "EdDeli";
       setImageSubfolder(folderFull);
     } else {
-      // default si no hay imagen previa
-      setImageSubfolder("EdDeli/products");
+      setImageSubfolder("EdDeli/stores");
     }
-  };
-
-  const fetchOptions = async () => {
-    const { data: catData } = await getCategories();
-    const { data: unitData } = await getUnits();
-    setCategories(catData);
-    setUnits(unitData);
   };
 
   useEffect(() => {
     loadData();
-    fetchOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ------- submit -------
   const submitForm = async (data) => {
     const fd = new FormData();
-  
-    // ✅ normaliza subfolder
-    const subfolder = String(imageSubfolder || "")
-      .trim()
-      .replace(/\\/g, "/")
-      .replace(/^\/+/, "")
-      .replace(/\/+$/, "")
-      .replace(/\/{2,}/g, "/");
-  
+
+    const subfolder = normalize(imageSubfolder);
     fd.append("subfolder", subfolder);
-  
-    // ✅ campos
+
+    // campos
     fd.append("name", data.name?.trim() || "");
-    if (data.desc) fd.append("desc", data.desc);
-    fd.append("type", data.type || "raw");
-    fd.append("unitId", String(data.unitId || ""));
-    if (data.categoryId) fd.append("categoryId", String(data.categoryId));
-    if (data.price != null) fd.append("price", String(data.price));
-    if (data.distributorPrice != null)
-      fd.append("distributorPrice", String(data.distributorPrice));
-    if (data.netWeight != null) fd.append("netWeight", String(data.netWeight));
-    if (data.minStock != null) fd.append("minStock", String(data.minStock));
-    if (data.stock != null) fd.append("stock", String(data.stock));
-    if (data.standardWeightGrams != null)
-      fd.append("standardWeightGrams", String(data.standardWeightGrams));
-  
-    fd.append("wholesaleRules", JSON.stringify(wholesaleRules || []));
-  
-    // ✅ nombre base si subes imagen nueva
-    fd.append("customFileName", data.name?.trim() || "producto");
-  
-    // ✅ archivo al final
+    fd.append("address", data.address?.trim() || "");
+    if (data.description) fd.append("description", data.description);
+    if (data.phone) fd.append("phone", data.phone);
+    if (data.email) fd.append("email", data.email);
+    if (data.city) fd.append("city", data.city);
+    if (data.province) fd.append("province", data.province);
+    fd.append("position", String(data.position ?? 0));
+    fd.append("isActive", String(data.isActive) === "true" ? "true" : "false");
+
+    // nombre base (si subes imagen nueva)
+    fd.append("customFileName", data.name?.trim() || "store");
+
+    // archivo
     if (selectedFile) {
       fd.append("image", selectedFile, selectedFile.name);
     }
-  
+
     /**
-     * ✅ CLAVE: si NO subiste imagen nueva pero cambiaste la carpeta,
-     * manda primaryImageUrl y moveImage=1 para que backend mueva el archivo.
+     * ✅ CLAVE (idéntico a Products):
+     * Si NO subiste imagen nueva pero cambiaste carpeta,
+     * manda imageUrl nuevo para que backend mueva el archivo.
      */
     if (isEditing && !selectedFile) {
-      const oldRel = String(datos?.primaryImageUrl || "").replace(/\\/g, "/").trim();
-  
-      // saca filename de la imagen actual
-      const fileName = oldRel.split("/").pop(); // "old.jpg"
-  
-      // construye la nueva ruta completa en BD: "<subfolder>/<filename>"
+      const oldRel = normalize(datos?.imageUrl || "");
+      const fileName = oldRel.split("/").pop(); // "logo.jpg"
       const newRel = subfolder ? `${subfolder}/${fileName}` : fileName;
-  
-      // solo si realmente cambió
+
       if (oldRel && newRel && newRel !== oldRel) {
+        // moveImage no es obligatorio si tu backend compara imageUrl,
+        // pero lo mandamos por compatibilidad
         fd.append("moveImage", "1");
-        fd.append("primaryImageUrl", newRel); // ✅ lo que el backend usará para mover + guardar
+        fd.append("imageUrl", newRel); // ✅ el backend usa esto para mover + guardar
       }
     }
-  
+
     const promise = isEditing
-      ? apiUpdateProduct(datos.id, fd)
-      : apiCreateProduct(fd);
-  
+      ? updateStoreRequest(datos.id, fd)
+      : createStoreRequest(fd);
+
     return toastAuth({
       promise,
       onSuccess: () => {
@@ -400,25 +333,23 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
         reset();
         clearPreview();
         return {
-          title: "Producto",
+          title: "Punto de venta",
           description: isEditing
-            ? "Producto actualizado correctamente"
-            : "Producto guardado con éxito",
+            ? "Actualizado correctamente"
+            : "Guardado con éxito",
         };
       },
       onError: (res) => ({
-        title: "Producto",
+        title: "Punto de venta",
         description: res?.response?.data?.message || "No se pudo guardar",
       }),
     });
   };
-  
-  
 
   return (
     <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit(submitForm)}>
       <Grid container spacing={2}>
-        {/* Campos principales */}
+        {/* Campos */}
         <Grid item xs={12}>
           <TextField
             label="Nombre"
@@ -430,201 +361,96 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
 
         <Grid item xs={12}>
           <TextField
+            label="Dirección"
+            fullWidth
+            variant="standard"
+            {...register("address", { required: true })}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
             multiline
             rows={3}
             label="Descripción"
             fullWidth
             variant="standard"
-            {...register("desc")}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Tipo"
-            select
-            fullWidth
-            variant="standard"
-            value={watch("type") ?? "raw"}
-            {...register("type", { required: true })}
-          >
-            <MenuItem value="raw">Materia Prima</MenuItem>
-            <MenuItem value="intermediate">Producto Intermedio</MenuItem>
-            <MenuItem value="final">Producto Final</MenuItem>
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Unidad"
-            select
-            fullWidth
-            variant="standard"
-            value={watch("unitId") || ""}
-            {...register("unitId", { required: true })}
-          >
-            {Array.isArray(units) &&
-              units.map((u) => (
-                <MenuItem key={u.id} value={u.id}>
-                  {u.name} ({u.abbreviation})
-                </MenuItem>
-              ))}
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Categoría"
-            select
-            fullWidth
-            variant="standard"
-            value={watch("categoryId") || ""}
-            {...register("categoryId", { required: true })}
-          >
-            {Array.isArray(categories) &&
-              categories.map((c) => (
-                <MenuItem key={c.id} value={c.id}>
-                  {c.name}
-                </MenuItem>
-              ))}
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={3}>
-          <TextField
-            label="Precio"
-            type="number"
-            fullWidth
-            variant="standard"
-            inputProps={{ step: "any" }}
-            {...register("price", { required: true })}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={3}>
-          <TextField
-            label="Peso Neto"
-            type="number"
-            fullWidth
-            variant="standard"
-            inputProps={{ step: "any" }}
-            {...register("netWeight", { required: true })}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={3}>
-          <TextField
-            label="Stock mínimo"
-            type="number"
-            fullWidth
-            variant="standard"
-            {...register("minStock", { required: true })}
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={3}>
-          <TextField
-            label="Stock actual"
-            type="number"
-            fullWidth
-            variant="standard"
-            {...register("stock", { required: true })}
+            {...register("description")}
           />
         </Grid>
 
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Precio Distribuidor"
-            type="number"
+            label="Teléfono"
             fullWidth
             variant="standard"
-            inputProps={{ step: "any" }}
-            {...register("distributorPrice", { required: true })}
+            {...register("phone")}
           />
         </Grid>
 
         <Grid item xs={12} sm={6}>
           <TextField
-            label="Peso promedio por unidad (g)"
-            type="number"
+            label="Email"
             fullWidth
             variant="standard"
-            inputProps={{ step: "any", min: 0 }}
-            {...register("standardWeightGrams", { required: true })}
+            {...register("email")}
           />
         </Grid>
 
-        {/* Reglas Mayoristas */}
-        <Grid item xs={12}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="subtitle2">Reglas Mayoristas</Typography>
-            <Button variant="outlined" size="small" onClick={addTier}>
-              Añadir tramo
-            </Button>
-          </Stack>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Ciudad"
+            fullWidth
+            variant="standard"
+            {...register("city")}
+          />
         </Grid>
 
-        {wholesaleRules.map((tier, idx) => (
-          <Grid key={idx} item xs={12} sm={6} md={4}>
-            <Stack
-              spacing={1}
-              sx={{
-                border: "1px solid",
-                borderColor: "divider",
-                p: 1.5,
-                borderRadius: 1,
-              }}
-            >
-              <TextField
-                label="Cantidad mínima"
-                type="number"
-                size="small"
-                value={tier.minQty}
-                onChange={(e) =>
-                  updateTier(
-                    idx,
-                    "minQty",
-                    Math.max(1, Number(e.target.value || 1))
-                  )
-                }
-              />
-              <TextField
-                label="Descuento %"
-                type="number"
-                size="small"
-                value={tier.discountPercent}
-                onChange={(e) =>
-                  updateTier(
-                    idx,
-                    "discountPercent",
-                    Math.max(0, Number(e.target.value || 0))
-                  )
-                }
-              />
-              <Button
-                color="error"
-                size="small"
-                onClick={() => removeTier(idx)}
-              >
-                Quitar
-              </Button>
-            </Stack>
-          </Grid>
-        ))}
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Provincia"
+            fullWidth
+            variant="standard"
+            {...register("province")}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Posición"
+            type="number"
+            fullWidth
+            variant="standard"
+            {...register("position")}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Activo"
+            select
+            fullWidth
+            variant="standard"
+            value={watch("isActive") ?? "true"}
+            {...register("isActive")}
+          >
+            <MenuItem value="true">Sí</MenuItem>
+            <MenuItem value="false">No</MenuItem>
+          </TextField>
+        </Grid>
 
         {/* Imagen */}
         <Grid item xs={12}>
           <Stack spacing={1}>
-            {/* ✅ Input manual: ruta completa desde EdDeli */}
             <TextField
-              label='Carpeta destino (ej: "EdDeli" o "EdDeli/products")'
+              label='Carpeta destino (ej: "EdDeli" o "EdDeli/stores")'
               size="small"
               fullWidth
               variant="standard"
               value={imageSubfolder}
               onChange={(e) => setImageSubfolder(e.target.value)}
-              placeholder='Ej: EdDeli | EdDeli/products | EdDeli/products/donas'
-              helperText='El backend guardará siempre la ruta en BD como: EdDeli/<subcarpeta>/<archivo>. No pongas ".." ni caracteres raros.'
+              placeholder='Ej: EdDeli | EdDeli/stores | EdDeli/stores/loja'
+              helperText='No pongas ".." ni rutas raras.'
             />
 
             <Stack
@@ -676,8 +502,8 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
                   src={currentImage}
                   alt="preview"
                   style={{
-                    width: 120,
-                    height: 120,
+                    width: 140,
+                    height: 90,
                     objectFit: "cover",
                     borderRadius: 8,
                   }}
@@ -718,4 +544,4 @@ function ProductForm({ isEditing = false, datos = {}, onClose, reload }) {
   );
 }
 
-export default ProductForm;
+export default StoreForm;

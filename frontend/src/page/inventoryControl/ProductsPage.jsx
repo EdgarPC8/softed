@@ -114,12 +114,12 @@ function ProductsPage() {
         </Typography>
       ),
     },
-    {
-      label: "Unidad",
-      id: "inventory_unit.name",
-      width: 100,
-      render: (params) => params.ERP_inventory_unit?.name,
-    },
+    // {
+    //   label: "Unidad",
+    //   id: "inventory_unit.name",
+    //   width: 100,
+    //   render: (params) => params.ERP_inventory_unit?.name,
+    // },
     {
       label: "Categoría",
       id: "category",
@@ -131,21 +131,21 @@ function ProductsPage() {
       id: "price",
       width: 50,
     },
-    {
-      label: "Peso Neto",
-      id: "netWeight",
-      width: 50,
-    },
+    // {
+    //   label: "Peso Neto",
+    //   id: "netWeight",
+    //   width: 50,
+    // },
     {
       label: "Stock",
       id: "stock",
       width: 90,
     },
-    {
-      label: "Stock Mínimo",
-      id: "minStock",
-      width: 120,
-    },
+    // {
+    //   label: "Stock Mínimo",
+    //   id: "minStock",
+    //   width: 120,
+    // },
     {
       label: "Acciones",
       id: "actions",

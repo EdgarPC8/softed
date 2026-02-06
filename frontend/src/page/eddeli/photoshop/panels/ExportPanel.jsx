@@ -1,7 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useEditor } from "../EditorProvider";
-
 export default function ExportPanel() {
   const {
     exportAsImage,
@@ -9,11 +8,28 @@ export default function ExportPanel() {
     copyOps,
     downloadTemplateJson,
     importTemplateJson,
+    saveTemplateDoc,
   } = useEditor();
 
-  const fileRef = useRef(null);
+
 
   const onPickFile = () => fileRef.current?.click();
+
+    const [saving, setSaving] = useState(false);
+  const fileRef = useRef(null);
+
+  const onSave = async () => {
+    try {
+      setSaving(true);
+      await saveTemplateDoc();
+      alert("✅ Guardado en la BD");
+    } catch (e) {
+      console.error(e);
+      alert(`❌ No se pudo guardar: ${e?.message || e}`);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const onFileChange = async (e) => {
     const file = e.target.files?.[0];
@@ -30,11 +46,16 @@ export default function ExportPanel() {
   };
 
   return (
-    <Box>
+<Box>
       <Typography sx={{ fontWeight: 900, color: "#fff", mb: 1 }}>
         Exportar
       </Typography>
 
+<Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+<Button variant="contained" onClick={onSave} disabled={saving}>
+  {saving ? "Guardando..." : "Guardar (BD)"}
+</Button>
+</Stack>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
         <Button variant="contained" onClick={() => exportAsImage("png")}>
           PNG

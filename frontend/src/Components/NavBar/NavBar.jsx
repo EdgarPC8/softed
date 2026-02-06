@@ -119,15 +119,22 @@ const permisos = {
         ],
       },
     },
+       {
+      name: "Publicidad", icon: <Terminal />, menu: {
+        items: [
+          { name: "Control de Imagenes", link: "/img", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <ImageIcon /> },
+          { name: "Editor de Publicidad", link: "/editorDefault", icon: <ImageIcon /> },
+          { name: "Control Publicidad", link: "/publicidad", icon: <ImageIcon /> },
+          { name: "Plantillas de Publicidad", link: "/templates", icon: <ImageIcon /> },
+        ],
+      },
+    },
     {
       name: "Programador", icon: <Terminal />, menu: {
         items: [
           { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
           { name: "Logs", link: "/logs", icon: <ListIcon /> },
-          { name: "Control de Imagenes", link: "/img", icon: <ImageIcon /> },
-          { name: "Control de Archivos", link: "/file", icon: <ImageIcon /> },
-          { name: "Editor de Publicidad", link: "/editor", icon: <ImageIcon /> },
-          { name: "Control Publicidad", link: "/publicidad", icon: <ImageIcon /> },
           { name: "Componentes", link: "/componentes", icon: <ViewModule /> },
           { name: "Preguntas", link: "/quiz", icon: <QuestionAnswer /> },
           { name: "Tokens", link: "/tokens", icon: <VpnKey /> },

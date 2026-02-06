@@ -7,20 +7,16 @@ export const urlRequestsApi = {
     production:`https://aplicaciones.marianosamaniego.edu.ec/${api}`,
     edgar:`http://192.168.110.93:3001/${api}`
   };
-
 const url =  urlRequestsApi.edgar;
-
 const instance = axios.create({
   baseURL: `${url}`,
   withCredentials: true,
 });
-
 export const pathPhotos = `${url}/photos/`;
 // export const pathImg = `${url}/inventory/imgEdDeli/`;
 export const pathImg = `${url}/img/`;
 export const pathFiles = `${url}/file/`;
 export const socket = io(`${url}`); 
-
 
 export const jwt = () => {
   return `Bearer ${window.localStorage.getItem("token")}`;

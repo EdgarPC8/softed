@@ -66,3 +66,37 @@ export const upsertEditorOverride = (designId, data = {}) =>
   axios.post(`/editor/designs/${designId}/overrides`, data, {
     headers: { Authorization: jwt() },
   });
+  export const getEditorTemplateResolved = (id) =>
+  axios.get(`/editor/templates/${id}/resolved`, {
+    headers: { Authorization: jwt() },
+  });
+  export const getEditorDefaultTemplate = (params = {}) =>
+  axios.get("/editor/templates/default", {
+    params, // app, format opcional
+    headers: { Authorization: jwt() },
+  });
+  export const updateTemplate = (id, doc = {}) =>
+  axios.put(
+    `/editor/templates/${id}`,
+    { doc }, // 👈 mandamos el doc completo aquí
+    { headers: { Authorization: jwt() } }
+  );
+  // ✅ Guarda el DOC completo (reemplazo total: groups + layers + props + bind)
+export const updateEditorTemplateDoc = (id, doc = {}) =>
+axios.put(
+  `/editor/templates/${id}/doc`,
+  { doc }, // 👈 doc completo
+  { headers: { Authorization: jwt() } }
+);
+
+export const deleteTemplateLayer = (templateId, layerKey) =>
+  axios.delete(
+    `/editor/templates/${templateId}/layers/${layerKey}`,
+    {
+      headers: { Authorization: jwt() },
+    }
+  );
+
+
+
+

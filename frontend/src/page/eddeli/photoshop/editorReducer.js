@@ -1,3 +1,4 @@
+// editorReducer.js
 import { ensureUniqueId, makeDefaultLayer } from "./editorActions";
 
 export const initialState = (template) => ({
@@ -11,7 +12,7 @@ export const initialState = (template) => ({
     })),
   },
   selected: null, // { kind:"layer"|"group", id }
-  action: null,   // move/resize runtime
+  action: null, // move/resize runtime
   ops: [],
   dragId: null,
 });
@@ -19,6 +20,17 @@ export const initialState = (template) => ({
 const pushOp = (state, op) => ({
   ...state,
   ops: [...state.ops, { at: new Date().toISOString(), ...op }],
+});
+
+// ✅ Normaliza doc al cargar desde backend/import
+const normalizeDoc = (doc) => ({
+  ...doc,
+  layers: (doc?.layers || []).map((l) => ({
+    ...l,
+    name: l.name ?? l.id,
+    visible: l.visible ?? true,
+    locked: l.locked ?? false,
+  })),
 });
 
 export function editorReducer(state, action) {
@@ -54,12 +66,19 @@ export function editorReducer(state, action) {
             ...state.doc,
             layers: state.doc.layers.map((l) =>
               l.id === action.layerId
-                ? { ...l, props: { ...(l.props || {}), ...(action.propsPatch || {}) } }
+                ? {
+                    ...l,
+                    props: { ...(l.props || {}), ...(action.propsPatch || {}) },
+                  }
                 : l
             ),
           },
         },
-        { type: "update-layer-props", layerId: action.layerId, propsPatch: action.propsPatch }
+        {
+          type: "update-layer-props",
+          layerId: action.layerId,
+          propsPatch: action.propsPatch,
+        }
       );
 
     case "TOGGLE_VISIBLE": {
@@ -70,7 +89,9 @@ export function editorReducer(state, action) {
         doc: {
           ...state.doc,
           layers: state.doc.layers.map((x) =>
-            x.id === action.layerId ? { ...x, visible: !(x.visible !== false) } : x
+            x.id === action.layerId
+              ? { ...x, visible: !(x.visible !== false) }
+              : x
           ),
         },
       };
@@ -104,7 +125,8 @@ export function editorReducer(state, action) {
           ? state.doc.groups.find((g) => g.id === selected.id)
           : null;
 
-      const groupId = selectedGroup?.id || selectedLayer?.groupId || state.doc.groups?.[0]?.id;
+      const groupId =
+        selectedGroup?.id || selectedLayer?.groupId || state.doc.groups?.[0]?.id;
       if (!groupId) return state;
 
       const used = new Set(state.doc.layers.map((l) => l.id));
@@ -135,7 +157,10 @@ export function editorReducer(state, action) {
       return pushOp(
         {
           ...state,
-          doc: { ...state.doc, layers: state.doc.layers.filter((x) => x.id !== selected.id) },
+          doc: {
+            ...state.doc,
+            layers: state.doc.layers.filter((x) => x.id !== selected.id),
+          },
           selected: null,
         },
         { type: "delete-layer", layerId: selected.id }
@@ -151,7 +176,7 @@ export function editorReducer(state, action) {
       const used = new Set(state.doc.layers.map((l) => l.id));
       const copy = JSON.parse(JSON.stringify(src));
       copy.id = ensureUniqueId(`${src.id}_copy`, used);
-      copy.name = `${(src.name || src.id)} copy`;
+      copy.name = `${src.name || src.id} copy`;
       copy.x = src.x + 40;
       copy.y = src.y + 40;
       copy.zIndex = (src.zIndex || 0) + 1;
@@ -168,7 +193,9 @@ export function editorReducer(state, action) {
       const { fromId, toId } = action;
       if (!fromId || !toId || fromId === toId) return state;
 
-      const ordered = [...state.doc.layers].sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
+      const ordered = [...state.doc.layers].sort(
+        (a, b) => (b.zIndex || 0) - (a.zIndex || 0)
+      );
       const fromIdx = ordered.findIndex((x) => x.id === fromId);
       const toIdx = ordered.findIndex((x) => x.id === toId);
       if (fromIdx < 0 || toIdx < 0) return state;
@@ -186,48 +213,99 @@ export function editorReducer(state, action) {
         { type: "reorder-layers", fromId, toId }
       );
     }
-    case "LOAD_TEMPLATE":
-  return {
-    ...state,
-    doc: action.doc,
-    selected: null,
-    action: null,
-    ops: [],
-    dragId: null,
-  };
-  case "SET_BACKGROUND_SRC": {
-    return {
-      ...state,
-      doc: {
-        ...state.doc,
-        backgroundSrc: action.backgroundSrc,
-      },
-    };
-  }
-  case "SET_DOC_DATA_PRODUCT": {
-    return {
-      ...state,
-      doc: {
-        ...state.doc,
-        data: {
-          ...(state.doc.data || {}),
-          product: action.product || null,
-        },
-      },
-    };
-  }
-  case "SET_DOC_DATA_PATCH": {
-    return {
-      ...state,
-      doc: {
-        ...state.doc,
-        data: { ...(state.doc.data || {}), ...(action.patch || {}) },
-      },
-    };
-  }
-  
+
+    // ✅ Cargar/Setear documento (desde backend/import)
+    case "LOAD_TEMPLATE": {
+      const doc = normalizeDoc(action.doc);
+      return {
+        ...state,
+        doc,
+        selected: null,
+        action: null,
+        ops: [],
+        dragId: null,
+      };
+    }
+
+    case "SET_DOC": {
+      const doc = normalizeDoc(action.doc);
+      return {
+        ...state,
+        doc,
+        selected: null,
+        action: null,
+        ops: [],
+        dragId: null,
+      };
+    }
     
 
+    case "SET_BACKGROUND_SRC": {
+      return {
+        ...state,
+        doc: {
+          ...state.doc,
+          backgroundSrc: action.backgroundSrc,
+        },
+      };
+    }
+
+    case "SET_DOC_DATA_PRODUCT": {
+      return {
+        ...state,
+        doc: {
+          ...state.doc,
+          data: {
+            ...(state.doc.data || {}),
+            product: action.product || null,
+          },
+        },
+      };
+    }
+    case "SET_DOC_DATA_PATCH": {
+      const prevDoc = state.doc || {};
+      const prevData = prevDoc.data || {};
+      const patch = action.patch || {};
+    
+      return {
+        ...state,
+        doc: {
+          ...prevDoc,
+          data: {
+            ...prevData, // ✅ mantiene lo anterior
+            ...patch,    // ✅ mete badge, displayName, imageUrl, etc.
+          },
+        },
+      };
+    }
+    
+    case "SET_DOC_DATA_CATALOG": {
+      return {
+        ...state,
+        doc: {
+          ...state.doc,
+          data: {
+            ...(state.doc.data || {}),
+            catalog: action.catalog || null,
+          },
+        },
+      };
+    }
+
+    case "DELETE_LAYER":
+  return {
+    ...state,
+    doc: {
+      ...state.doc,
+      layers: state.doc.layers.filter(
+        (l) => l.id !== action.layerId
+      ),
+    },
+    selected:
+      state.selected?.id === action.layerId ? null : state.selected,
+  };
+
+    
 
     default:
       return state;

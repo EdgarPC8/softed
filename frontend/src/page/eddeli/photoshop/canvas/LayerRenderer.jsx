@@ -7,20 +7,23 @@ import TransformBox from "./TransformBox";
 function LayerContent({ layer, scale }) {
   if (layer.type === "image") {
     return (
-      <img
-        src={layer.props?.src}
-        alt=""
-        draggable={false}
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "block",
-          objectFit: layer.props?.fit || "contain",
-          borderRadius: layer.props?.borderRadius || 0,
-          userSelect: "none",
-          pointerEvents: "none",
-        }}
-      />
+<img
+  src={layer.props?.src}
+  alt=""
+  draggable={false}
+  onLoad={() => console.log("✅ IMG OK:", layer.props?.src)}
+  onError={() => console.log("❌ IMG FAIL:", layer.props?.src)}
+  style={{
+    width: "100%",
+    height: "100%",
+    display: "block",
+    objectFit: layer.props?.fit || "contain",
+    borderRadius: layer.props?.borderRadius || 0,
+    userSelect: "none",
+    pointerEvents: "none",
+  }}
+/>
+
     );
   }
 
@@ -39,9 +42,12 @@ function LayerContent({ layer, scale }) {
   }
 
   if (layer.type === "text") {
+
+
     const align = layer.props?.align || "left";
     const wrap = layer.props?.wrap !== false;
     const clampLines = Number(layer.props?.maxLines || 0);
+    
     const lineHeight = Number(layer.props?.lineHeight || 1.1);
 
     return (

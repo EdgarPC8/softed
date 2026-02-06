@@ -76,10 +76,7 @@ import AdTemplateEditor from "./page/eddeli/AdTemplateEditor.jsx";
 import EditorPage from "./page/eddeli/photoshop/EditorPage.jsx";
 import ProductTemplateStudio from "./page/eddeli/photoshop/ProductTemplateStudio.jsx";
 import FilesManagerPage from "./page/FileManager.jsx";
-
-
-
-
+import EditorTemplatesView from "./page/eddeli/photoshop/EditorTemplatesView.jsx";
 
 function App() {
   return (
@@ -131,7 +128,9 @@ function App() {
                   <Route path="/catalog_manager" element={<CatalogManagerPage />} />
                   <Route path="/publicity_edit" element={<AdTemplateEditor />} />
                   <Route path="/publicidad" element={<ProductTemplateStudio />} />
-                  <Route path="/editor" element={<EditorPage />} />
+                  <Route path="/editorDefault" element={<EditorPage />} />
+                  <Route path="/editor/:id?" element={<EditorPage />} />
+                  <Route path="/templates" element={<EditorTemplatesView />} />
                   
 
                   <Route path="/analisis" element={<Analytics />} />

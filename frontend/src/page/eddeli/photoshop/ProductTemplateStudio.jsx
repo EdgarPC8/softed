@@ -17,7 +17,13 @@ import { EditorProvider, useEditor } from "./EditorProvider";
 import CanvasStage from "./canvas/CanvasStage";
 import ExportPanel from "./panels/ExportPanel";
 import { getCatalogTemplateItems } from "../../../api/inventoryControlRequest";
-import { pathImg } from "../../../api/axios"; // ✅ usa tu base: http://IP:PORT/eddeliapi/img
+import { pathImg } from "../../../api/axios";
+
+// ✅ MISMA lógica que Canvas
+import { resolveLayer } from "./bind/resolveTemplate";
+
+// ✅ helpers únicos
+import { normalizeKey, resolveValue } from "./bind/resolveMedia";
 
 export default function ProductTemplateStudio() {
   return (
@@ -27,94 +33,6 @@ export default function ProductTemplateStudio() {
   );
 }
 
-// -----------------------
-// helpers
-// -----------------------
-const getByPath = (obj, path) => {
-  try {
-    return String(path || "")
-      .split(".")
-      .reduce((acc, k) => acc?.[k], obj);
-  } catch {
-    return undefined;
-  }
-};
-
-const normalizeKey = (k = "") => {
-  const s = String(k || "").trim();
-  if (!s) return "";
-
-  // si ya viene con prefijos conocidos, lo respetamos
-  if (
-    s.startsWith("data.") ||
-    s.startsWith("product.") ||
-    s.startsWith("catalog.") ||
-    s.startsWith("computed.")
-  )
-    return s;
-
-  // si tiene puntos (product.xxx) lo respetamos
-  if (s.includes(".")) return s;
-
-  // si es simple (desc) lo asumimos dentro de data.*
-  return `data.${s}`;
-};
-
-const resolveFieldValue = (docData, rawKey) => {
-  const key = normalizeKey(rawKey);
-  if (!key) return { key: "", value: undefined };
-  const value = getByPath(docData || {}, key);
-  return { key, value };
-};
-
-const isNonEmpty = (v) => v !== undefined && v !== null && String(v).trim() !== "";
-
-// ✅ une URLs sin // dobles
-const joinUrl = (base = "", p = "") =>
-  `${String(base).replace(/\/+$/, "")}/${String(p).replace(/^\/+/, "")}`;
-
-// ✅ detectar si ya es URL completa
-const isAbsoluteUrl = (s = "") =>
-  /^https?:\/\//i.test(String(s)) || /^data:image\//i.test(String(s)) || /^blob:/i.test(String(s));
-
-/**
- * ✅ RESUELVE SRC FINAL:
- * 1) si value es absoluta -> value
- * 2) si hay bind.srcPrefix -> srcPrefix + value
- * 3) si no, usa pathImg + value
- * 4) fallback: props.src -> (si es relativa también se completa)
- * 5) fallback final: bind.fallbackSrc
- */
-const resolveImageSrc = ({ layer, docData }) => {
-  const rawKey = layer?.fieldKey || layer?.bind?.srcFrom || "";
-  const { key, value } = resolveFieldValue(docData, rawKey);
-
-  const srcPrefix = layer?.bind?.srcPrefix || "";
-  const fallbackSrc = layer?.bind?.fallbackSrc || "";
-  const defaultSrc = layer?.props?.src || "";
-
-  // 1) value por fieldKey/bind
-  if (isNonEmpty(value)) {
-    const v = String(value);
-    if (isAbsoluteUrl(v)) return { key, rawKey, src: v, from: "data(abs)" };
-    if (srcPrefix) return { key, rawKey, src: joinUrl(srcPrefix, v), from: "data(prefix)" };
-    return { key, rawKey, src: joinUrl(pathImg, v), from: "data(pathImg)" };
-  }
-
-  // 2) default props.src
-  if (isNonEmpty(defaultSrc)) {
-    const d = String(defaultSrc);
-    if (isAbsoluteUrl(d)) return { key, rawKey, src: d, from: "default(abs)" };
-    if (srcPrefix) return { key, rawKey, src: joinUrl(srcPrefix, d), from: "default(prefix)" };
-    return { key, rawKey, src: joinUrl(pathImg, d), from: "default(pathImg)" };
-  }
-
-  // 3) fallbackSrc (normalmente ya es absoluto)
-  if (isNonEmpty(fallbackSrc)) return { key, rawKey, src: String(fallbackSrc), from: "fallback" };
-
-  return { key, rawKey, src: "", from: "empty" };
-};
-
 function StudioInner() {
   const { state, dispatch } = useEditor();
 
@@ -122,25 +40,23 @@ function StudioInner() {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
 
-  const selectedId = state?.doc?.data?.catalog?.id ?? "";
+  const selectedId = state?.doc?.data?.id ?? "";
 
-  // ✅ guardo el item completo en doc.data.data y product/catálogo
+  // ✅ SOLO: item plano + product (modo limpio)
   const applySelection = useCallback(
     (it) => {
       if (!it) return;
 
-      dispatch({ type: "SET_DOC_DATA_CATALOG", catalog: it });
-      dispatch({ type: "SET_DOC_DATA_PRODUCT", product: it.product || null });
+      const product = it.product || {};
+      const { product: _p, ...catalogItem } = it;
 
       dispatch({
         type: "SET_DOC_DATA_PATCH",
         patch: {
-          data: it,              // data.imageUrl / data.displayName ...
-          product: it.product||{}, // product.primaryImageUrl ...
-          catalog: it
+          ...catalogItem, // badge, displayName, imageUrl...
+          product, // product.name, product.primaryImageUrl...
         },
       });
-      
     },
     [dispatch]
   );
@@ -157,7 +73,8 @@ function StudioInner() {
         const arr = Array.isArray(data) ? data : [];
         setItems(arr);
 
-        if ((!state?.doc?.data?.catalog || !state.doc.data.catalog?.id) && arr.length) {
+        // si no hay id seleccionado aún, toma el primero
+        if ((!state?.doc?.data || !state.doc.data?.id) && arr.length) {
           applySelection(arr[0]);
         }
       } catch (e) {
@@ -179,8 +96,8 @@ function StudioInner() {
     if (!q) return items;
 
     return items.filter((it) => {
-      const name = String(it?.name || it?.displayName || it?.title || it?.product?.name || "").toLowerCase();
-      const badge = String(it?.badge || it?.label || "").toLowerCase();
+      const name = String(it?.displayName || it?.title || it?.product?.name || "").toLowerCase();
+      const badge = String(it?.badge || "").toLowerCase();
       const section = String(it?.section || "").toLowerCase();
       return name.includes(q) || badge.includes(q) || section.includes(q);
     });
@@ -191,14 +108,14 @@ function StudioInner() {
     applySelection(it);
   };
 
-  // ✅ docData real
+  const doc = state?.doc || {};
   const docData = state?.doc?.data || {};
-
-  // ✅ layers
   const layers = state?.doc?.layers || [];
+
   const textLayers = useMemo(() => layers.filter((l) => l?.type === "text"), [layers]);
   const imageLayers = useMemo(() => layers.filter((l) => l?.type === "image"), [layers]);
 
+  // ✅ checker de imágenes usando el src RESUELTO por resolveLayer
   const [imgStatus, setImgStatus] = useState({});
 
   useEffect(() => {
@@ -207,22 +124,23 @@ function StudioInner() {
     const check = async () => {
       const next = {};
 
-      for (const layer of imageLayers) {
-        const { src } = resolveImageSrc({ layer, docData });
+      for (const rawLayer of imageLayers) {
+        const resolved = resolveLayer(doc, docData, rawLayer);
+        const src = resolved?.props?.src || "";
 
         if (!src) {
-          next[layer?.id || ""] = false;
+          next[rawLayer?.id || ""] = false;
           continue;
         }
 
         await new Promise((resolve) => {
           const img = new Image();
           img.onload = () => {
-            if (!cancelled) next[layer?.id || ""] = true;
+            if (!cancelled) next[rawLayer?.id || ""] = true;
             resolve(true);
           };
           img.onerror = () => {
-            if (!cancelled) next[layer?.id || ""] = false;
+            if (!cancelled) next[rawLayer?.id || ""] = false;
             resolve(false);
           };
           img.src = src;
@@ -233,11 +151,43 @@ function StudioInner() {
     };
 
     check();
-
     return () => {
       cancelled = true;
     };
-  }, [imageLayers, docData]);
+  }, [doc, docData, imageLayers]);
+
+  // helpers para mostrar estado en chips (usando modo limpio)
+  const getRawKeyForText = (l) => l?.fieldKey || l?.bind?.textFrom || "";
+  const getRawKeyForImage = (l) => l?.fieldKey || l?.bind?.srcFrom || "";
+  const getValueState = (rawKey) => {
+    if (!rawKey) return { k: "", value: undefined, state: "no-key" };
+  
+    const v = resolveValue(docData, rawKey);
+  
+    // ❌ solo undefined significa que no existe
+    if (v === undefined) return { k: rawKey, value: v, state: "missing" };
+  
+    // ⚠️ null es un valor válido pero vacío
+    if (v === null) return { k: rawKey, value: v, state: "null" };
+  
+    // 🔢 números SIEMPRE son válidos
+    if (typeof v === "number") {
+      if (Number.isNaN(v)) {
+        return { k: rawKey, value: v, state: "nan" };
+      }
+      return { k: rawKey, value: v, state: "ok" };
+    }
+  
+    // 🧵 strings
+    if (typeof v === "string") {
+      if (!v.trim()) return { k: rawKey, value: v, state: "empty" };
+      return { k: rawKey, value: v, state: "ok" };
+    }
+  
+    // 📦 otros tipos (boolean, object)
+    return { k: rawKey, value: v, state: "ok" };
+  };
+  
 
   return (
     <Box
@@ -295,7 +245,7 @@ function StudioInner() {
 
               {!loading &&
                 filtered.map((it) => {
-                  const name = it?.name || it.displayName || it.title || it.product?.name || `Item #${it.id}`;
+                  const name = it?.displayName || it?.title || it?.product?.name || `Item #${it.id}`;
                   const sec = it.section ? `[${it.section}] ` : "";
                   const price =
                     typeof it.displayPrice !== "undefined"
@@ -315,7 +265,7 @@ function StudioInner() {
           </FormControl>
 
           <Box sx={{ mt: 1, color: "rgba(255,255,255,0.7)", fontSize: 12 }}>
-            Este Studio es solo <b>preview</b> + <b>export</b>.
+            Este Studio es <b>preview</b> + <b>export</b>.
           </Box>
 
           <Box sx={{ mt: 1, color: "rgba(255,255,255,0.5)", fontSize: 11 }}>
@@ -329,6 +279,29 @@ function StudioInner() {
         <Box sx={{ p: 2, overflow: "auto", minHeight: 0 }}>
           <Typography sx={{ fontWeight: 900, color: "#fff", mb: 1 }}>Vista rápida (capas)</Typography>
 
+          {/* DOC DATA */}
+          <Box sx={{ mb: 2 }}>
+            <Typography sx={{ color: "rgba(255,255,255,0.8)", fontWeight: 800, fontSize: 12, mb: 1 }}>
+              doc.data (lo que leen las capas)
+            </Typography>
+            <Box
+              component="pre"
+              sx={{
+                m: 0,
+                p: 1,
+                borderRadius: 1.5,
+                border: "1px solid rgba(255,255,255,0.10)",
+                background: "rgba(255,255,255,0.03)",
+                color: "rgba(255,255,255,0.85)",
+                fontSize: 11,
+                overflow: "auto",
+                maxHeight: 180,
+              }}
+            >
+              {JSON.stringify(docData || {}, null, 2)}
+            </Box>
+          </Box>
+
           {/* TEXTOS */}
           <Box sx={{ mb: 2 }}>
             <Typography sx={{ color: "rgba(255,255,255,0.8)", fontWeight: 800, fontSize: 12, mb: 1 }}>
@@ -336,16 +309,41 @@ function StudioInner() {
             </Typography>
 
             <Stack spacing={1}>
-              {textLayers.map((l) => {
-                const rawKey = l?.fieldKey || l?.bind?.textFrom || "";
-                const { key, value } = resolveFieldValue(docData, rawKey);
+              {textLayers.map((rawLayer) => {
+                const resolved = resolveLayer(doc, docData, rawLayer);
+                const rawKey = getRawKeyForText(rawLayer);
+                const s = getValueState(rawKey);
 
-                const fallback = l?.props?.text ?? "";
-                const shown = isNonEmpty(value) ? String(value) : String(fallback);
+                const defaultText = rawLayer?.props?.text ?? "";
+                const shown = resolved?.props?.text ?? defaultText;
+
+                let statusLabel = "❌ vacío";
+                if (!rawKey) statusLabel = "🟡 default";
+                else if (s.state === "ok") statusLabel = "✅ cargó";
+                else if (s.state === "missing") statusLabel = "❌ no existe";
+                else if (s.state === "null") statusLabel = "⚠️ nulo";
+                else if (s.state === "empty") statusLabel = "🟡 default";
+
+                const from =
+                  !rawKey
+                    ? "default(no-key)"
+                    : s.state === "ok"
+                    ? `data(${s.k})`
+                    : s.state === "null"
+                    ? `data(null:${s.k})`
+                    : s.state === "missing"
+                    ? "missing"
+                    : "default";
+
+                const hasShown =
+  shown !== undefined &&
+  shown !== null &&
+  !(typeof shown === "string" && !shown.trim());
+
 
                 return (
                   <Box
-                    key={l.id}
+                    key={rawLayer.id}
                     sx={{
                       p: 1,
                       borderRadius: 1.5,
@@ -354,18 +352,19 @@ function StudioInner() {
                     }}
                   >
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5, flexWrap: "wrap" }}>
-                      <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 12 }}>{l.id}</Typography>
-                      <Chip size="small" label={rawKey || "sin fieldKey"} />
-                      <Chip size="small" label={isNonEmpty(value) ? "data" : "default"} />
+                      <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 12 }}>{rawLayer.id}</Typography>
+                      <Chip size="small" label={rawKey || "sin fieldKey/textFrom"} />
+                      <Chip size="small" label={statusLabel} />
+                      <Chip size="small" label={from} />
                     </Stack>
 
                     <Typography sx={{ color: "#fff", fontSize: 12 }}>
-                      {shown || <span style={{ color: "rgba(255,255,255,0.45)" }}>(vacío)</span>}
+                      {hasShown ? shown : <span style={{ color: "rgba(255,255,255,0.45)" }}>(vacío)</span>}
                     </Typography>
 
                     {!!rawKey && (
                       <Typography sx={{ mt: 0.5, color: "rgba(255,255,255,0.55)", fontSize: 11 }}>
-                        key: {key}
+                        key usada: {s.k}
                       </Typography>
                     )}
                   </Box>
@@ -381,13 +380,28 @@ function StudioInner() {
             </Typography>
 
             <Stack spacing={1}>
-              {imageLayers.map((l) => {
-                const { key, rawKey, src, from } = resolveImageSrc({ layer: l, docData });
-                const loaded = imgStatus[l?.id || ""] === true;
+              {imageLayers.map((rawLayer) => {
+                const resolved = resolveLayer(doc, docData, rawLayer);
+                const rawKey = getRawKeyForImage(rawLayer);
+                const s = getValueState(rawKey);
+
+                const src = resolved?.props?.src || "";
+                const loaded = imgStatus[rawLayer?.id || ""] === true;
+
+                let from =
+                  !rawKey
+                    ? "default(no-key)"
+                    : s.state === "ok"
+                    ? `data(${s.k})`
+                    : s.state === "null"
+                    ? `data(null:${s.k})`
+                    : s.state === "missing"
+                    ? "missing"
+                    : "default";
 
                 return (
                   <Box
-                    key={l.id}
+                    key={rawLayer.id}
                     sx={{
                       p: 1,
                       borderRadius: 1.5,
@@ -396,8 +410,8 @@ function StudioInner() {
                     }}
                   >
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5, flexWrap: "wrap" }}>
-                      <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 12 }}>{l.id}</Typography>
-                      <Chip size="small" label={rawKey || "sin fieldKey"} />
+                      <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 12 }}>{rawLayer.id}</Typography>
+                      <Chip size="small" label={rawKey || "sin fieldKey/srcFrom"} />
                       <Chip size="small" label={src ? (loaded ? "✅ cargó" : "❌ error") : "sin src"} />
                       <Chip size="small" label={from} />
                     </Stack>
@@ -408,7 +422,7 @@ function StudioInner() {
 
                     {!!rawKey && (
                       <Typography sx={{ mt: 0.5, color: "rgba(255,255,255,0.55)", fontSize: 11 }}>
-                        key: {key}
+                        key usada: {s.k}
                       </Typography>
                     )}
                   </Box>

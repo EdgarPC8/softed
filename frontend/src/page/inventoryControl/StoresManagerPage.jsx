@@ -24,6 +24,7 @@ import {
   TableCell,
   Checkbox,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
@@ -46,7 +47,7 @@ import {
   createStoreRequest,
   updateStoreRequest,
   deleteStoreRequest,
-  // NEW store-products APIs
+  // store-products APIs
   getStoreProductsRequest,
   addProductsToStoreRequest,
   removeProductFromStoreRequest,
@@ -82,18 +83,22 @@ async function getCroppedBlob(
   const cctx = canvasCrop.getContext("2d");
   cctx.drawImage(img, x, y, width, height, 0, 0, width, height);
 
+  const outW = targetW || width;
+  const outH = targetH || height;
+
   const canvasOut = document.createElement("canvas");
-  canvasOut.width = targetW;
-  canvasOut.height = targetH;
+  canvasOut.width = outW;
+  canvasOut.height = outH;
   const octx = canvasOut.getContext("2d");
-  octx.drawImage(canvasCrop, 0, 0, width, height, 0, 0, targetW, targetH);
+  octx.drawImage(canvasCrop, 0, 0, width, height, 0, 0, outW, outH);
 
   return new Promise((resolve) => canvasOut.toBlob(resolve, mime, quality));
 }
 
 function blobToFile(blob, originalName = "image", mime = "image/jpeg") {
   const base = originalName.replace(/\.[^.]+$/, "");
-  const ext = mime === "image/png" ? ".png" : mime === "image/webp" ? ".webp" : ".jpg";
+  const ext =
+    mime === "image/png" ? ".png" : mime === "image/webp" ? ".webp" : ".jpg";
   return new File([blob], base + ext, { type: mime });
 }
 
@@ -140,6 +145,7 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
   const getTargetSize = () => {
     if (!areaPixels) return { w: null, h: null };
     const { width, height } = areaPixels;
+
     if (sizeMode === "original") return { w: Math.round(width), h: Math.round(height) };
     if (sizeMode === "1080") {
       const scale = 1080 / width;
@@ -154,6 +160,7 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
     // custom
     const w = Number(customW) || null;
     const h = Number(customH) || null;
+
     if (w && !h) {
       const scale = w / width;
       return { w, h: Math.round(height * scale) };
@@ -162,10 +169,7 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
       const scale = h / height;
       return { w: Math.round(width * scale), h };
     }
-    return {
-      w: w || Math.round(width),
-      h: h || Math.round(height),
-    };
+    return { w: w || Math.round(width), h: h || Math.round(height) };
   };
 
   const handleEstimate = async () => {
@@ -224,7 +228,7 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={aspect} // undefined => libre
+            aspect={aspect}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={onCropComplete}
@@ -235,7 +239,6 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
         )}
       </Box>
 
-      {/* Controles */}
       <Box sx={{ px: 3, pt: 2, display: "grid", gap: 2 }}>
         <Box>
           <Typography variant="caption" sx={{ opacity: 0.7 }}>
@@ -246,7 +249,13 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
 
         <Box sx={{ display: "grid", gap: 1 }}>
           <Typography variant="subtitle2">Tamaño de salida</Typography>
-          <TextField label="Modo de tamaño" value={sizeMode} onChange={(e) => setSizeMode(e.target.value)} select fullWidth>
+          <TextField
+            label="Modo de tamaño"
+            value={sizeMode}
+            onChange={(e) => setSizeMode(e.target.value)}
+            select
+            fullWidth
+          >
             {PRESETS.map((p) => (
               <MenuItem key={p.k} value={p.k}>
                 {p.label}
@@ -256,8 +265,20 @@ function CropperDialog({ open, imageSrc, onClose, onConfirm, aspect }) {
 
           {sizeMode === "custom" && (
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-              <TextField label="Ancho (px)" type="number" value={customW} onChange={(e) => setCustomW(e.target.value)} placeholder="ej: 1600" />
-              <TextField label="Alto (px)" type="number" value={customH} onChange={(e) => setCustomH(e.target.value)} placeholder="ej: 1200" />
+              <TextField
+                label="Ancho (px)"
+                type="number"
+                value={customW}
+                onChange={(e) => setCustomW(e.target.value)}
+                placeholder="ej: 1600"
+              />
+              <TextField
+                label="Alto (px)"
+                type="number"
+                value={customH}
+                onChange={(e) => setCustomH(e.target.value)}
+                placeholder="ej: 1200"
+              />
             </Box>
           )}
         </Box>
@@ -329,6 +350,10 @@ function parseCoordsFromGoogleMapsUrl(url) {
 function MapPickDialog({ open, onClose, onPick, addressText }) {
   const [input, setInput] = useState("");
 
+  useEffect(() => {
+    if (!open) setInput("");
+  }, [open]);
+
   const handlePasteFromClipboard = async () => {
     try {
       const text = await navigator.clipboard.readText();
@@ -352,10 +377,10 @@ function MapPickDialog({ open, onClose, onPick, addressText }) {
         <Stack spacing={2}>
           <Typography variant="body2">
             1) Haz clic en <b>Abrir Google Maps</b> y busca tu ubicación.<br />
-            2) Copia la URL de la barra del navegador y pégala aquí. Detectaré las coordenadas.
+            2) Copia la URL de la barra del navegador y pégala aquí.
           </Typography>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} flexWrap="wrap">
             <Button
               variant="outlined"
               startIcon={<MapIcon />}
@@ -441,15 +466,15 @@ function MapPreview({ latitude, longitude, address, city, province, height = 220
 }
 
 /* ===========================
-   StoreProductsDialog (NUEVO)
+   StoreProductsDialog
 =========================== */
 function StoreProductsDialog({ open, onClose, store }) {
   const { toast: toastAuth } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [links, setLinks] = useState([]); // [{linkId, productId, isActive, product:{...}}]
+  const [links, setLinks] = useState([]);
   const [searchAdd, setSearchAdd] = useState("");
-  const [options, setOptions] = useState([]); // productos finales disponibles para agregar
-  const [sel, setSel] = useState([]); // productIds seleccionados para agregar
+  const [options, setOptions] = useState([]);
+  const [sel, setSel] = useState([]);
   const [busyAdd, setBusyAdd] = useState(false);
 
   const fetchLinks = async () => {
@@ -474,18 +499,22 @@ function StoreProductsDialog({ open, onClose, store }) {
   const fetchOptions = async () => {
     try {
       const { data } = await getFinalProductsRequest({ q: searchAdd || "" });
-      // Filtra los ya asignados:
       const assignedIds = new Set(links.map((l) => l.productId));
       const opts = (Array.isArray(data) ? data : []).filter((p) => !assignedIds.has(p.id));
       setOptions(opts);
-    } catch (err) {
-      // silencioso
+    } catch {
+      setOptions([]);
     }
   };
 
   useEffect(() => {
     if (open) {
       fetchLinks();
+      setSel([]);
+      setSearchAdd("");
+      setOptions([]);
+    } else {
+      setLinks([]);
       setSel([]);
       setSearchAdd("");
       setOptions([]);
@@ -498,13 +527,13 @@ function StoreProductsDialog({ open, onClose, store }) {
     const t = setTimeout(fetchOptions, 250);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchAdd, links]);
+  }, [searchAdd, links, open]);
 
   const toggleSel = (pid) =>
     setSel((prev) => (prev.includes(pid) ? prev.filter((x) => x !== pid) : [...prev, pid]));
 
   const addSelected = async () => {
-    if (!sel.length) return;
+    if (!sel.length || !store) return;
     try {
       setBusyAdd(true);
       await addProductsToStoreRequest(store.id, sel);
@@ -524,34 +553,32 @@ function StoreProductsDialog({ open, onClose, store }) {
   };
 
   const toggleVisibility = async (productId, current) => {
+    if (!store) return;
     try {
       await toggleStoreProductRequest(store.id, productId, !current);
       setLinks((prev) =>
         prev.map((r) => (r.productId === productId ? { ...r, isActive: !current } : r))
       );
-    } catch (err) {
-      // toast opcional
-    }
+    } catch {}
   };
 
   const removeLink = async (productId) => {
+    if (!store) return;
     try {
       await removeProductFromStoreRequest(store.id, productId);
       setLinks((prev) => prev.filter((r) => r.productId !== productId));
-    } catch (err) {
-      // toast opcional
-    }
+    } catch {}
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>Productos de: {store?.name || "—"}</DialogTitle>
       <DialogContent dividers>
-        {/* Asignar nuevos */}
         <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
           <Typography variant="subtitle2" sx={{ mb: 1 }}>
             Agregar productos
           </Typography>
+
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="center">
             <TextField
               fullWidth
@@ -560,15 +587,15 @@ function StoreProductsDialog({ open, onClose, store }) {
               value={searchAdd}
               onChange={(e) => setSearchAdd(e.target.value)}
               InputProps={{
-                startAdornment: <Search fontSize="small" sx={{ mr: 1 }} />,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search fontSize="small" />
+                  </InputAdornment>
+                ),
               }}
             />
-            <Button
-              variant="contained"
-              onClick={addSelected}
-              disabled={!sel.length || busyAdd}
-            >
-              Agregar seleccionados ({sel.length})
+            <Button variant="contained" onClick={addSelected} disabled={!sel.length || busyAdd}>
+              Agregar ({sel.length})
             </Button>
           </Stack>
 
@@ -597,6 +624,7 @@ function StoreProductsDialog({ open, onClose, store }) {
                               src={img}
                               alt={p.name}
                               style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover" }}
+                              onError={(e) => (e.currentTarget.style.visibility = "hidden")}
                             />
                           ) : (
                             <Box sx={{ width: 40, height: 40, bgcolor: "action.hover", borderRadius: 1 }} />
@@ -622,12 +650,11 @@ function StoreProductsDialog({ open, onClose, store }) {
           </Box>
         </Paper>
 
-        {/* Listado actual */}
         <Typography variant="subtitle2" sx={{ mb: 1 }}>
           Asignados ({links.length})
         </Typography>
 
-        <Paper variant="outlined" sx={{ p: 0 }}>
+        <Paper variant="outlined">
           <Box sx={{ maxHeight: 320, overflow: "auto" }}>
             <Table size="small" stickyHeader>
               <TableHead>
@@ -658,6 +685,7 @@ function StoreProductsDialog({ open, onClose, store }) {
                                 src={img}
                                 alt={p.name}
                                 style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover" }}
+                                onError={(e) => (e.currentTarget.style.visibility = "hidden")}
                               />
                             ) : (
                               <Box sx={{ width: 40, height: 40, bgcolor: "action.hover", borderRadius: 1 }} />
@@ -670,21 +698,14 @@ function StoreProductsDialog({ open, onClose, store }) {
                         </TableCell>
                         <TableCell align="center">
                           <Tooltip title={r.isActive ? "Ocultar" : "Mostrar"}>
-                            <IconButton
-                              size="small"
-                              onClick={() => toggleVisibility(r.productId, r.isActive)}
-                            >
+                            <IconButton size="small" onClick={() => toggleVisibility(r.productId, r.isActive)}>
                               {r.isActive ? <Visibility /> : <VisibilityOff />}
                             </IconButton>
                           </Tooltip>
                         </TableCell>
                         <TableCell align="center">
                           <Tooltip title="Quitar de la tienda">
-                            <IconButton
-                              color="error"
-                              size="small"
-                              onClick={() => removeLink(r.productId)}
-                            >
+                            <IconButton color="error" size="small" onClick={() => removeLink(r.productId)}>
                               <RemoveCircleOutline />
                             </IconButton>
                           </Tooltip>
@@ -704,6 +725,7 @@ function StoreProductsDialog({ open, onClose, store }) {
           </Box>
         </Paper>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose}>Cerrar</Button>
       </DialogActions>
@@ -719,17 +741,11 @@ function StoreForm({ value, onChange }) {
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-
   const [cropOpen, setCropOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
-  const [aspectKey, setAspectKey] = useState("4:3"); // sugerido para locales
+  const [aspectKey, setAspectKey] = useState("4:3");
 
-  const ASPECTS = {
-    "1:1": 1,
-    "4:3": 4 / 3,
-    "16:9": 16 / 9,
-    free: undefined,
-  };
+  const ASPECTS = { "1:1": 1, "4:3": 4 / 3, "16:9": 16 / 9, free: undefined };
 
   const fileRef = useRef(null);
   const handleChooseFile = () => fileRef.current?.click();
@@ -743,8 +759,6 @@ function StoreForm({ value, onChange }) {
     e.target.value = "";
   };
 
-  const [lastMeta, setLastMeta] = useState(null);
-
   const handleCropConfirm = async (blob, meta) => {
     const file = blobToFile(blob, "image", meta?.mime || "image/jpeg");
     setSelectedFile(file);
@@ -752,7 +766,6 @@ function StoreForm({ value, onChange }) {
     setPreviewUrl(URL.createObjectURL(file));
     set("imageFile", file);
     setCropOpen(false);
-    setLastMeta(meta || null);
 
     if (imageSrc) URL.revokeObjectURL(imageSrc);
     setImageSrc(null);
@@ -773,7 +786,6 @@ function StoreForm({ value, onChange }) {
 
   const previewSrc = previewUrl || (value.imageUrl ? `${pathImg}${value.imageUrl}` : null);
 
-  // ====== seleccionar coords desde Maps vía URL ======
   const [mapDialogOpen, setMapDialogOpen] = useState(false);
   const handlePickCoords = ({ lat, lng }) => {
     set("latitude", lat);
@@ -817,7 +829,6 @@ function StoreForm({ value, onChange }) {
           <TextField label="Provincia" value={value.province || ""} onChange={(e) => set("province", e.target.value)} fullWidth />
         </Stack>
 
-        {/* Lat / Lng + visor */}
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             label="Latitud"
@@ -837,7 +848,7 @@ function StoreForm({ value, onChange }) {
           />
         </Stack>
 
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} flexWrap="wrap">
           <Button variant="outlined" startIcon={<MapIcon />} onClick={() => setMapDialogOpen(true)}>
             Elegir desde Google Maps
           </Button>
@@ -854,12 +865,12 @@ function StoreForm({ value, onChange }) {
           province={value.province}
         />
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center">
           <TextField
             label="Posición"
             type="number"
             value={value.position ?? 0}
-            onChange={(e) => set("position", Number(e.target.value))}
+            onChange={(e) => set("position", Number(e.target.value || 0))}
             fullWidth
           />
           <FormControlLabel
@@ -868,18 +879,51 @@ function StoreForm({ value, onChange }) {
           />
         </Stack>
 
-        <TextField label="Relación de aspecto" value={aspectKey} onChange={(e) => setAspectKey(e.target.value)} select fullWidth>
-          <MenuItem value="free">Personalizado / libre</MenuItem>
-          {Object.keys(ASPECTS)
-            .filter((k) => k !== "free")
-            .map((k) => (
-              <MenuItem key={k} value={k}>
-                {k}
-              </MenuItem>
-            ))}
+        <TextField
+          label="Relación de aspecto"
+          value={aspectKey}
+          onChange={(e) => setAspectKey(e.target.value)}
+          select
+          fullWidth
+        >
+          <MenuItem value="free">Libre</MenuItem>
+          <MenuItem value="1:1">1:1</MenuItem>
+          <MenuItem value="4:3">4:3</MenuItem>
+          <MenuItem value="16:9">16:9</MenuItem>
         </TextField>
+{/* ✅ Carpeta destino */}
+<TextField
+  label='Carpeta destino (ej: "EdDeli/stores")'
+  value={value.imageSubfolder || ""}
+  onChange={(e) => set("imageSubfolder", e.target.value)}
+  fullWidth
+  helperText='Se guardará dentro de src/img/<carpeta>. No uses "..".'
+/>
+
+{/* ✅ Nombre archivo (sin extensión) */}
+<TextField
+  label='Nombre de imagen (sin extensión)'
+  value={value.customFileName || ""}
+  onChange={(e) => set("customFileName", e.target.value)}
+  fullWidth
+  placeholder='Ej: tienda_quilanga'
+  helperText='Si subes archivo, se renombra. Si no subes y activas "Mover", se mueve la imagen actual.'
+/>
+
+<FormControlLabel
+  control={
+    <Switch
+      checked={Boolean(value.moveImage)}
+      onChange={(e) => set("moveImage", e.target.checked)}
+    />
+  }
+  label="Mover imagen actual (si no subo una nueva)"
+/>
+
+
 
         <input type="file" accept="image/*" hidden ref={fileRef} onChange={handleFileChange} />
+
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center">
           <Button onClick={handleChooseFile} variant="outlined">
             {value.imageUrl ? "Cambiar imagen…" : "Elegir imagen…"}
@@ -905,7 +949,12 @@ function StoreForm({ value, onChange }) {
               flexWrap: "wrap",
             }}
           >
-            <img src={previewSrc} alt="preview" style={{ width: 160, height: 120, objectFit: "cover", borderRadius: 8 }} />
+            <img
+              src={previewSrc}
+              alt="preview"
+              style={{ width: 160, height: 120, objectFit: "cover", borderRadius: 8 }}
+              onError={(e) => (e.currentTarget.style.visibility = "hidden")}
+            />
             <Box>
               <Typography variant="body2" color="text.secondary">
                 {selectedFile ? "Vista previa (recortada)" : "Imagen actual"}
@@ -914,7 +963,13 @@ function StoreForm({ value, onChange }) {
           </Box>
         ) : null}
 
-        <CropperDialog open={cropOpen} imageSrc={imageSrc} aspect={ASPECTS[aspectKey]} onClose={handleCropCancel} onConfirm={handleCropConfirm} />
+        <CropperDialog
+          open={cropOpen}
+          imageSrc={imageSrc}
+          aspect={ASPECTS[aspectKey]}
+          onClose={handleCropCancel}
+          onConfirm={handleCropConfirm}
+        />
 
         <MapPickDialog
           open={mapDialogOpen}
@@ -940,6 +995,7 @@ function StoresPage() {
 
   const [openForm, setOpenForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
   const [formValue, setFormValue] = useState({
     name: "",
     address: "",
@@ -957,11 +1013,13 @@ function StoresPage() {
     customFileName: "",
   });
 
-  // NEW: Dialog productos por tienda
   const [storeForProducts, setStoreForProducts] = useState(null);
   const [openProducts, setOpenProducts] = useState(false);
 
-  const titleDialog = useMemo(() => (isEditing ? "Editar punto de venta" : "Agregar punto de venta"), [isEditing]);
+  const titleDialog = useMemo(
+    () => (isEditing ? "Editar punto de venta" : "Agregar punto de venta"),
+    [isEditing]
+  );
 
   const fetchRows = async () => {
     try {
@@ -983,6 +1041,7 @@ function StoresPage() {
 
   useEffect(() => {
     fetchRows();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOpenCreate = () => {
@@ -1002,6 +1061,10 @@ function StoresPage() {
       imageUrl: "",
       imageFile: null,
       customFileName: "",
+      imageSubfolder: "EdDeli/stores",
+customFileName: "",
+moveImage: false, // opcional
+
     });
     setOpenForm(true);
   };
@@ -1024,6 +1087,14 @@ function StoresPage() {
       imageUrl: row.imageUrl || "",
       imageFile: null,
       customFileName: "",
+      imageSubfolder: row.imageUrl?.includes("/")
+  ? row.imageUrl.split("/").slice(0, -1).join("/")
+  : "EdDeli/stores",
+customFileName: row.imageUrl
+  ? row.imageUrl.split("/").pop().replace(/\.[^.]+$/, "") // sin extensión
+  : "",
+moveImage: false,
+
     });
     setOpenForm(true);
   };
@@ -1047,6 +1118,7 @@ function StoresPage() {
     if (formValue.email) fd.append("email", formValue.email);
     if (formValue.city) fd.append("city", formValue.city);
     if (formValue.province) fd.append("province", formValue.province);
+
     fd.append("position", String(Number.isFinite(formValue.position) ? formValue.position : 0));
     fd.append("isActive", String(Boolean(formValue.isActive)));
 
@@ -1059,13 +1131,17 @@ function StoresPage() {
 
     if (formValue.imageFile) {
       fd.append("image", formValue.imageFile, formValue.imageFile.name);
-    } else if (formValue.imageUrl) {
-      fd.append("imageUrl", formValue.imageUrl);
+    } else if (typeof formValue.imageUrl !== "undefined") {
+      // si no cambias imagen, mantenemos el string (puede ser "" o null si quieres limpiar)
+      fd.append("imageUrl", formValue.imageUrl || "");
     }
 
-    const promise = isEditing && formValue.id ? updateStoreRequest(formValue.id, fd) : createStoreRequest(fd);
+    const promise =
+      isEditing && formValue.id
+        ? updateStoreRequest(formValue.id, fd)
+        : createStoreRequest(fd);
 
-    toastAuth({
+    return toastAuth({
       promise,
       onSuccess: async () => {
         setOpenForm(false);
@@ -1089,7 +1165,7 @@ function StoresPage() {
 
   const handleDelete = async () => {
     if (!rowToDelete) return;
-    toastAuth({
+    return toastAuth({
       promise: deleteStoreRequest(rowToDelete.id),
       onSuccess: () => {
         setRows((prev) => prev.filter((r) => r.id !== rowToDelete.id));
@@ -1117,7 +1193,12 @@ function StoresPage() {
         const filename = row?.imageUrl;
         const src = filename ? `${pathImg}${filename}` : null;
         return src ? (
-          <img src={src} alt={row?.name || "img"} style={{ width: 70, height: 56, objectFit: "cover", borderRadius: 8 }} />
+          <img
+            src={src}
+            alt={row?.name || "img"}
+            style={{ width: 70, height: 56, objectFit: "cover", borderRadius: 8 }}
+            onError={(e) => (e.currentTarget.style.visibility = "hidden")}
+          />
         ) : (
           <Box sx={{ width: 70, height: 56, borderRadius: 1, bgcolor: "action.hover" }} />
         );
@@ -1177,7 +1258,7 @@ function StoresPage() {
         tableMaxHeight={420}
       />
 
-      {/* Diálogo de formulario (crear/editar) */}
+      {/* Form create/edit */}
       <SimpleDialog open={openForm} onClose={() => setOpenForm(false)} tittle={titleDialog}>
         <StoreForm value={formValue} onChange={setFormValue} />
         <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -1188,7 +1269,7 @@ function StoresPage() {
         </DialogActions>
       </SimpleDialog>
 
-      {/* Diálogo Productos por tienda */}
+      {/* Productos por tienda */}
       <StoreProductsDialog
         open={openProducts}
         onClose={() => setOpenProducts(false)}

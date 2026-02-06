@@ -325,27 +325,19 @@ axios.get(`/inventory/stores/${id}`, {
   headers: { Authorization: jwt() },
 });
 
-// Crear nuevo store (con imagen)
 export const createStoreRequest = (formData) =>
-axios.post("/inventory/stores", formData, {
-  headers: {
-    "Content-Type": "multipart/form-data",
-    Authorization: jwt(),
-  },
-});
+  axios.post("/inventory/stores", formData, {
+    headers: { Authorization: jwt() }, // ✅ sin Content-Type
+  });
 
-// Actualizar store existente
 export const updateStoreRequest = (id, formData) =>
-axios.put(`/inventory/stores/${id}`, formData, {
-  headers: {
-    "Content-Type": "multipart/form-data",
-    Authorization: jwt(),
-  },
-});
+  axios.put(`/inventory/stores/${id}`, formData, {
+    headers: { Authorization: jwt() }, // ✅ sin Content-Type
+  });
 
-// Eliminar store
+// Eliminar store (igual)
 export const deleteStoreRequest = (id) =>
-axios.delete(`/inventory/stores/${id}`, {
-  headers: { Authorization: jwt() },
-});
+  axios.delete(`/inventory/stores/${id}`, {
+    headers: { Authorization: jwt() },
+  });
 

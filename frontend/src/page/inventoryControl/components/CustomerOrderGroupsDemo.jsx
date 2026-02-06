@@ -797,6 +797,144 @@ export default function CustomerOrderGroupsDemo() {
     return { txt, total };
   };
 
+// Nueva función para generar el reporte detallado en formato de tabla
+const buildDetailedReportTxt = ({ title, customer, items }) => {
+  const now = todayISO();
+  let totalAmount = 0;
+  let reportLines = [];
+
+  // ======================
+  // ENCABEZADO
+  // ======================
+  reportLines.push(title);
+  reportLines.push(`Fecha del reporte: ${now}`);
+  reportLines.push(`Cliente: ${customer?.name || "—"}`);
+  reportLines.push(`Teléfono: ${customer?.phone || "—"}`);
+  reportLines.push("\n====================================");
+  reportLines.push("RESUMEN GENERAL DE PRODUCTOS VENDIDOS");
+  reportLines.push("====================================\n");
+
+  // ======================
+  // 1. RESUMEN GENERAL (SIN FECHA)
+  // ======================
+  const generalMap = {};
+
+  for (const item of items) {
+    const key = `${item.product}|${item.price}`;
+
+    if (!generalMap[key]) {
+      generalMap[key] = {
+        product: item.product,
+        price: item.price,
+        qty: 0,
+      };
+    }
+
+    generalMap[key].qty += item.qty;
+  }
+
+  for (const key in generalMap) {
+    const g = generalMap[key];
+    const subtotal = g.qty * g.price;
+    totalAmount += subtotal;
+
+    reportLines.push(
+      `Producto: ${g.product}\n` +
+      `Cantidad: ${g.qty}\n` +
+      `Precio Unitario: ${money(g.price)}\n` +
+      `Total: ${money(subtotal)}\n`
+    );
+  }
+
+  // ======================
+  // 2. DETALLE POR FECHA
+  // ======================
+  reportLines.push("\n=========================");
+  reportLines.push("DETALLE DE VENTAS POR FECHA");
+  reportLines.push("=========================\n");
+
+  const dateMap = {};
+
+  for (const item of items) {
+    if (!dateMap[item.orderDate]) {
+      dateMap[item.orderDate] = [];
+    }
+    dateMap[item.orderDate].push(item);
+  }
+
+  for (const date of Object.keys(dateMap).sort()) {
+    reportLines.push(`Fecha: ${date}\n`);
+
+    for (const item of dateMap[date]) {
+      const subtotal = item.qty * item.price;
+
+      reportLines.push(
+        `  Producto: ${item.product}\n` +
+        `  Cantidad: ${item.qty}\n` +
+        `  Precio Unitario: ${money(item.price)}\n` +
+        `  Total: ${money(subtotal)}\n`
+      );
+    }
+
+    reportLines.push("----------------------------------");
+  }
+
+  // ======================
+  // 3. RESUMEN POR PRODUCTO (CAMBIO DE PRECIO)
+  // ======================
+  reportLines.push("\n=================================");
+  reportLines.push("RESUMEN POR PRODUCTO (POR PRECIO)");
+  reportLines.push("=================================\n");
+
+  const productMap = {};
+
+  for (const item of items) {
+    if (!productMap[item.product]) {
+      productMap[item.product] = {};
+    }
+
+    if (!productMap[item.product][item.price]) {
+      productMap[item.product][item.price] = 0;
+    }
+
+    productMap[item.product][item.price] += item.qty;
+  }
+
+  for (const product in productMap) {
+    reportLines.push(`Producto: ${product}`);
+
+    const prices = Object.keys(productMap[product]);
+
+    if (prices.length > 1) {
+      reportLines.push("⚠ Este producto tuvo cambios de precio");
+    }
+
+    for (const price of prices) {
+      const qty = productMap[product][price];
+      const subtotal = qty * price;
+
+      reportLines.push(
+        `  Precio Unitario: ${money(price)}\n` +
+        `  Cantidad: ${qty}\n` +
+        `  Total: ${money(subtotal)}`
+      );
+    }
+
+    reportLines.push("----------------------------------");
+  }
+
+  // ======================
+  // TOTAL GENERAL
+  // ======================
+  reportLines.push(`\nTOTAL GENERAL DEL REPORTE: ${money(totalAmount)}`);
+
+  return {
+    txt: reportLines.join("\n"),
+    total: totalAmount,
+  };
+};
+
+
   // =======================
   // Actions
   // =======================
@@ -1185,6 +1323,23 @@ export default function CustomerOrderGroupsDemo() {
           >
             Descargar deuda total (TXT)
           </Button>
+          <Button
+  variant="contained"
+  disabled={!customer || loading || customerItems.length === 0}
+  onClick={() => {
+    const pendingItems = customerItems.filter((it) => !it.paidAt);
+    const { txt } = buildDetailedReportTxt({
+      title: "REPORTE DETALLADO DE DEUDA (POR PRODUCTO)",
+      customer,
+      items: pendingItems,
+    });
+
+    const filename = `deuda_detallada_${safeFileName(customer?.name)}_${todayISO()}.txt`;
+    downloadTextFile(filename, txt);
+  }}
+>
+  Descargar deuda detallada (TXT)
+</Button>
         </Stack>
       </Stack>
 
