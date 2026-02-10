@@ -382,23 +382,22 @@ const VERSE9 = [
   { note: 'Bb4', time: '0:11:2', duration: '8n',hand:'R' },
   { note: 'Eb2', time: '0:12:0', duration: '1n',hand:'L' },{ note: 'Eb3', time: '0:12:0', duration: '1n',hand:'L' },{ note: 'Eb4', time: '0:12:0', duration: '1n',hand:'R' },{ note: 'F4', time: '0:12:0', duration: '1n',hand:'R' },{ note: 'G4', time: '0:12:0', duration: '1n',hand:'R' },
   ];
-export const notesToPlay = buildSongFromSections([
-  // { name: 'Intro',    notes: INTRO    },
-  // { name: 'Verso 1',    notes: VERSE1    },
-  // { name: 'Verso 2',    notes: VERSE2    },
-  // { name: 'Verso 3',    notes: VERSE3   },
-  // { name: 'Verso 4',    notes: VERSE4   },
-  // { name: 'Verso 5', notes: VERSE5 },
-  // { name: 'Verso 6', notes: VERSE6 },
+// Canción completa: Intro + todos los versos (para exportar a JSON o usar en app)
+const fullSongOrder = [
+  { name: 'Intro', notes: INTRO },
+  { name: 'Verso 1', notes: VERSE1 },
+  { name: 'Verso 2', notes: VERSE2 },
+  { name: 'Verso 3', notes: VERSE3 },
+  { name: 'Verso 4', notes: VERSE4 },
+  { name: 'Verso 5', notes: VERSE5 },
+  { name: 'Verso 6', notes: VERSE6 },
   { name: 'Verso 7', notes: VERSE7 },
-  { name: 'Verso 7', notes: VERSE7 },
-  { name: 'Verso 7', notes: VERSE7 },
-  { name: 'Verso 7', notes: VERSE7 },
-  // { name: 'Verso 8', notes: VERSE8 },
-  // { name: 'Verso 8', notes: VERSE7 },
-  // { name: 'Verso 8', notes: VERSE8 },
-  // { name: 'Verso 9', notes: VERSE9 },
-  // { name: 'Verso 9', notes: VERSE10 },
-]);
+  { name: 'Verso 8', notes: VERSE8 },
+  { name: 'Verso 9', notes: VERSE9 },
+  { name: 'Verso 10', notes: VERSE10 },
+];
+
+export const notesToPlay = buildSongFromSections(fullSongOrder);
+export { notesToPlay as notesToPlayFull, fullSongOrder };
 
 

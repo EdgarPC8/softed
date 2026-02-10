@@ -1,4 +1,12 @@
-// editorReducer.js
+/**
+ * editorReducer.js
+ *
+ * Reducer del estado del editor. Acciones principales:
+ * - SET_SELECTED, SET_ACTION, SET_DRAG_ID: UI (selección, arrastre).
+ * - UPDATE_LAYER, UPDATE_LAYER_PROPS, TOGGLE_VISIBLE, TOGGLE_LOCKED: capas.
+ * - ADD_LAYER, DELETE_LAYER, REORDER_BY_DROP, UPDATE_GROUP_POS: estructura.
+ * - SET_DOC, SET_DOC_DATA_*: documento y datos para bind.
+ */
 import { ensureUniqueId, makeDefaultLayer } from "./editorActions";
 
 export const initialState = (template) => ({
@@ -43,6 +51,23 @@ export function editorReducer(state, action) {
 
     case "SET_DRAG_ID":
       return { ...state, dragId: action.dragId };
+
+    /** Mover un grupo: actualiza x, y del grupo por dx/dy (ej. desde CanvasStage con Shift+mouse) */
+    case "UPDATE_GROUP_POS": {
+      const { groupId, dx, dy } = action;
+      if (!groupId) return state;
+      return {
+        ...state,
+        doc: {
+          ...state.doc,
+          groups: (state.doc.groups || []).map((g) =>
+            g.id === groupId
+              ? { ...g, x: (g.x || 0) + dx, y: (g.y || 0) + dy }
+              : g
+          ),
+        },
+      };
+    }
 
     case "UPDATE_LAYER":
       return pushOp(
@@ -239,16 +264,6 @@ export function editorReducer(state, action) {
       };
     }
     
-
-    case "SET_BACKGROUND_SRC": {
-      return {
-        ...state,
-        doc: {
-          ...state.doc,
-          backgroundSrc: action.backgroundSrc,
-        },
-      };
-    }
 
     case "SET_DOC_DATA_PRODUCT": {
       return {

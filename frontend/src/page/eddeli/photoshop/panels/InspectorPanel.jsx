@@ -79,17 +79,6 @@ export default function InspectorPanel({
   toggleVisible,
   toggleLocked,
 }) {
-  const { state, dispatch } = useEditor();
-
-  const backgroundSrc = state.doc?.backgroundSrc || "";
-
-  const setBackgroundSrc = (value) => {
-    dispatch({
-      type: "SET_BACKGROUND_SRC",
-      backgroundSrc: value,
-    });
-  };
-
   const layer = useMemo(() => {
     if (!selectedLayer) return null;
     return (layers || []).find((l) => l.id === selectedLayer) || null;
@@ -98,16 +87,8 @@ export default function InspectorPanel({
   if (!selectedLayer) {
     return (
       <Stack spacing={1.2}>
-        <TextField
-          size="small"
-          label="Background (Src)"
-          value={backgroundSrc}
-          onChange={(e) => setBackgroundSrc(e.target.value)}
-          fullWidth
-        />
-
         <Typography sx={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>
-          Selecciona una capa para editar.
+          Selecciona una capa para editar. Para el fondo usa una capa tipo imagen que ocupe todo el canvas.
         </Typography>
       </Stack>
     );
@@ -280,7 +261,7 @@ export default function InspectorPanel({
             <TextField
               size="small"
               select
-              label="Alineación"
+              label="Alineación horizontal"
               value={p.align || "left"}
               onChange={(e) => updateLayerProps(layer.id, { align: e.target.value })}
               sx={{ flex: 1 }}
@@ -290,6 +271,21 @@ export default function InspectorPanel({
               <MenuItem value="right">Derecha</MenuItem>
             </TextField>
 
+            <TextField
+              size="small"
+              select
+              label="Alineación vertical"
+              value={p.verticalAlign || "top"}
+              onChange={(e) => updateLayerProps(layer.id, { verticalAlign: e.target.value })}
+              sx={{ flex: 1 }}
+            >
+              <MenuItem value="top">Arriba</MenuItem>
+              <MenuItem value="center">Centro</MenuItem>
+              <MenuItem value="bottom">Abajo</MenuItem>
+            </TextField>
+          </Stack>
+
+          <Stack direction="row" spacing={1}>
             <TextField
               size="small"
               label="Line height"

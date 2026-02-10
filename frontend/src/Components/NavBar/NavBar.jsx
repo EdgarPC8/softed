@@ -1,10 +1,10 @@
 // MiniDrawer.jsx
 import React, { useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { 
+import {
   Box, CssBaseline, Toolbar, Typography, IconButton, Tooltip, Divider, List,
   ListItem, ListItemButton, ListItemIcon, ListItemText, Accordion, AccordionSummary,
-  AccordionDetails, Popover, Button, Avatar, Badge, Menu, MenuItem
+  AccordionDetails, Popover, Button, Avatar, Badge, Menu, MenuItem, ListSubheader
 } from '@mui/material';
 import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -37,10 +37,13 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import DescriptionIcon from '@mui/icons-material/Description';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import PeopleIcon from '@mui/icons-material/People';
 import FactoryIcon from "@mui/icons-material/Factory";
 import StarRounded from "@mui/icons-material/StarRounded";
 import StorefrontRounded from "@mui/icons-material/StorefrontRounded";
+import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
 import ThemeSwitcher from '../ThemeSwitcher';
 
 // Íconos públicos
@@ -49,26 +52,82 @@ import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 import CakeIcon from "@mui/icons-material/Cake";
 import LocalCafeIcon from "@mui/icons-material/LocalCafe";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import { activeApp } from '../../../appConfig';
+import { activeApp, activeAppId } from "../../../appConfig";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
+
+
+import CollectionsBookmark from "@mui/icons-material/CollectionsBookmark";
+import InsertDriveFile from "@mui/icons-material/InsertDriveFile";
+import EditNote from "@mui/icons-material/EditNote";
+import VolumeUp from "@mui/icons-material/VolumeUp";
+// Cambiar Terminal por Campaign para Publicidad
+import CampaignIcon from "@mui/icons-material/Campaign";
+import PianoIcon from "@mui/icons-material/Piano";
+
+
 
 
 const PUBLIC_NAV = [
   { label: "Inicio", icon: <HomeIcon fontSize="small" />, to: "/" },
-  { label: "Catalogo", icon: <BakeryDiningIcon fontSize="small" />, to: "/catalogo" },
-  { label: "Puntos de Venta", icon: <StorefrontIcon fontSize="small" />, to: "/punto_venta" },
-
+  { label: "Catalogo", icon: <BakeryDiningIcon fontSize="small" />, to: "/catalogo", app: "eddeli" },
+  { label: "Puntos de Venta", icon: <StorefrontIcon fontSize="small" />, to: "/punto_venta", app: "eddeli" },
 ];
+
+/** Menú público filtrado por app: en alumni no se muestran Catálogo ni Puntos de venta */
+function getPublicNavForApp(currentAppId) {
+  return PUBLIC_NAV.filter((item) => itemVisibleForApp(item.app, currentAppId));
+}
+
+/** Si la app está permitida para este ítem. softed = ver todo. */
+function itemVisibleForApp(itemApp, currentAppId) {
+  if (currentAppId === "softed") return true;
+  if (!itemApp || itemApp === "shared") return true;
+  return itemApp === currentAppId;
+}
+
+function filterPermisosByApp(permisosRole, currentAppId) {
+  if (!permisosRole) return [];
+  return permisosRole
+    .map((item) => {
+      // Si el ítem tiene app (ej. eddeli), no mostrarlo en otras apps (ej. alumni)
+      if (!itemVisibleForApp(item.app, currentAppId)) return null;
+      if (item.menu?.items) {
+        const filtered = item.menu.items.filter((sub) =>
+          itemVisibleForApp(sub.app, currentAppId)
+        );
+        if (filtered.length === 0) return null;
+        return { ...item, menu: { ...item.menu, items: filtered } };
+      }
+      return item;
+    })
+    .filter(Boolean);
+}
+
+/** Particiona items por app cuando activeAppId es softed: EdDeli, Alumni, SoftEd */
+function partitionByAppForSofted(items) {
+  const eddeli = items.filter((p) => p.app === "eddeli");
+  const alumni = items.filter((p) => p.app === "alumni");
+  const softed = items.filter((p) => !p.app || p.app === "shared" || p.app === "softed");
+  return { eddeli, alumni, softed };
+}
 
 const permisos = {
   Programador: [
     { name: "Home", icon: <Home />, link: "/" },
-    { name: "Panaderia", icon: <BakeryDiningIcon />, link: "/backery" },
-    { name: "Catalogo Config", icon: <ViewModuleIcon />, link: "/catalog_manager" },
+    { name: "Piano", icon: <PianoIcon />, link: "/piano", app: "softed" },
+    { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
+    { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
+    { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
+    { name: "Panaderia", icon: <BakeryDiningIcon />, link: "/backery", app: "eddeli" },
+    { name: "Catalogo Config", icon: <ViewModuleIcon />, link: "/catalog_manager", app: "eddeli" },
     {
-      name: "Inventory Control", icon: <InventoryIcon />, menu: {
+      name: "Inventory Control",
+      icon: <InventoryIcon />,
+      app: "eddeli",
+      menu: {
         items: [
           { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
+          { name: "Cobranzas", link: "/inventory/collections", icon: <RequestQuoteIcon /> },
           { name: "Producción", link: "/inventory/production", icon: <FactoryIcon /> },
           { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
           { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
@@ -83,7 +142,9 @@ const permisos = {
       },
     },
     {
-      name: "Encuestas", icon: <Poll />, menu: {
+      name: "Encuestas",
+      icon: <Poll />,
+      menu: {
         items: [
           { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
           { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
@@ -91,7 +152,9 @@ const permisos = {
       },
     },
     {
-      name: "Cuestionarios", icon: <Poll />, menu: {
+      name: "Cuestionarios",
+      icon: <Poll />,
+      menu: {
         items: [
           { name: "Ver cuestionarios", link: "/quizzes", icon: <ListIcon /> },
           { name: "Mis cuestionarios", link: "/myQuizzes", icon: <AssignmentInd /> },
@@ -99,19 +162,26 @@ const permisos = {
       },
     },
     {
-      name: "Entidades", icon: <AccountTree />, menu: {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
         items: [
           { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
           { name: "Roles", link: "/roles", icon: <Workspaces /> },
-          { name: "Carreras", link: "/careers", icon: <School /> },
-          { name: "Periodos", link: "/periods", icon: <CalendarMonth /> },
-          { name: "Matrices", link: "/matriz", icon: <Storage /> },
+          { name: "Carreras", link: "/careers", icon: <School />, app: "alumni" },
+          { name: "Periodos", link: "/periods", icon: <CalendarMonth />, app: "alumni" },
+          { name: "Matrices", link: "/matriz", icon: <Storage />, app: "alumni" },
+          { name: "Hoja de vida", link: "/cv", icon: <DescriptionIcon />, app: "alumni" },
+          { name: "Ver CV / PDF", link: "/cv/ver", icon: <PictureAsPdfIcon />, app: "alumni" },
+          { name: "Plantillas de CV", link: "/cv/plantillas", icon: <CollectionsBookmark />, app: "alumni" },
           { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
         ],
       },
     },
     {
-      name: "Configuracion", icon: <Settings />, menu: {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
         items: [
           { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
           { name: "Info", link: "/info", icon: <Info /> },
@@ -119,19 +189,24 @@ const permisos = {
         ],
       },
     },
-       {
-      name: "Publicidad", icon: <Terminal />, menu: {
+    {
+      name: "Publicidad",
+      icon: <CampaignIcon />,
+      app: "eddeli",
+      menu: {
         items: [
           { name: "Control de Imagenes", link: "/img", icon: <ImageIcon /> },
-          { name: "Control de Archivos", link: "/file", icon: <ImageIcon /> },
-          { name: "Editor de Publicidad", link: "/editorDefault", icon: <ImageIcon /> },
-          { name: "Control Publicidad", link: "/publicidad", icon: <ImageIcon /> },
-          { name: "Plantillas de Publicidad", link: "/templates", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <InsertDriveFile /> },
+          { name: "Editor de Publicidad", link: "/editorDefault", icon: <EditNote /> },
+          { name: "Control Publicidad", link: "/publicidad", icon: <VolumeUp /> },
+          { name: "Plantillas de Publicidad", link: "/templates", icon: <CollectionsBookmark /> },
         ],
       },
     },
     {
-      name: "Programador", icon: <Terminal />, menu: {
+      name: "Programador",
+      icon: <Terminal />,
+      menu: {
         items: [
           { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
           { name: "Logs", link: "/logs", icon: <ListIcon /> },
@@ -144,26 +219,53 @@ const permisos = {
   ],
   Administrador: [
     { name: "Home", icon: <Home />, link: "/" },
-    { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
-          { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
+    { name: "Piano", icon: <PianoIcon />, link: "/piano", app: "softed" },
+    { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
+    { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
+    { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
+    { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon />, app: "eddeli" },
+    { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn />, app: "eddeli" },
+    { name: "Cobranzas", link: "/inventory/collections", icon: <RequestQuoteIcon />, app: "eddeli" },
 
     {
-      name: "Configuracion", icon: <Settings />, menu: {
+      name: "Encuestas",
+      icon: <Poll />,
+      menu: {
         items: [
-          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
+          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
         ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [{ name: "Información", link: "/info", icon: <Info /> }],
       },
     },
   ],
   Estudiante: [
     { name: "Home", icon: <Home />, link: "/" },
+    { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
+    { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
+    { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
     {
-      name: "Encuestas", icon: <Poll />, menu: {
-        items: [{ name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> }],
+      name: "Encuestas",
+      icon: <Poll />,
+      menu: {
+        items: [
+          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
+          { name: "Hoja de vida", link: "/cv", icon: <DescriptionIcon />, app: "alumni" },
+          { name: "Ver mi CV / PDF", link: "/cv/ver", icon: <PictureAsPdfIcon />, app: "alumni" },
+          { name: "Plantillas de CV", link: "/cv/plantillas", icon: <CollectionsBookmark />, app: "alumni" },
+        ],
       },
     },
     {
-      name: "Configuracion", icon: <Settings />, menu: {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
         items: [{ name: "Información", link: "/info", icon: <Info /> }],
       },
     },
@@ -279,7 +381,9 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
   const handleClose = () => setAnchorEl(null);
   const handleAccordionChange = (panel) => (_e, isExp) => setExpandedAccordion(isExp ? panel : null);
 
-  const pagesToShow = isAuthenticated ? (permisos[user.loginRol] || []) : [];
+  const pagesToShow = isAuthenticated
+    ? filterPermisosByApp(permisos[user.loginRol] || [], activeAppId)
+    : [];
 
   const showDrawer = isAuthenticated;
   const showUserActions = isAuthenticated;
@@ -331,7 +435,7 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
     {isMdUp ? (
       // ✅ Vista desktop/tablet: botones en línea
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, ml: 2 }}>
-        {PUBLIC_NAV.map((item) => (
+        {getPublicNavForApp(activeAppId).map((item) => (
           <Button
             key={item.label}
             color="inherit"
@@ -363,7 +467,7 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
           transformOrigin={{ vertical: "top", horizontal: "left" }}
           PaperProps={{ sx: { minWidth: 220 } }}
         >
-          {PUBLIC_NAV.map((item) => (
+          {getPublicNavForApp(activeAppId).map((item) => (
             <MenuItem
               key={item.label}
               onClick={() => {
@@ -459,7 +563,7 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
                 <MenuItem onClick={() => { handleClose(); logout(); }}>Cerrar Sesión</MenuItem>
 
                 <SimpleDialog open={openChangeRol} onClose={handleDialogChangeRol} tittle={""}>
-                  <CambiarRol />
+                  <CambiarRol onClose={handleDialogChangeRol} />
                 </SimpleDialog>
               </Menu>
             </>
@@ -515,65 +619,158 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
           <Divider />
 
           <List>
-            {(pagesToShow || []).map((page) => {
-              if (page.menu) {
-                return (
-                  <Accordion
-                    key={page.name}
-                    expanded={expandedAccordion === page.name}
-                    onChange={handleAccordionChange(page.name)}
-                    sx={{ boxShadow: 'none', backgroundColor: 'transparent', '&:before': { display: 'none' } }}
-                  >
-                    <AccordionSummary
-                      onClick={() => { if (!open) handleDrawerOpen(); }}
-                      expandIcon={open ? <ExpandMoreIcon /> : null}
-                      sx={{ p: 0, minHeight: 48, justifyContent: open ? 'initial' : 'center', cursor: 'pointer' }}
-                    >
-                      <ListItemButton sx={{ minHeight: 38, justifyContent: 'center', px: 0 }}>
-                        <Tooltip title={page.name} placement="right" disableHoverListener={open}>
-                          <ListItemIcon sx={{ minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {page.icon}
-                          </ListItemIcon>
-                        </Tooltip>
-                        {open && <ListItemText primary={page.name} sx={{ ml: 1 }} />}
+            {activeAppId === "softed" && pagesToShow?.length > 0 ? (
+              // SoftEd: grupos EdDeli, Alumni, SoftEd
+              (() => {
+                const { eddeli, alumni, softed } = partitionByAppForSofted(pagesToShow);
+                const renderItem = (page) => {
+                  if (page.menu) {
+                    return (
+                      <Accordion
+                        key={page.name}
+                        expanded={expandedAccordion === page.name}
+                        onChange={handleAccordionChange(page.name)}
+                        sx={{ boxShadow: 'none', backgroundColor: 'transparent', '&:before': { display: 'none' } }}
+                      >
+                        <AccordionSummary
+                          onClick={() => { if (!open) handleDrawerOpen(); }}
+                          expandIcon={open ? <ExpandMoreIcon /> : null}
+                          sx={{ p: 0, minHeight: 48, justifyContent: open ? 'initial' : 'center', cursor: 'pointer' }}
+                        >
+                          <ListItemButton sx={{ minHeight: 38, justifyContent: 'center', px: 0 }}>
+                            <Tooltip title={page.name} placement="right" disableHoverListener={open}>
+                              <ListItemIcon sx={{ minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {page.icon}
+                              </ListItemIcon>
+                            </Tooltip>
+                            {open && <ListItemText primary={page.name} sx={{ ml: 1 }} />}
+                          </ListItemButton>
+                        </AccordionSummary>
+                        {open && (
+                          <AccordionDetails sx={{ p: 0 }}>
+                            <List component="div" disablePadding>
+                              {page.menu.items.map((sub) => (
+                                <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
+                                  <ListItemButton>
+                                    <ListItemIcon>{sub.icon}</ListItemIcon>
+                                    <ListItemText primary={sub.name} />
+                                  </ListItemButton>
+                                </ListItem>
+                              ))}
+                            </List>
+                          </AccordionDetails>
+                        )}
+                      </Accordion>
+                    );
+                  }
+                  return (
+                    <ListItem key={page.name} disablePadding sx={{ display: 'block' }} onClick={() => handleNavigation(page.link)}>
+                      <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
+                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                          {page.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
                       </ListItemButton>
-                    </AccordionSummary>
-
-                    {open && (
-                      <AccordionDetails sx={{ p: 0 }}>
-                        <List component="div" disablePadding>
-                          {page.menu.items.map((sub) => (
-                            <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
-                              <ListItemButton>
-                                <ListItemIcon>{sub.icon}</ListItemIcon>
-                                <ListItemText primary={sub.name} />
-                              </ListItemButton>
-                            </ListItem>
-                          ))}
-                        </List>
-                      </AccordionDetails>
+                    </ListItem>
+                  );
+                };
+                return (
+                  <>
+                    {eddeli.length > 0 && (
+                      <>
+                        <ListSubheader sx={{ lineHeight: 2, fontWeight: 700 }}>EdDeli (Panadería)</ListSubheader>
+                        {eddeli.map((page) => renderItem(page))}
+                        <Divider sx={{ my: 1 }} />
+                      </>
                     )}
-                  </Accordion>
+                    {alumni.length > 0 && (
+                      <>
+                        <ListSubheader sx={{ lineHeight: 2, fontWeight: 700 }}>Alumni</ListSubheader>
+                        {alumni.map((page) => renderItem(page))}
+                        <Divider sx={{ my: 1 }} />
+                      </>
+                    )}
+                    {softed.length > 0 && (
+                      <>
+                        <ListSubheader sx={{ lineHeight: 2, fontWeight: 700 }}>SoftEd</ListSubheader>
+                        {softed.map((page) => renderItem(page))}
+                      </>
+                    )}
+                  </>
                 );
-              }
+              })()
+            ) : (
+              // EdDeli / Alumni: lista plana
+              (pagesToShow || []).map((page) => {
+                if (page.menu) {
+                  return (
+                    <Accordion
+                      key={page.name}
+                      expanded={expandedAccordion === page.name}
+                      onChange={handleAccordionChange(page.name)}
+                      sx={{ boxShadow: 'none', backgroundColor: 'transparent', '&:before': { display: 'none' } }}
+                    >
+                      <AccordionSummary
+                        onClick={() => { if (!open) handleDrawerOpen(); }}
+                        expandIcon={open ? <ExpandMoreIcon /> : null}
+                        sx={{ p: 0, minHeight: 48, justifyContent: open ? 'initial' : 'center', cursor: 'pointer' }}
+                      >
+                        <ListItemButton sx={{ minHeight: 38, justifyContent: 'center', px: 0 }}>
+                          <Tooltip title={page.name} placement="right" disableHoverListener={open}>
+                            <ListItemIcon sx={{ minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {page.icon}
+                            </ListItemIcon>
+                          </Tooltip>
+                          {open && <ListItemText primary={page.name} sx={{ ml: 1 }} />}
+                        </ListItemButton>
+                      </AccordionSummary>
 
-              return (
-                <ListItem key={page.name} disablePadding sx={{ display: 'block' }} onClick={() => handleNavigation(page.link)}>
-                  <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
-                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
-                      {page.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
+                      {open && (
+                        <AccordionDetails sx={{ p: 0 }}>
+                          <List component="div" disablePadding>
+                            {page.menu.items.map((sub) => (
+                              <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
+                                <ListItemButton>
+                                  <ListItemIcon>{sub.icon}</ListItemIcon>
+                                  <ListItemText primary={sub.name} />
+                                </ListItemButton>
+                              </ListItem>
+                            ))}
+                          </List>
+                        </AccordionDetails>
+                      )}
+                    </Accordion>
+                  );
+                }
+
+                return (
+                  <ListItem key={page.name} disablePadding sx={{ display: 'block' }} onClick={() => handleNavigation(page.link)}>
+                    <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
+                      <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                        {page.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={page.name} sx={{ opacity: open ? 1 : 0 }} />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })
+            )}
           </List>
         </Drawer>
       )}
 
       {/* Contenido principal */}
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          width: "100%",
+          maxWidth: "100%",
+          overflowX: "hidden",
+          overflowY: "auto",
+          boxSizing: "border-box",
+        }}
+      >
         <DrawerHeader />
         {children}
       </Box>

@@ -1,11 +1,10 @@
-import { CloudUpload, Save } from "@mui/icons-material";
 import {
   Grid,
   TextField,
   Box,
   Button,
   IconButton,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -14,10 +13,9 @@ import {
   updateAccountRequest,
 } from "../../api/accountRequest";
 import { getUsersRequest } from "../../api/userRequest";
-import toast from "react-hot-toast";
-import DataTable from "../Tables/DataTable";
+import TablePro from "../Tables/TablePro";
 import SelectDataRoles from "../Selects/SelectDataRoles";
-import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import { useAuth } from "../../context/AuthContext";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -115,27 +113,22 @@ function AccountForm({ isEditing = false, datos = [], onClose, reload }) {
     }
   };
 
-  const columns = [
-    { headerName: "#", field: "#", width: 30 },
-    { headerName: "Cedula", field: "ci", width: 100 },
+  const userColumns = [
+    { id: "ci", label: "Cédula", getSortValue: (r) => (r.ci || "").toLowerCase() },
     {
-      headerName: "Nombres y Apellidos",
-      field: "null",
-      width: 200,
-      sortable: false,
-      renderCell: (params) => {
-        const u = params.row;
-        return `${u.firstName} ${u.firstLastName} ${u.secondName} ${u.secondLastName}`;
-      },
+      id: "fullName",
+      label: "Nombres y Apellidos",
+      getSearchValue: (r) =>
+        [r.firstName, r.firstLastName, r.secondName, r.secondLastName].filter(Boolean).join(" "),
+      render: (row) =>
+        [row.firstName, row.firstLastName, row.secondName, row.secondLastName].filter(Boolean).join(" ") || "—",
     },
     {
-      headerName: "Actions",
-      field: "actions",
-      width: 150,
-      sortable: false,
-      renderCell: (params) => (
-        <IconButton onClick={() => setUser(params.row)}>
-          <ArrowCircleUpIcon sx={{ fontSize: "2.5rem" }} />
+      id: "actions",
+      label: "Seleccionar",
+      render: (row) => (
+        <IconButton size="small" onClick={() => setUser(row)} title="Seleccionar usuario">
+          <ArrowCircleUpIcon sx={{ fontSize: "2rem" }} />
         </IconButton>
       ),
     },
@@ -292,7 +285,20 @@ function AccountForm({ isEditing = false, datos = [], onClose, reload }) {
         </Grid>
 
         <Grid item xs={12}>
-          {!isEditing && <DataTable data={users} columns={columns} />}
+          {!isEditing && (
+            <TablePro
+              title="Seleccione por favor un usuario"
+              rows={users}
+              columns={userColumns}
+              showSearch
+              showPagination
+              showIndex
+              indexHeader="#"
+              rowsPerPageOptions={[5, 10, 25]}
+              defaultRowsPerPage={10}
+              tableMaxHeight={280}
+            />
+          )}
         </Grid>
       </Grid>
     </Box>

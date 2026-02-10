@@ -5,8 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:eddeli": "VITE_ACTIVE_APP=eddeli vite",
+    "dev:alumni": "VITE_ACTIVE_APP=alumni vite",
+    "dev:softed": "VITE_ACTIVE_APP=softed vite",
     "host": "vite --host 192.168.137.250",
     "build": "vite build",
+    "build:eddeli": "VITE_ACTIVE_APP=eddeli vite build",
+    "build:alumni": "VITE_ACTIVE_APP=alumni vite build",
+    "build:softed": "VITE_ACTIVE_APP=softed vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -27,6 +33,7 @@
     "d3-interpolate": "^3.0.1",
     "dayjs": "^1.11.10",
     "exceljs": "^4.4.0",
+    "html2pdf.js": "^0.14.0",
     "leaflet": "^1.9.4",
     "localforage": "^1.10.0",
     "mapbox-gl": "^3.15.0",

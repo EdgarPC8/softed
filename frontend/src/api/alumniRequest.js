@@ -24,6 +24,9 @@ export const deletePeriod = async (id) =>
 
   export const getMatriz = async () =>
   await axios.get("/alumni/matriz", { headers: { Authorization: jwt() } });
+/** Estadísticas de títulos por carrera y género (Alumni en cifras) */
+export const getMatrizStats = () =>
+  axios.get("/alumni/matriz/stats", { headers: { Authorization: jwt() } });
 export const addMatriz = async (data) =>
   await axios.post("/alumni/matriz", data, { headers: { Authorization: jwt() } });
 export const editMatriz = async (id, data) =>

@@ -1,4 +1,13 @@
-// EditorProvider.jsx
+/**
+ * EditorProvider.jsx
+ *
+ * Contexto global del editor de plantillas:
+ * - Estado: doc (canvas, groups, layers, data), selected, action.
+ * - Carga/guardado: loadTemplateById, loadDefaultFromBackend, saveTemplateDoc, importTemplateJson.
+ * - Export: exportAsImage (PNG/JPG), downloadTemplateJson, copyTemplate.
+ * - Capas: setLayerMeta, updateLayerProps, toggleVisible, toggleLocked, deleteLayer.
+ * Usar useEditor() dentro de <EditorProvider> para acceder a todo esto.
+ */
 import React, {
   createContext,
   useContext,
@@ -9,6 +18,7 @@ import React, {
 } from "react";
 import { editorReducer, initialState } from "./editorReducer";
 import { resolveTemplate, resolveLayer } from "./bind/resolveTemplate";
+import { toRelativeImagePath } from "./editorActions";
 
 // ✅ Fallback local template
 import { template as LOCAL_TEMPLATE } from "./template";
@@ -29,7 +39,6 @@ const Ctx = createContext(null);
 // ✅ FALLBACK fuerte
 const BASE_TEMPLATE = LOCAL_TEMPLATE || {
   canvas: { width: 1920, height: 1080 },
-  backgroundSrc: "",
   groups: [{ id: "group_main", x: 0, y: 0 }],
   layers: [],
   data: {},
@@ -113,15 +122,15 @@ const drawImageFit = (ctx, im, x, y, w, h, fit = "cover", radius = 0) => {
 const normalizeDoc = (doc) => {
   if (!doc || typeof doc !== "object") return { ...BASE_TEMPLATE, id: null };
 
+  const { backgroundSrc: _drop, ...docRest } = doc;
   return {
     id: doc.id ?? null,
     canvas: doc.canvas || { width: 1920, height: 1080 },
-    backgroundSrc: doc.backgroundSrc || "",
     groups: Array.isArray(doc.groups) ? doc.groups : [],
     layers: Array.isArray(doc.layers) ? doc.layers : [],
     data: doc.data || {},
     meta: doc.meta || { name: doc.name || "Template" },
-    ...doc,
+    ...docRest,
   };
 };
 
@@ -167,10 +176,25 @@ const mapDbTemplateToDoc = (row) => {
       }))
     : [];
 
+  // Leer canvas desde diferentes posibles ubicaciones
+  const canvasWidth = row?.canvasWidth ?? row?.canvas?.width ?? row?.resolved?.canvas?.width ?? null;
+  const canvasHeight = row?.canvasHeight ?? row?.canvas?.height ?? row?.resolved?.canvas?.height ?? null;
+  
+  // Si no hay canvas válido, usar defaults según formato o 16:9
+  let canvas = { width: 1920, height: 1080 };
+  if (canvasWidth && canvasHeight && canvasWidth > 0 && canvasHeight > 0) {
+    canvas = { width: canvasWidth, height: canvasHeight };
+  } else if (row?.format) {
+    // Intentar inferir del formato si no hay canvas
+    const format = String(row.format);
+    if (format === "9:16") canvas = { width: 1080, height: 1920 };
+    else if (format === "1:1") canvas = { width: 1080, height: 1080 };
+    // else mantiene 16:9 por defecto
+  }
+
   return normalizeDoc({
     id: row?.id ?? null,
-    canvas: { width: row?.canvasWidth || 1920, height: row?.canvasHeight || 1080 },
-    backgroundSrc: row?.backgroundSrc || "",
+    canvas,
     groups,
     layers,
     meta: { name: row?.name || "Template" },
@@ -191,6 +215,8 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
   );
 
   const didLoadRef = useRef(false);
+  /** Ref al contenedor del canvas (para zoom, scroll o mediciones si se necesitan después) */
+  const stageRef = useRef(null);
 
   const layers = state.doc?.layers || [];
   const groups = state.doc?.groups || [];
@@ -222,15 +248,34 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
     return null;
   };
 
+  /** Doc listo para guardar o exportar: sin backgroundSrc, sin __meta*, imágenes con ruta relativa (ej. EdDeli/products/x.png). */
+  const getDocForExport = () => {
+    const doc = state.doc || {};
+    const { __metaSource, __metaTemplateId, backgroundSrc, ...docClean } = doc;
+    Object.keys(docClean).forEach((k) => {
+      if (k.startsWith("__meta")) delete docClean[k];
+    });
+    docClean.layers = (doc.layers || []).map((layer) => {
+      const out = { ...layer, props: { ...(layer.props || {}) }, bind: layer.bind ? { ...layer.bind } : undefined };
+      if (layer.type === "image") {
+        if (out.props.src != null) out.props.src = toRelativeImagePath(out.props.src);
+        if (out.bind) {
+          if (out.bind.fallbackSrc != null) out.bind.fallbackSrc = toRelativeImagePath(out.bind.fallbackSrc);
+          if (out.bind.srcPrefix != null && out.bind.srcPrefix !== "") out.bind.srcPrefix = "";
+        }
+      }
+      return out;
+    });
+    return docClean;
+  };
+
   const saveTemplateDoc = async () => {
     const templateId = getTemplateId();
     if (!templateId) {
       console.error("[saveTemplateDoc] state.doc:", state?.doc);
       throw new Error("No hay templateId para guardar.");
     }
-
-    const { __metaSource, __metaTemplateId, ...docClean } = state.doc || {};
-    await updateEditorTemplateDoc(templateId, docClean);
+    await updateEditorTemplateDoc(templateId, getDocForExport());
     return templateId;
   };
   const deleteLayer = async (layerId) => {
@@ -252,16 +297,26 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
   
 
   const loadTemplateById = async (id) => {
-    if (!id) return null;
+    if (!id) {
+      throw new Error("No se proporcionó ID de plantilla");
+    }
   
     const res = await getEditorTemplateResolved(id);
     const row = res?.data ?? res;
+  
+    if (!row || (!row.canvasWidth && !row.canvas?.width && !row.resolved?.canvas?.width)) {
+      throw new Error(`Plantilla #${id} no encontrada o sin datos de canvas`);
+    }
   
     // 🔑 CLAVE: usar resolved si existe
     const rawDoc = row?.resolved ?? row;
   
     // normalizar
     const doc = mapDbTemplateToDoc(rawDoc);
+  
+    if (!doc.canvas?.width || !doc.canvas?.height) {
+      throw new Error(`Plantilla #${id} tiene canvas inválido`);
+    }
   
     // 🔑 RESOLVER el template
     const resolvedDoc = resolveTemplate(doc, doc.data || {});
@@ -331,7 +386,7 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
   };
 
   const copyTemplate = async () => {
-    const txt = `export const template = ${JSON.stringify(state.doc, null, 2)};\n`;
+    const txt = `export const template = ${JSON.stringify(getDocForExport(), null, 2)};\n`;
     await copyToClipboard(txt);
   };
 
@@ -341,7 +396,7 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
   };
 
   const downloadTemplateJson = () => {
-    const json = JSON.stringify(state.doc, null, 2);
+    const json = JSON.stringify(getDocForExport(), null, 2);
     const blob = new Blob([json], { type: "application/json;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 
@@ -400,16 +455,11 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
     const ctx = canvas.getContext("2d");
 
     try {
-      const resolvedDoc = resolveTemplate(data, data.data); // ✅ layers + background resuelto
+      const resolvedDoc = resolveTemplate(data, data.data); // ✅ layers resueltos (fondo = capa imagen si quieres)
 
-      // Background
-      if (resolvedDoc.backgroundSrc) {
-        const bg = await loadImage(resolvedDoc.backgroundSrc);
-        ctx.drawImage(bg, 0, 0, W, H);
-      } else {
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, W, H);
-      }
+      // Fondo base (sin imagen fija; las capas tipo imagen cubren el espacio que definas)
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, W, H);
 
       const gmap = new Map((resolvedDoc.groups || []).map((g) => [g.id, g]));
 
@@ -495,6 +545,7 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
     () => ({
       state,
       dispatch,
+      stageRef,
 
       layers,
       groups,

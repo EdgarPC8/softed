@@ -2,17 +2,14 @@ import {
   Container,
   IconButton,
   Button,
-  Grid,
   Tooltip,
 } from "@mui/material";
-import DataTable from "../Components/Tables/DataTable";
+import TablePro from "../Components/Tables/TablePro";
 import { useEffect, useState } from "react";
 import { deleteAccountRequest, getAccountRequest, resetPassword } from "../api/accountRequest.js";
-import { Person, Edit, Delete } from "@mui/icons-material";
-import toast from "react-hot-toast";
+import { Person, Edit, Delete, LockReset } from "@mui/icons-material";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import AccountForm from "../Components/Forms/AccountForm";
-import Roles from "../Components/Roles";
 import { useAuth } from "../context/AuthContext";
 
 function Accounts() {
@@ -24,177 +21,154 @@ function Accounts() {
   const [idResetPass, setIdResetPass] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [datos, setDatos] = useState([]);
-  const [titleUserDialog, settitleUserDialog] = useState("");
+  const [titleUserDialog, setTitleUserDialog] = useState("");
   const { toast } = useAuth();
-
 
   const fetchdata = async () => {
     const { data } = await getAccountRequest();
     setData(data);
   };
-  const handleDialogResetPass = () => {
-    setOpenResetPass(!openResetPass);
-  };
 
-  const handleDialog = () => {
-    setOpen(!open);
-  };
-  const handleDialogUser = () => {
-    setOpenDialog(!openDialog);
-  };
+  const handleDialogResetPass = () => setOpenResetPass((v) => !v);
+  const handleDialog = () => setOpen((v) => !v);
+  const handleDialogUser = () => setOpenDialog((v) => !v);
 
   const deleteUser = async () => {
     toast({
-      promise:
-        deleteAccountRequest(dataToDelete.id),
-      successMessage: "Usuario elimninado con éxito",
-      onSuccess: (success) => {
-        setData(data.filter((d) => d.id !== dataToDelete.id));
+      promise: deleteAccountRequest(dataToDelete.id),
+      successMessage: "Usuario eliminado con éxito",
+      onSuccess: () => {
+        setData((prev) => prev.filter((d) => d.id !== dataToDelete.id));
         handleDialog();
       },
     });
   };
+
   const resetPasswordAccount = async () => {
     toast({
-      promise:
-        resetPassword(idResetPass),
+      promise: resetPassword(idResetPass),
       successMessage: "Contraseña reseteada con éxito a 12345678",
-      onSuccess: (data) => {
-        setIdResetPass(0)
+      onSuccess: () => {
+        setIdResetPass(0);
         handleDialogResetPass();
-
       },
     });
   };
 
   const columns = [
+    { id: "id", label: "Id", getSortValue: (r) => r.id },
     {
-      headerName: "#",
-      field: "#",
-      width: 20,
-    },
-    {
-      headerName: "Id",
-      field: "id",
-      width: 30,
-    },
-    {
-      headerName: "Nombres y Apellidos",
-      field: "null",
-      width: 180,
-      sortable: false,
-      renderCell: (params) => {
-        const user = params.row.user
-        return `${user.firstName} ${user.firstLastName} ${user.secondName} ${user.secondLastName}`;
+      id: "fullName",
+      label: "Nombres y Apellidos",
+      getSearchValue: (r) =>
+        r.user
+          ? `${r.user.firstName || ""} ${r.user.firstLastName || ""} ${r.user.secondName || ""} ${r.user.secondLastName || ""}`.trim()
+          : "",
+      render: (row) => {
+        const user = row.user || {};
+        return `${user.firstName || ""} ${user.firstLastName || ""} ${user.secondName || ""} ${user.secondLastName || ""}`.trim() || "—";
       },
     },
+    { id: "username", label: "Usuario", getSortValue: (r) => (r.username || "").toLowerCase() },
     {
-      headerName: "Usuario",
-      field: "username",
-      width: 120,
+      id: "roles",
+      label: "Roles",
+      getSearchValue: (r) => (r.roles || []).map((role) => role.name).join(" "),
+      render: (row) => (row.roles || []).map((role) => role.name).join(", ") || "—",
     },
     {
-      headerName: "Roles",
-      field: "roles",
-      width: 250,
-      sortable: false,
-      renderCell: (params) => {
-        const roles = params.row.roles || [];
-        return roles.map(role => role.name).join(", ");
-      },
-    },
-
-    {
-      headerName: "Actions",
-      field: "actions",
-      width: 150,
-      sortable: false,
-      renderCell: (params) => (
+      id: "actions",
+      label: "Acciones",
+      render: (row) => (
         <>
           <Tooltip title="Editar Cuenta">
             <IconButton
+              size="small"
               onClick={() => {
-                setDatos(params.row)
-                setIsEditing(true)
-                settitleUserDialog("Editar Cuenta")
+                setDatos(row);
+                setIsEditing(true);
+                setTitleUserDialog("Editar Cuenta");
                 handleDialogUser();
               }}
             >
               <Edit />
             </IconButton>
-
-
           </Tooltip>
           <Tooltip title="Resetear Contraseña">
-
             <IconButton
+              size="small"
               onClick={() => {
-                setIdResetPass(params.row.id)
+                setIdResetPass(row.id);
                 handleDialogResetPass();
               }}
             >
-              {`<>`}
+              <LockReset />
             </IconButton>
           </Tooltip>
           <Tooltip title="Eliminar Cuenta">
-
-
             <IconButton
+              size="small"
               onClick={() => {
                 handleDialog();
-                setDataToDelete(params.row);
+                setDataToDelete(row);
               }}
             >
               <Delete />
             </IconButton>
           </Tooltip>
-
         </>
       ),
     },
   ];
+
   useEffect(() => {
     fetchdata();
   }, []);
-  return (
-    <Container>
-     
-          <SimpleDialog
-            open={openResetPass}
-            onClose={handleDialogResetPass}
-            tittle="Resetear Contraseña"
-            onClickAccept={resetPasswordAccount}
-          >
-            ¿Está seguro de resetear la contraseña de esta cuenta?
-          </SimpleDialog>
 
-          <SimpleDialog
-            open={open}
-            onClose={handleDialog}
-            tittle="Eliminar Cuenta"
-            onClickAccept={deleteUser}
-          >
-            ¿Está seguro de eliminar la cuenta?
-          </SimpleDialog>
-          <Button
-            variant="text"
-            endIcon={<Person />}
-            onClick={() => {
-              setIsEditing(false)
-              settitleUserDialog("Agregar Cuenta")
-              handleDialogUser();
-            }}
-          >
-            Añadir Cuenta
-          </Button>
-          <SimpleDialog
-            open={openDialog}
-            onClose={handleDialogUser}
-            tittle={titleUserDialog}
-          >
-            <AccountForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchdata}></AccountForm>
-          </SimpleDialog>
-          <DataTable data={data} columns={columns} />
+  return (
+    <Container sx={{ py: 2 }}>
+      <SimpleDialog
+        open={openResetPass}
+        onClose={handleDialogResetPass}
+        tittle="Resetear Contraseña"
+        onClickAccept={resetPasswordAccount}
+      >
+        ¿Está seguro de resetear la contraseña de esta cuenta?
+      </SimpleDialog>
+
+      <SimpleDialog open={open} onClose={handleDialog} tittle="Eliminar Cuenta" onClickAccept={deleteUser}>
+        ¿Está seguro de eliminar la cuenta?
+      </SimpleDialog>
+
+      <Button
+        variant="text"
+        endIcon={<Person />}
+        onClick={() => {
+          setIsEditing(false);
+          setTitleUserDialog("Agregar Cuenta");
+          handleDialogUser();
+        }}
+        sx={{ mb: 2 }}
+      >
+        Añadir Cuenta
+      </Button>
+
+      <SimpleDialog open={openDialog} onClose={handleDialogUser} tittle={titleUserDialog}>
+        <AccountForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchdata} />
+      </SimpleDialog>
+
+      <TablePro
+        title="Cuentas"
+        rows={data}
+        columns={columns}
+        showSearch
+        showPagination
+        showIndex
+        indexHeader="#"
+        rowsPerPageOptions={[5, 10, 25]}
+        defaultRowsPerPage={10}
+        tableMaxHeight={440}
+      />
     </Container>
   );
 }

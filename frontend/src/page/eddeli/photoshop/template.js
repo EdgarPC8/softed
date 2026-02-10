@@ -3,7 +3,6 @@ export const template = {
     "width": 1920,
     "height": 1080
   },
-  "backgroundSrc": "http://192.168.110.93:3001/eddeliapi/img/EdDeli/ads/backgrounds/banner/plantilla_16_9.png",
   "groups": [
     {
       "id": "group_product",
@@ -37,14 +36,14 @@ export const template = {
       "h": 958,
       "zIndex": 10,
       "props": {
-        "src": "http://192.168.110.93:3001/eddeliapi/img/EdDeli/conos-frgou.jpg",
+        "src": "EdDeli/conos-frgou.jpg",
         "fit": "cover",
         "borderRadius": 30
       },
       "bind": {
         "srcFrom": "imageUrl",
-        "srcPrefix": "http://192.168.110.93:3001/eddeliapi/img/",
-        "fallbackSrc": "http://192.168.110.93:3001/eddeliapi/img/EdDeli/conos-frgou.jpg"
+        "srcPrefix": "",
+        "fallbackSrc": "EdDeli/conos-frgou.jpg"
       },
       "name": "product_image",
       "visible": true,
@@ -215,7 +214,7 @@ export const template = {
       "h": 308,
       "zIndex": 69,
       "props": {
-        "src": "http://192.168.110.93:3001/eddeliapi/img/EdDeli/ads/badges/estrella_badge_dorada.png",
+        "src": "EdDeli/ads/badges/estrella_badge_dorada.png",
         "fit": "cover",
         "borderRadius": 20
       },
@@ -234,7 +233,7 @@ export const template = {
       "h": 431,
       "zIndex": 72,
       "props": {
-        "src": "http://192.168.110.93:3001/eddeliapi/img/EdDeli/ads/badges/etiqueta_dorada.png",
+        "src": "EdDeli/ads/badges/etiqueta_dorada.png",
         "fit": "cover",
         "borderRadius": 20
       },

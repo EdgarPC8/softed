@@ -18,6 +18,7 @@ import {
   importEditorTemplate,
   updateEditorTemplate,
   deleteEditorTemplate,
+  getEditorTemplateById,
 } from "../../../api/editorRequest";
 
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
@@ -39,9 +40,12 @@ export default function EditorTemplatesView({
   const [openImportDlg, setOpenImportDlg] = useState(false);
   const [openEditDlg, setOpenEditDlg] = useState(false);
   const [openDeleteDlg, setOpenDeleteDlg] = useState(false);
+  const [openCreateDlg, setOpenCreateDlg] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   // form import
   const [importForm, setImportForm] = useState({
@@ -65,6 +69,15 @@ export default function EditorTemplatesView({
 
   // delete
   const [deleteTarget, setDeleteTarget] = useState(null);
+
+  // create form
+  const [createForm, setCreateForm] = useState({
+    name: "",
+    app: defaultApp || "",
+    format: defaultFormat || "16:9",
+    isDefault: false,
+    isActive: true,
+  });
 
   const openEditor = (id) => {
     if (!id) return;
@@ -291,6 +304,140 @@ export default function EditorTemplatesView({
   };
 
   // =========================
+  // DUPLICATE
+  // =========================
+  const handleDuplicate = async (tpl) => {
+    if (!tpl?.id) return;
+
+    try {
+      setDuplicating(true);
+
+      // 1. Obtener el template completo
+      const res = await getEditorTemplateById(tpl.id);
+      const templateData = res?.data?.templateJson || res?.data?.doc || res?.data;
+
+      if (!templateData) {
+        alert("No se pudo obtener el template para duplicar.");
+        return;
+      }
+
+      // 2. Preparar datos para la copia
+      const originalName = tpl?.name || tpl?.title || tpl?.meta?.name || `Template #${tpl.id}`;
+      const newName = `${originalName} - Copia`;
+
+      const extra = {
+        name: newName,
+        app: tpl?.app || defaultApp || null,
+        format: tpl?.format || defaultFormat || null,
+        isDefault: false, // Las copias no son default por defecto
+        isActive: tpl?.isActive !== false,
+      };
+
+      // 3. Importar como nuevo template
+      const importRes = await importEditorTemplate(templateData, extra);
+
+      const createdId =
+        importRes?.data?.id ||
+        importRes?.data?.templateId ||
+        importRes?.data?.template?.id ||
+        null;
+
+      // 4. Recargar lista
+      await fetchList(q);
+
+      if (createdId) {
+        alert(`✅ Plantilla duplicada: "${newName}"`);
+        // Opcional: abrir el editor con la copia
+        // openEditor(createdId);
+      } else {
+        alert("⚠️ Duplicada, pero el backend no devolvió el ID.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert(`❌ No se pudo duplicar la plantilla: ${e?.message || e}`);
+    } finally {
+      setDuplicating(false);
+    }
+  };
+
+  // =========================
+  // CREATE EMPTY TEMPLATE
+  // =========================
+  const getCanvasSizeByFormat = (format) => {
+    switch (format) {
+      case "16:9":
+        return { width: 1920, height: 1080 };
+      case "9:16":
+        return { width: 1080, height: 1920 };
+      case "1:1":
+        return { width: 1080, height: 1080 };
+      default:
+        return { width: 1920, height: 1080 };
+    }
+  };
+
+  const createEmptyTemplate = (format) => {
+    const canvas = getCanvasSizeByFormat(format);
+    return {
+      canvas,
+      groups: [{ id: "group_main", x: 0, y: 0, visible: true, locked: false }],
+      layers: [],
+      data: {},
+      meta: { name: "Nueva plantilla" },
+    };
+  };
+
+  const handleCreateNew = async () => {
+    if (!createForm.name?.trim()) {
+      alert("Por favor ingresa un nombre para la plantilla.");
+      return;
+    }
+
+    try {
+      setCreating(true);
+
+      const emptyTemplate = createEmptyTemplate(createForm.format);
+      const extra = {
+        name: createForm.name.trim(),
+        app: createForm.app || defaultApp || null,
+        format: createForm.format || null,
+        isDefault: !!createForm.isDefault,
+        isActive: createForm.isActive !== false,
+      };
+
+      const res = await importEditorTemplate(emptyTemplate, extra);
+
+      const createdId =
+        res?.data?.id ||
+        res?.data?.templateId ||
+        res?.data?.template?.id ||
+        null;
+
+      setOpenCreateDlg(false);
+      setCreateForm({
+        name: "",
+        app: defaultApp || "",
+        format: defaultFormat || "16:9",
+        isDefault: false,
+        isActive: true,
+      });
+
+      await fetchList(q);
+
+      if (createdId) {
+        openEditor(createdId);
+      } else {
+        alert("⚠️ Creada, pero el backend no devolvió el ID.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert(`❌ No se pudo crear la plantilla: ${e?.message || e}`);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // =========================
   // DELETE
   // =========================
   const openDelete = (tpl) => {
@@ -340,6 +487,10 @@ export default function EditorTemplatesView({
         <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="flex-end">
           <Button size="small" variant="outlined" onClick={() => fetchList(q)} disabled={loading}>
             Recargar
+          </Button>
+
+          <Button size="small" variant="contained" onClick={() => setOpenCreateDlg(true)} disabled={loading}>
+            Crear plantilla
           </Button>
 
           <Button size="small" variant="outlined" onClick={onPickFile} disabled={loading}>
@@ -466,6 +617,23 @@ export default function EditorTemplatesView({
                         </Button>
                       )}
 
+                      <Button 
+                        size="small" 
+                        variant="outlined" 
+                        onClick={() => handleDuplicate(t)}
+                        disabled={duplicating}
+                        sx={{
+                          borderColor: "rgba(0, 229, 255, 0.3)",
+                          color: "#00E5FF",
+                          "&:hover": {
+                            borderColor: "rgba(0, 229, 255, 0.5)",
+                            background: "rgba(0, 229, 255, 0.1)",
+                          },
+                        }}
+                      >
+                        {duplicating ? "Duplicando..." : "Duplicar"}
+                      </Button>
+
                       <Button size="small" variant="outlined" onClick={() => openEdit(t)}>
                         Editar
                       </Button>
@@ -565,6 +733,88 @@ export default function EditorTemplatesView({
 
             <Typography sx={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>
               Si marcas como <b>default</b>, el backend debe dejar solo una plantilla default por <b>app + format</b>.
+            </Typography>
+          </Stack>
+        </Box>
+      </SimpleDialog>
+
+      {/* =========================
+          DIALOG: CREATE NEW TEMPLATE
+         ========================= */}
+      <SimpleDialog
+        open={openCreateDlg}
+        title="Crear nueva plantilla"
+        handleClose={() => !creating && setOpenCreateDlg(false)}
+      >
+        <Box sx={{ p: 1 }}>
+          <Stack spacing={1.5}>
+            <TextField
+              label="Nombre"
+              value={createForm.name}
+              onChange={(e) => setCreateForm((p) => ({ ...p, name: e.target.value }))}
+              fullWidth
+              size="small"
+              placeholder="Ej: Banner Principal 16:9"
+              required
+            />
+
+            <TextField
+              label="App"
+              value={createForm.app}
+              onChange={(e) => setCreateForm((p) => ({ ...p, app: e.target.value }))}
+              fullWidth
+              size="small"
+              placeholder="EdDeli / SoftEd / ..."
+            />
+
+            <TextField
+              select
+              label="Formato"
+              value={createForm.format}
+              onChange={(e) => setCreateForm((p) => ({ ...p, format: e.target.value }))}
+              fullWidth
+              size="small"
+            >
+              <MenuItem value="16:9">16:9 (1920×1080) - Horizontal</MenuItem>
+              <MenuItem value="9:16">9:16 (1080×1920) - Vertical/Stories</MenuItem>
+              <MenuItem value="1:1">1:1 (1080×1080) - Cuadrado</MenuItem>
+            </TextField>
+
+            <TextField
+              select
+              label="¿Marcar como default?"
+              value={createForm.isDefault ? "yes" : "no"}
+              onChange={(e) => setCreateForm((p) => ({ ...p, isDefault: e.target.value === "yes" }))}
+              fullWidth
+              size="small"
+            >
+              <MenuItem value="no">No</MenuItem>
+              <MenuItem value="yes">Sí</MenuItem>
+            </TextField>
+
+            <TextField
+              select
+              label="Activo"
+              value={createForm.isActive ? "yes" : "no"}
+              onChange={(e) => setCreateForm((p) => ({ ...p, isActive: e.target.value === "yes" }))}
+              fullWidth
+              size="small"
+            >
+              <MenuItem value="yes">Sí</MenuItem>
+              <MenuItem value="no">No</MenuItem>
+            </TextField>
+
+            <Stack direction="row" spacing={1} justifyContent="flex-end">
+              <Button variant="outlined" onClick={() => setOpenCreateDlg(false)} disabled={creating}>
+                Cancelar
+              </Button>
+              <Button variant="contained" onClick={handleCreateNew} disabled={creating || !createForm.name?.trim()}>
+                {creating ? "Creando..." : "Crear"}
+              </Button>
+            </Stack>
+
+            <Typography sx={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>
+              Se creará una plantilla vacía con el formato seleccionado. Podrás añadir capas después en el editor.
             </Typography>
           </Stack>
         </Box>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useEditor } from "../EditorProvider";
 import { SCALE } from "../editorActions";
 import LayerRenderer from "./LayerRenderer";
@@ -151,6 +151,8 @@ export default function CanvasStage() {
     }
   };
 
+  const hasLayers = (doc.layers || []).length > 0;
+
   return (
     <Box
       ref={stageRef || undefined}
@@ -162,10 +164,7 @@ export default function CanvasStage() {
         width: doc.canvas.width / SCALE,
         height: doc.canvas.height / SCALE,
         position: "relative",
-        backgroundImage: `url(${doc.backgroundSrc})`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "0 0",
-        backgroundSize: "100% 100%",
+        backgroundColor: "rgba(0,0,0,0.2)",
         border: "2px solid #333",
         overflow: "hidden",
         borderRadius: 2,
@@ -180,6 +179,40 @@ export default function CanvasStage() {
         onResizeStart={startResizeLayer}
         onGroupMouseDown={startMoveGroup}
       />
+
+      {/* Mensaje cuando la plantilla está vacía */}
+      {!hasLayers && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <Box
+            sx={{
+              textAlign: "center",
+              p: 2,
+              borderRadius: 2,
+              background: "rgba(0,0,0,0.6)",
+              border: "1px dashed rgba(255,255,255,0.3)",
+            }}
+          >
+            <Typography sx={{ color: "#fff", fontWeight: 600, mb: 1 }}>
+              Plantilla vacía
+            </Typography>
+            <Typography sx={{ color: "rgba(255,255,255,0.8)", fontSize: 13 }}>
+              Usa los botones en el panel "Capas" para añadir texto, imágenes o formas
+            </Typography>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 }

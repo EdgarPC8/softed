@@ -5,15 +5,14 @@ import {
   Avatar,
   Tooltip,
 } from "@mui/material";
-import DataTable from "../Components/Tables/DataTable";
+import TablePro from "../Components/Tables/TablePro";
 import { useEffect, useState } from "react";
 import { deleteUserRequest, getUsersRequest } from "../api/userRequest";
 import { Person, Edit, Delete } from "@mui/icons-material";
-import toast from "react-hot-toast";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import UserForm from "../Components/Forms/UserForm";
 import { pathImg } from "../api/axios";
-
+import { useAuth } from "../context/AuthContext";
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -22,132 +21,90 @@ function Users() {
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [datos, setDatos] = useState([]);
-  const [titleUserDialog, settitleUserDialog] = useState("");
+  const [titleUserDialog, setTitleUserDialog] = useState("");
+  const { toast } = useAuth();
 
   const fetchUsers = async () => {
     const { data } = await getUsersRequest();
     setUsers(data);
   };
 
-  const handleDialog = () => {
-    setOpen(!open);
-  };
-  const handleDialogUser = () => {
-    setOpenDialog(!openDialog);
-  };
+  const handleDialog = () => setOpen((v) => !v);
+  const handleDialogUser = () => setOpenDialog((v) => !v);
 
   const deleteUser = async () => {
-    toast.promise(
-      deleteUserRequest(userToDelete.id),
-      {
-        loading: "Eliminando...",
-        success: "Usuario elimninado con éxito",
-        error: "Ocurrio un error",
+    toast({
+      promise: deleteUserRequest(userToDelete.id),
+      successMessage: "Usuario eliminado con éxito",
+      onSuccess: () => {
+        setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
+        handleDialog();
       },
-      {
-        position: "top-right",
-        style: {
-          fontFamily: "roboto",
-        },
-      }
-    );
-
-    setUsers(users.filter((user) => user.id !== userToDelete.id));
-    handleDialog();
+    });
   };
 
+  const genderLabel = (g) => (g === "M" ? "Masculino" : g === "F" ? "Femenino" : g || "—");
+
+  const fullName = (r) =>
+    [r.firstName, r.secondName, r.firstLastName, r.secondLastName].filter(Boolean).join(" ") || "—";
+
   const columns = [
+    { id: "id", label: "Id", getSortValue: (r) => r.id },
+    { id: "ci", label: "Cédula" },
     {
-      headerName: "Id",
-      field: "others",
-      width: 50,
-      sortable: false,
-      renderCell: (params,index) => {
-        return params.id;
-      },
+      id: "nombreCompleto",
+      label: "Nombre completo",
+      getSearchValue: (r) => fullName(r),
+      getSortValue: (r) => fullName(r).toLowerCase(),
+      render: (row) => fullName(row),
+    },
+    { id: "birthday", label: "Fecha de nacimiento" },
+    {
+      id: "gender",
+      label: "Género",
+      render: (row) => genderLabel(row.gender),
+      getSortValue: (r) => (r.gender || "").toLowerCase(),
     },
     {
-      headerName: "Cedula",
-      field: "ci",
-      width: 100,
-    },
-    {
-      headerName: "Primer Nombre",
-      field: "firstName",
-      width: 130,
-    },
-     {
-      headerName: "Segundo Nombre",
-      field: "secondName",
-      width: 130,
-    },
-    {
-      headerName: "Primer Apellido",
-      field: "firstLastName",
-      width: 130,
-    },
-    {
-      headerName: "Segundo Apellido",
-      field: "secondLastName",
-      width: 130,
-    },
-    {
-      headerName: "Fecha de nacimiento",
-      field: "birthday",
-      width: 150,
-    },
-    {
-      headerName: "Genero",
-      field: "gender",
-      width: 80,
-    },
-    {
-      headerName: "Foto",
-      field: "photoPerfil",
-      width: 80,
-      sortable: false,
-      renderCell: (params) => (
-        <>
-             <Avatar
-          src={`${pathImg}${params.row.photo}`} // Imagen del estado
-          alt={params.row.firstName}
+      id: "photo",
+      label: "Foto",
+      render: (row) => (
+        <Avatar
+          src={row.photo ? `${pathImg}${row.photo}` : undefined}
+          alt={fullName(row)}
+          sx={{ width: 36, height: 36 }}
         />
-        </>
       ),
     },
     {
-      headerName: "Actions",
-      field: "actions",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => (
+      id: "actions",
+      label: "Acciones",
+      render: (row) => (
         <>
-             <Tooltip title="Editar Usuario">
-             <IconButton
-            onClick={() => {
-              setDatos(params.row)
-              setIsEditing(true)
-              settitleUserDialog("Editar Usuario")
-              handleDialogUser();
-            }}
-          >
-            <Edit />
-          </IconButton>
-
-        </Tooltip>
-        <Tooltip title="Eliminar Usuario">
-
-     
-          <IconButton
-            onClick={() => {
-              handleDialog();
-              setUserToDelete(params.row);
-            }}
-          >
-            <Delete />
-          </IconButton>
-        </Tooltip>
-
+          <Tooltip title="Editar Usuario">
+            <IconButton
+              size="small"
+              onClick={() => {
+                setDatos(row);
+                setIsEditing(true);
+                setTitleUserDialog("Editar Usuario");
+                handleDialogUser();
+              }}
+            >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Eliminar Usuario">
+            <IconButton
+              size="small"
+              onClick={() => {
+                handleDialog();
+                setUserToDelete(row);
+              }}
+            >
+              <Delete />
+            </IconButton>
+          </Tooltip>
         </>
       ),
     },
@@ -157,38 +114,46 @@ function Users() {
     fetchUsers();
   }, []);
 
-
   return (
-    <Container>
-        <SimpleDialog
+    <Container sx={{ py: 2 }}>
+      <SimpleDialog
         open={open}
         onClose={handleDialog}
         tittle="Eliminar Usuario"
         onClickAccept={deleteUser}
       >
-            ¿Está seguro de eliminar al usuario?
+        ¿Está seguro de eliminar al usuario?
       </SimpleDialog>
+
       <Button
-        sx={{ marginTop: "30px" }}
         variant="text"
         endIcon={<Person />}
         onClick={() => {
-          setIsEditing(false)
-          settitleUserDialog("Agregar Usuario")
+          setIsEditing(false);
+          setTitleUserDialog("Agregar Usuario");
           handleDialogUser();
         }}
+        sx={{ mb: 2 }}
       >
         Añadir Usuario
       </Button>
 
-      <SimpleDialog
-        open={openDialog}
-        onClose={handleDialogUser}
-        tittle={titleUserDialog}
-      >
-        <UserForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchUsers}></UserForm> 
+      <SimpleDialog open={openDialog} onClose={handleDialogUser} tittle={titleUserDialog}>
+        <UserForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchUsers} />
       </SimpleDialog>
-      <DataTable data={users} columns={columns} />
+
+      <TablePro
+        title="Usuarios"
+        rows={users}
+        columns={columns}
+        showSearch
+        showPagination
+        showIndex
+        indexHeader="#"
+        rowsPerPageOptions={[5, 10, 25]}
+        defaultRowsPerPage={10}
+        tableMaxHeight={440}
+      />
     </Container>
   );
 }

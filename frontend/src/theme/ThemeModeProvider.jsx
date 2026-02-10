@@ -2,6 +2,9 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { getTheme } from "./getTheme";
+import { getTheme as getThemeAlumni } from "./getThemeAlumni";
+import { getTheme as getThemeSofted } from "./getThemeSofted";
+import { activeAppId } from "../../appConfig.js";
 
 const STORAGE_KEY = "ui-theme-mode"; // 'light' | 'dark' | 'neon' | 'system'
 
@@ -13,6 +16,12 @@ const ThemeModeContext = createContext({
 
 export function useThemeMode() {
   return useContext(ThemeModeContext);
+}
+
+function getThemeForActiveApp(mode) {
+  if (activeAppId === "alumni") return getThemeAlumni(mode);
+  if (activeAppId === "softed") return getThemeSofted(mode);
+  return getTheme(mode);
 }
 
 export function ThemeModeProvider({ children, defaultMode = "system" }) {
@@ -54,7 +63,7 @@ export function ThemeModeProvider({ children, defaultMode = "system" }) {
     return () => mm.removeEventListener?.("change", handler);
   }, []);
 
-  const theme = useMemo(() => getTheme(mode), [mode]);
+  const theme = useMemo(() => getThemeForActiveApp(mode), [mode]);
 
   const value = useMemo(
     () => ({

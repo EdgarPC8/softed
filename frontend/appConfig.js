@@ -1,6 +1,19 @@
-// src/config/appsInfo.js
+/** Valor inyectado desde vite.config.js (variable ACTIVE_APP). No edites aquí. */
+const ACTIVE_APP_ID = import.meta.env.VITE_ACTIVE_APP ?? "softed";
+
 const appsInfo = {
-    
+  softed: {
+    logo: "./android-chrome-512x512.png",
+    name: "SoftEd",
+    alias: "SoftEd",
+    version: "1.0.0",
+    description: "Entorno unificado con todos los sistemas.",
+    author: "SoftEd",
+    year: new Date().getFullYear(),
+    background: "#f5f6fa",
+    apiPath: "eddeliapi",
+  },
+
   alumni: {
     logo: "./android-chrome-512x512.png",
     name: "SoftEd Sistema Alumni",
@@ -8,12 +21,12 @@ const appsInfo = {
     version: "1.2.0",
     description: `
       Este sistema ha sido desarrollado para la gestión de usuarios, encuestas y currículums
-      de egresados y graduados. Permite administrar roles, acceder a estadísticas y manejar
-      información educativa de manera eficiente y segura.
+      de egresados y graduados.
     `,
     author: "SoftEd",
     year: new Date().getFullYear(),
     background: "#f5f6fa",
+    apiPath: "eddeliapi",
   },
 
   eddeli: {
@@ -22,25 +35,26 @@ const appsInfo = {
     alias: "EdDeli",
     version: "1.0.0",
     socials: {
-    whatsapp: "https://wa.me/593992371711",
-    facebook: "https://facebook.com/profile.php?id=61581806494763",
-    instagram: "https://instagram.com/panaderia_eddeli",
-    tiktok: "https://tiktok.com/@panaderia_eddeli",
-    email: "panaderiaeddeli@gmail.com",
-  },
+      whatsapp: "https://wa.me/593992371711",
+      facebook: "https://facebook.com/profile.php?id=61581806494763",
+      instagram: "https://instagram.com/panaderia_eddeli",
+      tiktok: "https://tiktok.com/@panaderia_eddeli",
+      email: "panaderiaeddeli@gmail.com",
+    },
     description: `
-      Sistema integral de gestión y control para la panadería EdDeli. 
-      Permite administrar recetas, inventarios, producción, pedidos y ventas 
-      con un diseño elegante y funcional. Incluye paneles de control, 
-      reportes, simulaciones de producción y catálogo digital.
+      Sistema integral de gestión y control para la panadería EdDeli.
     `,
     author: "SoftEd",
     year: new Date().getFullYear(),
     background: "#fff8f2",
+    apiPath: "eddeliapi",
   },
 };
 
-const activeApp = appsInfo.eddeli; // o appsInfo.alumni
+const activeApp = appsInfo[ACTIVE_APP_ID] || appsInfo.softed;
+const activeAppId = ACTIVE_APP_ID;
+const basename = "/" + activeAppId;
+const apiPath = activeApp.apiPath;
 
 export default appsInfo;
-export { activeApp };
+export { activeApp, activeAppId, basename, apiPath };

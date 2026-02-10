@@ -24,7 +24,7 @@ export const template = {
         "weightText": ""
       }
     },
-    "backgroundSrc": "http://localhost:3001/eddeliapi/img/EdDeli/ads/backgrounds/banner/plantilla_16_9.png",
+    "backgroundSrc": "EdDeli/ads/backgrounds/banner/plantilla_16_9.png",
     "groups": [
       {
         "id": "group_product",
@@ -58,14 +58,14 @@ export const template = {
         "h": 958,
         "zIndex": 10,
         "props": {
-          "src": "http://localhost:3001/eddeliapi/img/EdDeli/funda-de-suspiros-grandes-mne29.png",
+          "src": "EdDeli/funda-de-suspiros-grandes-mne29.png",
           "fit": "cover",
           "borderRadius": 30
         },
         "bind": {
           "srcFrom": "data.product.primaryImageUrl",
-          "srcPrefix": "http://localhost:3001/eddeliapi/img/",
-          "fallbackSrc": "http://localhost:3001/eddeliapi/img/EdDeli/ads/placeholders/no_image.png"
+          "srcPrefix": "",
+          "fallbackSrc": "EdDeli/ads/placeholders/no_image.png"
         },
         "name": "product_image",
         "visible": true,
@@ -234,7 +234,7 @@ export const template = {
         "h": 308,
         "zIndex": 69,
         "props": {
-          "src": "http://localhost:3001/eddeliapi/img/EdDeli/ads/badges/estrella_badge_dorada.png",
+          "src": "EdDeli/ads/badges/estrella_badge_dorada.png",
           "fit": "cover",
           "borderRadius": 20
         },
@@ -253,7 +253,7 @@ export const template = {
         "h": 431,
         "zIndex": 72,
         "props": {
-          "src": "http://localhost:3001/eddeliapi/img/EdDeli/ads/badges/etiqueta_dorada.png",
+          "src": "EdDeli/ads/badges/etiqueta_dorada.png",
           "fit": "cover",
           "borderRadius": 20
         },

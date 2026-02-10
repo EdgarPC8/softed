@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { basename, activeAppId } from "../appConfig.js";
 import "@fontsource/inter/300.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
@@ -57,10 +58,15 @@ import RecipePage from "./page/inventoryControl/RecipePage.jsx";
 import OrderPage from "./page/inventoryControl/OrderPage.jsx";
 import CustomerPage from "./page/inventoryControl/CustomerPage.jsx";
 import FinancePage from "./page/inventoryControl/FinancePage.jsx";
+import CollectionsPage from "./page/inventoryControl/CollectionsPage.jsx";
 import HomePageAlumni from "./page/alumni/Home.jsx";
+import CVPage from "./page/alumni/cv/CVPage.jsx";
+import CvVer from "./page/alumni/cv/CvVer.jsx";
+import CvPlantillas from "./page/alumni/cv/CvPlantillas.jsx";
 import HomePageERP from "./page/inventoryControl/HomePage.jsx";
 import DashBoardPageERP from "./page/inventoryControl/DashBoardPage.jsx";
-import PianoPage from "./page/piano/midi.jsx";
+import PianoPage from "./page/piano/index.jsx";
+import SoftedHome from "./page/SoftedHome.jsx";
 import ProductionManagerPage from "./page/inventoryControl/ProductionManagerPage.jsx";
 import BasicMap from "./page/mapa/BasicMap.jsx";
 import ProMap from "./page/mapa/ProMap.jsx";
@@ -78,6 +84,22 @@ import ProductTemplateStudio from "./page/eddeli/photoshop/ProductTemplateStudio
 import FilesManagerPage from "./page/FileManager.jsx";
 import EditorTemplatesView from "./page/eddeli/photoshop/EditorTemplatesView.jsx";
 
+// Home según app: alumni → Home Alumni, eddeli → Dashboard ERP, softed → SoftedHome (tech)
+const HomePage =
+  activeAppId === "alumni"
+    ? HomePageAlumni
+    : activeAppId === "eddeli"
+    ? DashBoardPageERP
+    : SoftedHome;
+
+// Home público (/home cuando no estás logeado): en alumni mismo home que logueado; en eddeli/softed HomeLogout
+const PublicHomePage = activeAppId === "alumni" ? HomePageAlumni : HomeLogout;
+
+// Rutas que solo existen en eddeli o en softed (no en alumni)
+const showEddeliRoutes = activeAppId === "eddeli" || activeAppId === "softed";
+// Rutas que solo existen en alumni o en softed (no en eddeli)
+const showAlumniRoutes = activeAppId === "alumni" || activeAppId === "softed";
+
 function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -89,29 +111,35 @@ function App() {
         }}
       >
         <AuthProvider>
-          <BrowserRouter basename="/eddeli">
+          <BrowserRouter basename={basename}>
             <NavBar>
 
               <Routes>
                 <Route element={<PublicOnlyRoute />}>
                   <Route path="/login" element={<Login />} />
-                  <Route path="/home" element={<HomeLogout />} />
-                  <Route path="/catalogo" element={<CatalogoPage />} />
-                  <Route path="/punto_venta" element={<StoresPage />} />
+                  <Route path="/home" element={<PublicHomePage />} />
+                  {showEddeliRoutes && (
+                    <>
+                      <Route path="/catalogo" element={<CatalogoPage />} />
+                      <Route path="/punto_venta" element={<StoresPage />} />
+                    </>
+                  )}
                 </Route>
                 <Route
                   element={
                     <ProtectedRoute requiredRol={["Estudiante", "Administrador", "Programador"]} />
                   }
                 >
-                  <Route path="/" element={<DashBoardPageERP />} />
+                  <Route path="/" element={<HomePage />} />
                   <Route path="/perfil" element={<Profile />} />
                   <Route path="/myforms" element={<FormsList />} />
                   <Route path="/myforms/:id" element={<FormAnswer />} />
                   <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/info" element={<Info />} />
                   <Route path="/donations" element={<Donations />} />
-
+                  <Route path="/cv" element={<CVPage />} />
+                  <Route path="/cv/ver" element={<CvVer />} />
+                  <Route path="/cv/plantillas" element={<CvPlantillas />} />
                 </Route>
 
                 <Route
@@ -119,25 +147,38 @@ function App() {
                     <ProtectedRoute requiredRol={["Administrador", "Programador"]} />
                   }
                 >
-                  <Route path="/piano" element={<PianoPage />} />
-                  <Route path="/mapa" element={<BasicMap />} />
-
-                  <Route path="/backery" element={<CatalogoPage />} />
-                  <Route path="/img" element={<ImgManagerPage />} />
-                  <Route path="/file" element={<FilesManagerPage />} />
-                  <Route path="/catalog_manager" element={<CatalogManagerPage />} />
-                  <Route path="/publicity_edit" element={<AdTemplateEditor />} />
-                  <Route path="/publicidad" element={<ProductTemplateStudio />} />
-                  <Route path="/editorDefault" element={<EditorPage />} />
-                  <Route path="/editor/:id?" element={<EditorPage />} />
-                  <Route path="/templates" element={<EditorTemplatesView />} />
-                  
-
-                  <Route path="/analisis" element={<Analytics />} />
-                  <Route path="/reservas" element={<Reservas />} />
-                  <Route path="/recepcion" element={<Recepcion />} />
-                  <Route path="/infoHotel" element={<InfoHotel />} />
-                  <Route path="/nivel" element={<NivelesHotel />} />
+                  {showEddeliRoutes && (
+                    <>
+                      <Route path="/piano" element={<PianoPage />} />
+                      <Route path="/mapa" element={<BasicMap />} />
+                      <Route path="/backery" element={<CatalogoPage />} />
+                      <Route path="/img" element={<ImgManagerPage />} />
+                      <Route path="/file" element={<FilesManagerPage />} />
+                      <Route path="/catalog_manager" element={<CatalogManagerPage />} />
+                      <Route path="/publicity_edit" element={<AdTemplateEditor />} />
+                      <Route path="/publicidad" element={<ProductTemplateStudio />} />
+                      <Route path="/editorDefault" element={<EditorPage />} />
+                      <Route path="/editor/:id?" element={<EditorPage />} />
+                      <Route path="/templates" element={<EditorTemplatesView />} />
+                      <Route path="/analisis" element={<Analytics />} />
+                      <Route path="/reservas" element={<Reservas />} />
+                      <Route path="/recepcion" element={<Recepcion />} />
+                      <Route path="/infoHotel" element={<InfoHotel />} />
+                      <Route path="/nivel" element={<NivelesHotel />} />
+                      <Route path="/inventory/products" element={<ProductsPage />} />
+                      <Route path="/inventory/categories" element={<CategoryPage />} />
+                      <Route path="/inventory/units" element={<UnitPage />} />
+                      <Route path="/inventory/movement" element={<MovementPage />} />
+                      <Route path="/inventory/recipes" element={<RecipePage />} />
+                      <Route path="/inventory/orders" element={<OrderPage />} />
+                      <Route path="/inventory/customers" element={<CustomerPage />} />
+                      <Route path="/inventory/finance" element={<FinancePage />} />
+                      <Route path="/inventory/collections" element={<CollectionsPage />} />
+                      <Route path="/inventory/production" element={<ProductionManagerPage />} />
+                      <Route path="/inventory/productos-destacados" element={<HomeProductPage />} />
+                      <Route path="/inventory/puntos-venta" element={<StoresManagerPage />} />
+                    </>
+                  )}
 
                   <Route path="/panel_control" element={<ControlPanelPage />} />
                   <Route path="/comandos" element={<Comandos />} />
@@ -153,10 +194,14 @@ function App() {
                   <Route path="/forms/assign/:id" element={<AssignForm />} />
                   <Route path="/forms/charts/:id" element={<FormResponsesCharts />} />
                   <Route path="/forms/view/:id" element={<FormViewer />} />
-                  <Route path="/careers" element={<CareerPage />} />
-                  <Route path="/periods" element={<PeriodPage />} />
-                  <Route path="/matriz" element={<MatrizPage />} />
 
+                  {showAlumniRoutes && (
+                    <>
+                      <Route path="/careers" element={<CareerPage />} />
+                      <Route path="/periods" element={<PeriodPage />} />
+                      <Route path="/matriz" element={<MatrizPage />} />
+                    </>
+                  )}
 
                   <Route path="/quizzes" element={<AdminQuizList />} />
                   <Route path="/quizzes/manage/:id" element={<QuizQuestions />} />
@@ -167,22 +212,7 @@ function App() {
                   <Route path="/myQuizzes/evaluation/:id" element={<QuizAnswerEvaluation />} />
                   <Route path="/myQuizzes/simulator/:id" element={<QuizSimulatorMode />} />
                   <Route path="/myQuizzes/practice/:id" element={<QuizAnswerPractice />} />
-
-                  <Route path="/inventory/products" element={<ProductsPage />} />
-                  <Route path="/inventory/categories" element={<CategoryPage />} />
-                  <Route path="/inventory/units" element={<UnitPage />} />
-                  <Route path="/inventory/movement" element={<MovementPage />} />
-                  <Route path="/inventory/recipes" element={<RecipePage />} />
-                  <Route path="/inventory/orders" element={<OrderPage />} />
-                  <Route path="/inventory/customers" element={<CustomerPage />} />
-                  <Route path="/inventory/finance" element={<FinancePage />} />
-                  <Route path="/inventory/production" element={<ProductionManagerPage />} />
-                  <Route path="/inventory/productos-destacados" element={<HomeProductPage />} />
-                  <Route path="/inventory/puntos-venta" element={<StoresManagerPage />} />
-
                 </Route>
-
-
               </Routes>
             </NavBar>
           </BrowserRouter>

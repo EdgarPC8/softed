@@ -1,4 +1,4 @@
-// tools/docscan.js
+/* // tools/docscan.js
 // Comando para ver la estructura de los acrhivos de mi proyecto y sus imports para sacar su respectiva documentacion
 import fs from "fs";
 import path from "path";
@@ -118,6 +118,26 @@ for (const s of snippets) {
   if (!s.snippet.trim()) continue;
   md += `## ${s.relPath}\n\n\`\`\`${s.ext.replace(".", "")}\n${s.snippet}\n\`\`\`\n\n`;
 }
-fs.writeFileSync(path.join(ROOT, "SNIPPETS.md"), md, "utf8");
+fs.write
+FileSync(path.join(ROOT, "SNIPPETS.md"), md, "utf8");
 
 console.log("✅ Generated: STRUCTURE.md, INDEX.json, SNIPPETS.md");
+ */
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const carpeta = path.join(__dirname, "../../eddeli/backend/src/img/EdDeli/products");
+
+fs.readdir(carpeta, (err, archivos) => {
+  if (err) {
+    console.error("Error:", err);
+    return;
+  }
+
+  console.log("Archivos encontrados:");
+  console.log(archivos);
+});

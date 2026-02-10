@@ -25,20 +25,30 @@ const donationData = [
 
 const Donations = () => {
   return (
-    <Box sx={{ maxWidth: 1000, mx: "auto", mt: 4, px: 2 }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Box
+      sx={{
+        maxWidth: 1000,
+        mx: "auto",
+        mt: 4,
+        px: 2,
+        bgcolor: "background.default",
+        color: "text.primary",
+        minHeight: "100vh",
+      }}
+    >
+      <Typography variant="h4" align="center" gutterBottom color="text.primary">
         <VolunteerActivismIcon fontSize="large" sx={{ verticalAlign: "middle", mr: 1 }} />
         Apoya a los Creadores
       </Typography>
 
-      <Typography variant="body1" align="center" sx={{ mb: 4 }}>
+      <Typography variant="body1" align="center" sx={{ mb: 4 }} color="text.secondary">
         Tu aporte contribuye al desarrollo y mantenimiento de este sistema. ¡Gracias por confiar en nosotros!
       </Typography>
 
       <Grid container spacing={3}>
         {donationData.map((donor, index) => (
           <Grid item xs={12} md={6} key={index}>
-            <Card sx={{ backgroundColor: "#f4fff0" }} elevation={4}>
+            <Card elevation={4} sx={{ bgcolor: "background.paper", color: "text.primary" }}>
               <CardContent>
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
                   <Avatar
@@ -61,26 +71,33 @@ const Donations = () => {
                 <Divider sx={{ mb: 2 }} />
 
                 <Grid container spacing={2} alignItems="center">
-                  {/* Columna izquierda: texto */}
                   <Grid item xs={7}>
-                    <Typography variant="h6" gutterBottom>{donor.name}</Typography>
-                    <Typography variant="body2"><strong>Cédula:</strong> {donor.ci}</Typography>
-                    <Typography variant="body2"><strong>Número de cuenta:</strong> {donor.accountNumber}</Typography>
-                    <Typography variant="body2"><strong>Tipo de cuenta:</strong> {donor.accountType}</Typography>
+                    <Typography variant="h6" gutterBottom color="text.primary">
+                      {donor.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      <strong>Cédula:</strong> {donor.ci}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      <strong>Número de cuenta:</strong> {donor.accountNumber}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      <strong>Tipo de cuenta:</strong> {donor.accountType}
+                    </Typography>
                   </Grid>
 
-                  {/* Columna derecha: imagen QR */}
                   <Grid item xs={5} textAlign="center">
                     {donor.qrImage && (
-                      <img
+                      <Box
+                        component="img"
                         src={donor.qrImage}
                         alt={`QR de ${donor.name}`}
-                        style={{
+                        sx={{
                           width: "100%",
-                          maxWidth: "200px",
+                          maxWidth: 200,
                           height: "auto",
-                          borderRadius: "12px",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                          borderRadius: 2,
+                          boxShadow: 2,
                         }}
                       />
                     )}

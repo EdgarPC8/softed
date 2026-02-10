@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getUsersRequest } from "../api/userRequest";
 import {
   Typography,
@@ -15,10 +15,8 @@ import {
 import DataTable from "../Components/Tables/DataTable";
 import { isValidCI } from "../helpers/isValidCI";
 
-const chartSize = {
-  width: 420,
-  height: 320,
-};
+const CHART_HEIGHT = 280;
+const CHART_LEGEND_MARGIN = 140;
 
 function ControlPanelPage() {
   const [users, setUsers] = useState([]);
@@ -28,6 +26,25 @@ function ControlPanelPage() {
   const [documentTypeData, setDocumentTypeData] = useState([]);
   const [genderData, setGenderData] = useState([]);
   const [birthYearData, setBirthYearData] = useState([]);
+  const chartContainerRef = useRef(null);
+  const [chartWidth, setChartWidth] = useState(400);
+
+  useEffect(() => {
+    const el = chartContainerRef.current;
+    if (!el) return;
+    const updateWidth = () => {
+      const w = el.offsetWidth;
+      const spacing = 32;
+      const padding = 24;
+      const colWidth = (w - spacing) / 2;
+      const maxChart = Math.floor(colWidth - CHART_LEGEND_MARGIN - padding);
+      setChartWidth(Math.min(380, Math.max(240, maxChart)));
+    };
+    updateWidth();
+    const ro = new ResizeObserver(updateWidth);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
 
   const fetchUsers = async () => {
@@ -143,8 +160,23 @@ setGenderData(genderArray);
     },
   ];
 
+  const chartProps = {
+    height: CHART_HEIGHT,
+    width: chartWidth,
+    margin: { right: CHART_LEGEND_MARGIN },
+    slotProps: {
+      legend: {
+        direction: "column",
+        position: { vertical: "middle", horizontal: "right" },
+      },
+    },
+    sx: {
+      [`& .${pieArcLabelClasses.root}`]: { fontWeight: "bold" },
+    },
+  };
+
   return (
-    <Box sx={{ padding: 4 }}>
+    <Box ref={chartContainerRef} sx={{ padding: 4, width: "100%", overflow: "hidden" }}>
       <Typography variant="h4" gutterBottom>
         Verificación y Tipos de Documento de Usuarios
       </Typography>
@@ -154,170 +186,112 @@ setGenderData(genderArray);
       </Typography>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 3 }}>
+        <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+          <Paper elevation={3} sx={{ p: 3, overflow: "hidden" }}>
             <Typography variant="h6" gutterBottom>
               Estado de Cédulas
             </Typography>
             <Divider sx={{ mb: 2 }} />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={7}>
-                <PieChart
-                  series={[
-                    {
-                      data: [
-                        { label: "Válidas", value: validas },
-                        { label: "Inválidas", value: invalidas },
-                      ],
-                      arcLabel: (item) =>
-                        `${item.value} (${((item.value / (total || 1)) * 100).toFixed(1)}%)`,
-                      arcLabelMinAngle: 15,
-                      arcLabelRadius: "60%",
-                    },
-                  ]}
-                  width={500} // Espacio total para gráfico + leyenda
-                  height={320}
-                  margin={{ right: 150 }} // Espacio para leyenda a la derecha
-                  slotProps={{
-                    legend: {
-                      direction: 'column',
-                      position: { vertical: 'middle', horizontal: 'right' }, // Centrado vertical y a la derecha
-                    },
-                  }}
-                  sx={{
-                    [`& .${pieArcLabelClasses.root}`]: {
-                      fontWeight: "bold",
-                    },
-                  }}
-                />
-
-              </Grid>
-            </Grid>
+            <Box sx={{ width: "100%", overflow: "hidden", display: "flex", justifyContent: "center" }}>
+              <PieChart
+                series={[
+                  {
+                    data: [
+                      { label: "Válidas", value: validas },
+                      { label: "Inválidas", value: invalidas },
+                    ],
+                    arcLabel: (item) =>
+                      `${item.value} (${((item.value / (total || 1)) * 100).toFixed(1)}%)`,
+                    arcLabelMinAngle: 15,
+                    arcLabelRadius: "60%",
+                  },
+                ]}
+                {...chartProps}
+              />
+            </Box>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 3 }}>
+        <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+          <Paper elevation={3} sx={{ p: 3, overflow: "hidden" }}>
             <Typography variant="h6" gutterBottom>
               Tipo de Documento
             </Typography>
             <Divider sx={{ mb: 2 }} />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={7}>
-                <PieChart
-                  series={[
-                    {
-                      data: documentTypeData,
-                      arcLabel: (item) =>
-                        `${((item.value / (total || 1)) * 100).toFixed(1)}%`,
-                      arcLabelMinAngle: 15,
-                      arcLabelRadius: "60%",
-                      valueFormatter: (item) => `${item.label}`,
-                    },
-                  ]}
-                  width={500}
-                  height={320}
-                  margin={{ right: 150 }}
-                  slotProps={{
-                    legend: {
-                      direction: 'column',
-                      position: { vertical: 'middle', horizontal: 'right' },
-                    },
-                  }}
-                  sx={{
-                    [`& .${pieArcLabelClasses.root}`]: {
-                      fontWeight: "bold",
-                    },
-                  }}
-                />
-
-              </Grid>
-            </Grid>
+            <Box sx={{ width: "100%", overflow: "hidden", display: "flex", justifyContent: "center" }}>
+              <PieChart
+                series={[
+                  {
+                    data: documentTypeData,
+                    arcLabel: (item) =>
+                      `${((item.value / (total || 1)) * 100).toFixed(1)}%`,
+                    arcLabelMinAngle: 15,
+                    arcLabelRadius: "60%",
+                    valueFormatter: (item) => `${item.label}`,
+                  },
+                ]}
+                {...chartProps}
+              />
+            </Box>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
-  <Paper elevation={3} sx={{ p: 3 }}>
-    <Typography variant="h6" gutterBottom>
-      Distribución por Género
-    </Typography>
-    <Divider sx={{ mb: 2 }} />
-    <PieChart
-      series={[
-        {
-          data: genderData,
-          arcLabel: (item) =>
-            `${item.value} (${((item.value / (total || 1)) * 100).toFixed(1)}%)`,
-          arcLabelMinAngle: 15,
-          arcLabelRadius: "60%",
-        },
-      ]}
-      width={500}
-      height={320}
-      margin={{ right: 150 }}
-      slotProps={{
-        legend: {
-          direction: "column",
-          position: { vertical: "middle", horizontal: "right" },
-        },
-      }}
-      sx={{
-        [`& .${pieArcLabelClasses.root}`]: {
-          fontWeight: "bold",
-        },
-      }}
-    />
-  </Paper>
-</Grid>
 
-<Grid item xs={12} md={6}>
-  <Paper elevation={3} sx={{ p: 3 }}>
-    <Typography variant="h6" gutterBottom>
-      Nacimientos por Década
-    </Typography>
-    <Divider sx={{ mb: 2 }} />
-    <PieChart
-      series={[
-        {
-          data: birthYearData,
-          arcLabel: (item) =>
-            `${item.value} (${((item.value / (total || 1)) * 100).toFixed(1)}%)`,
-          arcLabelMinAngle: 15,
-          arcLabelRadius: "60%",
-        },
-      ]}
-      width={500}
-      height={320}
-      margin={{ right: 150 }}
-      slotProps={{
-        legend: {
-          direction: "column",
-          position: { vertical: "middle", horizontal: "right" },
-        },
-      }}
-      sx={{
-        [`& .${pieArcLabelClasses.root}`]: {
-          fontWeight: "bold",
-        },
-      }}
-    />
-  </Paper>
-</Grid>
+        <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+          <Paper elevation={3} sx={{ p: 3, overflow: "hidden" }}>
+            <Typography variant="h6" gutterBottom>
+              Distribución por Género
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Box sx={{ width: "100%", overflow: "hidden", display: "flex", justifyContent: "center" }}>
+              <PieChart
+                series={[
+                  {
+                    data: genderData,
+                    arcLabel: (item) =>
+                      `${item.value} (${((item.value / (total || 1)) * 100).toFixed(1)}%)`,
+                    arcLabelMinAngle: 15,
+                    arcLabelRadius: "60%",
+                  },
+                ]}
+                {...chartProps}
+              />
+            </Box>
+          </Paper>
+        </Grid>
 
-
-
+        <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+          <Paper elevation={3} sx={{ p: 3, overflow: "hidden" }}>
+            <Typography variant="h6" gutterBottom>
+              Nacimientos por Década
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Box sx={{ width: "100%", overflow: "hidden", display: "flex", justifyContent: "center" }}>
+              <PieChart
+                series={[
+                  {
+                    data: birthYearData,
+                    arcLabel: (item) =>
+                      `${item.value} (${((item.value / (total || 1)) * 100).toFixed(1)}%)`,
+                    arcLabelMinAngle: 15,
+                    arcLabelRadius: "60%",
+                  },
+                ]}
+                {...chartProps}
+              />
+            </Box>
+          </Paper>
+        </Grid>
       </Grid>
 
       <Grid container spacing={4} sx={{ mt: 4 }}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
           <Typography variant="h6" gutterBottom>
             Usuarios con Cédula VÁLIDA ({validUsers.length})
           </Typography>
           <DataTable data={validUsers} columns={columns} />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
           <Typography variant="h6" gutterBottom color="error">
             Usuarios con Cédula INVÁLIDA ({invalidUsers.length})
           </Typography>

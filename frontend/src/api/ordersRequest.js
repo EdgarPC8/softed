@@ -80,6 +80,16 @@ export const createItemGroupRequest = async (data) =>
   });
 
 /**
+ * 🔹 Agregar ítems a un grupo existente
+ * POST /orders/workbench/item-groups/:groupId/add-items
+ * data: { itemIds: [] }
+ */
+export const addItemsToGroupRequest = async (groupId, data) =>
+  await axios.post(`/orders/workbench/item-groups/${groupId}/add-items`, data, {
+    headers: { Authorization: jwt() },
+  });
+
+/**
  * 🔹 Editar grupo (concept/status)
  * PUT /orders/workbench/item-groups/:groupId
  * data: { concept?, status? }  // "open" | "closed" | "cancelled"

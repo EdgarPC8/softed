@@ -22,11 +22,6 @@ import {
   deleteIncomeRequest,
   deleteExpenseRequest,
 } from "../../api/financeRequest";
-import CustomerOrderGroupsDemo from "./components/CustomerOrderGroupsDemo";
-
-
-
-
 function FinancePage() {
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpense: 0, balance: 0 });
   const [incomes, setIncomes] = useState([]);
@@ -248,8 +243,6 @@ const commonColumns = [
 
   return (
     <Container>
-      <CustomerOrderGroupsDemo/>
-
       {/* Dialog Eliminar */}
       <SimpleDialog
         open={openDeleteDialog}

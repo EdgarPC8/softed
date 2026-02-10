@@ -1,11 +1,9 @@
 import React from "react";
 import { Box, Typography, Paper, Divider } from "@mui/material";
-import appsInfo from "../../appConfig";
+import appsInfo, { activeAppId } from "../../appConfig";
 
-
-
-export default function Info({ app = "eddeli" }) {
-  const info = appsInfo[app];
+export default function Info() {
+  const info = appsInfo[activeAppId] || appsInfo.softed;
 
   return (
     <Box
@@ -15,28 +13,31 @@ export default function Info({ app = "eddeli" }) {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        bgcolor: info.background,
+        bgcolor: "background.default",
+        color: "text.primary",
         mt: -8,
       }}
     >
       <Paper elevation={3} sx={{ maxWidth: 500, p: 4, borderRadius: 3 }}>
         <Box display="flex" flexDirection="column" alignItems="center" textAlign="center">
-       <img
-  src={info.logo}
-  alt={info.name}
-  style={{
-    width: 100,
-    height: 100,
-    marginBottom: 16,
-    borderRadius: "50%",      // 👈 lo hace circular
-    objectFit: "cover",       // 👈 evita deformación
-    border: "3px solid #E2A05B", // 👈 borde dorado opcional (puedes quitarlo)
-    boxShadow: "0 0 8px rgba(0,0,0,0.1)", // 👈 sutil sombra
-  }}
-/>
+          <Box
+            component="img"
+            src={info.logo}
+            alt={info.name}
+            sx={{
+              width: 100,
+              height: 100,
+              mb: 2,
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: 3,
+              borderColor: "primary.main",
+              boxShadow: 2,
+            }}
+          />
 
 
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
+          <Typography variant="h5" fontWeight="bold" gutterBottom color="text.primary">
             {info.name}
           </Typography>
 
@@ -46,7 +47,7 @@ export default function Info({ app = "eddeli" }) {
 
           <Divider sx={{ my: 2, width: "100%" }} />
 
-          <Typography variant="body1" gutterBottom>
+          <Typography variant="body1" gutterBottom color="text.primary">
             {info.description}
           </Typography>
 

@@ -1,3 +1,11 @@
+/**
+ * resolveTemplate.js
+ *
+ * Resuelve el documento y cada capa con los datos (doc.data):
+ * - Capas tipo image: src desde bind.srcFrom o props.src o fallbackSrc.
+ * - Capas tipo text: text desde bind.textFrom o se mantiene props.text.
+ * (El fondo se hace con una capa tipo imagen que ocupe todo el canvas.)
+ */
 import { pathImg } from "../../../../api/axios";
 import {
   resolveValue,
@@ -6,16 +14,13 @@ import {
 } from "./resolveMedia";
 
 /**
- * Resuelve TODO el template antes de dibujar:
- * - background
- * - layers
+ * Resuelve TODO el template antes de dibujar (solo layers; sin background fijo).
  */
 export const resolveTemplate = (doc, docData) => {
   if (!doc) return doc;
 
   return {
     ...doc,
-    backgroundSrc: resolveImageUrl(doc.backgroundSrc, { base: pathImg }),
     layers: doc.layers.map((layer) =>
       resolveLayer(doc, docData, layer)
     ),

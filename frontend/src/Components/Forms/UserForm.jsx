@@ -67,20 +67,23 @@ function UserForm({isEditing = false,datos = [], onClose,reload}) {
           }
         });
         
-      }else{
+      } else {
         toast({
-          promise: addUserRequest( {
-                ...data,
-                birthday: data.birthday.split("T")[0],
-              }),
-              successMessage: "Usuario guardado con éxito",
-              onSuccess: (data) => {
-                if (onClose) onClose(); 
-                if (reload) reload(); 
-                resetForm();
-              }
+          promise: addUserRequest({
+            ...data,
+            birthday: data.birthday?.split("T")[0],
+          }),
+          successMessage: "Usuario guardado con éxito",
+          errorMessage: "Error al crear el usuario",
+          onSuccess: (data) => {
+            if (onClose) onClose();
+            if (reload) reload();
+            resetForm();
+          },
+          onError: (err) => ({
+            description: err?.response?.data?.message || "Error al crear el usuario",
+          }),
         });
-
       }
   };
 

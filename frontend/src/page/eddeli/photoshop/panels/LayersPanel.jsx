@@ -6,11 +6,20 @@ import {
   Stack,
   TextField,
   Tooltip,
+  IconButton,
+  Divider,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import ImageIcon from "@mui/icons-material/Image";
+import ShapeLineIcon from "@mui/icons-material/ShapeLine";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 import { useEditor } from "../EditorProvider";
-import SimpleDialog from "../../../../Components/Dialogs/SimpleDialog"; // ajusta ruta si hace falta
+import SimpleDialog from "../../../../Components/Dialogs/SimpleDialog";
 
 export default function LayersPanel() {
   const { state, dispatch, deleteLayer } = useEditor();
@@ -33,35 +42,103 @@ export default function LayersPanel() {
   }, [doc.layers]);
 
   return (
-    <Box>
-      {/* BOTONES AGREGAR */}
-      <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <Button
-          size="small"
-          variant="contained"
-          onClick={() => dispatch({ type: "ADD_LAYER", layerType: "text" })}
-        >
-          + Text
-        </Button>
-        <Button
-          size="small"
-          variant="contained"
-          onClick={() => dispatch({ type: "ADD_LAYER", layerType: "image" })}
-        >
-          + Image
-        </Button>
-        <Button
-          size="small"
-          variant="contained"
-          onClick={() => dispatch({ type: "ADD_LAYER", layerType: "shape" })}
-        >
-          + Shape
-        </Button>
-      </Stack>
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      {/* BOTONES AGREGAR (ARRIBA, SIEMPRE VISIBLES) */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 0.5,
+          pb: 0.5,
+        }}
+      >
+        <Tooltip title="Añadir capa de texto">
+          <IconButton
+            size="small"
+            onClick={() => dispatch({ type: "ADD_LAYER", layerType: "text" })}
+            sx={{
+              color: "#fff",
+              background: "rgba(0, 229, 255, 0.15)",
+              border: "1px solid rgba(0, 229, 255, 0.3)",
+              "&:hover": {
+                background: "rgba(0, 229, 255, 0.25)",
+                borderColor: "rgba(0, 229, 255, 0.5)",
+              },
+            }}
+          >
+            <TextFieldsIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
 
-      {/* LISTA DE CAPAS */}
-      <Stack spacing={0.7}>
-        {sortedLayers.map((l) => (
+        <Tooltip title="Añadir capa de imagen">
+          <IconButton
+            size="small"
+            onClick={() => dispatch({ type: "ADD_LAYER", layerType: "image" })}
+            sx={{
+              color: "#fff",
+              background: "rgba(0, 229, 255, 0.15)",
+              border: "1px solid rgba(0, 229, 255, 0.3)",
+              "&:hover": {
+                background: "rgba(0, 229, 255, 0.25)",
+                borderColor: "rgba(0, 229, 255, 0.5)",
+              },
+            }}
+          >
+            <ImageIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Añadir capa de forma">
+          <IconButton
+            size="small"
+            onClick={() => dispatch({ type: "ADD_LAYER", layerType: "shape" })}
+            sx={{
+              color: "#fff",
+              background: "rgba(0, 229, 255, 0.15)",
+              border: "1px solid rgba(0, 229, 255, 0.3)",
+              "&:hover": {
+                background: "rgba(0, 229, 255, 0.25)",
+                borderColor: "rgba(0, 229, 255, 0.5)",
+              },
+            }}
+          >
+            <ShapeLineIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
+      <Divider sx={{ borderColor: "rgba(255,255,255,0.08)", mb: 1 }} />
+
+      {/* LISTA DE CAPAS (con scroll, ocupa el resto del alto) */}
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
+          pr: 0.5,
+        }}
+      >
+        <Stack spacing={0.7}>
+          {sortedLayers.length === 0 ? (
+            <Box
+              sx={{
+                p: 2,
+                textAlign: "center",
+                color: "rgba(255,255,255,0.5)",
+                fontSize: 12,
+              }}
+            >
+              No hay capas. Usa los botones de abajo para añadir.
+            </Box>
+          ) : (
+            sortedLayers.map((l) => (
           <Box
             key={l.id}
             draggable
@@ -96,28 +173,56 @@ export default function LayersPanel() {
             }}
           >
             {/* IZQUIERDA */}
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Button
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({ type: "TOGGLE_VISIBLE", layerId: l.id });
-                }}
-              >
-                {l.visible ? "👁" : "🙈"}
-              </Button>
+            <Stack direction="row" spacing={0.5} alignItems="center">
+              <Tooltip title={l.visible ? "Ocultar capa" : "Mostrar capa"}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch({ type: "TOGGLE_VISIBLE", layerId: l.id });
+                  }}
+                  sx={{
+                    color: l.visible ? "#fff" : "rgba(255,255,255,0.4)",
+                    p: 0.5,
+                  }}
+                >
+                  {l.visible ? (
+                    <VisibilityIcon fontSize="small" />
+                  ) : (
+                    <VisibilityOffIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
 
-              <Button
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({ type: "TOGGLE_LOCKED", layerId: l.id });
-                }}
-              >
-                {l.locked ? "🔒" : "🔓"}
-              </Button>
+              <Tooltip title={l.locked ? "Desbloquear capa" : "Bloquear capa"}>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dispatch({ type: "TOGGLE_LOCKED", layerId: l.id });
+                  }}
+                  sx={{
+                    color: l.locked ? "#ffb74d" : "rgba(255,255,255,0.4)",
+                    p: 0.5,
+                  }}
+                >
+                  {l.locked ? (
+                    <LockIcon fontSize="small" />
+                  ) : (
+                    <LockOpenIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </Tooltip>
 
-              <Chip size="small" label={l.type} />
+              <Chip
+                size="small"
+                label={l.type}
+                sx={{
+                  fontSize: 10,
+                  height: 20,
+                  "& .MuiChip-label": { px: 0.75 },
+                }}
+              />
             </Stack>
 
             {/* DERECHA */}
@@ -133,7 +238,13 @@ export default function LayersPanel() {
                     patch: { name: e.target.value },
                   })
                 }
-                sx={{ width: 140 }}
+                sx={{
+                  width: 120,
+                  "& .MuiInputBase-root": {
+                    fontSize: 11,
+                    height: 28,
+                  },
+                }}
               />
 
               {/* ELIMINAR */}
@@ -152,8 +263,10 @@ export default function LayersPanel() {
               </Tooltip>
             </Stack>
           </Box>
-        ))}
-      </Stack>
+            ))
+          )}
+        </Stack>
+      </Box>
 
       {/* CONFIRMACIÓN */}
       <SimpleDialog

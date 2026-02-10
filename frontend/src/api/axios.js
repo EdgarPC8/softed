@@ -1,13 +1,13 @@
 import axios from "axios";
 import { io } from "socket.io-client";
+import { apiPath } from "../../appConfig.js";
 
-const api = "eddeliapi"
 export const urlRequestsApi = {
-    local: `http://localhost:3001/${api}`,
-    production:`https://aplicaciones.marianosamaniego.edu.ec/${api}`,
-    edgar:`http://192.168.110.93:3001/${api}`
-  };
-const url =  urlRequestsApi.edgar;
+  local: `http://localhost:3001/${apiPath}`,
+  production: `https://aplicaciones.marianosamaniego.edu.ec/${apiPath}`,
+  edgar: `http://192.168.1.100:3001/${apiPath}`,
+};
+const url = urlRequestsApi.edgar;
 const instance = axios.create({
   baseURL: `${url}`,
   withCredentials: true,

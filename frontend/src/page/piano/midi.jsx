@@ -1,9 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Button, Typography, TextField } from '@mui/material';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 import * as Tone from 'tone';
 import { notesToPlay as arrayNotes } from './arrayMusic';
 
-const SynthesiaRoll = () => {
+/**
+ * mode: 'simulation' | 'practice' | undefined (toggle)
+ * notes: partitura [{ note, time, duration, hand }]
+ * bpm: bpm inicial de la canción
+ * onBack: volver al home
+ */
+const SynthesiaRoll = ({ mode, notes: propNotes, bpm: propBpm = 120, onBack }) => {
   // ================== Refs de canvas ==================
   const rollCanvasRef = useRef(null);   // capa 1: notas + rejilla (RAF)
   const pianoCanvasRef = useRef(null);  // capa 2: teclado (repinta bajo demanda)
@@ -14,7 +21,9 @@ const SynthesiaRoll = () => {
   const isPlaying = phase === 'playing';
 
   // ===== Simulación / Práctica =====
-  const [autoSim, setAutoSim] = useState(false);
+  const [autoSimState, setAutoSimState] = useState(false);
+  const effectiveAutoSim = mode === 'simulation' ? true : mode === 'practice' ? false : autoSimState;
+  const hasFixedMode = mode === 'simulation' || mode === 'practice';
 
   // ===== Reloj =====
   const [startTime, setStartTime] = useState(null);
@@ -23,7 +32,7 @@ const SynthesiaRoll = () => {
 
   // ===== Audio/visuales =====
   const [highlightedKeys, setHighlightedKeys] = useState({});
-  const [bpm, setBpm] = useState(120);
+  const [bpm, setBpm] = useState(propBpm || 120);
   const samplerRef = useRef(null);
 
   // Sensibilidad simultaneidad (ms) – acordes
@@ -115,13 +124,24 @@ const SynthesiaRoll = () => {
   };
 
   // ===== Partitura =====
-  const rawNotes = useMemo(() => arrayNotes, []);
+  const rawNotes = useMemo(
+    () => (Array.isArray(propNotes) && propNotes.length ? propNotes : arrayNotes),
+    [propNotes]
+  );
   const notesToPlay = useMemo(() => {
     return rawNotes.map((n, idx) => {
       const nn = normalizeNote(n.note);
       return { ...n, note: nn, _idx: idx }; // ← sin 'key' (no PC)
     });
   }, [rawNotes]);
+
+  // Si cambian bpm o notas desde fuera, sincronizar estado básico
+  useEffect(() => {
+    setBpm(propBpm || 120);
+    setPhase('idle');
+    setCurrentGroupIdx(0);
+    setNoteReady(false);
+  }, [propBpm, rawNotes]);
 
   // Rango visible 4 octavas: C2 a B5
   const visibleRange = useMemo(() => ([
@@ -412,7 +432,7 @@ useEffect(() => {
     if (!currentGroupAllAtKey && noteReady) setNoteReady(false);
 
     // ===== AUTOSIMULACIÓN: ilumina + suena + HOLD + avanza =====
-    if (isPlaying && autoSim && (groups[currentGroupIdx] || []).length && currentGroupAllAtKey) {
+    if (isPlaying && effectiveAutoSim && (groups[currentGroupIdx] || []).length && currentGroupAllAtKey) {
       if (lastAutoAdvancedGroupRef.current !== currentGroupIdx) {
         const updates = {};
         for (const n of groups[currentGroupIdx]) {
@@ -551,14 +571,14 @@ useEffect(() => {
     // flash (y pressed si autosim)
     const m = noteMetaRef.current[target.index] || { currentStopY: 0, pressed: false, flashUntil: 0, pressedAt: 0, holdUntil: 0 };
     m.flashUntil = Tone.now() + 0.2;
-    if (autoSim) {
+    if (effectiveAutoSim) {
       m.pressed = true;
       m.pressedAt = Tone.now();
       m.holdUntil = m.pressedAt + HOLD_AT_KEY_SEC;
     }
     noteMetaRef.current[target.index] = m;
 
-    if (autoSim) return;
+    if (effectiveAutoSim) return;
 
     // ==== Acumulación de acorde en práctica ====
     const now = Tone.now();
@@ -764,7 +784,7 @@ useEffect(() => {
     loop();
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaying, bpm, currentGroupIdx, noteReady, groups, pauseOffset, startTime, autoSim, fallSpeed, HOLD_AT_KEY_SEC]);
+  }, [isPlaying, bpm, currentGroupIdx, noteReady, groups, pauseOffset, startTime, effectiveAutoSim, fallSpeed, HOLD_AT_KEY_SEC]);
 
   // Cambios de BPM / HOLD → reajusta stops
   useEffect(() => {
@@ -850,9 +870,9 @@ useEffect(() => {
   const onSecondary = () => {
     if (phase === 'paused') {
       resetWhilePaused();
-    } else {
-      setAutoSim(v => {
-        lastAutoAdvancedGroupRef.current = -1; // ← reset al togglear
+    } else if (!hasFixedMode) {
+      setAutoSimState(v => {
+        lastAutoAdvancedGroupRef.current = -1;
         return !v;
       });
     }
@@ -868,7 +888,9 @@ useEffect(() => {
   const secondaryLabel =
     phase === 'paused'
       ? 'Reiniciar (en pausa)'
-      : (autoSim ? 'Parar simulación' : 'Activar simulación');
+      : hasFixedMode
+      ? null
+      : (effectiveAutoSim ? 'Parar simulación' : 'Activar simulación');
 
   // ===== Pantalla completa =====
   const toggleFullscreen = async () => {
@@ -886,10 +908,18 @@ useEffect(() => {
   };
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h5">🎹 Synthesia (2 canvas): notas + teclado optimizado</Typography>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2, flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', gap: 2, width: '100%', pl: 8 }}>
+      {/* Panel izquierdo: controles */}
+      <Box sx={{ width: 220, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {onBack && (
+          <Button size="small" startIcon={<ArrowBack />} onClick={onBack}>
+            Volver
+          </Button>
+        )}
+        <Typography variant="subtitle2" color="text.secondary">
+          {mode === 'simulation' ? 'Simulación' : mode === 'practice' ? 'Práctica' : 'Synthesia'}
+        </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
           type="number"
           label="BPM"
@@ -897,6 +927,7 @@ useEffect(() => {
           onChange={(e) => setBpm(Math.max(20, Math.min(300, Number(e.target.value) || 0)))}
           inputProps={{ min: 20, max: 300, step: 1 }}
           size="small"
+          fullWidth
         />
         <TextField
           type="number"
@@ -905,6 +936,7 @@ useEffect(() => {
           onChange={(e) => setMidiOctaveShift(Math.max(-4, Math.min(4, Number(e.target.value) || 0)))}
           inputProps={{ min: -4, max: 4, step: 1 }}
           size="small"
+          fullWidth
         />
         <TextField
           type="number"
@@ -913,6 +945,7 @@ useEffect(() => {
           onChange={(e) => setChordWindowMs(Math.max(0, Math.min(500, Number(e.target.value) || 0)))}
           inputProps={{ min: 0, max: 500, step: 5 }}
           size="small"
+          fullWidth
         />
         <TextField
           type="number"
@@ -921,72 +954,55 @@ useEffect(() => {
           onChange={(e) => setHoldMs(Math.max(0, Math.min(1000, Number(e.target.value) || 0)))}
           inputProps={{ min: 0, max: 1000, step: 10 }}
           size="small"
+          fullWidth
         />
 
-        <Button variant="contained" onClick={onPrimary}>
+        <Button variant="contained" onClick={onPrimary} fullWidth>
           {primaryLabel}
         </Button>
 
-        <Button
-          variant="outlined"
-          color={phase === 'paused' ? 'warning' : (autoSim ? 'error' : 'success')}
-          onClick={onSecondary}
-        >
-          {secondaryLabel}
-        </Button>
-      </Box>
-
-      <Typography variant="subtitle1" sx={{ mb: 1, color: midiStatus.startsWith('🎵') ? 'lightgreen' : (midiStatus.startsWith('⚠️') ? 'orange' : 'gray') }}>
-        {midiStatus} {midiOctaveShift ? `(shift: ${midiOctaveShift} oct.)` : ''} · Modo: {autoSim ? 'Simulación' : 'Práctica'}
-      </Typography>
-
-      <Box
-        ref={containerRef}
-        mt={1}
-        sx={{ position: 'relative', width: '100%', maxWidth: `${canvasWidth}px` }}
-      >
-        {/* Capa 1: NOTAS + REJILLA */}
-        <canvas
-          ref={rollCanvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
-          style={{ border: '1px solid #999', backgroundColor: '#111', width: '100%', height: 'auto', display: 'block' }}
-        />
-
-        {/* Capa 2: TECLADO (encima) */}
-        <canvas
-          ref={pianoCanvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: 'auto', pointerEvents: 'none' }}
-        />
-
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={toggleFullscreen}
-          sx={{ position: 'absolute', top: 8, right: 8, opacity: 0.9, zIndex: 5 }}
-        >
+        {secondaryLabel && (
+          <Button
+            variant="outlined"
+            color={phase === 'paused' ? 'warning' : (effectiveAutoSim ? 'error' : 'success')}
+            onClick={onSecondary}
+            fullWidth
+          >
+            {secondaryLabel}
+          </Button>
+        )}
+        <Typography variant="caption" sx={{ color: midiStatus.startsWith('🎵') ? 'success.main' : (midiStatus.startsWith('⚠️') ? 'warning.main' : 'text.secondary') }}>
+          {midiStatus}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {phase === 'playing' ? (effectiveAutoSim ? 'Se toca solo' : (noteReady ? 'Toca el grupo' : 'Espera…')) : phase === 'paused' ? 'Pausado' : phase === 'finished' ? 'Finalizado' : 'Listo'}
+        </Typography>
+        <Button size="small" variant="outlined" onClick={toggleFullscreen} fullWidth>
           Pantalla completa
         </Button>
       </Box>
+      </Box>
 
-      <Typography sx={{ mt: 1 }} variant="body2" color={
-        phase === 'playing' ? (noteReady ? 'success.main' : 'warning.main')
-          : phase === 'paused' ? 'info.main'
-            : phase === 'finished' ? 'secondary.main'
-              : 'text.secondary'
-      }>
-        {phase === 'playing'
-          ? (autoSim
-            ? '▶ Simulación activa: se toca solo (con hold y caída detrás del piano). Usa ←/→ para moverte.'
-            : (noteReady ? '👉 Toca TODAS las notas del grupo casi a la vez (con tu teclado MIDI).' : '⏳ Espera a que el grupo toque el teclado…'))
-          : phase === 'paused'
-            ? '⏸️ Pausado. Reinicia (en pausa) o continúa. También ←/→ para moverte.'
-            : phase === 'finished'
-              ? '✅ Finalizado. Pulsa “Iniciar de nuevo”.'
-              : 'Listo para iniciar.'}
-      </Typography>
+      {/* Canvas centrado */}
+      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <Box
+          ref={containerRef}
+          sx={{ position: 'relative', width: '100%', maxWidth: canvasWidth }}
+        >
+          <canvas
+            ref={rollCanvasRef}
+            width={canvasWidth}
+            height={canvasHeight}
+            style={{ border: '1px solid #999', backgroundColor: '#111', width: '100%', height: 'auto', display: 'block' }}
+          />
+          <canvas
+            ref={pianoCanvasRef}
+            width={canvasWidth}
+            height={canvasHeight}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: 'auto', pointerEvents: 'none' }}
+          />
+        </Box>
+      </Box>
     </Box>
   );
 };

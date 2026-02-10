@@ -6,13 +6,13 @@ import TransformBox from "./TransformBox";
 
 function LayerContent({ layer, scale }) {
   if (layer.type === "image") {
+    const src = layer.props?.src || "";
     return (
 <img
-  src={layer.props?.src}
+  key={src}
+  src={src}
   alt=""
   draggable={false}
-  onLoad={() => console.log("✅ IMG OK:", layer.props?.src)}
-  onError={() => console.log("❌ IMG FAIL:", layer.props?.src)}
   style={{
     width: "100%",
     height: "100%",
@@ -45,10 +45,18 @@ function LayerContent({ layer, scale }) {
 
 
     const align = layer.props?.align || "left";
+    const verticalAlign = layer.props?.verticalAlign || "top";
     const wrap = layer.props?.wrap !== false;
     const clampLines = Number(layer.props?.maxLines || 0);
     
     const lineHeight = Number(layer.props?.lineHeight || 1.1);
+
+    // Mapeo de alineación vertical a alignItems
+    const alignItemsMap = {
+      top: "flex-start",
+      center: "center",
+      bottom: "flex-end",
+    };
 
     return (
       <div
@@ -77,7 +85,7 @@ function LayerContent({ layer, scale }) {
               : "none",
 
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: alignItemsMap[verticalAlign] || "flex-start",
           justifyContent:
             align === "center" ? "center" : align === "right" ? "flex-end" : "flex-start",
           textAlign: align,
