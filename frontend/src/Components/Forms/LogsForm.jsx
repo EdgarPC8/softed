@@ -1,171 +1,109 @@
-import { CloudUpload, Save } from "@mui/icons-material";
-import {
-  Grid,
-  TextField,
-  Box,
-  Button,
-  InputLabel,
-  Avatar,
-  IconButton,
-  FormControl,
-  Select,
-  ButtonGroup,
-  MenuItem,
-} from "@mui/material";
-// import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
+import { Grid, TextField, Box } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useForm, Controller } from "react-hook-form";
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  addUserRequest,
-  getOneUserRequest,
-  updateUserRequest,
-} from "../../api/userRequest";
-import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
+function LogsForm({ isEditing = false, datos = {}, onClose, reload }) {
+  const { register, setValue } = useForm();
+  const dni = datos?.id;
 
-
-function UserForm({isEditing = false,datos = [], onClose,reload}) {
-  const [inputValue, setInputValue] = useState("");
-  const { handleSubmit, register, reset, setValue, control } = useForm();
-  const [user, setUser] = useState({});
-  const dni=datos.id;
-  const { toast} = useAuth();
-
-  const peticion = async() => {
-    // const promise =await ; // Crear la promesa
-
-    
-  };
-  const resetForm = () => {
-    setInputValue("");
-    reset();
-  };
-
-  const submitForm = (data) => {
-      if (isEditing) {
-        toast({
-          promise: updateUserRequest(datos.id, {
-                ...data,
-                birthday: data.birthday.split("T")[0],
-              }),
-              successMessage: "Usuario editado con éxito",
-              onSuccess: (data) => {
-                if (onClose) onClose(); 
-                if (reload) reload(); 
-                resetForm();
-              }
-        });
-      }else{
-        toast({
-          promise: addUserRequest( {
-                ...data,
-                birthday: data.birthday.split("T")[0],
-              }),
-              successMessage: "Usuario guardado con éxito",
-              onSuccess: (data) => {
-                if (onClose) onClose(); 
-                if (reload) reload(); 
-                resetForm();
-              }
-        });
-
-      }
-  };
-
-  const loadUser = async () => {
-    if (isEditing) {
-    // const { data } = await getOneUserRequest(datos.id);
-    // const users = data;
-    const keys = Object.keys(datos);
-    keys.forEach((key) => {
-      setValue(key, datos[key]);
-    });
-
+  const formatDate = (d) => {
+    if (!d) return "";
+    try {
+      return new Date(d).toLocaleString();
+    } catch {
+      return String(d);
     }
-
   };
- 
 
   useEffect(() => {
-      loadUser();
-  }, []);
+    if (isEditing && datos && Object.keys(datos).length) {
+      Object.keys(datos).forEach((key) => {
+        const val = key === "date" ? formatDate(datos[key]) : datos[key];
+        setValue(key, val ?? "");
+      });
+    }
+  }, [isEditing, datos]);
+
   return (
-    <Box component="form" sx={{ mt: 1 }} onSubmit={handleSubmit(submitForm)}>
-      <Grid spacing={2} container>
-    
-        <Grid item xs={6}>
+    <Box component="form" sx={{ mt: 2, minWidth: 520 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
           <TextField
-            InputProps={{ readOnly: true }} 
-            label="Metodo Http"
+            InputProps={{ readOnly: true }}
+            label="Método Http"
             fullWidth
-            variant="standard"
-            {...register("httpMethod", { required: true })}
+            variant="outlined"
+            size="small"
+            {...register("httpMethod")}
             InputLabelProps={dni ? { shrink: true } : {}}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
-            InputProps={{ readOnly: true }} 
+            InputProps={{ readOnly: true }}
             label="Fecha"
-            variant="standard"
+            variant="outlined"
             fullWidth
-            {...register("date", { required: true })}
+            size="small"
+            {...register("date")}
             InputLabelProps={dni ? { shrink: true } : {}}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
-            InputProps={{ readOnly: true }} 
-            label="Accion"
-            variant="standard"
+            InputProps={{ readOnly: true }}
+            label="Acción"
+            variant="outlined"
             fullWidth
-            {...register("action", { required: true })}
+            size="small"
+            {...register("action")}
             InputLabelProps={dni ? { shrink: true } : {}}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
-            InputProps={{ readOnly: true }} 
+            InputProps={{ readOnly: true }}
             label="Url"
-            variant="standard"
+            variant="outlined"
             fullWidth
-            {...register("endPoint", { required: true })}
+            size="small"
+            {...register("endPoint")}
             InputLabelProps={dni ? { shrink: true } : {}}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            label="Descripcion"
-            InputProps={{ readOnly: true }} 
+            label="Descripción"
+            InputProps={{ readOnly: true }}
             fullWidth
-            variant="standard"
-            {...register("description", { required: true })}
+            variant="outlined"
+            multiline
+            minRows={3}
+            maxRows={6}
+            size="small"
+            sx={{ "& .MuiInputBase-input": { whiteSpace: "pre-wrap" } }}
+            {...register("description")}
             InputLabelProps={dni ? { shrink: true } : {}}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            label="Sistema OP"
-            InputProps={{ readOnly: true }} 
+            label="Sistema / User-Agent"
+            InputProps={{ readOnly: true }}
             fullWidth
-            variant="standard"
-            {...register("system", { required: true })}
+            variant="outlined"
+            multiline
+            minRows={2}
+            maxRows={4}
+            size="small"
+            sx={{ "& .MuiInputBase-input": { whiteSpace: "pre-wrap", wordBreak: "break-word" } }}
+            {...register("system")}
             InputLabelProps={dni ? { shrink: true } : {}}
           />
         </Grid>
-        {/* <Grid item xs={4}>
-          <Button variant="contained" fullWidth type="submit">
-            {!isEditing?'Guardar':'Editar'}
-          </Button>
-        </Grid> */}
       </Grid>
     </Box>
   );
 }
 
-export default UserForm;
+export default LogsForm;

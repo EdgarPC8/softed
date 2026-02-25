@@ -15,18 +15,18 @@ const appsInfo = {
   },
 
   alumni: {
-    logo: "./android-chrome-512x512.png",
-    name: "SoftEd Sistema Alumni",
+    logo: "./logo_alumni.png",
+    name: "Sistema Alumni",
     alias: "Alumni",
-    version: "1.2.0",
+    version: "1.2.4",
     description: `
-      Este sistema ha sido desarrollado para la gestión de usuarios, encuestas y currículums
+      Este sistema ha sido desarrollado para la gestión de usuarios, Bolsa de Empleo, encuestas y currículums
       de egresados y graduados.
     `,
     author: "SoftEd",
     year: new Date().getFullYear(),
     background: "#f5f6fa",
-    apiPath: "eddeliapi",
+    apiPath: "alumniapi",
   },
 
   eddeli: {

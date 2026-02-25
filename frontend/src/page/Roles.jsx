@@ -11,7 +11,7 @@ import {
   import { Person, Edit, Delete,Send } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../context/AuthContext";
-import DataTable from "../Components/Tables/DataTable";
+import TablePro from "../Components/Tables/TablePro";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import UserForm from "../Components/Forms/UserForm.jsx";
 
@@ -83,42 +83,28 @@ import UserForm from "../Components/Forms/UserForm.jsx";
       });
     };
     const columns = [
+      { id: "id", label: "Id" },
+      { id: "name", label: "Nombre" },
       {
-        headerName: "#",
-        field: "#",
-        width: 30,
-      },
-      {
-        headerName: "Id",
-        field: "id",
-        width: 50,
-      },
-      {
-        headerName: "Nombre",
-        field: "name",
-        width: 100,
-      },
-      {
-        headerName: "Actions",
-        field: "actions",
-        width: 150,
-        sortable: false,
-        renderCell: (params) => (
+        id: "actions",
+        label: "Actions",
+        render: (row) => (
           <>
             <IconButton
               onClick={() => {
-                setValue("name", params.row.name);
+                setValue("name", row.name);
                 setIsEditing(true);
-                setId(params.row.id);
+                setId(row.id);
               }}
             >
               <Edit />
             </IconButton>
-            <IconButton  onClick={() => {
-              handleDialog();
-              setDataToDelete(params.row);
-            }}>
-              
+            <IconButton
+              onClick={() => {
+                handleDialog();
+                setDataToDelete(row);
+              }}
+            >
               <Delete />
             </IconButton>
           </>
@@ -183,7 +169,17 @@ import UserForm from "../Components/Forms/UserForm.jsx";
             >
               <UserForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchdata}></UserForm>
             </SimpleDialog>
-            <DataTable data={data} columns={columns} />
+            <TablePro
+              rows={data.map((row, i) => ({ ...row, id: row.id ?? i }))}
+              columns={columns}
+              title=""
+              showSearch
+              showPagination
+              defaultRowsPerPage={5}
+              tableMaxHeight={400}
+              showIndex
+              indexHeader="#"
+            />
       </Container>
     );
   }

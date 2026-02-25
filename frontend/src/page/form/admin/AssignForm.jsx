@@ -7,29 +7,27 @@ import {
 import { useEffect, useState } from "react";
 import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
-import DataTable from "../../../Components/Tables/DataTable";
-import { getUsersByFormAssign, deleteUsersByFormAssign } from "../../../api/formsRequest";
+import TablePro from "../../../Components/Tables/TablePro";
+import { getAccountsByFormAssign, deleteAccountByFormAssign } from "../../../api/formsRequest";
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
 import AssignUserForm from "../components/AssignUserForm";
 import { useParams } from "react-router-dom";
-import { anonimizarTextoChino } from "../../../helpers/functions";
 
 
 
 function AssignForm() {
-  const [users, setUsers] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [open, setOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState({});
+  const [accountToDelete, setAccountToDelete] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [datos, setDatos] = useState([]);
   const [titleUserDialog, settitleUserDialog] = useState("");
-  const { id: formId } = useParams(); // Asegúrate que el id esté en la URL
+  const { id: formId } = useParams();
 
-
-  const fetchUsers = async () => {
-    const { data } = await getUsersByFormAssign(formId);
-    setUsers(data);
+  const fetchAccounts = async () => {
+    const { data } = await getAccountsByFormAssign(formId);
+    setAccounts(data || []);
   };
 
   const handleDialog = () => {
@@ -38,73 +36,65 @@ function AssignForm() {
   const handleDialogUser = () => {
     setOpenDialog(!openDialog);
   };
-  const deleteUser = async () => {
+  const deleteAccount = async () => {
     toast.promise(
-      deleteUsersByFormAssign(formId, userToDelete.id),
+      deleteAccountByFormAssign(formId, accountToDelete.id),
       {
         loading: "Eliminando...",
-        success: "Usuario elimninado con éxito",
-        error: "Ocurrio un error",
+        success: "Cuenta eliminada con éxito",
+        error: "Ocurrió un error",
       },
-      {
-        position: "top-right",
-        style: {
-          fontFamily: "roboto",
-        },
-      }
+      { position: "top-right", style: { fontFamily: "roboto" } }
     );
-
-    setUsers(users.filter((user) => user.id !== userToDelete.id));
+    setAccounts((prev) => prev.filter((a) => a.id !== accountToDelete.id));
     handleDialog();
   };
-  const columns = [
-    {
-      headerName: "#",
-      field: "#",
-      width: 50,
-      sortable: false,
-    },
-    {
-      headerName: "Cedula",
-      field: "ci",
-      width: 250,
-      renderCell: (params) => anonimizarTextoChino(params.row.ci)
 
-    },
+  const flatRow = (acc) => {
+    const roleNames = (acc.roles || []).map((r) => r.name).filter(Boolean);
+    return {
+      id: acc.id,
+      ci: acc.user?.ci ?? acc.ci ?? "-",
+      firstName: acc.user?.firstName ?? acc.firstName,
+      secondName: acc.user?.secondName ?? acc.secondName,
+      firstLastName: acc.user?.firstLastName ?? acc.firstLastName,
+      secondLastName: acc.user?.secondLastName ?? acc.secondLastName,
+      rol: roleNames.join(", ") || "-",
+    };
+  };
+  const columns = [
+    { id: "ci", label: "Cédula", render: (row) => row.ci ?? "-" },
     {
-      headerName: "Nombres y Apellidos",
-      field: "null",
-      width: 350,
-      sortable: false,
-      renderCell: (params, index) => {
-        const user = params.row;
-        const name = `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`
-        return anonimizarTextoChino(name);
+      id: "nombre",
+      label: "Nombres y Apellidos",
+      render: (row) => {
+        const name = `${row.firstName || ""} ${row.secondName || ""} ${row.firstLastName || ""} ${row.secondLastName || ""}`.trim();
+        return name || "-";
       },
     },
+    { id: "rol", label: "Rol", render: (row) => row.rol ?? "-" },
     {
-      headerName: "Actions",
-      field: "actions",
-      width: 100,
-      sortable: false,
-      renderCell: (params) => (
-        <>
-          <IconButton
-            onClick={() => {
-              handleDialog();
-              setUserToDelete(params.row);
-            }}
-          >
-            <Delete />
-          </IconButton>
-        </>
+      id: "actions",
+      label: "Acciones",
+      render: (row) => (
+        <IconButton
+          size="small"
+          onClick={() => {
+            handleDialog();
+            setAccountToDelete(row);
+          }}
+        >
+          <Delete />
+        </IconButton>
       ),
     },
   ];
 
+  const rowsWithId = accounts.map((a) => flatRow(a));
+
 
   useEffect(() => {
-    fetchUsers();
+    fetchAccounts();
   }, []);
 
   return (
@@ -119,10 +109,10 @@ function AssignForm() {
       <SimpleDialog
         open={open}
         onClose={handleDialog}
-        tittle="Desasignar Usuario"
-        onClickAccept={deleteUser}
+        tittle="Desasignar cuenta"
+        onClickAccept={deleteAccount}
       >
-        ¿Está seguro de eliminar el usuario de la Encuesta?
+        ¿Está seguro de eliminar esta cuenta de la encuesta?
       </SimpleDialog>
   
       {/* Botón alineado a la izquierda */}
@@ -151,13 +141,20 @@ function AssignForm() {
         <AssignUserForm
           onClose={handleDialogUser}
           isEditing={isEditing}
-          datos={users}
-          reload={fetchUsers}
+          datos={accounts}
+          reload={fetchAccounts}
         />
       </SimpleDialog>
   
       {/* Tabla centrada */}
-      <DataTable data={users} columns={columns} />
+      <TablePro
+        rows={rowsWithId}
+        columns={columns}
+        showIndex
+        showSearch
+        rowsPerPageOptions={[5, 10, 25]}
+        defaultRowsPerPage={10}
+      />
     </Box>
   );
   

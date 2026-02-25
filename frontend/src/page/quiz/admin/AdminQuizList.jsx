@@ -23,7 +23,7 @@ import {
   getQuizzes,
   deleteQuiz,
   // cloneQuiz, // aún no implementado
-} from "../../../api/quizRequest";
+} from "../../../api/alumni/quizRequest";
 import { formatDate } from "../../../helpers/functions";
 import DataTable from "../../../Components/Tables/DataTable";
 

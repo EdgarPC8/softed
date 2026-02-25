@@ -1,8 +1,8 @@
 import * as React from 'react';
 import InfoCuartos from '../../Components/Papers/InfoCuartos.jsx';
 import { Paper, Typography, Grid, Box, Container } from "@mui/material";
-import HotelForm from '../../Components/Forms/HotelForm.jsx';
-import { getHotel } from "../../api/hotelRequest";
+import HotelForm from './components/forms/HotelForm.jsx';
+import { getHotel } from "../../api/eddeli/hotelRequest";
 import { useEffect, useState } from "react";
 
 

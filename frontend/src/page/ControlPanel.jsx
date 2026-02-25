@@ -12,7 +12,7 @@ import {
   PieChart,
   pieArcLabelClasses,
 } from "@mui/x-charts/PieChart";
-import DataTable from "../Components/Tables/DataTable";
+import TablePro from "../Components/Tables/TablePro";
 import { isValidCI } from "../helpers/isValidCI";
 
 const CHART_HEIGHT = 280;
@@ -129,35 +129,16 @@ setGenderData(genderArray);
   const invalidUsers = users.filter((u) => !isValidCI(u.ci));
 
   const columns = [
+    { id: "ci", label: "Cédula" },
     {
-      headerName: "Cédula",
-      field: "ci",
-      width: 90,
+      id: "fullName",
+      label: "Nombre completo",
+      render: (row) =>
+        `${row.firstName || ""} ${row.secondName || ""} ${row.firstLastName || ""} ${row.secondLastName || ""}`.trim(),
     },
-    {
-      headerName: "Nombre completo",
-      field: "fullName",
-      width: 200,
-      renderCell: (params) => {
-        const u = params.row;
-        return `${u.firstName} ${u.secondName || ""} ${u.firstLastName} ${u.secondLastName || ""}`;
-      },
-    },
-    {
-      headerName: "Fecha de nacimiento",
-      field: "birthday",
-      width: 120,
-    },
-    {
-      headerName: "Género",
-      field: "gender",
-      width: 50,
-    },
-    {
-      headerName: "Tipo Documento",
-      field: "documentType",
-      width: 150,
-    },
+    { id: "birthday", label: "Fecha de nacimiento" },
+    { id: "gender", label: "Género" },
+    { id: "documentType", label: "Tipo Documento" },
   ];
 
   const chartProps = {
@@ -288,14 +269,30 @@ setGenderData(genderArray);
           <Typography variant="h6" gutterBottom>
             Usuarios con Cédula VÁLIDA ({validUsers.length})
           </Typography>
-          <DataTable data={validUsers} columns={columns} />
+          <TablePro
+            rows={validUsers.map((u, i) => ({ ...u, id: u.id ?? i }))}
+            columns={columns}
+            title=""
+            showSearch
+            showPagination
+            defaultRowsPerPage={5}
+            tableMaxHeight={400}
+          />
         </Grid>
 
         <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
           <Typography variant="h6" gutterBottom color="error">
             Usuarios con Cédula INVÁLIDA ({invalidUsers.length})
           </Typography>
-          <DataTable data={invalidUsers} columns={columns} />
+          <TablePro
+            rows={invalidUsers.map((u, i) => ({ ...u, id: u.id ?? i }))}
+            columns={columns}
+            title=""
+            showSearch
+            showPagination
+            defaultRowsPerPage={5}
+            tableMaxHeight={400}
+          />
         </Grid>
       </Grid>
     </Box>
@@ -303,3 +300,5 @@ setGenderData(genderArray);
 }
 
 export default ControlPanelPage;
+
+

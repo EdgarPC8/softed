@@ -228,6 +228,7 @@ export default function PianoRollFL({
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const container = containerRef.current;
     if (!canvas) return;
 
     const dpr = window.devicePixelRatio || 1;
@@ -244,6 +245,14 @@ export default function PianoRollFL({
 
     const gridLeft = KEY_STRIP_WIDTH;
     const beatsPerBar = BEATS_PER_BAR;
+
+    // Ventana visible (para no dibujar notas que están muy fuera de pantalla)
+    let viewLeft = 0;
+    let viewRight = w;
+    if (container) {
+      viewLeft = container.scrollLeft;
+      viewRight = container.scrollLeft + container.clientWidth;
+    }
 
     for (let i = 0; i < rowCount; i++) {
       const y = i * rowHeight;
@@ -293,9 +302,26 @@ export default function PianoRollFL({
       const y = row * rowHeight + 1;
       const noteHeight = rowHeight - 2;
 
+      // Culling horizontal: si la nota está totalmente fuera de la vista, no la dibujamos
+      const marginPx = 32;
+      if (x + noteWidth < viewLeft - marginPx || x > viewRight + marginPx) {
+        return;
+      }
+
       const hand = n.hand === 'L' ? 'L' : 'R';
       const isSelected = editable && selectedIndex === idx;
-      ctx.fillStyle = HAND_COLORS[hand] || '#00fcd4';
+      const isActive =
+        playheadBeats != null &&
+        playheadBeats >= startBeats &&
+        playheadBeats <= startBeats + durBeats;
+
+      // Color base por mano, y si la línea de reproducción pasa, hacemos "brillo"
+      let fillColor = HAND_COLORS[hand] || '#00fcd4';
+      if (isActive) {
+        fillColor = '#ffffff';
+      }
+
+      ctx.fillStyle = fillColor;
       ctx.fillRect(x, y, noteWidth, noteHeight);
       if (isSelected) {
         ctx.strokeStyle = '#fff';
@@ -311,7 +337,7 @@ export default function PianoRollFL({
     // Línea de recorrido (playhead): izquierda → derecha
     if (playheadBeats != null && playheadBeats >= 0) {
       const playheadX = gridLeft + playheadBeats * pxPerBeat;
-      if (playheadX >= gridLeft && playheadX <= w) {
+      if (playheadX >= viewLeft && playheadX <= viewRight) {
         ctx.strokeStyle = '#00ff88';
         ctx.lineWidth = 2;
         ctx.beginPath();

@@ -13,7 +13,9 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import bannerImage from "/home_edDeli.png"; // ajusta la ruta si está en otro lugar
+import { activeAppId } from "../../appConfig.js";
+import bannerImageEddeli from "/home_edDeli.png";
+import bannerImageAlumni from "/home_istms.png";
 
 
 
@@ -58,11 +60,14 @@ function Login() {
     if (isAuthenticated) navigate("/");
   }, [isAuthenticated]);
 
+  const loginBackground =
+    activeAppId === "alumni" ? bannerImageAlumni : activeAppId === "eddeli" ? bannerImageEddeli : bannerImageAlumni;
+
   return (
     <Box
       sx={{
         height: "100vh",
-        backgroundImage: `url(${bannerImage})`,
+        backgroundImage: `url(${loginBackground})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

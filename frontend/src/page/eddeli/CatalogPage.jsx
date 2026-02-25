@@ -38,7 +38,7 @@ import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-import { getCatalogBySection, getCategories } from "../../api/inventoryControlRequest";
+import { getCatalogBySection, getCategories } from "../../api/eddeli/inventoryControlRequest";
 import { pathImg } from "../../api/axios";
 
 

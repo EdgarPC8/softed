@@ -1,18 +1,10 @@
 import axios, { jwt } from "./axios.js";
 
-// Obtener todas las notificaciones de un usuario
-export const getNotificationsByUser = async (userId) =>
-  await axios.get(`/notifications/${userId}`, {
-    headers: {
-      Authorization: jwt(),
-    },
-  });
-export const getUnreadCountByUser = async (userId) =>
-  await axios.get(`/notifications/unreadCount/${userId}`, {
-    headers: {
-      Authorization: jwt(),
-    },
-  });
+export const getNotifications = async () =>
+  await axios.get("/notifications", { headers: { Authorization: jwt() } });
+
+export const getUnreadCount = async () =>
+  await axios.get("/notifications/unreadCount", { headers: { Authorization: jwt() } });
 
 // Crear una nueva notificación
 export const createNotification = async (data) =>

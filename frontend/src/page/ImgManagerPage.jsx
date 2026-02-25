@@ -30,17 +30,19 @@ import { pathImg } from "../api/axios";
 import UploadImageForm from "../Components/Forms/UploadImageForm";
 import {
   scanImagesRequest,
+  getUnusedImagesRequest,
   deleteImageRequest,
   downloadFolderZipRequest,
-  deleteFolderRequest, // ✅ NUEVO
+  deleteFolderRequest,
 } from "../api/imgRequest";
 
 function ImgManagerPage() {
   const [rows, setRows] = useState([]);
   const [totals, setTotals] = useState(null);
 
-  const [folder, setFolder] = useState(""); // ej: "EdDeli/products"
+  const [folder, setFolder] = useState(""); // ej: "alumni/empresas"
   const [maxDepth, setMaxDepth] = useState(5);
+  const [showOnlyUnused, setShowOnlyUnused] = useState(false); // Imágenes no referenciadas en BD
 
   const [openUpload, setOpenUpload] = useState(false);
 
@@ -61,14 +63,19 @@ function ImgManagerPage() {
 
   const fetchScan = async () => {
     try {
-      const { data } = await scanImagesRequest({
-        folder,
-        maxDepth,
-        includeNonImages: false,
-      });
-
-      setRows(data?.files || []);
-      setTotals(data?.totals || null);
+      if (showOnlyUnused) {
+        const { data } = await getUnusedImagesRequest();
+        setRows(data?.files || []);
+        setTotals(data?.totals || null);
+      } else {
+        const { data } = await scanImagesRequest({
+          folder,
+          maxDepth,
+          includeNonImages: false,
+        });
+        setRows(data?.files || []);
+        setTotals(data?.totals || null);
+      }
     } catch (e) {
       toast.error(e?.response?.data?.message || "Error al escanear imágenes");
     }
@@ -77,7 +84,7 @@ function ImgManagerPage() {
   useEffect(() => {
     fetchScan();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showOnlyUnused]);
 
   const deleteSelected = async () => {
     if (!rowToDelete?.relPath) return;
@@ -268,7 +275,7 @@ function ImgManagerPage() {
           size="small"
           value={folder}
           onChange={(e) => setFolder(e.target.value)}
-          placeholder='Ej: "EdDeli" o "EdDeli/products" (vacío = todo)'
+          placeholder='Ej: "alumni/empresas" o "photos" (vacío = todo)'
           fullWidth
         />
 
@@ -287,11 +294,31 @@ function ImgManagerPage() {
           </IconButton>
         </Tooltip>
 
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={showOnlyUnused}
+              onChange={(e) => setShowOnlyUnused(e.target.checked)}
+              color="warning"
+            />
+          }
+          label={
+            <Tooltip title="Muestra solo imágenes que no están referenciadas en la BD (usuarios, empresas, etc.)">
+              <span>Solo no utilizadas</span>
+            </Tooltip>
+          }
+        />
+
         <Button variant="text" startIcon={<UploadFile />} onClick={handleUploadDialog}>
           Subir imagen
         </Button>
 
-        <Button variant="text" startIcon={<Download />} onClick={downloadZip}>
+        <Button
+          variant="text"
+          startIcon={<Download />}
+          onClick={downloadZip}
+          disabled={showOnlyUnused}
+        >
           Descargar carpeta
         </Button>
 
@@ -300,6 +327,7 @@ function ImgManagerPage() {
           color="error"
           startIcon={<DeleteForever />}
           onClick={handleDeleteFolderDialog}
+          disabled={showOnlyUnused}
         >
           Eliminar carpeta
         </Button>
@@ -316,7 +344,7 @@ function ImgManagerPage() {
         rows={rows}
         columns={columns}
         defaultRowsPerPage={10}
-        title="IMÁGENES"
+        title={showOnlyUnused ? "IMÁGENES NO UTILIZADAS (se pueden eliminar)" : "IMÁGENES"}
         tableMaxHeight={420}
         showIndex={true}
       />

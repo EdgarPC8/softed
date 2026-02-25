@@ -1,17 +1,43 @@
 import * as React from 'react';
+import { useState, useMemo } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 
-// Definir el modelo de paginación
-const paginationModel = { page: 0, pageSize: 5 };
+export default function DataTable({ columns = [], rows = [], onSelectionChange, getRowId }) {
+  const [searchText, setSearchText] = useState('');
 
-export default function DataTable({ columns = [], rows = [], onSelectionChange }) {
+  const filteredRows = useMemo(() => {
+    if (!searchText.trim()) return rows;
+    const term = searchText.toLowerCase().trim();
+    return rows.filter((row) => {
+      const nombre = `${row.firstName || ''} ${row.secondName || ''} ${row.firstLastName || ''} ${row.secondLastName || ''}`.toLowerCase();
+      const ci = String(row.ci || '').toLowerCase();
+      const rol = String(row.rol || row.roles?.join(' ') || '').toLowerCase();
+      const estado = row.asignado ? 'ya asignado' : 'disponible';
+      return nombre.includes(term) || ci.includes(term) || rol.includes(term) || estado.includes(term);
+    });
+  }, [rows, searchText]);
+
   return (
-    <Paper sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        checkboxSelection
+    <Paper sx={{ width: '100%' }}>
+      <Box sx={{ p: 1.5 }}>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Buscar por nombre, cédula..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          sx={{ mb: 1 }}
+        />
+      </Box>
+      <Box sx={{ height: 400 }}>
+        <DataGrid
+          rows={filteredRows}
+          columns={columns}
+          getRowId={getRowId}
+          checkboxSelection
         disableSelectionOnClick
         isRowSelectable={(params) => !params.row.asignado} // No seleccionables si ya están asignados
         getRowClassName={(params) =>
@@ -29,6 +55,7 @@ export default function DataTable({ columns = [], rows = [], onSelectionChange }
           if (onSelectionChange) onSelectionChange(newSelection);
         }}
       />
+      </Box>
     </Paper>
   );
 }

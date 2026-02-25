@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -19,6 +19,7 @@ import {
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import PlayArrow from '@mui/icons-material/PlayArrow';
 import Stop from '@mui/icons-material/Stop';
+import Pause from '@mui/icons-material/Pause';
 import FiberManualRecord from '@mui/icons-material/FiberManualRecord';
 import UploadFile from '@mui/icons-material/UploadFile';
 import Download from '@mui/icons-material/Download';
@@ -36,6 +37,8 @@ import {
   normalizeNote,
   shiftNoteOctave,
   secondsToMBT,
+  timeStrToBeats,
+  durationToBeats,
 } from '../utils/noteUtils';
 import { useAuth } from '../../../context/AuthContext';
 import {
@@ -44,7 +47,7 @@ import {
   createPianoSong,
   updatePianoSong,
   deletePianoSong,
-} from '../../../api/pianoRequest';
+} from '../../../api/eddeli/pianoRequest';
 
 const PC_KEYS = {
   a: 'C4', s: 'D4', d: 'E4', f: 'F4', g: 'G4', h: 'A4', j: 'B4',
@@ -93,16 +96,52 @@ export default function ModeCreateSong({ onBack }) {
   const [selectedSongId, setSelectedSongId] = useState(null);
   /** 'editor' = canvas + panel | 'songsList' = pantalla para elegir canción de la BD */
   const [viewMode, setViewMode] = useState('editor');
+  /** Acordes por compás (solo frontend, aún no se guardan en BD) */
+  const [chordsByBar, setChordsByBar] = useState([]);
+  /** Reproducción desde compás y tamaño de bucle (en compases) */
+  const [startBar, setStartBar] = useState(0);
+  const [loopBars, setLoopBars] = useState(0);
 
   const overlayNotesRef = useRef(new Set());
   const recordStartRef = useRef(null);
   const { toast } = useAuth();
   const { playNote, samplerRef } = usePianoSampler();
-  const { isPlaying, playheadBeats, play, stop } = usePianoPlayback(
+  const { isPlaying, playheadBeats, play, pause, stop } = usePianoPlayback(
     notes,
     bpm,
     samplerRef
   );
+
+  // === Acordes por compás (se calculan en función de la longitud de la canción) ===
+  const totalBeats = useMemo(() => {
+    if (!notes.length) return 0;
+    let maxEnd = 0;
+    notes.forEach((n) => {
+      const start = timeStrToBeats(n.time);
+      const dur = durationToBeats(n.duration);
+      if (!Number.isNaN(start)) {
+        maxEnd = Math.max(maxEnd, start + dur);
+      }
+    });
+    return maxEnd;
+  }, [notes]);
+
+  const numBars = useMemo(
+    () => Math.max(1, Math.ceil((totalBeats || 0) / 4)),
+    [totalBeats]
+  );
+
+  useEffect(() => {
+    setChordsByBar((prev) => {
+      const next = [...prev];
+      if (next.length < numBars) {
+        for (let i = next.length; i < numBars; i += 1) next[i] = '';
+      } else if (next.length > numBars) {
+        next.length = numBars;
+      }
+      return next;
+    });
+  }, [numBars]);
 
   const loadSongsFromDb = useCallback(async () => {
     setLoadingSongs(true);
@@ -344,12 +383,17 @@ export default function ModeCreateSong({ onBack }) {
 
   const handlePlay = useCallback(async () => {
     try {
-      await play();
+      const start = Math.max(0, Math.floor(startBar || 0));
+      const loop = Math.max(0, Math.floor(loopBars || 0));
+      await play({
+        startBar: start,
+        loopBars: loop > 0 ? loop : null,
+      });
     } catch (e) {
       const msg = e?.message || 'No se pudo reproducir.';
       toast({ info: { description: msg } });
     }
-  }, [play, toast]);
+  }, [play, toast, startBar, loopBars]);
 
   // Pantalla: elegir canción de la BD (tabla)
   if (viewMode === 'songsList') {
@@ -461,6 +505,34 @@ export default function ModeCreateSong({ onBack }) {
           fullWidth
           sx={{ '& .MuiInputBase-input': { py: 0.5 } }}
         />
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <TextField
+            type="number"
+            label="Compás inicio"
+            value={startBar}
+            onChange={(e) => {
+              const v = Math.max(0, Math.min(numBars - 1, Number(e.target.value) || 0));
+              setStartBar(v);
+            }}
+            inputProps={{ min: 0, max: Math.max(0, numBars - 1) }}
+            size="small"
+            fullWidth
+            sx={{ '& .MuiInputBase-input': { py: 0.5 } }}
+          />
+          <TextField
+            type="number"
+            label="Bucle (compases)"
+            value={loopBars}
+            onChange={(e) => {
+              const v = Math.max(0, Math.min(numBars, Number(e.target.value) || 0));
+              setLoopBars(v);
+            }}
+            inputProps={{ min: 0, max: numBars }}
+            size="small"
+            fullWidth
+            sx={{ '& .MuiInputBase-input': { py: 0.5 } }}
+          />
+        </Box>
         <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
           {!isRecording ? (
             <Button size="small" color="error" startIcon={<FiberManualRecord />} onClick={startRecording} variant="outlined" sx={{ py: 0.5 }}>
@@ -478,8 +550,45 @@ export default function ModeCreateSong({ onBack }) {
           )}
         </Box>
         <Typography variant="caption" color="text.secondary">
-          Notas: {notes.length}
+          Notas: {notes.length} · Compases: {numBars}
         </Typography>
+
+        {/* Acordes por compás (solo visual, todavía no se guardan en BD) */}
+        <Box sx={{ mt: 0.5 }}>
+          <Typography variant="caption" color="text.secondary" fontWeight={600}>
+            Acordes por compás
+          </Typography>
+          <Box
+            sx={{
+              maxHeight: 120,
+              overflowY: 'auto',
+              mt: 0.5,
+              pr: 0.5,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 0.25,
+            }}
+          >
+            {Array.from({ length: numBars }).map((_, barIdx) => (
+              <TextField
+                key={barIdx}
+                size="small"
+                fullWidth
+                label={`Compás ${barIdx + 1}`}
+                value={chordsByBar[barIdx] ?? ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setChordsByBar((prev) => {
+                    const next = [...prev];
+                    next[barIdx] = value;
+                    return next;
+                  });
+                }}
+                InputProps={{ style: { fontSize: '0.7rem', paddingTop: 2, paddingBottom: 2 } }}
+              />
+            ))}
+          </Box>
+        </Box>
 
         <Button
           size="small"
@@ -538,6 +647,13 @@ export default function ModeCreateSong({ onBack }) {
             <span style={{ display: 'inline-flex' }}>
               <IconButton color="primary" onClick={handlePlay} disabled={notes.length === 0 || isPlaying} size="small">
                 <PlayArrow />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip title="Pausar">
+            <span style={{ display: 'inline-flex' }}>
+              <IconButton onClick={pause} disabled={!isPlaying} size="small">
+                <Pause />
               </IconButton>
             </span>
           </Tooltip>

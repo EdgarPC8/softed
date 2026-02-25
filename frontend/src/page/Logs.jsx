@@ -1,109 +1,100 @@
-import {
-  Container,
-  IconButton,
-} from "@mui/material";
-import DataTable from "../Components/Tables/DataTable";
+import { Container, IconButton, Tooltip } from "@mui/material";
+import TablePro from "../Components/Tables/TablePro";
 import { useEffect, useState } from "react";
-import {  getLogs } from "../api/comandsRequest";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { getLogs } from "../api/comandsRequest";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import LogsForm from "../Components/Forms/LogsForm";
- 
+
 function Logs() {
-  const [users, setUsers] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [logs, setLogs] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [datos, setDatos] = useState([]);
-  const [titleUserDialog, settitleUserDialog] = useState("");
+  const [titleUserDialog, setTitleUserDialog] = useState("");
 
-  const fetchUsers = async () => {
+  const fetchLogs = async () => {
     const { data } = await getLogs();
-    setUsers(data);
+    setLogs(data);
   };
-  const handleDialogUser = () => {
-    setOpenDialog(!openDialog);
+  const handleDialogUser = () => setOpenDialog((v) => !v);
+
+  const formatDate = (d) => {
+    if (!d) return "—";
+    try {
+      const date = new Date(d);
+      return date.toLocaleString();
+    } catch {
+      return String(d);
+    }
   };
 
   const columns = [
+    { id: "id", label: "Id", getSortValue: (r) => r.id },
+    { id: "httpMethod", label: "Método Http" },
+    { id: "action", label: "Acción" },
+    { id: "description", label: "Descripción" },
+    { id: "endPoint", label: "Url" },
+    { id: "system", label: "Sistema" },
     {
-      headerName: "#",
-      field: "#",
-      width: 20,
+      id: "date",
+      label: "Fecha",
+      getSortValue: (r) => r.date,
+      render: (row) => formatDate(row.date),
     },
     {
-      headerName: "Id",
-      field: "id",
-      width: 20,
-    },
-     {
-      headerName: "Metodo Http",
-      field: "httpMethod",
-      width: 80,
-    },
-    {
-      headerName: "Accion",
-      field: "action",
-      width: 150,
-    },
-    {
-      headerName: "Descripcion",
-      field: "description",
-      width: 300,
-    },
-    {
-      headerName: "Url ",
-      field: "endPoint",
-      width: 120,
-    },
-    {
-      headerName: "Sistema",
-      field: "system",
-      width: 100,
-    },
-    {
-      headerName: "Fecha",
-      field: "date",
-      width: 200,
-    },
-    {
-      headerName: "Actions",
-      field: "actions",
-      width: 150,
-      sortable: false,
-      renderCell: (params) => (
-        <>
+      id: "actions",
+      label: "Acciones",
+      render: (row) => (
+        <Tooltip title="Ver detalle">
           <IconButton
+            size="small"
             onClick={() => {
-              setDatos(params.row)
-              setIsEditing(true)
-              settitleUserDialog("Informacion del log")
+              setDatos(row);
+              setIsEditing(true);
+              setTitleUserDialog("Información del log");
               handleDialogUser();
             }}
           >
             <VisibilityIcon />
           </IconButton>
-        </>
+        </Tooltip>
       ),
     },
   ];
 
   useEffect(() => {
-    fetchUsers();
+    fetchLogs();
   }, []);
 
-
   return (
-    <Container>
-
+    <Container sx={{ py: 2 }}>
       <SimpleDialog
         open={openDialog}
         onClose={handleDialogUser}
         tittle={titleUserDialog}
+        maxWidth="lg"
+        fullWidth
       >
-        <LogsForm onClose={handleDialogUser} isEditing={isEditing} datos={datos} reload={fetchUsers}></LogsForm> 
+        <LogsForm
+          onClose={handleDialogUser}
+          isEditing={isEditing}
+          datos={datos}
+          reload={fetchLogs}
+        />
       </SimpleDialog>
-      <DataTable data={users} columns={columns} />
+      <TablePro
+        title="Logs"
+        rows={logs}
+        columns={columns}
+        showSearch
+        showPagination
+        showIndex
+        indexHeader="#"
+        rowsPerPageOptions={[5, 10, 25]}
+        defaultRowsPerPage={10}
+        tableMaxHeight={440}
+      />
     </Container>
   );
 }

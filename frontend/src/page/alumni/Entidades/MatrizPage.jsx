@@ -10,8 +10,8 @@ import {
   import { Person, Edit, Delete,Send } from "@mui/icons-material";
   
   import { useForm } from "react-hook-form";
-  import DataTable from "../../../Components/Tables/DataTable";
-  import { getPeriods,addPeriod,editPeriod,deletePeriod, getMatriz } from "../../../api/alumniRequest.js";
+  import TablePro from "../../../Components/Tables/TablePro";
+  import { getPeriods,addPeriod,editPeriod,deletePeriod, getMatriz } from "../../../api/alumni/alumniRequest.js";
 
 
 
@@ -89,76 +89,49 @@ import {
     };
   
     const columns = [
+      { id: "idMatriz", label: "Id" },
       {
-        headerName: "#",
-        field: "#",
-        width: 20,
+        id: "graduado",
+        label: "Graduado",
+        render: (row) => {
+          const user = row.user;
+          return user
+            ? `${user.firstName || ""} ${user.secondName || ""} ${user.firstLastName || ""} ${user.secondLastName || ""}`.trim()
+            : "";
+        },
       },
       {
-        headerName: "Id",
-        field: "idMatriz",
-        width: 30,
+        id: "periodo",
+        label: "Periodo",
+        render: (row) => row.alumni_period?.name ?? "",
+      },
+      { id: "modality", label: "Modalidad" },
+      { id: "grateDate", label: "Fecha Grado" },
+      {
+        id: "carrera",
+        label: "Carrera",
+        render: (row) => row.alumni_career?.name ?? "",
       },
       {
-        headerName: "Graduado",
-        field: "Graduado",
-        width: 220,
-        sortable: false,
-        renderCell: (params) => {
-          const user=params.row.user
-          return `${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`
-        }
-      },
-      {
-        headerName: "Periodo",
-        field: "Periodo",
-        width: 150,
-        sortable: false,
-        renderCell: (params) => {
-          const period=params.row.alumni_period
-          return `${period.name}`
-        }
-      },
-      {
-        headerName: "Modalidad",
-        field: "modality",
-        width: 80,
-      },
-      {
-        headerName: "Fecha Grado",
-        field: "grateDate",
-        width: 80,
-      },
-      {
-        headerName: "Carrera",
-        field: "Carrera",
-        width: 300,
-        sortable: false,
-        renderCell: (params) => {
-          return params.row.alumni_career.name
-        }
-      },
-      {
-        headerName: "Actions",
-        field: "actions",
-        width: 150,
-        sortable: false,
-        renderCell: (params) => (
+        id: "actions",
+        label: "Actions",
+        render: (row) => (
           <>
             <IconButton
               onClick={() => {
-                setValue("name", params.row.name);
+                setValue("name", row.name);
                 setIsEditing(true);
-                setId(params.row.idPeriod);
+                setId(row.idPeriod);
               }}
             >
               <Edit />
             </IconButton>
-            <IconButton  onClick={() => {
-              handleDialog();
-              setDataToDelete(params.row);
-            }}>
-              
+            <IconButton
+              onClick={() => {
+                handleDialog();
+                setDataToDelete(row);
+              }}
+            >
               <Delete />
             </IconButton>
           </>
@@ -205,7 +178,17 @@ import {
               tittle={titleUserDialog}
             >
             </SimpleDialog>
-            <DataTable data={data} columns={columns} />
+            <TablePro
+              rows={data.map((row, i) => ({ ...row, id: row.idMatriz ?? row.idPeriod ?? i }))}
+              columns={columns}
+              title=""
+              showSearch
+              showPagination
+              defaultRowsPerPage={5}
+              tableMaxHeight={400}
+              showIndex
+              indexHeader="#"
+            />
       </Container>
     );
   }

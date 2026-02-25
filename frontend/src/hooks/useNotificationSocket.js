@@ -1,14 +1,11 @@
-// src/hooks/useNotificationSocket.js
 import { useEffect } from "react";
-
 import { socket } from "../api/axios";
 
-export const useNotificationSocket = (userId, onNewNotification) => {
+export const useNotificationSocket = (userId, accountId, onNewNotification) => {
   useEffect(() => {
-    // console.log("------------------------ si se ejecuta ",userId)
-    if (!userId) return;
-    socket.emit("join", userId);
-  }, [userId]);
+    if (!userId && !accountId) return;
+    socket.emit("join", { userId: userId || null, accountId: accountId || null });
+  }, [userId, accountId]);
 
   useEffect(() => {
     socket.on("newNotification", onNewNotification);

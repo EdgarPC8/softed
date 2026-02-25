@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import DataTable from "../Tables/DataTable.jsx";
 import { getUsersRequest } from "../../api/userRequest";
-import { getMatriculas, addMatriculasBulk } from "../../api/alumniRequest.js";
+import { getMatriculas, addMatriculasBulk } from "../../api/alumni/alumniRequest.js";
 import SimpleDialog from "../Dialogs/SimpleDialog";
 import { useAuth } from "../../context/AuthContext.jsx";
 

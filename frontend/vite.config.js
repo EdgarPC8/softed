@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react-swc'
 //  CAMBIA SOLO ESTO para elegir la app (basename, tema, menú, todo):
 //  'softed'  |  'eddeli'  |  'alumni'
 // ─────────────────────────────────────────────────────────────────
-const ACTIVE_APP = 'softed'
+const ACTIVE_APP = 'eddeli'
 
 export default defineConfig({
   plugins: [react()],
@@ -24,6 +24,11 @@ export default defineConfig({
   },
 
   build: {
-    outDir: '../../eddeli', // 👈 sale de softed y entra a eddeli
+    // Sale de softed/frontend y va a la carpeta según ACTIVE_APP (eddeli | alumni | softed)
+    outDir: `../../${ACTIVE_APP}`,
   }
 })
+
+
+
+

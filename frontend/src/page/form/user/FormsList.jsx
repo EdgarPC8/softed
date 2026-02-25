@@ -12,7 +12,7 @@ import {
   import { QuestionAnswer } from "@mui/icons-material";
   import toast from "react-hot-toast";
   import DataTable from "../../../Components/Tables/DataTable";
-  import { getFormsByUserId } from "../../../api/formsRequest";
+  import { getFormsByAccountId } from "../../../api/formsRequest";
   
 import { useAuth } from "../../../context/AuthContext";
 
@@ -26,7 +26,7 @@ import { useAuth } from "../../../context/AuthContext";
     const navigate = useNavigate();
   
     const fecthData = async () => {
-      const { data } = await getFormsByUserId(user.userId);
+      const { data } = await getFormsByAccountId(user.accountId);
       setData(data);
     };
     const handleDialog = () => {

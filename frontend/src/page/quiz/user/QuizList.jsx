@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { QuestionAnswer } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import DataTable from "../../../Components/Tables/DataTable";
-import { getQuizzesByUserId } from "../../../api/quizRequest";
+import { getQuizzesByUserId } from "../../../api/alumni/quizRequest";
 import { useAuth } from "../../../context/AuthContext";
 import QuizIcon from "@mui/icons-material/Quiz";
 import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";

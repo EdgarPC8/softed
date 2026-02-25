@@ -15,7 +15,7 @@ import MuiAppBar from '@mui/material/AppBar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import { useNotificationSocket } from '../../hooks/useNotificationSocket';
-import { getNotificationsByUser } from '../../api/notificationsRequest';
+import { getNotifications, getUnreadCount } from '../../api/notificationsRequest';
 
 import SimpleDialog from '../Dialogs/SimpleDialog';
 import CambiarRol from '../ViewModal/CambiarRol';
@@ -45,6 +45,13 @@ import StarRounded from "@mui/icons-material/StarRounded";
 import StorefrontRounded from "@mui/icons-material/StorefrontRounded";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
 import ThemeSwitcher from '../ThemeSwitcher';
+import { useThemeMode } from '../../theme/ThemeModeProvider';
+import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
+import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import BoltIcon from '@mui/icons-material/Bolt';
+import CheckIcon from '@mui/icons-material/Check';
 
 // Íconos públicos
 import HomeIcon from "@mui/icons-material/Home";
@@ -57,12 +64,17 @@ import ViewModuleIcon from "@mui/icons-material/ViewModule";
 
 
 import CollectionsBookmark from "@mui/icons-material/CollectionsBookmark";
+import WorkIcon from "@mui/icons-material/Work";
+import BusinessIcon from "@mui/icons-material/Business";
 import InsertDriveFile from "@mui/icons-material/InsertDriveFile";
 import EditNote from "@mui/icons-material/EditNote";
 import VolumeUp from "@mui/icons-material/VolumeUp";
 // Cambiar Terminal por Campaign para Publicidad
 import CampaignIcon from "@mui/icons-material/Campaign";
 import PianoIcon from "@mui/icons-material/Piano";
+import SaveIcon from "@mui/icons-material/Save";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import { saveBackup, downloadBackup } from "../../api/comandsRequest";
 
 
 
@@ -115,9 +127,21 @@ const permisos = {
   Programador: [
     { name: "Home", icon: <Home />, link: "/" },
     { name: "Piano", icon: <PianoIcon />, link: "/piano", app: "softed" },
+    { name: "PianoPro", icon: <PianoIcon />, link: "/pianoPro", app: "softed" },
     { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
     { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
     { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
+    {
+      name: "Bolsa de empleo",
+      icon: <WorkIcon />,
+      app: "alumni",
+      menu: {
+        items: [
+          { name: "Ofertas y postulantes", link: "/bolsa-empleo/empresa/ofertas", icon: <WorkIcon /> },
+          { name: "Empresas", link: "/bolsa-empleo/admin/empresas", icon: <BusinessIcon /> },
+        ],
+      },
+    },
     { name: "Panaderia", icon: <BakeryDiningIcon />, link: "/backery", app: "eddeli" },
     { name: "Catalogo Config", icon: <ViewModuleIcon />, link: "/catalog_manager", app: "eddeli" },
     {
@@ -142,22 +166,16 @@ const permisos = {
       },
     },
     {
-      name: "Encuestas",
-      icon: <Poll />,
+      name: "Publicidad",
+      icon: <CampaignIcon />,
+      app: "eddeli",
       menu: {
         items: [
-          { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
-          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
-        ],
-      },
-    },
-    {
-      name: "Cuestionarios",
-      icon: <Poll />,
-      menu: {
-        items: [
-          { name: "Ver cuestionarios", link: "/quizzes", icon: <ListIcon /> },
-          { name: "Mis cuestionarios", link: "/myQuizzes", icon: <AssignmentInd /> },
+          { name: "Control de Imagenes", link: "/img", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <InsertDriveFile /> },
+          { name: "Editor de Publicidad", link: "/editorDefault", icon: <EditNote /> },
+          { name: "Control Publicidad", link: "/publicidad", icon: <VolumeUp /> },
+          { name: "Plantillas de Publicidad", link: "/templates", icon: <CollectionsBookmark /> },
         ],
       },
     },
@@ -179,27 +197,37 @@ const permisos = {
       },
     },
     {
+      name: "Encuestas",
+      icon: <Poll />,
+      app: "alumni",
+      menu: {
+        items: [
+          { name: "Ver encuestas", link: "/forms", icon: <ListIcon /> },
+          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
+        ],
+      },
+    },
+    {
+      name: "Cuestionarios",
+      icon: <Poll />,
+      app: "alumni",
+      menu: {
+        items: [
+          { name: "Ver cuestionarios", link: "/quizzes", icon: <ListIcon /> },
+          { name: "Mis cuestionarios", link: "/myQuizzes", icon: <AssignmentInd /> },
+        ],
+      },
+    },
+    {
       name: "Configuracion",
       icon: <Settings />,
       menu: {
         items: [
           { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Programar notificaciones", link: "/notification-programs", icon: <NotificationsIcon /> },
           { name: "Info", link: "/info", icon: <Info /> },
           { name: "Donaciones", link: "/donations", icon: <CardGiftcardIcon /> },
-        ],
-      },
-    },
-    {
-      name: "Publicidad",
-      icon: <CampaignIcon />,
-      app: "eddeli",
-      menu: {
-        items: [
-          { name: "Control de Imagenes", link: "/img", icon: <ImageIcon /> },
-          { name: "Control de Archivos", link: "/file", icon: <InsertDriveFile /> },
-          { name: "Editor de Publicidad", link: "/editorDefault", icon: <EditNote /> },
-          { name: "Control Publicidad", link: "/publicidad", icon: <VolumeUp /> },
-          { name: "Plantillas de Publicidad", link: "/templates", icon: <CollectionsBookmark /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
         ],
       },
     },
@@ -210,6 +238,8 @@ const permisos = {
         items: [
           { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
           { name: "Logs", link: "/logs", icon: <ListIcon /> },
+          { name: "Control de Imágenes", link: "/img", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <InsertDriveFile /> },
           { name: "Componentes", link: "/componentes", icon: <ViewModule /> },
           { name: "Preguntas", link: "/quiz", icon: <QuestionAnswer /> },
           { name: "Tokens", link: "/tokens", icon: <VpnKey /> },
@@ -220,6 +250,7 @@ const permisos = {
   Administrador: [
     { name: "Home", icon: <Home />, link: "/" },
     { name: "Piano", icon: <PianoIcon />, link: "/piano", app: "softed" },
+    { name: "PianoPro", icon: <PianoIcon />, link: "/pianoPro", app: "softed" },
     { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
     { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
     { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
@@ -238,27 +269,27 @@ const permisos = {
       },
     },
     {
-      name: "Configuracion",
-      icon: <Settings />,
-      menu: {
-        items: [{ name: "Información", link: "/info", icon: <Info /> }],
-      },
-    },
-  ],
-  Estudiante: [
-    { name: "Home", icon: <Home />, link: "/" },
-    { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
-    { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
-    { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
-    {
-      name: "Encuestas",
-      icon: <Poll />,
+      name: "Entidades",
+      icon: <AccountTree />,
       menu: {
         items: [
-          { name: "Mis encuestas", link: "/myforms", icon: <AssignmentInd /> },
-          { name: "Hoja de vida", link: "/cv", icon: <DescriptionIcon />, app: "alumni" },
-          { name: "Ver mi CV / PDF", link: "/cv/ver", icon: <PictureAsPdfIcon />, app: "alumni" },
-          { name: "Plantillas de CV", link: "/cv/plantillas", icon: <CollectionsBookmark />, app: "alumni" },
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Carreras", link: "/careers", icon: <School />, app: "alumni" },
+          { name: "Periodos", link: "/periods", icon: <CalendarMonth />, app: "alumni" },
+          { name: "Matrices", link: "/matriz", icon: <Storage />, app: "alumni" },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Bolsa de empleo",
+      icon: <WorkIcon />,
+      app: "alumni",
+      menu: {
+        items: [
+          { name: "Ofertas y postulantes", link: "/bolsa-empleo/empresa/ofertas", icon: <WorkIcon /> },
+          { name: "Empresas", link: "/bolsa-empleo/admin/empresas", icon: <BusinessIcon /> },
         ],
       },
     },
@@ -266,7 +297,69 @@ const permisos = {
       name: "Configuracion",
       icon: <Settings />,
       menu: {
-        items: [{ name: "Información", link: "/info", icon: <Info /> }],
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Programar notificaciones", link: "/notification-programs", icon: <NotificationsIcon /> },
+          { name: "Guardar copia de seguridad", icon: <SaveIcon />, action: "saveBackup" },
+          { name: "Descargar JSON", icon: <CloudDownloadIcon />, action: "downloadBackup" },
+          { name: "Donaciones", link: "/donations", icon: <CardGiftcardIcon /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  Empresa: [
+    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Bolsa de empleo", icon: <WorkIcon />, link: "/bolsa-empleo", app: "alumni" },
+    { name: "Perfil empresa", icon: <BusinessIcon />, link: "/bolsa-empleo/empresa/perfil", app: "alumni" },
+    { name: "Mis ofertas", icon: <WorkIcon />, link: "/bolsa-empleo/empresa/ofertas", app: "alumni" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  Profesional: [
+    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Bolsa de empleo", icon: <WorkIcon />, link: "/bolsa-empleo", app: "alumni" },
+    { name: "Mis postulaciones", icon: <AssignmentInd />, link: "/bolsa-empleo/mis-postulaciones", app: "alumni" },
+    { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
+    { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
+    { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  Estudiante: [
+    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Bolsa de empleo", icon: <WorkIcon />, link: "/bolsa-empleo", app: "alumni" },
+    { name: "Mis postulaciones", icon: <AssignmentInd />, link: "/bolsa-empleo/mis-postulaciones", app: "alumni" },
+    { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
+    { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
+    { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
+    { name: "Mis encuestas", icon: <AssignmentInd />, link: "/myforms", app: "alumni" },
+
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
       },
     },
   ],
@@ -331,7 +424,7 @@ export default function MiniDrawer({ children }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { isAuthenticated, logout, user, profileImageUser } = useAuth();
+  const { isAuthenticated, logout, user, profileImageUser, toast } = useAuth();
   const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [openChangeRol, setOpenChangeRol] = useState(false);
   const [anchorElNotif, setAnchorElNotif] = useState(null);
@@ -351,32 +444,52 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
 
   const [unreadCount, setUnreadCount] = useState(0);
 
-  useNotificationSocket(isAuthenticated ? user?.userId : null, () => {
-    if (isAuthenticated) setUnreadCount((c) => c + 1);
-  });
+  useNotificationSocket(
+    isAuthenticated ? user?.userId : null,
+    isAuthenticated ? user?.accountId : null,
+    () => { if (isAuthenticated) fetchUnreadCount(); }
+  );
+
+  // Refrescar conteo periódicamente por si el socket falla
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const interval = setInterval(fetchUnreadCount, 60000); // cada 60 seg
+    return () => clearInterval(interval);
+  }, [isAuthenticated, user?.accountId, user?.userId]);
+
+  const fetchUnreadCount = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const res = await getUnreadCount();
+      setUnreadCount(res.data?.count ?? 0);
+    } catch (error) {
+      console.error("Error al obtener conteo de notificaciones:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!isAuthenticated || !user?.userId) return;
-      try {
-        const res = await getNotificationsByUser(user.userId);
-        setUnreadCount(res.data.filter(n => !n.seen).length);
-      } catch (error) {
-        console.error("Error al obtener notificaciones:", error);
-      }
-    };
-    fetchNotifications();
-  }, [isAuthenticated, user?.userId]);
+    fetchUnreadCount();
+  }, [isAuthenticated, user?.accountId, user?.userId]);
+
+  const handleNotifClick = (event) => {
+    setAnchorElNotif(event.currentTarget);
+    fetchUnreadCount(); // refrescar al abrir
+  };
 
   const openNotif = Boolean(anchorElNotif);
-
-  const handleNotifClick = (event) => setAnchorElNotif(event.currentTarget);
   const handleNotifClose = () => setAnchorElNotif(null);
 
   const handleDialogChangeRol = () => setOpenChangeRol((v) => !v);
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => { setOpen(false); setExpandedAccordion(null); };
   const handleNavigation = (link) => navigate(link);
+  const handleBackupAction = (actionType) => {
+    if (actionType === "saveBackup") {
+      toast?.({ promise: saveBackup(), successMessage: "Copia de seguridad guardada con éxito" });
+    } else if (actionType === "downloadBackup") {
+      toast?.({ promise: downloadBackup(), successMessage: "Backup descargado con éxito" });
+    }
+  };
   const handleMenu = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
   const handleAccordionChange = (panel) => (_e, isExp) => setExpandedAccordion(isExp ? panel : null);
@@ -408,6 +521,19 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
   const handleClickPublicChild = (to) => {
     handleClosePublicMenu();
     if (to) navigate(to);
+  };
+
+  const { mode: themeMode, setMode: setThemeMode } = useThemeMode();
+  const [themeMenuAnchor, setThemeMenuAnchor] = useState(null);
+  const THEME_OPTIONS = [
+    { value: "system", label: "Usar sistema", icon: <BrightnessAutoIcon fontSize="small" /> },
+    { value: "light", label: "Claro (Light)", icon: <LightModeIcon fontSize="small" /> },
+    { value: "dark", label: "Oscuro (Dark)", icon: <DarkModeIcon fontSize="small" /> },
+    { value: "neon", label: "Neón (Tron)", icon: <BoltIcon fontSize="small" /> },
+  ];
+  const handleThemeSelect = (value) => {
+    setThemeMode(value);
+    setThemeMenuAnchor(null);
   };
 
   return (
@@ -649,14 +775,30 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
                         {open && (
                           <AccordionDetails sx={{ p: 0 }}>
                             <List component="div" disablePadding>
-                              {page.menu.items.map((sub) => (
-                                <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
-                                  <ListItemButton>
-                                    <ListItemIcon>{sub.icon}</ListItemIcon>
-                                    <ListItemText primary={sub.name} />
-                                  </ListItemButton>
-                                </ListItem>
-                              ))}
+                              {page.menu.items.map((sub) =>
+                                sub.isThemeSelector ? (
+                                  <ListItem key={sub.name} disablePadding sx={{ pl: 4 }}>
+                                    <ListItemButton onClick={(e) => setThemeMenuAnchor(e.currentTarget)}>
+                                      <ListItemIcon>{sub.icon}</ListItemIcon>
+                                      <ListItemText primary={sub.name} />
+                                    </ListItemButton>
+                                  </ListItem>
+                                ) : sub.action ? (
+                                  <ListItem key={sub.name} disablePadding sx={{ pl: 4 }}>
+                                    <ListItemButton onClick={() => handleBackupAction(sub.action)}>
+                                      <ListItemIcon>{sub.icon}</ListItemIcon>
+                                      <ListItemText primary={sub.name} />
+                                    </ListItemButton>
+                                  </ListItem>
+                                ) : (
+                                  <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
+                                    <ListItemButton>
+                                      <ListItemIcon>{sub.icon}</ListItemIcon>
+                                      <ListItemText primary={sub.name} />
+                                    </ListItemButton>
+                                  </ListItem>
+                                )
+                              )}
                             </List>
                           </AccordionDetails>
                         )}
@@ -728,14 +870,30 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
                       {open && (
                         <AccordionDetails sx={{ p: 0 }}>
                           <List component="div" disablePadding>
-                            {page.menu.items.map((sub) => (
-                              <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
-                                <ListItemButton>
-                                  <ListItemIcon>{sub.icon}</ListItemIcon>
-                                  <ListItemText primary={sub.name} />
-                                </ListItemButton>
-                              </ListItem>
-                            ))}
+                            {page.menu.items.map((sub) =>
+                              sub.isThemeSelector ? (
+                                <ListItem key={sub.name} disablePadding sx={{ pl: 4 }}>
+                                  <ListItemButton onClick={(e) => setThemeMenuAnchor(e.currentTarget)}>
+                                    <ListItemIcon>{sub.icon}</ListItemIcon>
+                                    <ListItemText primary={sub.name} />
+                                  </ListItemButton>
+                                </ListItem>
+                              ) : sub.action ? (
+                                <ListItem key={sub.name} disablePadding sx={{ pl: 4 }}>
+                                  <ListItemButton onClick={() => handleBackupAction(sub.action)}>
+                                    <ListItemIcon>{sub.icon}</ListItemIcon>
+                                    <ListItemText primary={sub.name} />
+                                  </ListItemButton>
+                                </ListItem>
+                              ) : (
+                                <ListItem key={sub.name} disablePadding onClick={() => handleNavigation(sub.link)} sx={{ pl: 4 }}>
+                                  <ListItemButton>
+                                    <ListItemIcon>{sub.icon}</ListItemIcon>
+                                    <ListItemText primary={sub.name} />
+                                  </ListItemButton>
+                                </ListItem>
+                              )
+                            )}
                           </List>
                         </AccordionDetails>
                       )}
@@ -758,6 +916,33 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
           </List>
         </Drawer>
       )}
+
+      {/* Menú de tema (desde Configuración > Tema) */}
+      <Menu
+        anchorEl={themeMenuAnchor}
+        open={Boolean(themeMenuAnchor)}
+        onClose={() => setThemeMenuAnchor(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+      >
+        <MenuItem disabled sx={{ opacity: 0.8 }}>Tema de la interfaz</MenuItem>
+        <Divider />
+        {THEME_OPTIONS.map((opt) => {
+          const selected = themeMode === opt.value;
+          return (
+            <MenuItem
+              key={opt.value}
+              onClick={() => handleThemeSelect(opt.value)}
+              selected={selected}
+              dense
+            >
+              <ListItemIcon>{opt.icon}</ListItemIcon>
+              <ListItemText primary={opt.label} />
+              {selected && <CheckIcon fontSize="small" />}
+            </MenuItem>
+          );
+        })}
+      </Menu>
 
       {/* Contenido principal */}
       <Box

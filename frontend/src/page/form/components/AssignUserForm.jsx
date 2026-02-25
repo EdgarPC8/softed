@@ -7,20 +7,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import DataTable from "./DataTableFormCheck";
-import { assignUsersToForm } from "../../../api/formsRequest";
+import { assignAccountsToForm } from "../../../api/formsRequest";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { filterUsers, getCareers, getEspecialidades, getPeriodosAcademicos, getPeriods } from "../../../api/alumniRequest";
+import { filterAccounts, getCareers, getEspecialidades, getPeriodosAcademicos, getPeriods } from "../../../api/alumni/alumniRequest";
+import { getRolRequest } from "../../../api/accountRequest";
 import SelectData from "../../../Components/Selects/SelectData";
-import { anonimizarTextoChino } from "../../../helpers/functions";
 
 
 function AssignUserForm({ datos = [], onClose, reload }) {
-  const [selectedUserIds, setSelectedUserIds] = useState([]);
-  const [user, setUser] = useState([]);
-  const { id: formId } = useParams(); // Asegúrate que el id esté en la URL
+  const [selectedAccountIds, setSelectedAccountIds] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+  const { id: formId } = useParams();
   const { toast } = useAuth();
-  const [tipoUsuario, setTipoUsuario] = useState("todos"); // todos, estudiantes, egresados
-
+  const [tipoUsuario, setTipoUsuario] = useState("todos");
   const [careers, setCareers] = useState([]);
   const [periods, setPeriods] = useState([]);
   const [selectedCareer, setSelectedCareer] = useState("");
@@ -29,61 +28,54 @@ function AssignUserForm({ datos = [], onClose, reload }) {
   const [selectedEspecialidad, setSelectedEspecialidad] = useState("");
   const [especialidades, setEspecialidades] = useState([]);
   const [periodosAcademicos, setPeriodosAcademicos] = useState([]);
-
   const [selectedPeriodoActivo, setSelectedPeriodoActivo] = useState("");
+  const [roles, setRoles] = useState([]);
 
-
-
-  const getUsers = async () => {
+  const getAccounts = async () => {
     let response;
-
     if (tipoUsuario === "estudiantes") {
-      response = await filterUsers({
+      response = await filterAccounts({
         fuente: "matriculas",
         especialidad: selectedEspecialidad,
         periodoAcademico: selectedPeriodoAcademico,
-        periodoActivo: selectedPeriodoActivo
+        periodoActivo: selectedPeriodoActivo,
       });
     } else if (tipoUsuario === "egresados") {
-      response = await filterUsers({
+      response = await filterAccounts({
         fuente: "matrices",
         carrera: selectedCareer,
-        periodo: selectedPeriod
+        periodo: selectedPeriod,
       });
+    } else if (tipoUsuario === "admins") {
+      const rolAdmin = roles.find((r) => r.name === "Administrador");
+      response = await filterAccounts({ rolId: rolAdmin?.id });
+    } else if (tipoUsuario === "empresa") {
+      const rolEmpresa = roles.find((r) => r.name === "Empresa");
+      response = await filterAccounts({ rolId: rolEmpresa?.id });
     } else {
-      response = await filterUsers();
+      response = await filterAccounts({});
     }
-
-    const data = response.data;
-
-    const usersWithAssignment = data.map(user => {
-      const yaAsignado = datos.some(u => u.id === user.id);
-      return { ...user, asignado: yaAsignado };
+    const data = response.data || [];
+    const withAssignment = data.map((acc) => {
+      const yaAsignado = datos.some((d) => (d.id || d.accountId) === acc.accountId);
+      return { ...acc, asignado: yaAsignado };
     });
-
-    setUser(usersWithAssignment);
+    setAccounts(withAssignment);
   };
 
-
-
-
   const submitForm = async () => {
-    if (selectedUserIds.length === 0) {
-      toast({
-        info: {
-          description: "Agrega al menos un Usuario"
-        }
-      });
+    if (selectedAccountIds.length === 0) {
+      toast({ info: { description: "Agrega al menos una cuenta" } });
       return;
     }
     toast({
-      promise: assignUsersToForm(formId, selectedUserIds),
+      promise: assignAccountsToForm(formId, selectedAccountIds),
       onSuccess: (data) => {
         if (onClose) onClose();
         if (reload) reload();
         return {
           title: "Asignacion de Encuesta",
-          description: "Usuario asignado con éxito"
+          description: "Cuentas asignadas con éxito"
         };
       }
     });
@@ -91,8 +83,20 @@ function AssignUserForm({ datos = [], onClose, reload }) {
   };
 
   useEffect(() => {
-    getUsers();
-  }, [tipoUsuario, selectedCareer, selectedPeriod, selectedEspecialidad, selectedPeriodoAcademico, selectedPeriodoActivo]);
+    getAccounts();
+  }, [tipoUsuario, selectedCareer, selectedPeriod, selectedEspecialidad, selectedPeriodoAcademico, selectedPeriodoActivo, roles]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const res = await getRolRequest();
+        setRoles(res.data || []);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchRoles();
+  }, []);
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -126,30 +130,32 @@ function AssignUserForm({ datos = [], onClose, reload }) {
   const columns = [
     {
       headerName: "Nombres y Apellidos",
-      field: "null",
+      field: "nombre",
       width: 350,
-      sortable: false,
       renderCell: (params) => {
-        const user = params.row;
-        const name=`${user.firstName} ${user.secondName} ${user.firstLastName} ${user.secondLastName}`
-        return anonimizarTextoChino(name);
+        const r = params.row;
+        const name = `${r.firstName || ""} ${r.secondName || ""} ${r.firstLastName || ""} ${r.secondLastName || ""}`.trim();
+        return name || "-";
       },
     },
     {
       headerName: "Cédula",
       field: "ci",
       width: 200,
-      renderCell: (params) => anonimizarTextoChino(params.row.ci)
+      renderCell: (params) => params.row.ci ?? "-",
+    },
+    {
+      headerName: "Rol",
+      field: "rol",
+      width: 180,
+      renderCell: (params) => params.row.rol ?? params.row.roles?.join(", ") ?? "-",
     },
     {
       headerName: "Estado",
       field: "asignado",
       width: 120,
-      renderCell: (params) => {
-        return params.row.asignado ? "Ya asignado" : "Disponible";
-      },
-    }
-
+      renderCell: (params) => (params.row.asignado ? "Ya asignado" : "Disponible"),
+    },
   ];
 
   return (
@@ -166,6 +172,8 @@ function AssignUserForm({ datos = [], onClose, reload }) {
           <MenuItem value="todos">Todos</MenuItem>
           <MenuItem value="estudiantes">Estudiantes</MenuItem>
           <MenuItem value="egresados">Egresados o Graduados</MenuItem>
+          <MenuItem value="admins">Administradores</MenuItem>
+          <MenuItem value="empresa">Empresas</MenuItem>
         </Select>
         {tipoUsuario === "egresados" && (
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -215,8 +223,9 @@ function AssignUserForm({ datos = [], onClose, reload }) {
 
       <DataTable
         columns={columns}
-        rows={user}
-        onSelectionChange={(selectedIds) => setSelectedUserIds(selectedIds)}
+        rows={accounts}
+        getRowId={(row) => row.accountId ?? row.id}
+        onSelectionChange={(selectedIds) => setSelectedAccountIds(selectedIds)}
       />
    
     </Box>

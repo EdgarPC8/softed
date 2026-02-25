@@ -3,7 +3,7 @@ import PdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import html2pdf from "html2pdf.js";
-import { getFullCv } from "../../../api/cvRequest.js";
+import { getFullCv } from "../../../api/alumni/cvRequest.js";
 import { pathImg } from "../../../api/axios.js";
 import { getTemplateById } from "./templates/config.js";
 import { useAuth } from "../../../context/AuthContext.jsx";

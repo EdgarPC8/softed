@@ -88,7 +88,15 @@ export const downloadFolderZipRequest = async (folder = "") =>
     headers: { Authorization: jwt() },
     responseType: "blob",
   });
-  export const deleteFolderRequest = (folder, { force = false } = {}) =>
+
+/**
+ * Imágenes no utilizadas (no referenciadas en BD: usuarios, empresas, etc.)
+ * Solo Admin/Programador
+ */
+export const getUnusedImagesRequest = async () =>
+  await axios.get("/img/unused", { headers: { Authorization: jwt() } });
+
+export const deleteFolderRequest = (folder, { force = false } = {}) =>
   axios.delete(
     `/img/folder?folder=${encodeURIComponent(folder)}&force=${encodeURIComponent(force)}`,
     { headers: { Authorization: jwt() } }

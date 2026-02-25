@@ -13,10 +13,18 @@ export default function PianoPage() {
   const [mode, setMode] = useState(null);
 
   return (
-    <Box sx={{ p: 3, minHeight: '100%' }}>
+    <Box
+      sx={{
+        p: 3,
+        flex: 1,
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {mode === null ? (
         /* Home: selección de modos */
-        <Box sx={{ maxWidth: 600, mx: 'auto', pt: 4 }}>
+        <Box sx={{ maxWidth: 600, mx: 'auto', pt: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h5" gutterBottom align="center">
             🎹 Piano
           </Typography>

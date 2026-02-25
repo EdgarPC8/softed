@@ -1,6 +1,6 @@
 import { Box, TextField, Button, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getProfessional, updateProfessional } from "../../../../api/cvRequest.js";
+import { getProfessional, updateProfessional } from "../../../../api/alumni/cvRequest.js";
 import { useAuth } from "../../../../context/AuthContext.jsx";
 
 export default function ProfessionalFormSection() {

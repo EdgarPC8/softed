@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Box } from "@mui/material";
-import { getQuizResponses, getQuizUserResponses } from "../../../api/quizRequest";
+import { getQuizResponses, getQuizUserResponses } from "../../../api/alumni/quizRequest";
 import UserResponsesTable from "../components/UserResponsesTable";
 
 

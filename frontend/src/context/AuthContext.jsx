@@ -4,17 +4,26 @@ import {
   loginRequest,
   getSessionRequest,
 } from "../api/userRequest.js";
-
-
-
-import { jwt, pathImg } from "../api/axios.js";
+import axios, { jwt, pathImg } from "../api/axios.js";
 import { Link } from "react-router-dom";
-import { useSnackbar } from "notistack"; // Importa useSnackbar
+import { useSnackbar } from "notistack";
 import { getAccount } from "../api/accountRequest.js";
-import { changeRole as changeRoleRequest  } from "../api/authRequest.js";
-
+import { changeRole as changeRoleRequest } from "../api/authRequest.js";
+import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 
 const AuthContext = createContext();
+
+/** Orígenes permitidos para postMessage (SSO desde PHP/GAISTMS). Solo se acepta de estos orígenes. */
+const ALLOWED_POST_MESSAGE_ORIGINS = [
+  "https://gaistms.marianosamaniego.edu.ec",
+  "http://gaistms.marianosamaniego.edu.ec",
+  "https://aplicaciones.marianosamaniego.edu.ec",
+  "http://aplicaciones.marianosamaniego.edu.ec",
+  "http://localhost",
+  "http://127.0.0.1",
+];
+const POST_MESSAGE_TYPE_TOKEN = "ALUMNI_TOKEN";
+const POST_MESSAGE_TYPE_SSO = "ALUMNI_SSO";
 
 const useAuth = () => {
   const context = useContext(AuthContext);
@@ -35,6 +44,7 @@ const AuthProvider = ({ children }) => {
   const [profileImageUser, setProfileImageUser] = useState(null); // Nuevo estado para la imagen de perfil
 
   const [user, setUser] = useState([]);
+  const [isSsoRegistering, setIsSsoRegistering] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const loadUserProfile = async () => {
@@ -99,14 +109,14 @@ const AuthProvider = ({ children }) => {
     let loadingSnackbar = null;
     let snackbarTimeout = null;
   
-    // Configurar el timeout para mostrar el snackbar solo si la promesa tarda más de 1 segundo
+    // Mostrar "Esperando..." solo si la promesa tarda más de 3 segundos (evita flashes innecesarios)
     snackbarTimeout = setTimeout(() => {
       loadingSnackbar = enqueueSnackbar("Esperando...", {
         variant: 'info',
-        persist: true, // El snackbar se queda hasta que se cierre manualmente
+        persist: true,
         anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
       });
-    }, 1000); // Mostrar el snackbar si tarda más de 1 segundo
+    }, 3000);
   
     try {
       const response = await promise; // Esperar la promesa
@@ -144,7 +154,7 @@ const AuthProvider = ({ children }) => {
   
       return response; // Retornar la respuesta del backend
     } catch (error) {
-      // Cancelar el temporizador si ocurre un error antes de los 1000ms
+      // Cancelar el temporizador si ocurre un error antes de mostrar "Esperando..."
       clearTimeout(snackbarTimeout);
   
       // Si ya se mostró el snackbar de "Esperando...", lo cerramos
@@ -152,12 +162,16 @@ const AuthProvider = ({ children }) => {
         closeSnackbar(loadingSnackbar);
       }
   
+      // Mensaje: priorizar respuesta del backend (error.response.data.message), luego el errorMessage pasado, luego error.message
+      const apiMessage = error?.response?.data?.message;
+      const descError = apiMessage || errorMessage || error?.message;
+
       // Inicializar con los valores por defecto para errores
       let errorAttributes = {
         title: "Error", // Título por defecto para errores
-        description: errorMessage || error.message, // Descripción del error
+        description: descError, // Descripción del error (incluye mensajes del backend)
         variant: 'error', // Tipo de toast para error
-        autoHideDuration: 3000 // Duración por defecto para errores
+        autoHideDuration: 4000 // Un poco más para leer mensajes largos
       };
   
       // Ejecutar la función de error si fue proporcionada y sobrescribir los atributos del toast
@@ -266,6 +280,59 @@ const AuthProvider = ({ children }) => {
     checkLogin();
   }, []);
 
+  // Listener para postMessage (SSO desde PHP/GAISTMS). Acepta token directo o datos para registrar/login.
+  useEffect(() => {
+    const handleMessage = async (event) => {
+      if (!ALLOWED_POST_MESSAGE_ORIGINS.includes(event.origin)) return;
+
+      const { type, token, ci, firstName, secondName, firstLastName, secondLastName, id_estudiante, urlWeb } = event.data || {};
+
+      // Token directo: guardar y loguear
+      if (type === POST_MESSAGE_TYPE_TOKEN && typeof token === "string" && token.trim()) {
+        setIsSsoRegistering(true);
+        try {
+          window.localStorage.setItem("token", token.trim());
+          setIsAuthenticated(true);
+          await loadUserProfile();
+        } finally {
+          setIsSsoRegistering(false);
+        }
+        return;
+      }
+
+      // Datos de usuario: mostrar cuadro "Se está registrando...", llamar API smistms/login, loguear
+      if (type === POST_MESSAGE_TYPE_SSO && ci && firstName && firstLastName) {
+        setIsSsoRegistering(true);
+        try {
+          const res = await axios.post("/smistms/login", {
+            ci: String(ci).trim(),
+            firstName: String(firstName).trim(),
+            secondName: secondName ? String(secondName).trim() : "",
+            firstLastName: String(firstLastName).trim(),
+            secondLastName: secondLastName ? String(secondLastName).trim() : "",
+            id_estudiante: id_estudiante ?? null,
+            urlWeb: urlWeb ?? null,
+          });
+          const data = res.data;
+          if (data?.token) {
+            window.localStorage.setItem("token", data.token);
+            setIsAuthenticated(true);
+            await loadUserProfile();
+          } else {
+            enqueueSnackbar(data?.message || "No se recibió token", { variant: "error" });
+          }
+        } catch (err) {
+          const msg = err?.response?.data?.message || err?.message || "Error al registrarse";
+          enqueueSnackbar(msg, { variant: "error" });
+        } finally {
+          setIsSsoRegistering(false);
+        }
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   useEffect(() => {
     if (errors.message) {
       setTimeout(() => {
@@ -296,6 +363,19 @@ const AuthProvider = ({ children }) => {
       }}
     >
       {children}
+      <Backdrop
+        open={isSsoRegistering}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <CircularProgress color="inherit" size={48} />
+        <Typography variant="h6" color="inherit">
+          Se está registrando desde otra página...
+        </Typography>
+      </Backdrop>
     </AuthContext.Provider>
   );
 };

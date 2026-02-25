@@ -18,7 +18,7 @@ import FileUpload from "@mui/icons-material/FileUpload";
 import { useNavigate } from "react-router-dom";
 import { CV_TEMPLATES } from "./templates/config.js";
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
-import { saveTemplates } from "../../../api/cvRequest";
+import { saveTemplates } from "../../../api/alumni/cvRequest";
 import { useAuth } from "../../../context/AuthContext";
 
 /** Para exportar: solo datos guardables (sin component) */

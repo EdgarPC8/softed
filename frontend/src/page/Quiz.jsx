@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import SimpleDialog from "../Components/Dialogs/SimpleDialog";
 import UserForm from "../Components/Forms/UserForm";
 import { pathPhotos } from "../api/axios";
-import { getQuizzes } from "../api/quizRequest";
+import { getQuizzes } from "../api/alumni/quizRequest";
 
 
 function Users() {

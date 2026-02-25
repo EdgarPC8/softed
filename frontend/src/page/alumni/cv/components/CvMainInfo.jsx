@@ -17,6 +17,7 @@ import {
   MenuItem,
   useTheme,
   alpha,
+  Skeleton,
 } from "@mui/material";
 import {
   Person as PersonIcon,
@@ -30,7 +31,7 @@ import {
   PhotoCamera as PhotoCameraIcon,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { getProfessional, updateProfessional, updateProfessionalPhoto } from "../../../../api/cvRequest.js";
+import { getProfessional, updateProfessional, updateProfessionalPhoto } from "../../../../api/alumni/cvRequest.js";
 import { getMyUserData } from "../../../../api/userDataRequest.js";
 import { pathImg } from "../../../../api/axios.js";
 import { useAuth } from "../../../../context/AuthContext.jsx";
@@ -104,9 +105,63 @@ export default function CvMainInfo() {
     });
   };
 
-  if (loading) return null;
-
   const cvPhotoUrl = professional?.photo ? `${pathImg}${professional.photo}` : null;
+
+  if (loading) {
+    return (
+      <Card
+        sx={{
+          mb: 3,
+          borderRadius: 2,
+          boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.08)}`,
+          overflow: "hidden",
+        }}
+      >
+        <CardHeader
+          title="Información principal de la hoja de vida"
+          titleTypographyProps={{ variant: "h6", fontWeight: 600 }}
+          subheader={
+            <Skeleton variant="text" width="90%" height={20} sx={{ mt: 0.5 }} />
+          }
+          subheaderTypographyProps={{ variant: "body2" }}
+          sx={{ pb: 0 }}
+        />
+        <CardContent>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={5}>
+              <Skeleton variant="text" width={180} height={20} sx={{ mb: 2 }} />
+              <Stack spacing={2}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Skeleton variant="circular" width={24} height={24} />
+                    <Box sx={{ flex: 1 }}>
+                      <Skeleton variant="text" width={120} height={16} />
+                      <Skeleton variant="text" width="70%" height={22} />
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={7}>
+              <Skeleton variant="text" width={220} height={20} sx={{ mb: 2 }} />
+              <Stack spacing={2}>
+                <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                  <Skeleton variant="rectangular" width={100} height={100} sx={{ borderRadius: 1 }} />
+                  <Skeleton variant="text" width={200} height={16} sx={{ alignSelf: "center" }} />
+                </Box>
+                <Skeleton variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" width={220} height={40} sx={{ borderRadius: 1 }} />
+              </Stack>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card

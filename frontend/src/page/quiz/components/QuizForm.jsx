@@ -17,7 +17,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../context/AuthContext";
-import { createQuiz, editQuiz } from "../../../api/quizRequest";
+import { createQuiz, editQuiz } from "../../../api/alumni/quizRequest";
 
 function QuizForm({ isEditing = false, datos = [], onClose, reload }) {
   const [inputValue, setInputValue] = useState("");

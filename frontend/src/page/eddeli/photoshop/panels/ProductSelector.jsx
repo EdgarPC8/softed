@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 
 import { useEditor } from "../EditorProvider";
-import { getCatalogTemplateItems } from "../../../../api/inventoryControlRequest";
+import { getCatalogTemplateItems } from "../../../../api/eddeli/inventoryControlRequest";
 import { pathImg } from "../../../../api/axios";
 import { resolveLayer } from "../bind/resolveTemplate";
 import { normalizeKey, resolveValue } from "../bind/resolveMedia";

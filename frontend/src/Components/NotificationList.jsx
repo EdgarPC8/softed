@@ -9,15 +9,18 @@ import {
   Tabs,
   Tab,
   Divider,
+  Skeleton,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import BusinessIcon from "@mui/icons-material/Business";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  getNotificationsByUser,
+  getNotifications,
   markNotificationAsSeen,
   deleteNotification,
 } from "../api/notificationsRequest";
+import { buildImageUrl } from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
 function getRelativeTime(dateString) {
@@ -37,18 +40,27 @@ const NotificationList = ({setCount}) => {
   const [selectedNotifId, setSelectedNotifId] = useState(null);
   const [menuAllAnchor, setMenuAllAnchor] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user?.userId) return;
-      const res = await getNotificationsByUser(user.userId);
-      setNotifications(res.data);
+      if (!user?.accountId && !user?.userId) {
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await getNotifications();
+        setNotifications(res.data || []);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
-  }, [user?.userId]);
+  }, [user?.accountId, user?.userId]);
 
   const handleTabChange = (event, newValue) => setTab(newValue);
 
@@ -80,7 +92,11 @@ const NotificationList = ({setCount}) => {
   const handleDelete = async () => {
     if (!selectedNotifId) return;
     await deleteNotification(selectedNotifId);
-    setNotifications((prev) => prev.filter((n) => n.id !== selectedNotifId));
+    setNotifications((prev) => {
+      const updated = prev.filter((n) => n.id !== selectedNotifId);
+      if (setCount) setCount(updated.filter((n) => !n.seen).length);
+      return updated;
+    });
     handleMenuClose();
   };
 
@@ -91,6 +107,7 @@ const NotificationList = ({setCount}) => {
     const unseen = notifications.filter((n) => !n.seen);
     await Promise.all(unseen.map((n) => markNotificationAsSeen(n.id)));
     setNotifications((prev) => prev.map((n) => ({ ...n, seen: true })));
+    if (setCount) setCount(0);
     handleMenuAllClose();
   };
 
@@ -119,7 +136,24 @@ const NotificationList = ({setCount}) => {
 
       <Divider />
 
-      {filtered.map((notif) => (
+      {loading ? (
+        [...Array(4)].map((_, i) => (
+          <Box key={i} sx={{ py: 1.5, px: 1, display: "flex", alignItems: "center", gap: 2 }}>
+            <Skeleton variant="circular" width={40} height={40} />
+            <Box flex={1}>
+              <Skeleton variant="text" width="70%" height={24} sx={{ mb: 0.5 }} />
+              <Skeleton variant="text" width="50%" height={20} />
+            </Box>
+          </Box>
+        ))
+      ) : filtered.length === 0 ? (
+        <Box sx={{ py: 3, px: 2, textAlign: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            No hay notificaciones
+          </Typography>
+        </Box>
+      ) : (
+      filtered.map((notif) => (
         <Box
           key={notif.id}
           sx={{
@@ -130,19 +164,35 @@ const NotificationList = ({setCount}) => {
             "&:hover": { bgcolor: "action.hover" },
             px: 1,
             borderRadius: 1,
+            bgcolor: notif.seen ? "transparent" : "action.selected",
+            opacity: notif.seen ? 0.72 : 1,
           }}
           onClick={() => notif.link && navigate(notif.link)}
         >
-          <Avatar sx={{ mr: 2 }}>{notif.title.charAt(0)}</Avatar>
+          <Avatar
+            src={notif.imageUrl ? buildImageUrl(notif.imageUrl) : undefined}
+            sx={{ mr: 2, opacity: notif.seen ? 0.8 : 1, bgcolor: notif.imageUrl ? undefined : "primary.main" }}
+          >
+            {!notif.imageUrl && <BusinessIcon />}
+          </Avatar>
 
           <Box flex={1}>
-            <Typography variant="body1" sx={{ fontWeight: notif.seen ? "normal" : "bold" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: notif.seen ? "normal" : "bold",
+                color: notif.seen ? "text.secondary" : "text.primary",
+              }}
+            >
               {notif.title}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{ color: notif.seen ? "text.secondary" : "text.primary", opacity: notif.seen ? 0.9 : 1 }}
+            >
               {notif.message}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" color="text.secondary" sx={{ opacity: notif.seen ? 0.8 : 1 }}>
               {getRelativeTime(notif.createdAt)}
             </Typography>
           </Box>
@@ -155,7 +205,8 @@ const NotificationList = ({setCount}) => {
             <MoreVertIcon fontSize="small" />
           </IconButton>
         </Box>
-      ))}
+      ))
+      )}
 
       <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
         <MenuItem onClick={handleMarkAsRead}>Marcar como leída</MenuItem>

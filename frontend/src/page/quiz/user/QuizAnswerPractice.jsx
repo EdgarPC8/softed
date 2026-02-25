@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getQuestionsByQuiz } from "../../../api/quizRequest";
+import { getQuestionsByQuiz } from "../../../api/alumni/quizRequest";
 import { useAuth } from "../../../context/AuthContext";
 
 function QuizAnswerPractice() {

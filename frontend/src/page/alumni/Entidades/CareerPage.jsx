@@ -11,7 +11,7 @@ import { Person, Edit, Delete, Send } from "@mui/icons-material";
 
 import { useForm } from "react-hook-form";
 import DataTable from "../../../Components/Tables/DataTable";
-import { getCareers, addCareer, editCareer, deleteCareer } from "../../../api/alumniRequest.js";
+import { getCareers, addCareer, editCareer, deleteCareer } from "../../../api/alumni/alumniRequest.js";
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
 import { useAuth } from "../../../context/AuthContext";
 function CareerPage() {

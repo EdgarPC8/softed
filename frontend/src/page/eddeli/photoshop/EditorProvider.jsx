@@ -32,7 +32,7 @@ import {
   deleteTemplateLayer,
   getEditorTemplateResolved
 
-} from "../../../api/editorRequest";
+} from "../../../api/eddeli/editorRequest";
 
 const Ctx = createContext(null);
 
@@ -449,6 +449,11 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
     const W = data.canvas.width;
     const H = data.canvas.height;
 
+    // ✅ Esperar fuentes (Inter, Poppins, etc.) para que el canvas dibuje igual que el editor
+    if (typeof document?.fonts?.ready === "object") {
+      await document.fonts.ready;
+    }
+
     const canvas = document.createElement("canvas");
     canvas.width = W;
     canvas.height = H;
@@ -509,16 +514,25 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
         }
 
         if (layer.type === "text") {
-          const text = String(layer.props?.text ?? "");
+          const rawText = String(layer.props?.text ?? "");
           const fontSize = Number(layer.props?.fontSize || 32);
           const fontWeight = layer.props?.fontWeight || 700;
+          const fontStyle = layer.props?.fontStyle || "normal";
           const fontFamily = layer.props?.fontFamily || "Inter, system-ui, Arial";
           const color = layer.props?.color || "#fff";
           const align = layer.props?.align || "left";
+          const verticalAlign = layer.props?.verticalAlign || "top"; // ✅ igual que LayerRenderer
+          const stroke = layer.props?.stroke;
+          const strokeWidth = Number(layer.props?.strokeWidth || 0);
+          const shadowBlur = Number(layer.props?.shadowBlur || 0);
+          const shadowOffsetX = Number(layer.props?.shadowOffsetX || 0);
+          const shadowOffsetY = Number(layer.props?.shadowOffsetY || 0);
+          const shadowColor = layer.props?.shadowColor || "transparent";
+          const lineHeight = Number(layer.props?.lineHeight || 1.1);
+          const wrap = layer.props?.wrap !== false; // ✅ igual que LayerRenderer (pre-wrap)
 
           ctx.save();
-          ctx.fillStyle = color;
-          ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+          ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
           ctx.textBaseline = "middle";
           ctx.textAlign = align;
 
@@ -526,7 +540,67 @@ export function EditorProvider({ children, designId = null, autoload = true }) {
           if (align === "center") tx = x + w / 2;
           if (align === "right") tx = x + w;
 
-          ctx.fillText(text, tx, y + h / 2);
+          // ✅ Word wrap: dividir líneas para que quepan en w (como el div del editor)
+          const wrapLine = (str) => {
+            if (!wrap || w <= 0) return str.split("\n");
+            const lines = [];
+            for (const para of str.split("\n")) {
+              const words = para.split(/\s+/);
+              let current = "";
+              for (const word of words) {
+                const test = current ? `${current} ${word}` : word;
+                const m = ctx.measureText(test);
+                if (m.width <= w) {
+                  current = test;
+                } else {
+                  if (current) lines.push(current);
+                  if (ctx.measureText(word).width <= w) {
+                    current = word;
+                  } else {
+                    for (const c of word) {
+                      const t = current + c;
+                      if (ctx.measureText(t).width > w && current) {
+                        lines.push(current);
+                        current = c;
+                      } else current = t;
+                    }
+                  }
+                }
+              }
+              if (current) lines.push(current);
+            }
+            return lines.length ? lines : [str];
+          };
+          const lines = wrapLine(rawText);
+
+          const totalHeight = (lines.length - 1) * fontSize * lineHeight + fontSize;
+          let ty = verticalAlign === "top"
+            ? y + fontSize / 2
+            : verticalAlign === "bottom"
+              ? y + h - totalHeight + fontSize / 2
+              : y + h / 2 - totalHeight / 2 + fontSize / 2;
+
+          if (shadowBlur > 0) {
+            ctx.shadowBlur = shadowBlur;
+            ctx.shadowOffsetX = shadowOffsetX;
+            ctx.shadowOffsetY = shadowOffsetY;
+            ctx.shadowColor = shadowColor;
+          }
+
+          if (strokeWidth > 0 && stroke) {
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = strokeWidth;
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
+          }
+
+          lines.forEach((line, i) => {
+            const lineTy = i === 0 ? ty : ty + i * fontSize * lineHeight;
+            if (strokeWidth > 0 && stroke) ctx.strokeText(line, tx, lineTy);
+            ctx.fillStyle = color;
+            ctx.fillText(line, tx, lineTy);
+          });
+
           ctx.restore();
         }
       }

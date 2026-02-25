@@ -16,7 +16,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import Refresh from '@mui/icons-material/Refresh';
 import PlayArrow from '@mui/icons-material/PlayArrow';
 import { useAuth } from '../../../context/AuthContext';
-import { getPianoSongs, getPianoSongById } from '../../../api/pianoRequest';
+import { getPianoSongs, getPianoSongById } from '../../../api/eddeli/pianoRequest';
 import SynthesiaRoll from '../midi';
 
 const DEFAULT_DURATION = '8n';
@@ -106,7 +106,7 @@ export default function ModeSimulation({ onBack }) {
   );
 
   return (
-    <Box sx={{ p: 2, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box sx={{ p: 2, width: '100%', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {onBack && (
@@ -194,7 +194,7 @@ export default function ModeSimulation({ onBack }) {
               sx={{
                 height: '100%',
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 justifyContent: 'center',
                 color: 'text.secondary',
                 textAlign: 'center',

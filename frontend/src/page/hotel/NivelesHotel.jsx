@@ -5,12 +5,12 @@ import {
 } from "@mui/material";
 import DataTable from "../../Components/Tables/DataTable";
 import { useEffect, useState } from "react";
-import { deleteNivel, getNivel } from "../../api/nivelHotelRequest";
+import { deleteNivel, getNivel } from "../../api/eddeli/nivelHotelRequest";
 import { Person, Edit, Delete } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import SimpleDialog from "../../Components/Dialogs/SimpleDialog";
 import UserForm from "../../Components/Forms/UserForm";
-import NivelHotelForm from "../../Components/Forms/NivelHotelForm";
+import NivelHotelForm from "./components/forms/NivelHotelForm";
 
 function NivelesHotel() {
   const [users, setUsers] = useState([]);

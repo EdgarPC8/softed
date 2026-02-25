@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getQuestionsByQuiz, submitQuizAnswers } from "../../../api/quizRequest";
+import { getQuestionsByQuiz, submitQuizAnswers } from "../../../api/alumni/quizRequest";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../context/AuthContext";
 

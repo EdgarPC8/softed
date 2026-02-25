@@ -11,7 +11,7 @@ import {
   
   import { useForm } from "react-hook-form";
   import DataTable from "../../../Components/Tables/DataTable";
-  import { getPeriods,addPeriod,editPeriod,deletePeriod } from "../../../api/alumniRequest.js";
+  import { getPeriods,addPeriod,editPeriod,deletePeriod } from "../../../api/alumni/alumniRequest.js";
 
 
   

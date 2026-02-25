@@ -19,7 +19,7 @@ import {
   updateEditorTemplate,
   deleteEditorTemplate,
   getEditorTemplateById,
-} from "../../../api/editorRequest";
+} from "../../../api/eddeli/editorRequest";
 
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
 

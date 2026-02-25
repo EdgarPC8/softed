@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getQuestionsByQuiz } from "../../../api/quizRequest";
+import { getQuestionsByQuiz } from "../../../api/alumni/quizRequest";
 
 function QuizViewer() {
   const { id: quizId } = useParams();

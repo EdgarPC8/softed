@@ -17,7 +17,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Add, Delete, ArrowUpward, ArrowDownward } from "@mui/icons-material";
-import { addQuestionsToQuiz, getQuestionsByQuiz } from "../../../api/quizRequest";
+import { addQuestionsToQuiz, getQuestionsByQuiz } from "../../../api/alumni/quizRequest";
 import toast from "react-hot-toast";
 
 const questionTypes = [

@@ -47,6 +47,14 @@ const MODULES = [
     color: "#9C27B0",
   },
   {
+    title: "PianoPro",
+    subtitle: "Piano avanzado",
+    description: "Versión Pro del piano, pensada para escalar tipo FL Studio / Synthesia.",
+    icon: PianoIcon,
+    to: "/pianoPro",
+    color: "#AB47BC",
+  },
+  {
     title: "Inventory",
     subtitle: "Control total",
     description: "Finanzas, producción, movimientos y productos.",

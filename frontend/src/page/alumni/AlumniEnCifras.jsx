@@ -98,7 +98,7 @@ export default function AlumniEnCifras({ data: dataProp, getStats }) {
         <Grid container spacing={3} alignItems="flex-start">
           <Grid item xs={12} md={8}>
             <Typography variant="h6" color="text.secondary" gutterBottom>
-              Universidad Nacional de Loja
+              Instituto Superior Tecnológico Marianos Samaniego
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {subtitle}

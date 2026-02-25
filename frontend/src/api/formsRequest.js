@@ -5,17 +5,17 @@ export const getForms = async () =>
   await axios.get("/forms", { headers: { Authorization: jwt() } });
 
   
-  export const getUsersByFormAssign = async (id) =>
+export const getAccountsByFormAssign = async (id) =>
   await axios.get(`/forms/assign/${id}`, { headers: { Authorization: jwt() } });
 
-  export const deleteUsersByFormAssign = async (formId,userId) =>
-  await axios.delete(`/forms/assign/${formId}/${userId}`, { headers: { Authorization: jwt() } });
+export const deleteAccountByFormAssign = async (formId, accountId) =>
+  await axios.delete(`/forms/assign/${formId}/${accountId}`, { headers: { Authorization: jwt() } });
 
   export const getQuestionsByForm = async (id) =>
   await axios.get(`/forms/manage/${id}`, { headers: { Authorization: jwt() } });
 
-export const assignUsersToForm = async (formId,userIds) =>
-  await axios.post(`/forms/assign/${formId}`, {userIds}, { headers: { Authorization: jwt() } });
+export const assignAccountsToForm = async (formId, accountIds) =>
+  await axios.post(`/forms/assign/${formId}`, { accountIds }, { headers: { Authorization: jwt() } });
 // Crear una nueva encuesta
 export const createForm = async (data) =>
   await axios.post("/forms", data, { headers: { Authorization: jwt() } });
@@ -40,9 +40,8 @@ export const getResponses = async (id) =>
 export const respondeForm = async (id, response) =>
   await axios.post(`/forms/submit/${id}`, response, { headers: { Authorization: jwt() } });
 
-// Obtener todas las encuestas de un usuario por userId
-export const getFormsByUserId = async (userId) =>
-  await axios.get(`/forms/user/${userId}`, { headers: { Authorization: jwt() } });
+export const getFormsByAccountId = async (accountId) =>
+  await axios.get(`/forms/account/${accountId}`, { headers: { Authorization: jwt() } });
 
 
 export const cloneFormRequest = async (formId) =>

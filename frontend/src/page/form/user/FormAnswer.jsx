@@ -60,7 +60,7 @@ function FormAnswer() {
 
   const handleSubmit = async () => {
     try {
-      const userId = user.userId; // reemplaza esto por el userId real (autenticado)
+      const accountId = user.accountId;
   
       // Construir el arreglo de respuestas
       const formattedAnswers = [];
@@ -103,9 +103,8 @@ function FormAnswer() {
         }
       }
   
-      // Enviar al backend
       await respondeForm(formId, {
-        userId,
+        accountId,
         answers: formattedAnswers,
       });
   

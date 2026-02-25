@@ -23,7 +23,14 @@ export function usePianoPlayback(notes, bpm, samplerRef) {
     setPlayheadBeats(null);
   }, []);
 
-  const play = useCallback(async () => {
+  /**
+   * play(options):
+   * - startBar: compás desde el que comienza la reproducción (0 = inicio)
+   * - loopBars: si > 0, activa loop entre [startBar, startBar + loopBars)
+   */
+  const play = useCallback(async (options = {}) => {
+    const { startBar = 0, loopBars = null } = options || {};
+
     if (!samplerRef?.current) {
       throw new Error('El piano aún no está listo. Haz clic de nuevo en Reproducir.');
     }
@@ -65,23 +72,54 @@ export function usePianoPlayback(notes, bpm, samplerRef) {
     const last = sorted[sorted.length - 1];
     const endBeats = timeStrToBeats(last.time) + durationToBeats(last.duration);
     const endTimeStr = beatToMBT(endBeats + 0.5);
-    Tone.Transport.schedule(() => {
-      stop();
-    }, endTimeStr);
+    // Si hay loop, no programamos stop automático; se detiene con Stop.
+    if (!loopBars || loopBars <= 0) {
+      Tone.Transport.schedule(() => {
+        stop();
+      }, endTimeStr);
+    }
+
+    // Configurar loop si se pide
+    const startBarSafe = Math.max(0, Math.floor(startBar));
+    const loopBarsSafe = loopBars && loopBars > 0 ? Math.floor(loopBars) : null;
+    const loopStartStr = beatToMBT(startBarSafe * 4);
+    if (loopBarsSafe && loopBarsSafe > 0) {
+      const loopEndStr = beatToMBT((startBarSafe + loopBarsSafe) * 4);
+      Tone.Transport.setLoopPoints(loopStartStr, loopEndStr);
+      Tone.Transport.loop = true;
+    } else {
+      Tone.Transport.loop = false;
+    }
 
     setPlayheadBeats(0);
     setIsPlaying(true);
-    Tone.Transport.start();
+    // Iniciar en el compás solicitado
+    if (startBarSafe > 0) {
+      Tone.Transport.start(undefined, loopStartStr);
+    } else {
+      Tone.Transport.start();
+    }
   }, [notes, bpm, samplerRef, stop]);
+
+  const pause = useCallback(() => {
+    if (!isPlaying) return;
+    Tone.Transport.pause();
+    setIsPlaying(false);
+  }, [isPlaying]);
 
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
-      const sec = Tone.Transport.seconds;
-      setPlayheadBeats((sec * bpm) / 60);
+      // Usamos la posición del Transport (Bars:Beats:Sixteenths) para alinear con el rollo
+      const pos = Tone.Transport.position;
+      const posStr = typeof pos === 'string' ? pos : String(pos);
+      const beats = timeStrToBeats(posStr);
+      if (!Number.isNaN(beats)) {
+        setPlayheadBeats(beats);
+      }
     }, 50);
     return () => clearInterval(interval);
   }, [isPlaying, bpm]);
 
-  return { isPlaying, playheadBeats, play, stop };
+  return { isPlaying, playheadBeats, play, pause, stop };
 }

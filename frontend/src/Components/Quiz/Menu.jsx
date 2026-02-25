@@ -1,7 +1,7 @@
 import { Container, Grid, Typography, Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import * as React from "react";
-import { getOptionsQuestions,addAllAnswersUsers } from "../../api/quizRequest.js";
+import { getOptionsQuestions,addAllAnswersUsers } from "../../api/alumni/quizRequest.js";
 import DataTableQuestionsSimulator from "../Tables/DataTableQuestionsSimulator.jsx";
 
 function QuizPage() {

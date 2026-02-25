@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import DataTable from "./DataTableFormCheck";
-import { assignUsersToQuiz, filterUsersByRole } from "../../../api/quizRequest.js";
+import { assignUsersToQuiz, filterUsersByRole } from "../../../api/alumni/quizRequest.js";
 import SelectData from "../../../Components/Selects/SelectData";
 import { getRolRequest } from "../../../api/accountRequest";
 

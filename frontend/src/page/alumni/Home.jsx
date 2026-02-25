@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 
 import bannerImage from '/home_istms.png';
 
-import { getMatrizStats } from '../../api/alumniRequest';
+import { getMatrizStats } from '../../api/alumni/alumniRequest';
 import AlumniEnCifras from './AlumniEnCifras';
 
 export default function HomePageAlumni() {

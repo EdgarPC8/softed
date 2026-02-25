@@ -16,7 +16,7 @@ import TablePagination from "@mui/material/TablePagination";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { addAnswerUser } from "../../api/quizRequest";
+import { addAnswerUser } from "../../api/alumni/quizRequest";
 import { useAuth } from "../../context/AuthContext";
 
 

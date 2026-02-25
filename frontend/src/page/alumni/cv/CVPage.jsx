@@ -37,7 +37,7 @@ import {
   addProfessionalExperience,
   editProfessionalExperience,
   deleteProfessionalExperience,
-} from "../../../api/cvRequest.js";
+} from "../../../api/alumni/cvRequest.js";
 
 const sectionConfigs = [
   {

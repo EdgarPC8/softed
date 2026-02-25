@@ -11,7 +11,7 @@ import DataTable from "../../../Components/Tables/DataTable";
 import {
   getUsersByQuizAssign,
   deleteUsersByQuizAssign,
-} from "../../../api/quizRequest";
+} from "../../../api/alumni/quizRequest";
 import SimpleDialog from "../../../Components/Dialogs/SimpleDialog";
 import AssignUserForm from "../components/AssignUserForm";
 import { useParams } from "react-router-dom";
