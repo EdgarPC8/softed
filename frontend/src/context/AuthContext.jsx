@@ -51,10 +51,9 @@ const AuthProvider = ({ children }) => {
     try {
       setIsLoading(false);
       setIsAuthenticated(true);
-      const session = await getSessionRequest();
-      // console.log(session.data)
-      const {data} = await getAccount(session.data.accountId,session.data.rolId);
 
+      const session = await getSessionRequest();
+      const { data } = await getAccount(session.data.accountId, session.data.rolId);
       const userData = {
         ci: data.user.ci,
         firstName: data.user.firstName,
@@ -68,13 +67,11 @@ const AuthProvider = ({ children }) => {
         userId: session.data.userId,
         rolId: session.data.rolId,
         loginRol: session.data.loginRol,
-        roles: data.roles || [], 
+        roles: data.roles || [],
       };
-      // console.log(userData)
-
       if (session.data) {
         setUser(userData);
-        setProfileImageUser(`${pathImg}${data.user.photo}`)
+        setProfileImageUser(`${pathImg}${data.user.photo}`);
       }
     } catch (error) {
       console.log(error);
@@ -83,14 +80,22 @@ const AuthProvider = ({ children }) => {
   
   const toast = async ({
     promise, 
+    message,
     successMessage = "Operación exitosa", // Mensaje por defecto de éxito
     errorMessage = "Ocurrió un error", // Mensaje por defecto de error
+    variant: variantParam,
     onSuccess = null, // Función opcional para ejecutar en caso de éxito
     onError = null, // Función opcional para ejecutar en caso de error
-    info=null
-
+    info = null,
   }) => {
-    if(info){
+    if (message !== undefined && !promise) {
+      enqueueSnackbar(message, {
+        variant: variantParam || "info",
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    if (info) {
       let infoAttributes = {
         title: "Informacion", // Título por defecto
         description: "Alguna Descripcion", // Descripción usando el mensaje de éxito por defecto
@@ -163,7 +168,10 @@ const AuthProvider = ({ children }) => {
       }
   
       // Mensaje: priorizar respuesta del backend (error.response.data.message), luego el errorMessage pasado, luego error.message
-      const apiMessage = error?.response?.data?.message;
+      let apiMessage = error?.response?.data?.message;
+      if (!apiMessage && error?.response?.data && typeof error.response.data === "string") {
+        apiMessage = error.response.data;
+      }
       const descError = apiMessage || errorMessage || error?.message;
 
       // Inicializar con los valores por defecto para errores
@@ -213,16 +221,16 @@ const AuthProvider = ({ children }) => {
   
   
 
-  const signin = async (user) => {
+  const signin = async (userData) => {
     try {
-      const response = await loginRequest(user);
+      const response = await loginRequest(userData);
       const { data } = response;
-  
+
       // Si se requiere seleccionar un rol
       if (data.selectRole) {
         return { selectRole: true, roles: data.roles, accountId: data.accountId };
       }
-  
+
       // Si se devuelve directamente el token
       if (data.token) {
         window.localStorage.setItem("token", data.token);
@@ -230,19 +238,18 @@ const AuthProvider = ({ children }) => {
         loadUserProfile();
         return { success: true };
       }
-  
+
       setErrors({ message: data.message, status: data.status });
       return { error: true };
-    }catch (error) {
-        setIsAuthenticated(false);
-        setIsLoading(false); // ✅ correcto: ya no está cargando
-        setErrors({
-          message: error.response?.data?.message || "Error de conexión",
-          status: "error",
-        });
-        return { error: true };
-      }
-      
+    } catch (error) {
+      setIsAuthenticated(false);
+      setIsLoading(false);
+      setErrors({
+        message: error.response?.data?.message || "Error de conexión",
+        status: "error",
+      });
+      return { error: true };
+    }
   };
   
   const logout = async () => {
@@ -261,15 +268,11 @@ const AuthProvider = ({ children }) => {
 
     try {
       const session = await getSessionRequest();
-
-      // console.log(session)
       if (session.status) {
         setIsLoading(false);
         setIsAuthenticated(true);
         loadUserProfile();
       }
-
-      // console.log(res);
     } catch (error) {
       setIsAuthenticated(false);
       setIsLoading(false);

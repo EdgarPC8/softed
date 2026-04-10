@@ -4,14 +4,17 @@ import { ChartContainer } from '@mui/x-charts/ChartContainer';
 import { BarPlot } from '@mui/x-charts/BarChart';
 import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { interpolateObject } from '@mui/x-charts-vendor/d3-interpolate';
+import { getChartSeriesColors } from '../../theme/chartPalette';
 
 export default function LabelsAboveBars() {
+  const theme = useTheme();
+  const barColor = getChartSeriesColors(theme)[0];
   return (
     <ChartContainer
       xAxis={[{ scaleType: 'band', data: ['L', 'M', 'W','J','V','S','D'] }]}
-      series={[{ type: 'bar', id: 'base', data: [5, 17, 11,5, 17, 11,32] }]}
+      series={[{ type: 'bar', id: 'base', data: [5, 17, 11,5, 17, 11,32], color: barColor }]}
       height={150}
       yAxis={[{ width: 30 }]}
       margin={{ left: 0, right: 10 }}

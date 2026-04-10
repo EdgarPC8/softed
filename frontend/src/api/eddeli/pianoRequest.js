@@ -1,4 +1,4 @@
-import axios, { jwt } from "../axios.js";
+import { axiosForSoftedModules as axios, jwt } from "../axios.js";
 
 const base = "/piano";
 

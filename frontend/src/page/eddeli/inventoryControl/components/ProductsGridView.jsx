@@ -21,12 +21,17 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Edit from "@mui/icons-material/Edit";
-import { createProduct } from "../../../../api/eddeli/inventoryControlRequest";
+import CheckIcon from "@mui/icons-material/Check";
+import {
+  createProduct,
+  registerMovement,
+} from "../../../../api/eddeli/inventoryControlRequest";
 import { pathImg } from "../../../../api/axios";
 import toast from "react-hot-toast";
+import { useAuth } from "../../../../context/AuthContext";
 
 const typeLabels = {
   raw: "Materia Prima",
@@ -34,11 +39,71 @@ const typeLabels = {
   final: "Producto Final",
 };
 
-function ProductCard({ product, onEdit, onDuplicate, pathImgBase }) {
+function stockNum(p) {
+  const n = Number(p?.stock);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function unitAbbrOf(p) {
+  return (
+    p?.unit?.abbreviation ||
+    p?.InventoryUnit?.abbreviation ||
+    p?.ERP_inventory_unit?.abbreviation ||
+    ""
+  );
+}
+
+function ProductCard({ product, onEdit, onDuplicate, onStockAdjusted, pathImgBase }) {
+  const { toast: authToast } = useAuth();
   const imgSrc = product?.primaryImageUrl
     ? `${pathImgBase}${product.primaryImageUrl}`
     : null;
   const categoryName = product?.ERP_inventory_category?.name || "—";
+  const current = stockNum(product);
+  const abbr = unitAbbrOf(product);
+  const [draft, setDraft] = useState(() => String(current));
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setDraft(String(stockNum(product)));
+  }, [product.id, product.stock]);
+
+  const applyStockAdjust = async () => {
+    const nuevo = Number(String(draft).replace(",", "."));
+    if (!Number.isFinite(nuevo) || nuevo < 0) {
+      authToast({ message: "Ingrese un stock válido (número ≥ 0).", variant: "warning" });
+      return;
+    }
+    if (Math.abs(nuevo - current) < 1e-9) {
+      authToast({ message: "El valor es igual al stock actual.", variant: "info" });
+      return;
+    }
+    setSaving(true);
+    try {
+      await authToast({
+        promise: registerMovement({
+          productId: Number(product.id),
+          type: "ajuste",
+          reason: "AJUSTE_INVENTARIO",
+          quantity: nuevo,
+          description: `Ajuste (productos): ${product.name} ${current} → ${nuevo}${abbr ? ` ${abbr}` : ""}`,
+          price: null,
+          referenceType: null,
+          referenceId: null,
+          simulated: null,
+        }),
+        successMessage: "Ajuste de inventario registrado",
+        onSuccess: () => {
+          onStockAdjusted?.();
+          return { description: "Stock actualizado correctamente" };
+        },
+      });
+    } catch {
+      /* authToast ya mostró el error */
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Card
@@ -109,7 +174,43 @@ function ProductCard({ product, onEdit, onDuplicate, pathImgBase }) {
           <Typography variant="body2" fontWeight={600}>
             ${Number(product?.price ?? 0).toFixed(2)}
           </Typography>
-          <Typography variant="body2">Stock: {product?.stock ?? 0}</Typography>
+          <Typography variant="caption" color="text.secondary">
+            Actual: <strong>{current}</strong>
+            {abbr ? ` ${abbr}` : ""}
+          </Typography>
+        </Box>
+        <Box sx={{ mt: 1, display: "flex", gap: 0.5, alignItems: "flex-start" }}>
+          <TextField
+            size="small"
+            fullWidth
+            variant="outlined"
+            label={abbr ? `Stock (${abbr})` : "Nuevo stock"}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                applyStockAdjust();
+              }
+            }}
+            disabled={saving}
+            inputProps={{ inputMode: "decimal" }}
+            helperText="Movimiento ajuste"
+          />
+          <Tooltip title="Guardar ajuste">
+            <span>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={applyStockAdjust}
+                disabled={saving}
+                aria-label="Guardar ajuste de stock"
+                sx={{ mt: 0.5 }}
+              >
+                <CheckIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
         </Box>
         <Box sx={{ mt: 1, display: "flex", gap: 0.5, justifyContent: "flex-end" }}>
           {onEdit && (
@@ -241,14 +342,22 @@ export default function ProductsGridView({ products = [], onEdit, onReload, path
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    if (!categoryFilter) return products;
-    return products.filter((p) => String(p?.categoryId ?? p?.ERP_inventory_category?.id) === String(categoryFilter));
+    let list = products;
+    if (categoryFilter) {
+      list = products.filter(
+        (p) => String(p?.categoryId ?? p?.ERP_inventory_category?.id) === String(categoryFilter)
+      );
+    }
+    return [...list].sort((a, b) => stockNum(b) - stockNum(a));
   }, [products, categoryFilter]);
 
   return (
     <Box sx={{ mt: 3 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 0.5 }}>
         Vista en tarjetas
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Ordenadas por stock (mayor a menor). Puede ajustar stock con movimiento de ajuste.
       </Typography>
       <FormControl size="small" sx={{ minWidth: 200, mb: 2 }}>
         <InputLabel>Categoría</InputLabel>
@@ -274,6 +383,7 @@ export default function ProductsGridView({ products = [], onEdit, onReload, path
               product={p}
               onEdit={onEdit}
               onDuplicate={(prod) => setDuplicateProduct(prod)}
+              onStockAdjusted={onReload}
               pathImgBase={pathImgBase}
             />
           </Grid>

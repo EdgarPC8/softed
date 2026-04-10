@@ -2,8 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
 // ─────────────────────────────────────────────────────────────────
+//  Raíz: softed/frontend. Backend módulos: softed/backend (softedapi:3004).
 //  CAMBIA SOLO ESTO para elegir la app (basename, tema, menú, todo):
-//  'softed'  |  'eddeli'  |  'alumni'
+//  'softed'  |  'eddeli'  |  'alumni'  |  'turnos'  |  'enfermeria'  |  'musica'
 // ─────────────────────────────────────────────────────────────────
 const ACTIVE_APP = 'eddeli'
 
@@ -26,9 +27,5 @@ export default defineConfig({
   build: {
     // Sale de softed/frontend y va a la carpeta según ACTIVE_APP (eddeli | alumni | softed)
     outDir: `../../${ACTIVE_APP}`,
-  }
+  },
 })
-
-
-
-

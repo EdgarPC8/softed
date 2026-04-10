@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Container,
   Box,
@@ -13,6 +13,7 @@ import { pathImg } from "../../../api/axios";
 import {
   getCatalogBySection,
   getStoresRequest,
+  getStoreProductsPublicRequest,
 } from "../../../api/eddeli/inventoryControlRequest.js";
 import { activeApp } from "../../../../appConfig.js";
 
@@ -48,7 +49,7 @@ export default function HomeLogout() {
     };
   }, []);
 
-  // 🔹 Puntos de venta
+  // 🔹 Locales (vista pública)
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -68,12 +69,14 @@ export default function HomeLogout() {
           img: s.imageUrl ? `${pathImg}${s.imageUrl}` : s.img || null,
           position: s.position,
           isActive: s.isActive,
+          latitude: s.latitude,
+          longitude: s.longitude,
         }));
 
         if (alive) setStores(mapped);
       } catch (e) {
         if (alive) {
-          setErr(e?.message || "No se pudo cargar puntos de venta");
+          setErr(e?.message || "No se pudieron cargar los locales");
           setStores([]);
         }
       }
@@ -82,6 +85,11 @@ export default function HomeLogout() {
       alive = false;
     };
   }, []);
+
+  const loadStoreProducts = useCallback(
+    (storeId) => getStoreProductsPublicRequest(storeId),
+    []
+  );
 
   return (
     <>
@@ -96,7 +104,11 @@ export default function HomeLogout() {
         </Box>
 
         <Box sx={{ p: 1 }}>
-          <StoresPanel title="Puntos de venta" items={stores} />
+          <StoresPanel
+            title="Locales"
+            items={stores}
+            loadStoreProducts={loadStoreProducts}
+          />
         </Box>
       </Container>
 

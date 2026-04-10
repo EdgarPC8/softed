@@ -17,7 +17,7 @@ import {
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
-import { money, toNum, getItemGroupId } from "./helpers.js";
+import { money, moneyUnitPrice, toNum, getItemGroupId } from "./helpers.js";
 
 export default function ItemsTable({
   items,
@@ -194,7 +194,7 @@ export default function ItemsTable({
                 </TableCell>
                 <TableCell align="right" sx={{ px: { xs: 0.5, sm: 1 } }}>
                   {!editing ? (
-                    money(price)
+                    moneyUnitPrice(price)
                   ) : (
                     <TextField
                       size="small"

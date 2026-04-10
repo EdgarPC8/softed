@@ -42,7 +42,36 @@ function chunkArray(array, size) {
   return result;
 }
 
-// Devuelve el color base (success/error/warning/info) según el estado de los ítems
+// Severidad por un solo pedido (0 = peor / rojo, 3 = ok / verde). Misma lógica que getStatusBaseColor.
+function getOrderStatusSeverity(items) {
+  if (!items?.length) return 3;
+  const allPaid = items.every((i) => i.paidAt);
+  const allDelivered = items.every((i) => i.deliveredAt);
+  const somePaid = items.some((i) => i.paidAt);
+  const someDelivered = items.some((i) => i.deliveredAt);
+
+  if (allPaid && allDelivered) return 3;
+  if (!somePaid && !someDelivered) return 0;
+  if (someDelivered && !allPaid) return 1;
+  if (somePaid && !allDelivered) return 2;
+  return 1;
+}
+
+/** Color del día en calendario: gana el pedido “peor” (si hay uno rojo y otro verde → rojo). */
+function getCalendarDayBaseColor(dailyOrders, theme) {
+  if (!dailyOrders?.length) return null;
+  const worst = Math.min(
+    ...dailyOrders.map((o) => getOrderStatusSeverity(o.ERP_order_items || []))
+  );
+  const { palette } = theme;
+  if (worst === 0) return palette.error.main;
+  if (worst === 1) return palette.warning.main;
+  if (worst === 2) return palette.info.main;
+  if (worst === 3) return palette.success.main;
+  return null;
+}
+
+// Devuelve el color base (success/error/warning/info) según el estado de los ítems (un pedido o lista coherente)
 function getStatusBaseColor(items, theme) {
   const allPaid = items.every(i => i.paidAt);
   const allDelivered = items.every(i => i.deliveredAt);
@@ -333,9 +362,12 @@ export default function OrderCalendarView({ orders, onReload }) {
                 );
                 const isSelected = selectedDate && isSameDay(date, selectedDate);
 
-                const itemsOfDay = dailyOrders.flatMap(o => o.ERP_order_items);
-                const statusBase = getStatusBaseColor(itemsOfDay, theme);
-                const statusBg = getColorByStatus(itemsOfDay, theme, tones.state);
+                const statusBase = getCalendarDayBaseColor(dailyOrders, theme);
+                const statusBg = statusBase
+                  ? alpha(statusBase, tones.state)
+                  : theme.palette.mode === 'dark'
+                    ? theme.palette.background.paper
+                    : 'white';
 
                 const isOutOfMonth = !isSameMonth(date, currentDate);
                 const dayBg = isOutOfMonth

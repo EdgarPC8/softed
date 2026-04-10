@@ -1,15 +1,19 @@
+import * as React from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useTheme, useMediaQuery, Box, Typography, Grid } from '@mui/material';
-
-const data = [
-  { label: 'No Pagados', value: 35, color: '#e57373' },
-  { label: 'Pagados no Entregados', value: 20, color: '#ffb74d' },
-  { label: 'No Pagados ni Entregados', value: 10, color: '#64b5f6' },
-  { label: 'Entregados no Pagados', value: 5, color: '#81c784' },
-];
+import { getChartSeriesColors, CHART_SEMANTIC_INDEX } from '../../theme/chartPalette';
 
 export default function DonutChart() {
   const theme = useTheme();
+  const data = React.useMemo(() => {
+    const s = getChartSeriesColors(theme);
+    return [
+      { label: 'No Pagados', value: 35, color: s[CHART_SEMANTIC_INDEX.alert] },
+      { label: 'Pagados no Entregados', value: 20, color: s[CHART_SEMANTIC_INDEX.warm] },
+      { label: 'No Pagados ni Entregados', value: 10, color: s[CHART_SEMANTIC_INDEX.secondary] },
+      { label: 'Entregados no Pagados', value: 5, color: s[CHART_SEMANTIC_INDEX.positive] },
+    ];
+  }, [theme]);
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const isMd = useMediaQuery(theme.breakpoints.down('md'));
 

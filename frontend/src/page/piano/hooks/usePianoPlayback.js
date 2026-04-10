@@ -107,17 +107,17 @@ export function usePianoPlayback(notes, bpm, samplerRef) {
     setIsPlaying(false);
   }, [isPlaying]);
 
+  // Actualización suave del playhead para vistas 2D (PianoRollFL) sin saturar React.
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
-      // Usamos la posición del Transport (Bars:Beats:Sixteenths) para alinear con el rollo
       const pos = Tone.Transport.position;
       const posStr = typeof pos === 'string' ? pos : String(pos);
       const beats = timeStrToBeats(posStr);
       if (!Number.isNaN(beats)) {
         setPlayheadBeats(beats);
       }
-    }, 50);
+    }, 100);
     return () => clearInterval(interval);
   }, [isPlaying, bpm]);
 

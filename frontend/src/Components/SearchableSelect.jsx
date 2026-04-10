@@ -1,130 +1,117 @@
 // src/Components/SearchableSelect.jsx
-import React, { useState, useMemo, useRef } from "react";
-import {
-  Box,
-  TextField,
-  MenuItem,
-  Typography,
-  InputLabel,
-  FormControl,
-  Select,
-  ListSubheader,
-} from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { Box, TextField, Autocomplete, CircularProgress } from "@mui/material";
+
+const EMPTY_MARKER = "__searchableSelect_empty__";
 
 function SearchableSelect({
   label = "Seleccionar",
   items = [],
   value = "",
   onChange,
-  getOptionLabel = (item) => item.name,
-  getOptionValue = (item) => item.id,
+  getOptionLabel: getOptionLabelProp = (item) => item?.name ?? "",
+  getOptionValue = (item) => item?.id,
   placeholder = "Buscar...",
-  clearSearchOnClose = true, // opcional
+  clearSearchOnClose: _clearSearchOnClose = true,
+  onSearchChange,
+  loading = false,
+  emptyOptionLabel,
 }) {
-  const [search, setSearch] = useState("");
-  const searchRef = useRef(null);
+  const [inputLen, setInputLen] = useState(0);
 
-  const filtered = useMemo(() => {
-    const q = (search || "").toLowerCase();
-    if (!q) return items;
-    return items.filter((item) =>
-      (getOptionLabel(item) || "").toLowerCase().includes(q)
+  const emptyOption = useMemo(
+    () => (emptyOptionLabel ? { [EMPTY_MARKER]: true } : null),
+    [emptyOptionLabel]
+  );
+
+  const options = useMemo(() => {
+    if (emptyOption) return [emptyOption, ...items];
+    return items;
+  }, [items, emptyOption]);
+
+  const resolveLabel = (option) => {
+    if (!option) return "";
+    if (option[EMPTY_MARKER]) return emptyOptionLabel || "";
+    return getOptionLabelProp(option) ?? "";
+  };
+
+  const selectedOption = useMemo(() => {
+    if (value === "" || value == null) return null;
+    return (
+      items.find((i) => {
+        const ov = getOptionValue(i);
+        return ov === value || String(ov) === String(value);
+      }) ?? null
     );
-  }, [search, items, getOptionLabel]);
-
-  const handleChange = (event) => {
-    const val = event.target.value;
-    if (onChange) onChange(val);
-  };
-
-  const handleOpen = () => {
-    // Enfoca el buscador cuando se abre el menú
-    setTimeout(() => {
-      searchRef.current?.focus();
-    }, 0);
-  };
-
-  const handleClose = () => {
-    if (clearSearchOnClose) setSearch("");
-  };
+  }, [items, value, getOptionValue]);
 
   return (
     <Box sx={{ width: "100%" }}>
-      <FormControl fullWidth size="small">
-        <InputLabel>{label}</InputLabel>
-
-        <Select
-          label={label}
-          value={value ?? ""}
-          onChange={handleChange}
-          onOpen={handleOpen}
-          onClose={handleClose}
-          MenuProps={{
-            // ✅ CLAVE: evita que MUI robe el foco del TextField al tipear
-            autoFocus: false,
-            disableAutoFocusItem: true,
-            MenuListProps: {
-              autoFocusItem: false,
-              // evita que key events del menú interfieran con el input
-              onKeyDown: (e) => {
-                // si el foco está en el buscador, no dejes que el menú capture teclas
-                if (document.activeElement === searchRef.current) {
-                  e.stopPropagation();
-                }
-              },
-            },
-            PaperProps: {
-              sx: {
-                maxHeight: 360,
-                "& .MuiListSubheader-root": {
-                  bgcolor: "background.paper",
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                },
-              },
-            },
-          }}
-        >
-          {/* 🔍 Buscador dentro del menú */}
-          <ListSubheader disableSticky>
-            <TextField
-              inputRef={searchRef}
-              size="small"
-              placeholder={placeholder}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              fullWidth
-              // ❌ quita autoFocus aquí (lo manejamos en handleOpen)
-              // autoFocus
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                // ✅ evita que el menú capture teclas mientras escribes
-                e.stopPropagation();
-              }}
-            />
-          </ListSubheader>
-
-          {/* 📌 Opciones filtradas */}
-          {filtered.length === 0 ? (
-            <MenuItem disabled>
-              <Typography variant="caption">
-                No se encontraron resultados…
-              </Typography>
-            </MenuItem>
-          ) : (
-            filtered.map((item) => {
-              const optionValue = getOptionValue(item);
-              const optionLabel = getOptionLabel(item);
-              return (
-                <MenuItem key={optionValue} value={optionValue}>
-                  {optionLabel}
-                </MenuItem>
-              );
-            })
-          )}
-        </Select>
-      </FormControl>
+      <Autocomplete
+        size="small"
+        options={options}
+        loading={loading}
+        value={selectedOption}
+        onChange={(event, newValue) => {
+          if (!onChange) return;
+          if (!newValue || newValue[EMPTY_MARKER]) {
+            onChange("");
+            return;
+          }
+          onChange(getOptionValue(newValue));
+        }}
+        onInputChange={(event, newInput, reason) => {
+          if (reason === "input") {
+            setInputLen(newInput.length);
+            onSearchChange?.(newInput);
+          }
+          if (reason === "clear" || reason === "reset") {
+            setInputLen(0);
+          }
+        }}
+        getOptionLabel={(option) => resolveLabel(option)}
+        isOptionEqualToValue={(a, b) => {
+          if (!a && !b) return true;
+          if (!a || !b) return false;
+          if (a[EMPTY_MARKER] && b[EMPTY_MARKER]) return true;
+          if (a[EMPTY_MARKER] || b[EMPTY_MARKER]) return false;
+          return String(getOptionValue(a)) === String(getOptionValue(b));
+        }}
+        filterOptions={(opts, params) => {
+          const q = (params.inputValue || "").toLowerCase().trim();
+          if (!q) return opts;
+          return opts.filter((opt) => {
+            if (opt[EMPTY_MARKER]) return true;
+            return (resolveLabel(opt) || "").toLowerCase().includes(q);
+          });
+        }}
+        noOptionsText={
+          onSearchChange && inputLen > 0 && inputLen < 2
+            ? "Escriba al menos 2 caracteres para buscar"
+            : "No se encontraron resultados"
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={label}
+            placeholder={placeholder}
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading ? <CircularProgress color="inherit" size={18} sx={{ mr: 1 }} /> : null}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
+          />
+        )}
+        ListboxProps={{ style: { maxHeight: 360 } }}
+        clearOnBlur
+        handleHomeEndKeys
+        selectOnFocus
+      />
     </Box>
   );
 }

@@ -1,5 +1,5 @@
 // MiniDrawer.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Box, CssBaseline, Toolbar, Typography, IconButton, Tooltip, Divider, List,
@@ -24,15 +24,15 @@ import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import CategoryIcon from '@mui/icons-material/Category';
 
 import {
-  Terminal, Home, Settings, Poll, AssignmentInd, School, CalendarMonth, AccountTree,
+  Terminal, Dashboard, Settings, Poll, AssignmentInd, School, CalendarMonth, AccountTree,
   Info, ViewModule, VpnKey, Notifications as NotificationsIcon, ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon, Menu as MenuIconBar, ExpandMore as ExpandMoreIcon, AccountBox,
   PeopleAlt, List as ListIcon, Workspaces, Storage, Dns, IntegrationInstructions,
   QuestionAnswer, MonetizationOn,
 } from '@mui/icons-material';
 
-import InventoryIcon from '@mui/icons-material/Inventory';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import StraightenIcon from '@mui/icons-material/Straighten';
@@ -59,6 +59,7 @@ import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 import CakeIcon from "@mui/icons-material/Cake";
 import LocalCafeIcon from "@mui/icons-material/LocalCafe";
 import StorefrontIcon from "@mui/icons-material/Storefront";
+import StoreMallDirectoryRounded from "@mui/icons-material/StoreMallDirectoryRounded";
 import { activeApp, activeAppId } from "../../../appConfig";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 
@@ -72,7 +73,9 @@ import VolumeUp from "@mui/icons-material/VolumeUp";
 // Cambiar Terminal por Campaign para Publicidad
 import CampaignIcon from "@mui/icons-material/Campaign";
 import PianoIcon from "@mui/icons-material/Piano";
+import LyricsIcon from "@mui/icons-material/Lyrics";
 import SaveIcon from "@mui/icons-material/Save";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { saveBackup, downloadBackup } from "../../api/comandsRequest";
 
@@ -81,11 +84,12 @@ import { saveBackup, downloadBackup } from "../../api/comandsRequest";
 
 const PUBLIC_NAV = [
   { label: "Inicio", icon: <HomeIcon fontSize="small" />, to: "/" },
-  { label: "Catalogo", icon: <BakeryDiningIcon fontSize="small" />, to: "/catalogo", app: "eddeli" },
-  { label: "Puntos de Venta", icon: <StorefrontIcon fontSize="small" />, to: "/punto_venta", app: "eddeli" },
+  { label: "Consultar mi turno", icon: <CalendarMonth fontSize="small" />, to: "/home", app: "turnos" },
+  { label: "Catálogo", icon: <BakeryDiningIcon fontSize="small" />, to: "/catalogo", app: "eddeli" },
+  { label: "Locales", icon: <StoreMallDirectoryRounded fontSize="small" />, to: "/punto_venta", app: "eddeli" },
 ];
 
-/** Menú público filtrado por app: en alumni no se muestran Catálogo ni Puntos de venta */
+/** Menú público filtrado por app: en alumni no se muestran Catálogo ni Locales */
 function getPublicNavForApp(currentAppId) {
   return PUBLIC_NAV.filter((item) => itemVisibleForApp(item.app, currentAppId));
 }
@@ -125,7 +129,7 @@ function partitionByAppForSofted(items) {
 
 const permisos = {
   Programador: [
-    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Dashboard", icon: <Dashboard />, link: "/home" },
     { name: "Piano", icon: <PianoIcon />, link: "/piano", app: "softed" },
     { name: "PianoPro", icon: <PianoIcon />, link: "/pianoPro", app: "softed" },
     { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
@@ -142,26 +146,43 @@ const permisos = {
         ],
       },
     },
-    { name: "Panaderia", icon: <BakeryDiningIcon />, link: "/backery", app: "eddeli" },
     { name: "Catalogo Config", icon: <ViewModuleIcon />, link: "/catalog_manager", app: "eddeli" },
     {
-      name: "Inventory Control",
-      icon: <InventoryIcon />,
+      name: "Ventas y clientes",
+      icon: <PointOfSaleIcon />,
       app: "eddeli",
       menu: {
         items: [
+          { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
+          { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },
           { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
           { name: "Cobranzas", link: "/inventory/collections", icon: <RequestQuoteIcon /> },
-          { name: "Producción", link: "/inventory/production", icon: <FactoryIcon /> },
-          { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
+        ],
+      },
+    },
+    {
+      name: "Inventario",
+      icon: <Inventory2Icon />,
+      app: "eddeli",
+      menu: {
+        items: [
           { name: "Productos", link: "/inventory/products", icon: <Inventory2Icon /> },
-          { name: "Clientes", link: "/inventory/customers", icon: <PeopleIcon /> },
-          { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
-          { name: "Categorias", link: "/inventory/categories", icon: <CategoryIcon /> },
+          { name: "Movimientos", link: "/inventory/movement", icon: <CompareArrowsIcon /> },
+          { name: "Categorías", link: "/inventory/categories", icon: <CategoryIcon /> },
           { name: "Unidades", link: "/inventory/units", icon: <StraightenIcon /> },
           { name: "Recetas", link: "/inventory/recipes", icon: <ReceiptLongIcon /> },
-          { name: "Productos Destacados", link: "/inventory/productos-destacados", icon: <StarRounded /> },
-          { name: "Puntos de Venta", link: "/inventory/puntos-venta", icon: <StorefrontRounded /> },
+        ],
+      },
+    },
+    {
+      name: "Producción y canal",
+      icon: <FactoryIcon />,
+      app: "eddeli",
+      menu: {
+        items: [
+          { name: "Producción", link: "/inventory/production", icon: <FactoryIcon /> },
+          { name: "Puntos de venta", link: "/inventory/puntos-venta", icon: <StorefrontRounded /> },
+          { name: "Productos destacados", link: "/inventory/productos-destacados", icon: <StarRounded /> },
         ],
       },
     },
@@ -248,15 +269,24 @@ const permisos = {
     },
   ],
   Administrador: [
-    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
     { name: "Piano", icon: <PianoIcon />, link: "/piano", app: "softed" },
     { name: "PianoPro", icon: <PianoIcon />, link: "/pianoPro", app: "softed" },
     { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
     { name: "Ver mi CV", icon: <PictureAsPdfIcon />, link: "/cv/ver", app: "alumni" },
     { name: "Plantillas de CV", icon: <CollectionsBookmark />, link: "/cv/plantillas", app: "alumni" },
-    { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon />, app: "eddeli" },
-    { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn />, app: "eddeli" },
-    { name: "Cobranzas", link: "/inventory/collections", icon: <RequestQuoteIcon />, app: "eddeli" },
+    {
+      name: "EdDeli · Ventas",
+      icon: <PointOfSaleIcon />,
+      app: "eddeli",
+      menu: {
+        items: [
+          { name: "Pedidos", link: "/inventory/orders", icon: <AssignmentIcon /> },
+          { name: "Finanzas", link: "/inventory/finance", icon: <MonetizationOn /> },
+          { name: "Cobranzas", link: "/inventory/collections", icon: <RequestQuoteIcon /> },
+        ],
+      },
+    },
 
     {
       name: "Encuestas",
@@ -310,7 +340,7 @@ const permisos = {
     },
   ],
   Empresa: [
-    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
     { name: "Bolsa de empleo", icon: <WorkIcon />, link: "/bolsa-empleo", app: "alumni" },
     { name: "Perfil empresa", icon: <BusinessIcon />, link: "/bolsa-empleo/empresa/perfil", app: "alumni" },
     { name: "Mis ofertas", icon: <WorkIcon />, link: "/bolsa-empleo/empresa/ofertas", app: "alumni" },
@@ -326,7 +356,7 @@ const permisos = {
     },
   ],
   Profesional: [
-    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
     { name: "Bolsa de empleo", icon: <WorkIcon />, link: "/bolsa-empleo", app: "alumni" },
     { name: "Mis postulaciones", icon: <AssignmentInd />, link: "/bolsa-empleo/mis-postulaciones", app: "alumni" },
     { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
@@ -343,8 +373,388 @@ const permisos = {
       },
     },
   ],
+  // Permisos base para app Turnos (usuarios, roles, cuentas, comandos, logs, img)
+  turnos_Programador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Clientes", icon: <PeopleIcon />, link: "/clientes" },
+    { name: "Empleados", icon: <PeopleIcon />, link: "/empleados" },
+    { name: "Servicios", icon: <CategoryIcon />, link: "/servicios" },
+    { name: "Servicio extra", icon: <StarRounded />, link: "/servicio-extra" },
+    { name: "Agenda", icon: <CalendarMonth />, link: "/agenda" },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Programar notificaciones", link: "/notification-programs", icon: <NotificationsIcon /> },
+          { name: "Info", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+    {
+      name: "Programador",
+      icon: <Terminal />,
+      menu: {
+        items: [
+          { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
+          { name: "Logs", link: "/logs", icon: <ListIcon /> },
+          { name: "Control de Imágenes", link: "/img", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <InsertDriveFile /> },
+          { name: "Componentes", link: "/componentes", icon: <ViewModule /> },
+          { name: "Tokens", link: "/tokens", icon: <VpnKey /> },
+        ],
+      },
+    },
+  ],
+  turnos_Empleado: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Clientes", icon: <PeopleIcon />, link: "/clientes" },
+    { name: "Mis turnos", icon: <CalendarMonth />, link: "/agenda" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  // App Música (API musicaapi): usuarios, roles, cuentas, panel
+  musica_Programador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Canciones", icon: <LyricsIcon />, link: "/canciones" },
+    { name: "Piano Pro", icon: <PianoIcon />, link: "/pianoPro" },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Info", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+    {
+      name: "Programador",
+      icon: <Terminal />,
+      menu: {
+        items: [
+          { name: "Comandos (backup)", link: "/comandos", icon: <IntegrationInstructions /> },
+        ],
+      },
+    },
+  ],
+  musica_Administrador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Canciones", icon: <LyricsIcon />, link: "/canciones" },
+    { name: "Piano Pro", icon: <PianoIcon />, link: "/pianoPro" },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Info", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  musica_Estudiante: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Canciones", icon: <LyricsIcon />, link: "/canciones" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Info", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  musica_Default: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Info", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  // Permisos para app Enfermería (Sistema Clínico)
+  enfermeria_Programador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Tutorial", icon: <MenuBookIcon />, link: "/tutorial" },
+    { name: "Pacientes", icon: <PeopleIcon />, link: "/pacientes" },
+    {
+      name: "Fichas médicas",
+      icon: <AssignmentIcon />,
+      menu: {
+        items: [
+          { name: "Añadir", link: "/ficha/anadir", icon: <AssignmentIcon /> },
+          { name: "Estadísticas", link: "/ficha/estadisticas", icon: <AssignmentIcon /> },
+        ],
+      },
+    },
+    { name: "Instituciones", icon: <BusinessIcon />, link: "/instituciones" },
+    { name: "CIE-10", icon: <CategoryIcon />, link: "/cie10" },
+    { name: "Logs", icon: <ListIcon />, link: "/logs" },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Programar notificaciones", link: "/notification-programs", icon: <NotificationsIcon /> },
+          { name: "Guardar copia de seguridad", icon: <SaveIcon />, action: "saveBackup" },
+          { name: "Descargar JSON", icon: <CloudDownloadIcon />, action: "downloadBackup" },
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+    {
+      name: "Programador",
+      icon: <Terminal />,
+      menu: {
+        items: [
+          { name: "Comandos", link: "/comandos", icon: <IntegrationInstructions /> },
+          { name: "Logs", link: "/logs", icon: <ListIcon /> },
+          { name: "Control de Imágenes", link: "/img", icon: <ImageIcon /> },
+          { name: "Control de Archivos", link: "/file", icon: <InsertDriveFile /> },
+          { name: "Componentes", link: "/componentes", icon: <ViewModule /> },
+          { name: "Tokens", link: "/tokens", icon: <VpnKey /> },
+        ],
+      },
+    },
+  ],
+  "enfermeria_Doctor/a": [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Tutorial", icon: <MenuBookIcon />, link: "/tutorial" },
+    { name: "Pacientes", icon: <PeopleIcon />, link: "/pacientes" },
+    {
+      name: "Fichas médicas",
+      icon: <AssignmentIcon />,
+      menu: {
+        items: [
+          { name: "Añadir", link: "/ficha/anadir", icon: <AssignmentIcon /> },
+          { name: "Estadísticas", link: "/ficha/estadisticas", icon: <AssignmentIcon /> },
+        ],
+      },
+    },
+    { name: "CIE-10", icon: <CategoryIcon />, link: "/cie10" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  "enfermeria_Enfermero/a": [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Tutorial", icon: <MenuBookIcon />, link: "/tutorial" },
+    { name: "Pacientes", icon: <PeopleIcon />, link: "/pacientes" },
+    {
+      name: "Fichas médicas",
+      icon: <AssignmentIcon />,
+      menu: {
+        items: [
+          { name: "Estructura", link: "/ficha/estructura", icon: <AssignmentIcon /> },
+          { name: "Añadir", link: "/ficha/anadir", icon: <AssignmentIcon /> },
+        ],
+      },
+    },
+    { name: "CIE-10", icon: <CategoryIcon />, link: "/cie10" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  "enfermeria_Pasante": [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Tutorial", icon: <MenuBookIcon />, link: "/tutorial" },
+    { name: "Pacientes", icon: <PeopleIcon />, link: "/pacientes" },
+    {
+      name: "Fichas médicas",
+      icon: <AssignmentIcon />,
+      menu: {
+        items: [
+          { name: "Estructura", link: "/ficha/estructura", icon: <AssignmentIcon /> },
+          { name: "Añadir", link: "/ficha/anadir", icon: <AssignmentIcon /> },
+        ],
+      },
+    },
+    { name: "CIE-10", icon: <CategoryIcon />, link: "/cie10" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  enfermeria_Administrador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Tutorial", icon: <MenuBookIcon />, link: "/tutorial" },
+    { name: "Pacientes", icon: <PeopleIcon />, link: "/pacientes" },
+    { name: "Estructura de ficha", icon: <AssignmentIcon />, link: "/ficha/estructura" },
+    { name: "Instituciones", icon: <BusinessIcon />, link: "/instituciones" },
+    { name: "CIE-10", icon: <CategoryIcon />, link: "/cie10" },
+    { name: "Logs", icon: <ListIcon />, link: "/logs" },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Guardar copia de seguridad", icon: <SaveIcon />, action: "saveBackup" },
+          { name: "Descargar JSON", icon: <CloudDownloadIcon />, action: "downloadBackup" },
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  enfermeria_Moderador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Tutorial", icon: <MenuBookIcon />, link: "/tutorial" },
+    { name: "Pacientes", icon: <PeopleIcon />, link: "/pacientes" },
+    {
+      name: "Fichas médicas",
+      icon: <AssignmentIcon />,
+      menu: {
+        items: [
+          { name: "Añadir", link: "/ficha/anadir", icon: <AssignmentIcon /> },
+          { name: "Estadísticas", link: "/ficha/estadisticas", icon: <AssignmentIcon /> },
+        ],
+      },
+    },
+    { name: "Instituciones", icon: <BusinessIcon />, link: "/instituciones" },
+    { name: "CIE-10", icon: <CategoryIcon />, link: "/cie10" },
+    { name: "Logs", icon: <ListIcon />, link: "/logs" },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
+  turnos_Administrador: [
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
+    { name: "Clientes", icon: <PeopleIcon />, link: "/clientes" },
+    { name: "Empleados", icon: <PeopleIcon />, link: "/empleados" },
+    { name: "Servicios", icon: <CategoryIcon />, link: "/servicios" },
+    { name: "Servicio extra", icon: <StarRounded />, link: "/servicio-extra" },
+    { name: "Agenda", icon: <CalendarMonth />, link: "/agenda" },
+    {
+      name: "Entidades",
+      icon: <AccountTree />,
+      menu: {
+        items: [
+          { name: "Cuentas", link: "/cuentas", icon: <AccountBox /> },
+          { name: "Roles", link: "/roles", icon: <Workspaces /> },
+          { name: "Usuarios", link: "/users", icon: <PeopleAlt /> },
+        ],
+      },
+    },
+    {
+      name: "Configuracion",
+      icon: <Settings />,
+      menu: {
+        items: [
+          { name: "Información", link: "/info", icon: <Info /> },
+          { name: "Panel de Control", link: "/panel_control", icon: <Dns /> },
+          { name: "Programar notificaciones", link: "/notification-programs", icon: <NotificationsIcon /> },
+          { name: "Tema", icon: <SettingsBrightnessIcon />, isThemeSelector: true },
+        ],
+      },
+    },
+  ],
   Estudiante: [
-    { name: "Home", icon: <Home />, link: "/" },
+    { name: "Dashboard", icon: <Dashboard />, link: "/" },
     { name: "Bolsa de empleo", icon: <WorkIcon />, link: "/bolsa-empleo", app: "alumni" },
     { name: "Mis postulaciones", icon: <AssignmentInd />, link: "/bolsa-empleo/mis-postulaciones", app: "alumni" },
     { name: "Hoja de vida", icon: <DescriptionIcon />, link: "/cv", app: "alumni" },
@@ -437,6 +847,12 @@ const openMobileMenu = Boolean(mobileAnchorEl);
 const handleOpenMobileMenu = (e) => setMobileAnchorEl(e.currentTarget);
 const handleCloseMobileMenu = () => setMobileAnchorEl(null);
 
+  /** Menú móvil EdDeli logueado: Inicio (vitrina /inicio) + catálogo + locales */
+  const [eddeliBarMenuAnchor, setEddeliBarMenuAnchor] = useState(null);
+  const openEddeliBarMenu = Boolean(eddeliBarMenuAnchor);
+  const handleOpenEddeliBarMenu = (e) => setEddeliBarMenuAnchor(e.currentTarget);
+  const handleCloseEddeliBarMenu = () => setEddeliBarMenuAnchor(null);
+
 
 
 
@@ -495,11 +911,30 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
   const handleAccordionChange = (panel) => (_e, isExp) => setExpandedAccordion(isExp ? panel : null);
 
   const pagesToShow = isAuthenticated
-    ? filterPermisosByApp(permisos[user.loginRol] || [], activeAppId)
+    ? activeAppId === "turnos"
+      ? permisos[`turnos_${user.loginRol}`] || permisos[user.loginRol] || []
+      : activeAppId === "enfermeria"
+      ? permisos[`enfermeria_${user.loginRol}`] || permisos[user.loginRol] || []
+      : activeAppId === "musica"
+      ? permisos[`musica_${user.loginRol}`] || permisos.musica_Default || []
+      : filterPermisosByApp(permisos[user.loginRol] || [], activeAppId)
     : [];
 
   const showDrawer = isAuthenticated;
   const showUserActions = isAuthenticated;
+
+  /** Con sesión: Inicio → vitrina (HomeLogout, /inicio); Catálogo + Locales. Dashboard del ERP sigue en el drawer (/). */
+  const eddeliBarNav = useMemo(() => {
+    if (!showUserActions || !(activeAppId === "eddeli" || activeAppId === "softed")) return [];
+    const nav = getPublicNavForApp(activeAppId);
+    const eddeliItems = nav.filter((item) => item.app === "eddeli");
+    const inicioVitrina = {
+      label: "Inicio",
+      icon: <HomeIcon fontSize="small" />,
+      to: "/inicio",
+    };
+    return [inicioVitrina, ...eddeliItems];
+  }, [showUserActions, activeAppId]);
 
   // ====== MENÚ PÚBLICO EN APPBAR (cuando NO está logeado) ======
   const [publicAnchorEl, setPublicAnchorEl] = useState(null);
@@ -554,8 +989,61 @@ const handleCloseMobileMenu = () => setMobileAnchorEl(null);
             {showUserActions ? user.loginRol : title}
           </Typography>
 
-          {/* Navegación pública (Panadería / Pastelería / Repostería / Puntos de Venta) SOLO si NO está logeado */}
-    {/* Navegación pública SOLO si NO está logeado (responsiva) */}
+          {/* EdDeli con sesión: Inicio (/inicio = HomeLogout) + Catálogo + Locales; drawer → Dashboard + Puntos de venta */}
+          {eddeliBarNav.length > 0 && (
+            <>
+              {isMdUp ? (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, ml: 2 }}>
+                  {eddeliBarNav.map((item) => (
+                    <Button
+                      key={`eddeli-bar-${item.label}`}
+                      color="inherit"
+                      onClick={() => navigate(item.to)}
+                      startIcon={item.icon || null}
+                      sx={{ textTransform: "none", fontWeight: 600, whiteSpace: "nowrap" }}
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
+                </Box>
+              ) : (
+                <Box sx={{ ml: 1 }}>
+                  <IconButton
+                    color="inherit"
+                    aria-label="inicio vitrina, catálogo y locales"
+                    onClick={handleOpenEddeliBarMenu}
+                    edge="start"
+                  >
+                    <StorefrontIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={eddeliBarMenuAnchor}
+                    open={openEddeliBarMenu}
+                    onClose={handleCloseEddeliBarMenu}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
+                    PaperProps={{ sx: { minWidth: 220 } }}
+                  >
+                    {eddeliBarNav.map((item) => (
+                      <MenuItem
+                        key={`eddeli-m-${item.label}`}
+                        onClick={() => {
+                          handleCloseEddeliBarMenu();
+                          navigate(item.to);
+                        }}
+                        sx={{ gap: 1 }}
+                      >
+                        {item.icon || null}
+                        <ListItemText primary={item.label} />
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+              )}
+            </>
+          )}
+
+          {/* Navegación pública (Inicio / Catálogo / Locales / …) SOLO si NO está logeado */}
 {!showUserActions && (
   <>
     {isMdUp ? (

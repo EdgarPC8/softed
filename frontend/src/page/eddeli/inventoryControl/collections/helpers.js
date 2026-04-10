@@ -28,6 +28,22 @@ export const money = (n) =>
     Number(n || 0)
   );
 
+/**
+ * P/U en cobranzas: hasta 4 decimales si el valor no coincide con redondeo a 2
+ * (evita que se vea $0,11 pero Total vendido refleje 0,111 × cantidad).
+ */
+export const moneyUnitPrice = (n) => {
+  const x = Number(n || 0);
+  const r2 = Number(x.toFixed(2));
+  const needsExtra = Math.abs(x - r2) > 1e-6;
+  return new Intl.NumberFormat("es-EC", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: needsExtra ? 4 : 2,
+  }).format(x);
+};
+
 export const todayISO = () => {
   const d = new Date();
   const yyyy = d.getFullYear();
@@ -49,6 +65,9 @@ export const toNum = (v, fallback = 0) => {
   const n = Number(v);
   return Number.isFinite(n) ? n : fallback;
 };
+
+/** Misma comparación para IDs de grupo (evita 6 !== "6" en JSON/Sequelize). */
+export const sameGroupId = (a, b) => Number(a) === Number(b);
 
 /** Cantidad cobrable (entregado - dañado - yapa) */
 export const getBillableQty = (it) => {

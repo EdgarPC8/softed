@@ -1,4 +1,4 @@
-import axios, { jwt } from "../axios.js";
+import { axiosForAlumniModules as axios, jwt } from "../axios.js";
 
 const prefix = "/bolsa-empleo";
 

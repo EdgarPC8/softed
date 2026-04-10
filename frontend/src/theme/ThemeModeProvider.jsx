@@ -4,6 +4,8 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 import { getTheme } from "./getTheme";
 import { getTheme as getThemeAlumni } from "./getThemeAlumni";
 import { getTheme as getThemeSofted } from "./getThemeSofted";
+import { getTheme as getThemeTurnos } from "./getThemeTurnos";
+import { getTheme as getThemeEnfermeria } from "./getThemeEnfermeria";
 import { activeAppId } from "../../appConfig.js";
 
 const STORAGE_KEY = "ui-theme-mode"; // 'light' | 'dark' | 'neon' | 'system'
@@ -21,6 +23,9 @@ export function useThemeMode() {
 function getThemeForActiveApp(mode) {
   if (activeAppId === "alumni") return getThemeAlumni(mode);
   if (activeAppId === "softed") return getThemeSofted(mode);
+  if (activeAppId === "turnos") return getThemeTurnos(mode);
+  if (activeAppId === "enfermeria") return getThemeEnfermeria(mode);
+  if (activeAppId === "musica") return getThemeTurnos(mode);
   return getTheme(mode);
 }
 

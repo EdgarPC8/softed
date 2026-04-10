@@ -47,6 +47,7 @@ import {
   getItemGroupId,
   toNum,
   getBillableQty,
+  sameGroupId,
 } from "./helpers.js";
 import { buildReportTxtByProduct, buildDetailedReportTxt } from "./reportBuilders.js";
 import ItemsTable from "./ItemsTable.jsx";
@@ -148,8 +149,11 @@ export default function CollectionsWorkbench() {
     for (const o of orders) {
       const itemsArr = Array.isArray(o.items) ? o.items : [];
       for (const it of itemsArr) {
-        const gid = getItemGroupId(it);
-        if (gid) groupIdByItemId.set(it.id, gid);
+        const raw = getItemGroupId(it);
+        if (raw == null || raw === "__grouped__") continue;
+        const gid = Number(raw);
+        if (!Number.isFinite(gid)) continue;
+        groupIdByItemId.set(it.id, gid);
       }
     }
     
@@ -164,9 +168,11 @@ export default function CollectionsWorkbench() {
     const paidByGroupId = new Map();
     for (const p of payments) {
       if (p.status !== "completed") continue;
+      const pg = Number(p.groupId);
+      if (!Number.isFinite(pg)) continue;
       paidByGroupId.set(
-        p.groupId,
-        Number(((paidByGroupId.get(p.groupId) || 0) + toNum(p.amount)).toFixed(2))
+        pg,
+        Number(((paidByGroupId.get(pg) || 0) + toNum(p.amount)).toFixed(2))
       );
     }
     
@@ -175,7 +181,7 @@ export default function CollectionsWorkbench() {
       if (g.status !== "open") continue;
       
       // Calcular total del grupo
-      const itemIds = itemsByGroupId.get(g.id) || [];
+      const itemIds = itemsByGroupId.get(Number(g.id)) || [];
       let groupTotalCalc = 0;
       for (const o of orders) {
         const itemsArr = Array.isArray(o.items) ? o.items : [];
@@ -192,7 +198,7 @@ export default function CollectionsWorkbench() {
         }
       }
       
-      const groupPaidAmount = paidByGroupId.get(g.id) || 0;
+      const groupPaidAmount = paidByGroupId.get(Number(g.id)) || 0;
       const remaining = Number(Math.max(0, groupTotalCalc - groupPaidAmount).toFixed(2));
       if (remaining <= 0) continue;
       
@@ -276,8 +282,8 @@ export default function CollectionsWorkbench() {
   const itemsByGroup = useMemo(() => {
     const map = new Map();
     for (const it of customerItems) {
-      const gid = it?.itemGroupId ?? it?.groupId;
-      if (!gid) continue;
+      const gid = Number(it?.itemGroupId ?? it?.groupId);
+      if (!Number.isFinite(gid)) continue;
       if (!map.has(gid)) map.set(gid, []);
       map.get(gid).push(it);
     }
@@ -301,7 +307,9 @@ export default function CollectionsWorkbench() {
     return Number(sum(arr, (it) => itemLineTotal(it)).toFixed(2));
   };
   const groupPaid = (groupId) => {
-    const arr = payments.filter((p) => p.groupId === groupId);
+    const arr = payments.filter(
+      (p) => sameGroupId(p.groupId, groupId) && p.status === "completed"
+    );
     return Number(sum(arr, (p) => p.amount).toFixed(2));
   };
   const groupRemaining = (groupId) => {
@@ -326,7 +334,10 @@ export default function CollectionsWorkbench() {
     [itemsByGroup, selectedGroupId]
   );
   const selectedGroupPayments = useMemo(
-    () => payments.filter((p) => p.groupId === selectedGroupId),
+    () =>
+      payments.filter(
+        (p) => selectedGroupId != null && sameGroupId(p.groupId, selectedGroupId)
+      ),
     [payments, selectedGroupId]
   );
   const selectedItemsTotal = useMemo(() => {

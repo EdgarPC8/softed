@@ -13,7 +13,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { activeAppId } from "../../appConfig.js";
+import { activeAppId, activeApp } from "../../appConfig.js";
 import bannerImageEddeli from "/home_edDeli.png";
 import bannerImageAlumni from "/home_istms.png";
 
@@ -35,6 +35,7 @@ function Login() {
     event.preventDefault();
 
     const loginPayload = { username, password };
+
     const result = await signin(loginPayload);
 
     if (result?.selectRole) {
@@ -63,9 +64,23 @@ function Login() {
   const loginBackground =
     activeAppId === "alumni" ? bannerImageAlumni : activeAppId === "eddeli" ? bannerImageEddeli : bannerImageAlumni;
 
-  return (
-    <Box
-      sx={{
+  const isTurnos = activeAppId === "turnos";
+  const isEnfermeriaBg = activeAppId === "enfermeria";
+  const isMusicaBg = activeAppId === "musica";
+  const boxSx = isTurnos || isEnfermeriaBg || isMusicaBg
+    ? {
+        height: "100vh",
+        background: isEnfermeriaBg
+          ? "linear-gradient(135deg, #1976D2 0%, #0D47A1 50%, #42A5F5 100%)"
+          : isMusicaBg
+          ? (activeApp?.background ||
+              "linear-gradient(135deg, #1a237e 0%, #4a148c 50%, #880e4f 100%)")
+          : "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }
+    : {
         height: "100vh",
         backgroundImage: `url(${loginBackground})`,
         backgroundSize: "cover",
@@ -74,8 +89,10 @@ function Login() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-      }}
-    >
+      };
+
+  return (
+    <Box sx={boxSx}>
       <Grid item xs={12} sm={8} md={4}>
         <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
           <Box

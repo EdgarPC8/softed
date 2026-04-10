@@ -1076,9 +1076,7 @@ function StoresPage() {
       imageFile: null,
       customFileName: "",
       imageSubfolder: "EdDeli/stores",
-customFileName: "",
-moveImage: false, // opcional
-
+      moveImage: false,
     });
     setOpenForm(true);
   };
@@ -1100,15 +1098,13 @@ moveImage: false, // opcional
       isActive: Boolean(row.isActive),
       imageUrl: row.imageUrl || "",
       imageFile: null,
-      customFileName: "",
       imageSubfolder: row.imageUrl?.includes("/")
-  ? row.imageUrl.split("/").slice(0, -1).join("/")
-  : "EdDeli/stores",
-customFileName: row.imageUrl
-  ? row.imageUrl.split("/").pop().replace(/\.[^.]+$/, "") // sin extensión
-  : "",
-moveImage: false,
-
+        ? row.imageUrl.split("/").slice(0, -1).join("/")
+        : "EdDeli/stores",
+      customFileName: row.imageUrl
+        ? row.imageUrl.split("/").pop().replace(/\.[^.]+$/, "")
+        : "",
+      moveImage: false,
     });
     setOpenForm(true);
   };
@@ -1274,7 +1270,7 @@ moveImage: false,
   return (
     <Container sx={{ py: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">Puntos de venta (Stores)</Typography>
+        <Typography variant="h6">Puntos de venta</Typography>
         <Button variant="contained" startIcon={<Add />} onClick={handleOpenCreate}>
           Agregar punto de venta
         </Button>

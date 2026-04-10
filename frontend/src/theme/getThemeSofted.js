@@ -1,6 +1,7 @@
 // src/theme/getThemeSofted.js - Tema azul para SoftEd
 import { createTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material/styles";
+import { getChartsPalette } from "./chartPalette";
 
 const commonColors = {
   red: "#FF6F61",
@@ -52,6 +53,7 @@ export function getTheme(mode = "light") {
         },
         divider: alpha("#2196F3", 0.15),
         colors: commonColors,
+        charts: getChartsPalette("dark"),
       },
       shape: { borderRadius: 14 },
       typography: {
@@ -99,6 +101,7 @@ export function getTheme(mode = "light") {
         },
         divider: alpha("#18FFFF", 0.25),
         colors: { ...commonColors, neonCyan: "#18FFFF", neonBlue: "#448AFF" },
+        charts: getChartsPalette("neon"),
       },
       shape: { borderRadius: 18 },
       shadows: [
@@ -165,6 +168,7 @@ export function getTheme(mode = "light") {
       },
       divider: alpha("#1976D2", 0.15),
       colors: commonColors,
+      charts: getChartsPalette("light"),
     },
     shape: { borderRadius: 12 },
     typography: {

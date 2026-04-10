@@ -33,6 +33,11 @@ import {
   Badge as BadgeIcon,
   Cake as CakeIcon,
   Wc as GenderIcon,
+  Work as WorkIcon,
+  Public as PublicIcon,
+  Groups as GroupsIcon,
+  Favorite as FavoriteIcon,
+  Place as PlaceIcon,
 } from '@mui/icons-material';
 import {
   updateUserPhotoRequest,
@@ -60,6 +65,11 @@ const Profile = () => {
     bloodType: "",
     personalEmail: "",
     institutionalEmail: "",
+    especialidad: "",
+    nacionalidad: "",
+    grupo_cultural: "",
+    estado_civil: "",
+    lugar_nacimiento: "",
   });
 
   const loadUserData = async () => {
@@ -74,6 +84,11 @@ const Profile = () => {
         bloodType: data.bloodType ?? "",
         personalEmail: data.personalEmail ?? "",
         institutionalEmail: data.institutionalEmail ?? "",
+        especialidad: data.especialidad ?? "",
+        nacionalidad: data.nacionalidad ?? "",
+        grupo_cultural: data.grupo_cultural ?? "",
+        estado_civil: data.estado_civil ?? "",
+        lugar_nacimiento: data.lugar_nacimiento ?? "",
       });
     } catch (e) {
       console.error(e);
@@ -105,6 +120,11 @@ const Profile = () => {
         bloodType: userData.bloodType ?? "",
         personalEmail: userData.personalEmail ?? "",
         institutionalEmail: userData.institutionalEmail ?? "",
+        especialidad: userData.especialidad ?? "",
+        nacionalidad: userData.nacionalidad ?? "",
+        grupo_cultural: userData.grupo_cultural ?? "",
+        estado_civil: userData.estado_civil ?? "",
+        lugar_nacimiento: userData.lugar_nacimiento ?? "",
       });
     }
     setIsEditingData(false);
@@ -118,7 +138,12 @@ const Profile = () => {
     userData.cellPhone ||
     userData.bloodType ||
     userData.personalEmail ||
-    userData.institutionalEmail
+    userData.institutionalEmail ||
+    userData.especialidad ||
+    userData.nacionalidad ||
+    userData.grupo_cultural ||
+    userData.estado_civil ||
+    userData.lugar_nacimiento
   );
 
   const handleDialog = () => {
@@ -384,6 +409,51 @@ const Profile = () => {
                         </Box>
                       </Box>
                     )}
+                    {userData.especialidad && (
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <WorkIcon sx={{ color: "text.secondary", mt: 0.25, fontSize: 22 }} />
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">Especialidad</Typography>
+                          <Typography variant="body1">{userData.especialidad}</Typography>
+                        </Box>
+                      </Box>
+                    )}
+                    {userData.nacionalidad && (
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <PublicIcon sx={{ color: "text.secondary", mt: 0.25, fontSize: 22 }} />
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">Nacionalidad</Typography>
+                          <Typography variant="body1">{userData.nacionalidad}</Typography>
+                        </Box>
+                      </Box>
+                    )}
+                    {userData.grupo_cultural && (
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <GroupsIcon sx={{ color: "text.secondary", mt: 0.25, fontSize: 22 }} />
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">Grupo cultural</Typography>
+                          <Typography variant="body1">{userData.grupo_cultural}</Typography>
+                        </Box>
+                      </Box>
+                    )}
+                    {userData.estado_civil && (
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <FavoriteIcon sx={{ color: "text.secondary", mt: 0.25, fontSize: 22 }} />
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">Estado civil</Typography>
+                          <Typography variant="body1">{userData.estado_civil}</Typography>
+                        </Box>
+                      </Box>
+                    )}
+                    {userData.lugar_nacimiento && (
+                      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <PlaceIcon sx={{ color: "text.secondary", mt: 0.25, fontSize: 22 }} />
+                        <Box>
+                          <Typography variant="caption" color="text.secondary" display="block">Lugar de nacimiento</Typography>
+                          <Typography variant="body1">{userData.lugar_nacimiento}</Typography>
+                        </Box>
+                      </Box>
+                    )}
                     {!hasAnyData && (
                       <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
                         Agregue su dirección, teléfonos, tipo de sangre o correos. Use el ícono de lápiz para editar.
@@ -491,6 +561,77 @@ const Profile = () => {
                     startAdornment: (
                       <InputAdornment position="start">
                         <Business fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Especialidad"
+                  value={dataForm.especialidad}
+                  onChange={(e) => setDataForm((p) => ({ ...p, especialidad: e.target.value }))}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <WorkIcon fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Nacionalidad"
+                  value={dataForm.nacionalidad}
+                  onChange={(e) => setDataForm((p) => ({ ...p, nacionalidad: e.target.value }))}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PublicIcon fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Grupo cultural"
+                  value={dataForm.grupo_cultural}
+                  onChange={(e) => setDataForm((p) => ({ ...p, grupo_cultural: e.target.value }))}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <GroupsIcon fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Estado civil"
+                  placeholder="Ej. Soltero/a, Casado/a"
+                  value={dataForm.estado_civil}
+                  onChange={(e) => setDataForm((p) => ({ ...p, estado_civil: e.target.value }))}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <FavoriteIcon fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Lugar de nacimiento"
+                  value={dataForm.lugar_nacimiento}
+                  onChange={(e) => setDataForm((p) => ({ ...p, lugar_nacimiento: e.target.value }))}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PlaceIcon fontSize="small" color="action" />
                       </InputAdornment>
                     ),
                   }}

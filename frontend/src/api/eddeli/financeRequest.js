@@ -78,6 +78,7 @@ export const getWeeklySales = async () => {
     headers: { Authorization: jwt() },
   });
 };
+/** Respuesta: { paid, delivered } cada uno con products, dataset, datasetAmount */
 export const getTopProductsDailySales = async () => {
   return await axios.get("/finance/getTopProductsDailySales", {
     headers: { Authorization: jwt() },

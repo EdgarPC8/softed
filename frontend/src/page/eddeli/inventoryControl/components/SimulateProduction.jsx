@@ -1,5 +1,5 @@
 // RenderFromFinal.jsx
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   Box,
@@ -7,9 +7,9 @@ import {
   Paper,
   Typography,
   TextField,
-  MenuItem,
   Button,
   CircularProgress,
+  LinearProgress,
   List,
   ListItem,
   ListItemText,
@@ -22,12 +22,10 @@ import SaveIcon from "@mui/icons-material/Save";
 
 // API (ajusta la ruta si hace falta)
 import {
-  getAllProducts,
   simulateProduction,
   registerProductionFinalFromPayload,
 } from "../../../../api/eddeli/inventoryControlRequest";
 import { useAuth } from "../../../../context/AuthContext";
-import SearchableSelect from "../../../../Components/SearchableSelect";
 /* ---------------- Utils ---------------- */
 const numberOrZero = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
 
@@ -142,8 +140,12 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
               key={item.id ?? pathKey}
               sx={{
                 mb: 1,
-                borderLeft: level > 0 ? "2px solid #ccc" : "none",
                 pl: 2,
+                ...(level > 0 && {
+                  borderLeft: 2,
+                  borderStyle: "solid",
+                  borderColor: "divider",
+                }),
               }}
             >
               <ListItem
@@ -179,6 +181,7 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
                           <TextField
                             type="number"
                             size="small"
+                            variant="outlined"
                             label="Cantidad"
                             value={editState.cantidad ?? ""}
                             onChange={(e) => handleValueChange(pathKey, "cantidad", e.target.value)}
@@ -192,6 +195,7 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
                             <TextField
                               type="number"
                               size="small"
+                              variant="outlined"
                               label="Sobrante"
                               value={editState.sobrante ?? ""}
                               onChange={(e) =>
@@ -252,49 +256,88 @@ function TreeEditor({ requiere = [], level = 0, onChange }) {
 
 
 /* ======================= Componente: RenderFromFinal ======================= */
-export default function RenderFromFinal({ fetchData }) {
-  const [products, setProducts] = React.useState([]);
-  const [productId, setProductId] = React.useState("");
-  const [quantity, setQuantity] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [resultado, setResultado] = React.useState(null);
-  const [selectedProduct, setSelectedProduct] = useState("");
+/**
+ * Modo página: `productId` + `fetchData` (Producción).
+ * Modo embebido (movimientos): `embedProductId`, `embedQuantity`, `onSimulated`.
+ */
+export default function RenderFromFinal({
+  fetchData,
+  productId,
+  embedProductId,
+  embedQuantity,
+  onSimulated,
+}) {
+  const isEmbed =
+    typeof onSimulated === "function" &&
+    embedProductId != null &&
+    Number(embedQuantity) > 0;
 
+  const [quantity, setQuantity] = useState("1");
+  const [loading, setLoading] = useState(false);
+  const [resultado, setResultado] = useState(null);
 
   const { toast: toastAuth } = useAuth();
+  const onSimulatedRef = useRef(onSimulated);
+  onSimulatedRef.current = onSimulated;
 
-  /* --- Cargar productos finales --- */
-  React.useEffect(() => {
+  /* --- Embebido: simular para el formulario de movimiento --- */
+  useEffect(() => {
+    if (!isEmbed) return;
+    let cancelled = false;
+    setLoading(true);
     (async () => {
       try {
-        const res = await getAllProducts();
-        const list = res?.data?.data ?? res?.data ?? [];
-        const arr = Array.isArray(list) ? list : [];
-        const finales = arr.filter((p) => !p.esIntermedio && p.type !== "raw");
-        setProducts(finales);
-        if (finales[0]) setProductId(String(finales[0].id));
+        const res = await simulateProduction(Number(embedProductId), Number(embedQuantity));
+        const r = res?.data?.resultado ?? res?.data ?? null;
+        if (cancelled) return;
+        if (r) {
+          const cloned = clone(r);
+          setResultado(cloned);
+          onSimulatedRef.current?.(cloned);
+        } else {
+          setResultado(null);
+        }
       } catch (e) {
-        console.error("Error cargando productos:", e);
+        console.error("Error en simulación (embed):", e);
+        if (!cancelled) setResultado(null);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     })();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [isEmbed, embedProductId, embedQuantity]);
 
-  /* --- Simular --- */
-  const handleSimular = async () => {
-    if (!productId || !quantity) return;
-    setLoading(true);
-    try {
-      const res = await simulateProduction(Number(productId), Number(quantity));
-      const r = res?.data?.resultado ?? res?.data ?? null;
-      if (r) setResultado(clone(r));
-    } catch (e) {
-      console.error("Error en simulación:", e);
-    } finally {
-      setLoading(false);
+  /* --- Página: simular al tener producto y cantidad --- */
+  useEffect(() => {
+    if (isEmbed || !productId) return;
+    const n = Number(quantity);
+    if (!Number.isFinite(n) || n <= 0) {
+      setResultado(null);
+      return;
     }
-  };
+    let cancelled = false;
+    setLoading(true);
+    (async () => {
+      try {
+        const res = await simulateProduction(Number(productId), n);
+        const r = res?.data?.resultado ?? res?.data ?? null;
+        if (cancelled) return;
+        if (r) setResultado(clone(r));
+        else setResultado(null);
+      } catch (e) {
+        console.error("Error en simulación:", e);
+        if (!cancelled) setResultado(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isEmbed, productId, quantity]);
 
-  /* --- Procesar --- */
   const handleProcess = async () => {
     if (!resultado) return;
 
@@ -310,12 +353,8 @@ export default function RenderFromFinal({ fetchData }) {
       promise: registerProductionFinalFromPayload(payload),
       onSuccess: () => {
         fetchData?.();
-
-        // ✅ resetear estados → limpia UI y cierra árbol
         setResultado(null);
-        setQuantity("");
-        setProductId(products[0] ? String(products[0].id) : "");
-
+        setQuantity("1");
         return {
           title: "Producción",
           description: "Producción registrada correctamente",
@@ -324,62 +363,49 @@ export default function RenderFromFinal({ fetchData }) {
     });
   };
 
+  if (isEmbed) {
+    return (
+      <Box>
+        {loading && <LinearProgress sx={{ mb: 1 }} />}
+        {resultado && (
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }} color="text.secondary">
+              Requerimientos según receta (producción)
+            </Typography>
+            <TreeEditor
+              requiere={resultado.requiere}
+              onChange={(newTree) => setResultado((prev) => ({ ...prev, requiere: newTree }))}
+            />
+          </Paper>
+        )}
+      </Box>
+    );
+  }
+
   return (
     <Box>
-      {/* Controles */}
       <Paper sx={{ p: 2, mb: 2 }}>
+        {loading && <LinearProgress sx={{ mb: 2 }} />}
         <Grid container spacing={2} alignItems="flex-end">
-          <Grid item xs={12} md={7}>
-            {/* <TextField
-              label="Producto final"
-              select
-              fullWidth
-              variant="standard"
-              value={productId}
-              onChange={(e) => setProductId(String(e.target.value))}
-              SelectProps={{ MenuProps: { PaperProps: { sx: { maxHeight: 320 } } } }}
-            >
-              {products.map((p) => (
-                <MenuItem key={p.id} value={p.id}>
-                  {p.name}
-                </MenuItem>
-              ))}
-            </TextField> */}
-<SearchableSelect
-  label="Seleccionar Producto Final"
-  items={products}
-  value={productId}
-  onChange={(e) => setProductId(String(e))}
-/>
-
-          </Grid>
-
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
+              variant="outlined"
               type="number"
               label="Cantidad a producir"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               inputProps={{ step: "0.01", min: 0 }}
-              onWheel={(e) => e.target.blur()} // evita cambios al hacer scroll
+              onWheel={(e) => e.target.blur()}
+              helperText="La simulación se actualiza al cambiar la cantidad."
             />
           </Grid>
-
-          <Grid item xs={12} md={2}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={handleSimular}
-              disabled={!productId || !quantity || loading}
-            >
-              {loading ? <CircularProgress size={20} /> : "Simular"}
-            </Button>
+          <Grid item xs={12} md={6} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {loading && <CircularProgress size={28} />}
           </Grid>
         </Grid>
       </Paper>
 
-      {/* Resultado con árbol */}
       {resultado && (
         <Paper sx={{ p: 2 }}>
           <Stack direction="row" spacing={1} sx={{ mb: 1, flexWrap: "wrap" }}>
@@ -389,9 +415,7 @@ export default function RenderFromFinal({ fetchData }) {
             <Chip
               size="small"
               color="primary"
-              label={`Cantidad: ${numberOrZero(
-                resultado.cantidadDeseada
-              )} ${resultado.unidad || "u"}`}
+              label={`Cantidad: ${numberOrZero(resultado.cantidadDeseada)} ${resultado.unidad || "u"}`}
             />
           </Stack>
 

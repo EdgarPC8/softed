@@ -22,6 +22,7 @@ import ContentPaste from '@mui/icons-material/ContentPaste';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import LibraryMusic from '@mui/icons-material/LibraryMusic';
 import Refresh from '@mui/icons-material/Refresh';
+import { getExamplePianoSongEditorState } from '../../piano/examplePianoSong';
 import { usePianoSampler } from '../../piano/hooks/usePianoSampler';
 import { useMIDI } from '../../piano/hooks/useMIDI';
 import { usePianoPlayback } from '../../piano/hooks/usePianoPlayback';
@@ -161,6 +162,25 @@ const CHORD_OPTIONS = [
   { id: 'E7', label: 'E7 (Mi séptima)' },
 ];
 
+function normalizeChordArrayFromImport(data) {
+  if (!data || typeof data !== 'object') return [];
+  if (Array.isArray(data.chordsByBar)) {
+    return data.chordsByBar.map((x) => (x == null ? '' : String(x)));
+  }
+  if (typeof data.chords === 'string') {
+    try {
+      const p = JSON.parse(data.chords);
+      return Array.isArray(p) ? p.map((x) => (x == null ? '' : String(x))) : [];
+    } catch {
+      return [];
+    }
+  }
+  if (Array.isArray(data.chords)) {
+    return data.chords.map((x) => (x == null ? '' : String(x)));
+  }
+  return [];
+}
+
 function normalizeSongPayload(data) {
   const rawTitle = typeof data?.title === 'string' ? data.title.trim() : '';
   const title = rawTitle || 'Sin título';
@@ -175,8 +195,13 @@ function normalizeSongPayload(data) {
           hand: n.hand === 'L' ? 'L' : 'R',
         }))
     : [];
-  const chordsByBar = Array.isArray(data?.chordsByBar) ? data.chordsByBar : [];
-  const keySignature = typeof data?.keySignature === 'string' ? data.keySignature : 'C';
+  const chordsByBar = Array.isArray(data?.chordsByBar)
+    ? data.chordsByBar.map((x) => (x == null ? '' : String(x)))
+    : normalizeChordArrayFromImport(data);
+  const keySignature =
+    typeof data?.keySignature === 'string' && data.keySignature.trim()
+      ? data.keySignature.trim()
+      : 'C';
   return { title, bpm, notes, chordsByBar, keySignature };
 }
 
@@ -192,10 +217,16 @@ function formatDate(dateStr) {
   }
 }
 
-export default function ModeProCreate({ onBack }) {
-  const [title, setTitle] = useState('');
-  const [bpm, setBpm] = useState(120);
-  const [notes, setNotes] = useState([]);
+function getInitialEditorState(developerMode) {
+  if (developerMode) return getExamplePianoSongEditorState();
+  return { title: '', bpm: 120, notes: [], chordsByBar: [], keySignature: 'C' };
+}
+
+export default function ModeProCreate({ onBack, developerMode = false }) {
+  const init = getInitialEditorState(developerMode);
+  const [title, setTitle] = useState(init.title);
+  const [bpm, setBpm] = useState(init.bpm);
+  const [notes, setNotes] = useState(init.notes);
   const [isRecording, setIsRecording] = useState(false);
   const [midiOctaveShift, setMidiOctaveShift] = useState(0);
   const [pasteOpen, setPasteOpen] = useState(false);
@@ -204,19 +235,24 @@ export default function ModeProCreate({ onBack }) {
   const [loadingSongs, setLoadingSongs] = useState(false);
   const [selectedSongId, setSelectedSongId] = useState(null);
   const [viewMode, setViewMode] = useState('editor');
-  const [chordsByBar, setChordsByBar] = useState([]);
+  const [chordsByBar, setChordsByBar] = useState(init.chordsByBar);
   const [startBar, setStartBar] = useState(0);
   const [loopBars, setLoopBars] = useState(0);
-  const [keySignature, setKeySignature] = useState('C');
+  const [keySignature, setKeySignature] = useState(init.keySignature);
   const [highlightedKeys, setHighlightedKeys] = useState({});
   const [overlayVersion, setOverlayVersion] = useState(0);
+  const [rollDims, setRollDims] = useState({
+    width: CANVAS_WIDTH + 280,
+    height: 420,
+  });
 
   const overlayNotesRef = useRef(new Set());
   const recordStartRef = useRef(null);
   const pianoCanvasRef = useRef(null);
+  const rollContainerRef = useRef(null);
   const { toast } = useAuth();
   const { playNote, samplerRef } = usePianoSampler();
-  const { isPlaying, playheadBeats, play, pause, stop } = usePianoPlayback(
+  const { isPlaying, play, pause, stop } = usePianoPlayback(
     notes,
     bpm,
     samplerRef
@@ -267,6 +303,23 @@ export default function ModeProCreate({ onBack }) {
   useEffect(() => {
     loadSongsFromDb();
   }, [loadSongsFromDb]);
+
+  useEffect(() => {
+    if (viewMode !== 'editor') return;
+    const el = rollContainerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const cr = entries[0]?.contentRect;
+      if (!cr) return;
+      const w = Math.max(400, Math.floor(cr.width));
+      const h = Math.max(160, Math.floor(cr.height));
+      setRollDims((prev) =>
+        prev.width === w && prev.height === h ? prev : { width: w, height: h }
+      );
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [viewMode]);
 
   const loadSongIntoEditor = useCallback(
     async (id) => {
@@ -355,7 +408,119 @@ export default function ModeProCreate({ onBack }) {
         loadSongsFromDb();
       },
     });
-  }, [title, bpm, notes, selectedSongId, toast, loadSongsFromDb]);
+  }, [title, bpm, notes, chordsByBar, keySignature, selectedSongId, toast, loadSongsFromDb]);
+
+  const applyImportedPayload = useCallback((payload) => {
+    setTitle(payload.title);
+    setBpm(payload.bpm);
+    setNotes(payload.notes);
+    setChordsByBar(payload.chordsByBar || []);
+    setKeySignature(payload.keySignature || 'C');
+    setSelectedSongId(null);
+  }, []);
+
+  const loadExampleSong = useCallback(() => {
+    const p = getExamplePianoSongEditorState();
+    applyImportedPayload(p);
+    toast({
+      info: {
+        description:
+          'Demo arrayMusic cargada. Úsala para probar el canvas; «Guardar en BD» si quieres persistir.',
+      },
+    });
+  }, [applyImportedPayload, toast]);
+
+  const handleImportFile = useCallback(
+    (e) => {
+      const file = e?.target?.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          let text = reader.result;
+          if (typeof text !== 'string') {
+            toast({ info: { description: 'No se pudo leer el archivo.' } });
+            return;
+          }
+          text = text.replace(/^\uFEFF/, '');
+          const data = JSON.parse(text);
+          if (!data || typeof data !== 'object') {
+            toast({
+              info: {
+                description: 'El JSON debe ser un objeto con title, bpm, notes (y opcional chordsByBar, keySignature).',
+              },
+            });
+            return;
+          }
+          const payload = normalizeSongPayload(data);
+          applyImportedPayload(payload);
+          toast({
+            info: {
+              description: `Importado: ${payload.notes.length} notas, ${payload.chordsByBar.filter(Boolean).length} acordes.`,
+            },
+          });
+        } catch (err) {
+          const msg =
+            err instanceof SyntaxError
+              ? 'JSON inválido (revisa el archivo).'
+              : err?.message || 'Error al importar.';
+          toast({ info: { description: msg } });
+        }
+      };
+      reader.onerror = () => toast({ info: { description: 'Error al leer el archivo.' } });
+      reader.readAsText(file, 'UTF-8');
+      e.target.value = '';
+    },
+    [toast, applyImportedPayload]
+  );
+
+  const handlePasteImport = useCallback(() => {
+    try {
+      const text = pasteText.replace(/^\uFEFF/, '').trim();
+      if (!text) {
+        toast({ info: { description: 'Pega el contenido JSON.' } });
+        return;
+      }
+      const data = JSON.parse(text);
+      if (!data || typeof data !== 'object') {
+        toast({ info: { description: 'JSON inválido.' } });
+        return;
+      }
+      const payload = normalizeSongPayload(data);
+      applyImportedPayload(payload);
+      setPasteText('');
+      setPasteOpen(false);
+      toast({
+        info: {
+          description: `Importado: ${payload.notes.length} notas.`,
+        },
+      });
+    } catch (err) {
+      const msg =
+        err instanceof SyntaxError ? 'JSON inválido.' : err?.message || 'Error al importar.';
+      toast({ info: { description: msg } });
+    }
+  }, [pasteText, toast, applyImportedPayload]);
+
+  const handleExportJson = useCallback(() => {
+    const payload = {
+      title: title || 'Sin título',
+      bpm,
+      notes,
+      chordsByBar,
+      keySignature,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(title || 'cancion_pro').replace(/\s+/g, '_')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ info: { description: 'Archivo JSON descargado.' } });
+  }, [title, bpm, notes, chordsByBar, keySignature, toast]);
 
   const handleNoteOn = useCallback(
     (noteName) => {
@@ -562,50 +727,6 @@ export default function ModeProCreate({ onBack }) {
     );
   }
 
-  if (viewMode === 'songsList') {
-    return (
-      <Box
-        sx={{
-          p: 2,
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'auto',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mb: 2,
-          }}
-        >
-          <Typography variant="h6">Canciones guardadas en la BD</Typography>
-          <Button
-            startIcon={<ArrowBack />}
-            onClick={() => setViewMode('editor')}
-            variant="outlined"
-            size="small"
-          >
-            Volver al editor Pro
-          </Button>
-        </Box>
-        <Button
-          startIcon={<Refresh />}
-          onClick={loadSongsFromDb}
-          disabled={loadingSongs}
-          sx={{ mb: 1, alignSelf: 'flex-start' }}
-        >
-          Actualizar lista
-        </Button>
-        {/* Aquí se podría reutilizar la misma tabla de ModeCreateSong.
-            Por brevedad, lo omitimos; el foco de este módulo es la parte visual/WebGL. */}
-      </Box>
-    );
-  }
-
   return (
     <Box
       sx={{
@@ -613,8 +734,13 @@ export default function ModeProCreate({ onBack }) {
         gap: 1,
         width: '100%',
         height: '100%',
-        minHeight: 0,
-        pl: 6,
+        pl: { xs: 1, sm: 2, md: 6 },
+        pr: { xs: 1, sm: 2 },
+        pt: 1,
+        pb: 1,
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+        alignItems: 'stretch',
       }}
     >
       {/* Panel izquierdo (controles) */}
@@ -625,6 +751,10 @@ export default function ModeProCreate({ onBack }) {
           display: 'flex',
           flexDirection: 'column',
           gap: 0.75,
+          overflowY: 'auto',
+          minHeight: 0,
+          maxHeight: '100%',
+          pr: 0.5,
         }}
       >
         {onBack && (
@@ -638,7 +768,7 @@ export default function ModeProCreate({ onBack }) {
           </Button>
         )}
         <Typography variant="caption" color="text.secondary" fontWeight={600}>
-          Piano Pro · Crear
+          {developerMode ? 'Piano Pro · Desarrollador' : 'Piano Pro · Crear'}
         </Typography>
         <TextField
           label="Título"
@@ -748,6 +878,23 @@ export default function ModeProCreate({ onBack }) {
         >
           Ver canciones de la BD
         </Button>
+        {developerMode && (
+          <>
+            <Button
+              size="small"
+              onClick={loadExampleSong}
+              fullWidth
+              variant="outlined"
+              color="secondary"
+              sx={{ py: 0.5 }}
+            >
+              Cargar demo (arrayMusic)
+            </Button>
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
+              Modo desarrollador: partitura de ejemplo para probar el rollo WebGL con muchas notas.
+            </Typography>
+          </>
+        )}
 
         <Box sx={{ display: 'flex', gap: 0.5 }}>
           <TextField
@@ -826,12 +973,62 @@ export default function ModeProCreate({ onBack }) {
         </Box>
 
         <Typography variant="caption" color="text.secondary" fontWeight={600}>
-          Importar / Exportar (Pro)
+          Importar / Exportar
         </Typography>
-        {/* Para no duplicar demasiado código, aquí se podría reutilizar la lógica
-            de import/export de ModeCreateSong. */}
+        <Button
+          size="small"
+          startIcon={<UploadFile />}
+          onClick={() => document.getElementById('piano-pro-import-file')?.click()}
+          fullWidth
+          variant="outlined"
+          sx={{ py: 0.5 }}
+        >
+          Cargar JSON
+        </Button>
+        <input
+          id="piano-pro-import-file"
+          type="file"
+          accept=".json,application/json"
+          style={{ display: 'none' }}
+          onChange={handleImportFile}
+        />
+        <Button
+          size="small"
+          startIcon={<ContentPaste />}
+          onClick={() => setPasteOpen((o) => !o)}
+          fullWidth
+          variant="outlined"
+          sx={{ py: 0.5 }}
+        >
+          Pegar JSON
+        </Button>
+        <Collapse in={pasteOpen}>
+          <TextField
+            multiline
+            minRows={2}
+            placeholder='{"title":"...","bpm":120,"notes":[],"chordsByBar":[],"keySignature":"C"}'
+            value={pasteText}
+            onChange={(e) => setPasteText(e.target.value)}
+            size="small"
+            fullWidth
+            sx={{ mt: 0.5, '& .MuiInputBase-input': { fontSize: '0.75rem' } }}
+          />
+          <Button size="small" onClick={handlePasteImport} sx={{ mt: 0.5 }}>
+            Importar
+          </Button>
+        </Collapse>
+        <Button
+          size="small"
+          startIcon={<Download />}
+          onClick={handleExportJson}
+          fullWidth
+          variant="outlined"
+          sx={{ py: 0.5 }}
+        >
+          Exportar JSON
+        </Button>
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
-          Esta vista usa la misma canción del backend, solo cambia lo visual (WebGL).
+          Tras importar JSON, usa «Guardar en BD» para persistir en el servidor.
         </Typography>
         <Button
           size="small"
@@ -878,15 +1075,15 @@ export default function ModeProCreate({ onBack }) {
             Rollo WebGL (rejilla, notas, playhead).
           </Typography>
         </Box>
-        <Box sx={{ flex: 1, minHeight: 360, display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ flex: 1, minHeight: 260 }}>
+        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <Box ref={rollContainerRef} sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
             <WebGLPianoRoll
               notes={notes}
               bpm={bpm}
-              playheadBeats={playheadBeats}
+              isPlaying={isPlaying}
               chordsByBar={chordsByBar}
-              width={CANVAS_WIDTH + 280}
-              height={420}
+              width={rollDims.width}
+              height={rollDims.height}
             />
           </Box>
           <Box

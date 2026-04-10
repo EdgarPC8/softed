@@ -1,4 +1,4 @@
-import axios, { jwt } from "../axios.js";
+import { axiosForAlumniModules as axios, jwt } from "../axios.js";
 
 export const getCareers = async () =>
   await axios.get("/alumni/career", { headers: { Authorization: jwt() } });

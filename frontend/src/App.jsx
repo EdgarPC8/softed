@@ -77,12 +77,31 @@ import DashBoardPageERP from "./page/eddeli/inventoryControl/DashBoardPage.jsx";
 import PianoPage from "./page/piano/index.jsx";
 import PianoProPracticePage from "./page/pianoProPractice/index.jsx";
 import SoftedHome from "./page/SoftedHome.jsx";
+import TurnosHome from "./page/turnos/TurnosHome.jsx";
+import TurnosHomeLogout from "./page/turnos/TurnosHomeLogout.jsx";
+import ClientesPage from "./page/turnos/ClientesPage.jsx";
+import EmpleadosPage from "./page/turnos/EmpleadosPage.jsx";
+import ServiciosPage from "./page/turnos/ServiciosPage.jsx";
+import AddonsPage from "./page/turnos/AddonsPage.jsx";
+import TurnosPage from "./page/turnos/TurnosPage.jsx";
+import EnfermeriaHome from "./page/enfermeria/EnfermeriaHome.jsx";
+import PacientesPage from "./page/enfermeria/PacientesPage.jsx";
+import PacienteDetallePage from "./page/enfermeria/PacienteDetallePage.jsx";
+import InstitucionesPage from "./page/enfermeria/InstitucionesPage.jsx";
+import Cie10Page from "./page/enfermeria/Cie10Page.jsx";
+import LogsPage from "./page/enfermeria/LogsPage.jsx";
+import FichaPage from "./page/enfermeria/FichaPage.jsx";
+import AnadirFichaPage from "./page/enfermeria/AnadirFichaPage.jsx";
+import FichaEstadisticasPage from "./page/enfermeria/FichaEstadisticasPage.jsx";
+import FichaEstructuraPage from "./page/enfermeria/FichaEstructuraPage.jsx";
+import HistorialClinicoPage from "./page/enfermeria/HistorialClinicoPage.jsx";
+import TutorialEnfermeriaPage from "./page/enfermeria/TutorialEnfermeriaPage.jsx";
 import ProductionManagerPage from "./page/eddeli/inventoryControl/ProductionManagerPage.jsx";
 import BasicMap from "./page/mapa/BasicMap.jsx";
 import ProMap from "./page/mapa/ProMap.jsx";
 import HomeProductPage from "./page/eddeli/inventoryControl/HomeProduct.jsx";
 import StoresManagerPage from "./page/eddeli/inventoryControl/StoresManagerPage.jsx";
-import StoresPage from "./page/eddeli/inventoryControl/StoresPage.jsx";
+import StoresPublicPage from "./page/eddeli/inventoryControl/StoresPublicPage.jsx";
 import HomeLogout from "./page/eddeli/inventoryControl/HomeLogout.jsx";
 
 import CatalogManagerPage from "./page/eddeli/inventoryControl/CatalogManagerPage.jsx";
@@ -93,22 +112,47 @@ import EditorPage from "./page/eddeli/photoshop/EditorPage.jsx";
 import ProductTemplateStudio from "./page/eddeli/photoshop/ProductTemplateStudio.jsx";
 import FilesManagerPage from "./page/FileManager.jsx";
 import EditorTemplatesView from "./page/eddeli/photoshop/EditorTemplatesView.jsx";
+import MusicaHome from "./page/musica/MusicaHome.jsx";
+import MusicaPianoProPage from "./page/musica/pianoPro/index.jsx";
+import ChordSongsListPage from "./page/musica/chordSongs/ChordSongsListPage.jsx";
+import ChordSongStructurePage from "./page/musica/chordSongs/ChordSongStructurePage.jsx";
 
-// Home según app: alumni → Home Alumni, eddeli → Dashboard ERP, softed → SoftedHome (tech)
+// Home según app: alumni → Home Alumni, eddeli → Dashboard ERP, turnos → TurnosHome, enfermeria → EnfermeriaHome, musica → MusicaHome, softed → SoftedHome
 const HomePage =
   activeAppId === "alumni"
     ? HomePageAlumni
     : activeAppId === "eddeli"
     ? DashBoardPageERP
+    : activeAppId === "turnos"
+    ? TurnosHome
+    : activeAppId === "enfermeria"
+    ? EnfermeriaHome
+    : activeAppId === "musica"
+    ? MusicaHome
     : SoftedHome;
 
-// Home público (/home cuando no estás logeado): en alumni mismo home que logueado; en eddeli/softed HomeLogout
-const PublicHomePage = activeAppId === "alumni" ? HomePageAlumni : HomeLogout;
+// Home público (/home cuando no estás logeado): en alumni mismo home; en turnos TurnosHomeLogout; en enfermeria EnfermeriaHome; en musica MusicaHome; en eddeli/softed HomeLogout
+const PublicHomePage =
+  activeAppId === "alumni"
+    ? HomePageAlumni
+    : activeAppId === "turnos"
+    ? TurnosHomeLogout
+    : activeAppId === "enfermeria"
+    ? EnfermeriaHome
+    : activeAppId === "musica"
+    ? MusicaHome
+    : HomeLogout;
 
 // Rutas que solo existen en eddeli o en softed (no en alumni)
-const showEddeliRoutes = activeAppId === "eddeli" || activeAppId === "softed";
+const showEddeliRoutes = (activeAppId === "eddeli" || activeAppId === "softed") && activeAppId !== "turnos";
 // Rutas que solo existen en alumni o en softed (no en eddeli)
-const showAlumniRoutes = activeAppId === "alumni" || activeAppId === "softed";
+const showAlumniRoutes = (activeAppId === "alumni" || activeAppId === "softed") && activeAppId !== "turnos";
+// Rutas base para turnos (usuarios, roles, cuentas, comandos, logs, img)
+const showTurnosRoutes = activeAppId === "turnos";
+// Rutas para enfermería (pacientes, instituciones, logs)
+const showEnfermeriaRoutes = activeAppId === "enfermeria";
+// Rutas base app Música (usuarios, roles, cuentas, panel; sin módulos eddeli/alumni)
+const showMusicaRoutes = activeAppId === "musica";
 
 function App() {
   return (
@@ -128,24 +172,30 @@ function App() {
                 <Route element={<PublicOnlyRoute />}>
                   <Route path="/login" element={<Login />} />
                   <Route path="/home" element={<PublicHomePage />} />
-                  {showEddeliRoutes && (
-                    <>
-                      <Route path="/catalogo" element={<CatalogoPage />} />
-                      <Route path="/punto_venta" element={<StoresPage />} />
-                    </>
-                  )}
+                  {showTurnosRoutes && <Route path="/consultar" element={<TurnosHomeLogout />} />}
                 </Route>
+                {/* Catálogo y PV: fuera de PublicOnlyRoute (si no, la primera coincidencia redirige a "/" al estar logueado) */}
+                {showEddeliRoutes && (
+                  <>
+                    <Route path="/catalogo" element={<CatalogoPage />} />
+                    <Route path="/punto_venta" element={<StoresPublicPage />} />
+                  </>
+                )}
                 <Route
                   element={
-                    <ProtectedRoute requiredRol={["Estudiante", "Administrador", "Programador", "Empresa", "Profesional"]} />
+                    <ProtectedRoute requiredRol={["Estudiante", "Administrador", "Programador", "Empresa", "Profesional", "Empleado", "Doctor/a", "Enfermero/a", "Pasante", "Moderador"]} />
                   }
                 >
                   <Route path="/" element={<HomePage />} />
+                  {showEddeliRoutes && (
+                    <Route path="/inicio" element={<HomeLogout />} />
+                  )}
                   <Route path="/perfil" element={<Profile />} />
                   <Route path="/myforms" element={<FormsList />} />
                   <Route path="/myforms/:id" element={<FormAnswer />} />
                   <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/info" element={<Info />} />
+                  {showEnfermeriaRoutes && <Route path="/tutorial" element={<TutorialEnfermeriaPage />} />}
                   <Route path="/donations" element={<Donations />} />
                   <Route path="/cv" element={<CVPage />} />
                   <Route path="/cv/ver" element={<CvVer />} />
@@ -160,6 +210,66 @@ function App() {
                   <Route path="/bolsa-empleo/empresa/oferta/:id/editar" element={<FormOfertaEmpresa />} />
                   <Route path="/bolsa-empleo/empresa/oferta/:id/postulantes" element={<PostulantesOferta />} />
                   <Route path="/bolsa-empleo/admin/empresas" element={<AdminEmpresasBolsa />} />
+                  {showMusicaRoutes && (
+                    <>
+                      <Route path="/canciones" element={<ChordSongsListPage />} />
+                      <Route path="/canciones/:id/estructura" element={<ChordSongStructurePage />} />
+                    </>
+                  )}
+                </Route>
+
+                {/* CIE-10: roles clínicos y admin de enfermería */}
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Doctor/a", "Enfermero/a", "Pasante", "Administrador", "Moderador", "Programador"]} />
+                  }
+                >
+                  {showEnfermeriaRoutes && <Route path="/cie10" element={<Cie10Page />} />}
+                </Route>
+
+                {/* Estructura de ficha: Admin, Enfermero, Pasante, Doctor (sin ver datos clínicos) */}
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Doctor/a", "Enfermero/a", "Pasante", "Administrador", "Moderador", "Programador"]} />
+                  }
+                >
+                  {showEnfermeriaRoutes && <Route path="/ficha/estructura" element={<FichaEstructuraPage />} />}
+                </Route>
+
+                {/* Añadir ficha: Doctor, Enfermero, Pasante */}
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Doctor/a", "Enfermero/a", "Pasante"]} />
+                  }
+                >
+                  {showEnfermeriaRoutes && <Route path="/ficha/anadir" element={<AnadirFichaPage />} />}
+                  {showEnfermeriaRoutes && <Route path="/ficha/nuevo/:page" element={<FichaPage />} />}
+                </Route>
+
+                {/* Ver ficha, estadísticas e historial: solo Doctor, Moderador, Programador (datos clínicos) */}
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Doctor/a", "Moderador", "Programador"]} />
+                  }
+                >
+                  {showEnfermeriaRoutes && <Route path="/ficha/estadisticas" element={<FichaEstadisticasPage />} />}
+                  {showEnfermeriaRoutes && <Route path="/ficha/:dni/:page" element={<FichaPage />} />}
+                  {showEnfermeriaRoutes && <Route path="/pacientes/:dni/historial" element={<HistorialClinicoPage />} />}
+                </Route>
+
+                {/* Pacientes: Doctor, Enfermero, Pasante, Admin, Moderador, Programador */}
+                <Route
+                  element={
+                    <ProtectedRoute requiredRol={["Doctor/a", "Enfermero/a", "Pasante", "Administrador", "Moderador", "Programador"]} />
+                  }
+                >
+                  {showEnfermeriaRoutes && <Route path="/pacientes" element={<PacientesPage />} />}
+                  {showEnfermeriaRoutes && <Route path="/pacientes/:dni" element={<PacienteDetallePage />} />}
+                </Route>
+
+                {/* Logs enfermería: Administrador, Moderador, Programador */}
+                <Route element={<ProtectedRoute requiredRol={["Administrador", "Moderador", "Programador"]} />}>
+                  {showEnfermeriaRoutes && <Route path="/logs" element={<LogsPage />} />}
                 </Route>
 
                 {/* Rutas solo Programador (no aparecen en menú Admin) */}
@@ -211,17 +321,60 @@ function App() {
                     </>
                   )}
 
-                  <Route path="/panel_control" element={<ControlPanelPage />} />
-                  <Route path="/notification-programs" element={<NotificationProgramsPage />} />
-                  <Route path="/users" element={<Users />} />
-                  <Route path="/cuentas" element={<Accounts />} />
-                  <Route path="/roles" element={<Roles/>} />
+                  {showMusicaRoutes && (
+                    <>
+                      <Route path="/pianoPro" element={<MusicaPianoProPage />} />
+                    </>
+                  )}
 
-                  <Route path="/forms" element={<AdminFormsList />} />
-                  <Route path="/forms/manage/:id" element={<FormQuestions />} />
-                  <Route path="/forms/assign/:id" element={<AssignForm />} />
-                  <Route path="/forms/charts/:id" element={<FormResponsesCharts />} />
-                  <Route path="/forms/view/:id" element={<FormViewer />} />
+                  {(showTurnosRoutes || showEddeliRoutes || showAlumniRoutes || showEnfermeriaRoutes) && (
+                    <>
+                      <Route path="/panel_control" element={<ControlPanelPage />} />
+                      <Route path="/notification-programs" element={<NotificationProgramsPage />} />
+                      <Route path="/users" element={<Users />} />
+                      <Route path="/cuentas" element={<Accounts />} />
+                      <Route path="/roles" element={<Roles />} />
+                    </>
+                  )}
+                  {showMusicaRoutes && (
+                    <>
+                      <Route path="/panel_control" element={<ControlPanelPage />} />
+                      <Route path="/users" element={<Users />} />
+                      <Route path="/cuentas" element={<Accounts />} />
+                      <Route path="/roles" element={<Roles />} />
+                    </>
+                  )}
+                  {showTurnosRoutes && (
+                    <>
+                      <Route path="/clientes" element={<ClientesPage />} />
+                      <Route path="/empleados" element={<EmpleadosPage />} />
+                      <Route path="/servicios" element={<ServiciosPage />} />
+                      <Route path="/servicio-extra" element={<AddonsPage />} />
+                    </>
+                  )}
+                  {showEnfermeriaRoutes && (
+                    <Route path="/instituciones" element={<InstitucionesPage />} />
+                  )}
+                </Route>
+
+                {/* Clientes para Empleado (agregar clientes) */}
+                <Route element={<ProtectedRoute requiredRol={["Empleado"]} />}>
+                  {showTurnosRoutes && <Route path="/clientes" element={<ClientesPage />} />}
+                </Route>
+
+                {/* Agenda: Admin/Programador (gestión completa) y Empleado (solo ver sus turnos) */}
+                <Route element={<ProtectedRoute requiredRol={["Administrador", "Programador", "Empleado"]} />}>
+                  {showTurnosRoutes && <Route path="/agenda" element={<TurnosPage />} />}
+
+                  {!showTurnosRoutes && !showMusicaRoutes && (
+                    <>
+                      <Route path="/forms" element={<AdminFormsList />} />
+                      <Route path="/forms/manage/:id" element={<FormQuestions />} />
+                      <Route path="/forms/assign/:id" element={<AssignForm />} />
+                      <Route path="/forms/charts/:id" element={<FormResponsesCharts />} />
+                      <Route path="/forms/view/:id" element={<FormViewer />} />
+                    </>
+                  )}
 
                   {showAlumniRoutes && (
                     <>
@@ -231,15 +384,19 @@ function App() {
                     </>
                   )}
 
-                  <Route path="/quizzes" element={<AdminQuizList />} />
-                  <Route path="/quizzes/manage/:id" element={<QuizQuestions />} />
-                  <Route path="/quizzes/view/:id" element={<QuizViewer/>} />
-                  <Route path="/quizzes/charts/:id" element={<QuizResponsesCharts/>} />
-                  <Route path="/quizzes/assign/:id" element={<AssignQuiz/>} />
-                  <Route path="/myQuizzes" element={<QuizList/>} />
-                  <Route path="/myQuizzes/evaluation/:id" element={<QuizAnswerEvaluation />} />
-                  <Route path="/myQuizzes/simulator/:id" element={<QuizSimulatorMode />} />
-                  <Route path="/myQuizzes/practice/:id" element={<QuizAnswerPractice />} />
+                  {!showTurnosRoutes && !showMusicaRoutes && (
+                    <>
+                      <Route path="/quizzes" element={<AdminQuizList />} />
+                      <Route path="/quizzes/manage/:id" element={<QuizQuestions />} />
+                      <Route path="/quizzes/view/:id" element={<QuizViewer />} />
+                      <Route path="/quizzes/charts/:id" element={<QuizResponsesCharts />} />
+                      <Route path="/quizzes/assign/:id" element={<AssignQuiz />} />
+                      <Route path="/myQuizzes" element={<QuizList />} />
+                      <Route path="/myQuizzes/evaluation/:id" element={<QuizAnswerEvaluation />} />
+                      <Route path="/myQuizzes/simulator/:id" element={<QuizSimulatorMode />} />
+                      <Route path="/myQuizzes/practice/:id" element={<QuizAnswerPractice />} />
+                    </>
+                  )}
                 </Route>
               </Routes>
             </NavBar>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Box, useTheme } from '@mui/material';
 import { useAnimate } from '@mui/x-charts/hooks';
 import { ChartContainer } from '@mui/x-charts/ChartContainer';
 import { BarPlot } from '@mui/x-charts/BarChart';
@@ -6,20 +7,33 @@ import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
 import { styled } from '@mui/material/styles';
 import { interpolateObject } from '@mui/x-charts-vendor/d3-interpolate';
+import ChartBlockHeader from '../../../../../Components/Charts/ChartBlockHeader';
+import { getChartSeriesColors } from '../../../../../theme/chartPalette';
 
-export default function BarChartDays({dataDays=['L', 'M', 'W','J','V','S','D'],dataValues= [0,0,0,0,0,0,0]}) {
+export default function BarChartDays({
+  dataDays = ['L', 'M', 'W', 'J', 'V', 'S', 'D'],
+  dataValues = [0, 0, 0, 0, 0, 0, 0],
+  title = 'Ventas diarias (semana actual)',
+  subtitle = 'Suma en dólares de pedidos con estado «pagado» por día, de lunes a domingo (según datos del servidor).',
+}) {
+  const theme = useTheme();
+  const barColor = getChartSeriesColors(theme)[0];
+
   return (
-    <ChartContainer
-      xAxis={[{ scaleType: 'band', data: dataDays }]}
-      series={[{ type: 'bar', id: 'base', data:dataValues }]}
-      height={160}
-      yAxis={[{ width: 30 }]}
-      margin={{ left: 0, right: 10 }}
-    >
-      <BarPlot barLabel="value" slots={{ barLabel: BarLabel }} />
-      <ChartsXAxis />
-      <ChartsYAxis />
-    </ChartContainer>
+    <Box>
+      <ChartBlockHeader title={title} subtitle={subtitle} />
+      <ChartContainer
+        xAxis={[{ scaleType: 'band', data: dataDays }]}
+        series={[{ type: 'bar', id: 'base', data: dataValues, color: barColor }]}
+        height={160}
+        yAxis={[{ width: 36 }]}
+        margin={{ left: 4, right: 10, top: 8, bottom: 4 }}
+      >
+        <BarPlot barLabel="value" slots={{ barLabel: BarLabel }} />
+        <ChartsXAxis />
+        <ChartsYAxis />
+      </ChartContainer>
+    </Box>
   );
 }
 
@@ -63,10 +77,8 @@ function BarLabel(props) {
         element.setAttribute('y', p.y.toString());
       },
       skip: skipAnimation,
-    },
+    }
   );
 
-  return (
-    <Text {...otherProps} fill={color} textAnchor="middle" {...animatedProps} />
-  );
+  return <Text {...otherProps} fill={color} textAnchor="middle" {...animatedProps} />;
 }

@@ -102,7 +102,10 @@ function MovementPage() {
         <MovementForm
           productOptions={products}
           onClose={handleDialog}
-          onSaved={fetchMovements}
+          onSaved={() => {
+            fetchMovements();
+            fetchProducts();
+          }}
         />
       </SimpleDialog>
 

@@ -1,5 +1,16 @@
 /** Configuración compartida del módulo Piano */
 
+/** FluidR3 GM — mismo sonido que Piano Pro (`usePianoSampler`) y práctica Synthesia. */
+export const PIANO_FLUID_BASE_URL =
+  "https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/";
+/** Muestras base; Tone interpola el resto de notas. */
+export const PIANO_FLUID_SAMPLER_URLS = {
+  C4: "C4.mp3",
+  E4: "E4.mp3",
+  G4: "G4.mp3",
+  C5: "C5.mp3",
+};
+
 export const CANVAS_WIDTH = 1000;
 export const CANVAS_HEIGHT = 600;
 export const PIANO_HEIGHT = 100;

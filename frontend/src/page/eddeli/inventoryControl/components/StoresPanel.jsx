@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Paper,
   Typography,
@@ -17,24 +17,31 @@ import {
   IconButton,
   Divider,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import { useTheme, alpha } from "@mui/material/styles";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import { buildImageUrl } from "../../../../api/axios";
 
 /** items: [{ id, name, address, description, city, province, phone, email, img, latitude, longitude, ... }] */
 export default function StoresPanel({
-  title = "Puntos de venta",
+  title = "Locales",
   items = [],
   maxVisible = 4,
   onStoreClick, // opcional: callback(store) cuando se abre el diálogo
+  /** Si se pasa, al abrir el detalle se cargan productos del local (vista pública). */
+  loadStoreProducts,
 }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(null);
+  const [storeProducts, setStoreProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [productsErr, setProductsErr] = useState("");
 
   const hasOverflow = useMemo(() => items.length > maxVisible, [items.length, maxVisible]);
   const visibleItems = expanded || !hasOverflow ? items : items.slice(0, maxVisible);
@@ -74,9 +81,44 @@ export default function StoresPanel({
   const handleOpen = (store) => {
     setActive(store);
     setOpen(true);
+    setStoreProducts([]);
+    setProductsErr("");
     if (typeof onStoreClick === "function") onStoreClick(store);
   };
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setStoreProducts([]);
+    setProductsErr("");
+    setLoadingProducts(false);
+  };
+
+  useEffect(() => {
+    if (!open || !active?.id || typeof loadStoreProducts !== "function") {
+      return;
+    }
+    let cancelled = false;
+    setLoadingProducts(true);
+    setProductsErr("");
+    loadStoreProducts(active.id)
+      .then((res) => {
+        if (cancelled) return;
+        const raw = res?.data;
+        const list = Array.isArray(raw) ? raw : raw?.data ?? [];
+        setStoreProducts(list);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setProductsErr("No se pudieron cargar los productos de este punto.");
+          setStoreProducts([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingProducts(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, active?.id, loadStoreProducts]);
 
   // URL para abrir Google Maps (preferir coords > texto)
   const mapsHref = (store) => {
@@ -267,7 +309,7 @@ export default function StoresPanel({
             gap: 1,
           }}
         >
-          {active?.name || "Punto de venta"}
+          {active?.name || "Local"}
           <Box sx={{ flex: 1 }} />
           <Tooltip title="Cerrar">
             <IconButton onClick={handleClose} size="small">
@@ -382,6 +424,86 @@ export default function StoresPanel({
                 <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
                   {active.description}
                 </Typography>
+              </>
+            )}
+
+            {typeof loadStoreProducts === "function" && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <Typography variant="subtitle2" fontWeight={700}>
+                  Productos en este punto
+                </Typography>
+                {loadingProducts ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+                    <CircularProgress size={28} />
+                  </Box>
+                ) : productsErr ? (
+                  <Typography variant="body2" color="text.secondary">
+                    {productsErr}
+                  </Typography>
+                ) : storeProducts.length === 0 ? (
+                  <Typography variant="body2" color="text.secondary">
+                    No hay productos publicados para este local.
+                  </Typography>
+                ) : (
+                  <Grid container spacing={1} sx={{ mt: 0.5 }}>
+                    {storeProducts.map((row) => {
+                      const p = row?.product || row;
+                      const name = p?.name || "Producto";
+                      const price = Number(p?.price ?? 0);
+                      const priceLabel = new Intl.NumberFormat("es-EC", {
+                        style: "currency",
+                        currency: "USD",
+                        minimumFractionDigits: 2,
+                      }).format(price);
+                      const imgSrc = buildImageUrl(p?.primaryImageUrl);
+                      return (
+                        <Grid item xs={12} key={row?.linkId ?? row?.productId ?? p?.id ?? name}>
+                          <Stack
+                            direction="row"
+                            spacing={1.25}
+                            alignItems="center"
+                            sx={{
+                              p: 1,
+                              borderRadius: 1.5,
+                              border: `1px solid ${borderTone}`,
+                              bgcolor: alpha(theme.palette.background.paper, 0.6),
+                            }}
+                          >
+                            <Box
+                              component="img"
+                              src={imgSrc || placeholderImg(theme.palette.mode)}
+                              alt={name}
+                              onError={(e) => {
+                                e.currentTarget.src = placeholderImg(theme.palette.mode);
+                              }}
+                              sx={{
+                                width: 48,
+                                height: 48,
+                                objectFit: "cover",
+                                borderRadius: 1,
+                                flexShrink: 0,
+                              }}
+                            />
+                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                              <Typography variant="body2" fontWeight={600} noWrap title={name}>
+                                {name}
+                              </Typography>
+                              <Stack direction="row" spacing={0.75} flexWrap="wrap" alignItems="center">
+                                <Typography variant="caption" color="primary">
+                                  {priceLabel}
+                                </Typography>
+                                {p?.category ? (
+                                  <Chip size="small" label={p.category} variant="outlined" />
+                                ) : null}
+                              </Stack>
+                            </Box>
+                          </Stack>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                )}
               </>
             )}
           </Stack>

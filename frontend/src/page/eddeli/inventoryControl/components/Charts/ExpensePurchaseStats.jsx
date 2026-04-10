@@ -1,8 +1,9 @@
 // ExpensePurchaseStats.jsx
 import * as React from 'react';
 import {
-  Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Chip, Stack
+  Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Chip, Stack,
 } from '@mui/material';
+import ChartBlockHeader from '../../../../../Components/Charts/ChartBlockHeader';
 import { parseISO, format, differenceInCalendarDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -111,16 +112,16 @@ export default function ExpensePurchaseStats({ sampleExpenses = [] }) {
 
   return (
     <Box>
-      <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <Chip label={`Productos: ${intFmt(summary.totalProducts)}`} />
-        <Chip label={`Compras: ${intFmt(summary.totalPurchases)}`} />
-        <Chip label={`Total: ${moneyFmt(summary.totalAmount)}`} color="primary" />
-        <Chip label={`Ticket medio: ${moneyFmt(summary.avgTicket)}`} color="success" />
+      <ChartBlockHeader
+        title="Compras / gastos agregados por producto"
+        subtitle="Solo gastos con producto asociado. Intervalos entre compras, ticket medio y ritmo mensual estimado según el historial."
+      />
+      <Stack direction="row" spacing={1} sx={{ mb: 1, flexWrap: 'wrap', rowGap: 0.5 }}>
+        <Chip label={`Productos: ${intFmt(summary.totalProducts)}`} size="small" />
+        <Chip label={`Compras: ${intFmt(summary.totalPurchases)}`} size="small" />
+        <Chip label={`Total: ${moneyFmt(summary.totalAmount)}`} color="primary" size="small" />
+        <Chip label={`Ticket medio: ${moneyFmt(summary.avgTicket)}`} color="success" size="small" />
       </Stack>
-
-      <Typography variant="h6" sx={{ mb: 1, fontWeight: 700 }}>
-        Estadísticas de compras por producto
-      </Typography>
 
       <Table size="small">
         <TableHead>

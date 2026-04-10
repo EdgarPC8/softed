@@ -3,14 +3,15 @@ import {
   Button,
   IconButton,
   Tooltip,
-  MenuItem,
   TextField,
   Grid,
   Typography,
   Box,
-  Stack
+  Stack,
+  Paper,
+  Divider,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Edit, Delete, RestaurantMenu } from "@mui/icons-material";
 import toast from "react-hot-toast";
 
@@ -38,11 +39,7 @@ function RecipePage() {
   const [datos, setDatos] = useState([]);
   const [titleUserDialog, settitleUserDialog] = useState("");
 
-  // Costeo (plano)
-  const [costRows, setCostRows] = useState([]);
   const [costSummary, setCostSummary] = useState(null);
-
-  // Árbol
   const [costTreeData, setCostTreeData] = useState(null);
 
   // Loading
@@ -58,6 +55,73 @@ function RecipePage() {
   const handleDialog = () => setOpen(!open);
   const handleDialogUser = () => setOpenDialog(!openDialog);
 
+  /** JSON en consola del navegador + petición con debug=1 para log en terminal del backend */
+  const logRecipeAnalysis = useCallback(async () => {
+    if (!selectedProduct) {
+      toast.error("Selecciona un producto primero");
+      return;
+    }
+
+    const meta = products.find((p) => String(p.id) === String(selectedProduct));
+
+    const pruneCostTree = (node, depth = 0, maxDepth = 6) => {
+      if (!node || depth > maxDepth) return null;
+      return {
+        info: node.info,
+        cost: node.cost,
+        directItemsCount: node.directItems?.length ?? 0,
+        directItemsSample: (node.directItems || []).slice(0, 10),
+        childCount: node.children?.length ?? 0,
+        children: (node.children || []).map((c) => pruneCostTree(c, depth + 1, maxDepth)),
+      };
+    };
+
+    const params = {
+      extrasPercent: Number(uiParams.extrasPercent) || 0,
+      laborPercent: Number(uiParams.laborPercent) || 0,
+      producedQty: Number(uiParams.producedQty) || 0,
+    };
+
+    const payload = {
+      _doc: "EdDeli RecipePage — pegar este JSON en el chat para análisis",
+      ts: new Date().toISOString(),
+      uiParams: params,
+      cabecera: meta
+        ? { id: meta.id, name: meta.name, type: meta.type, unitId: meta.unitId }
+        : { id: Number(selectedProduct) },
+      notaFlujo:
+        meta?.type === "intermediate"
+          ? "Intermedio: recetaDirecta = insumos del intermedio; destinosSiHayMasa = yieldInfo (padres / finales que lo consumen) si producedQty > 0"
+          : "Final: recetaDirecta incluye intermedios e insumos de primer nivel; arbolCostosResumido desglosa todo",
+      recetaDirecta: recipe.map((r) => ({
+        lineId: r.id,
+        productRawId: r.productRawId,
+        rawName: r.rawProduct?.name,
+        quantity: r.quantity,
+        isQuantityInGrams: r.isQuantityInGrams,
+        itemType: r.itemType,
+      })),
+      costeoResumen: costSummary,
+      destinosSiHayMasa_oPadres: costSummary?.yieldInfo ?? null,
+      arbolCostosResumido: costTreeData?.tree ? pruneCostTree(costTreeData.tree) : null,
+      filasPlano_total: costTreeData?.rows?.length ?? 0,
+      filasPlano_muestra: (costTreeData?.rows || []).slice(0, 15),
+    };
+
+    console.log("========== EdDeli RECETA / COSTEO (copiar JSON siguiente) ==========");
+    console.log(JSON.stringify(payload, null, 2));
+    console.log("========== /EdDeli ==========");
+
+    try {
+      await getRecipeCosting(selectedProduct, { ...params, debug: 1 });
+      toast.success("Listo: revisa consola del navegador (F12) y la terminal del backend");
+    } catch {
+      toast("Log en consola del navegador listo; el backend no respondió al debug", {
+        icon: "⚠️",
+      });
+    }
+  }, [selectedProduct, products, recipe, costSummary, costTreeData, uiParams]);
+
   const fetchProducts = async () => {
     const { data } = await getAllProducts();
     setProducts(data.filter((p) => p.type === "final" || p.type === "intermediate"));
@@ -68,7 +132,7 @@ function RecipePage() {
     setRecipe(data);
   };
 
-  const fetchCosting = async (productId) => {
+  const fetchCostingData = async (productId) => {
     if (!productId) return;
     try {
       setLoadingCost(true);
@@ -78,29 +142,10 @@ function RecipePage() {
         producedQty: Number(uiParams.producedQty) || 0,
       };
       const { data } = await getRecipeCosting(productId, params);
-      setCostRows(data.rows || []);
+      setCostTreeData(data);
       setCostSummary(data.summary || null);
     } catch (e) {
       toast.error("Error al calcular el costeo");
-    } finally {
-      setLoadingCost(false);
-    }
-  };
-
-  const fetchCostingTree = async (productId) => {
-    if (!productId) return;
-    try {
-      setLoadingCost(true);
-      const params = {
-        extrasPercent: Number(uiParams.extrasPercent) || 0,
-        laborPercent: Number(uiParams.laborPercent) || 0,
-        producedQty: Number(uiParams.producedQty) || 0,
-      };
-      const { data } = await getRecipeCosting(productId, params);
-      // data: { tree, summary, rows }
-      setCostTreeData(data);
-    } catch (e) {
-      toast.error("Error al calcular el costeo (árbol)");
     } finally {
       setLoadingCost(false);
     }
@@ -118,9 +163,7 @@ function RecipePage() {
     );
     setRecipe((prev) => prev.filter((item) => item.id !== dataToDelete.id));
     handleDialog();
-    // Recalcula ambos costos
-    fetchCosting(selectedProduct);
-    fetchCostingTree(selectedProduct);
+    fetchCostingData(selectedProduct);
   };
 
   // columnas receta (izquierda)
@@ -162,27 +205,6 @@ function RecipePage() {
     },
   ];
 
-  // columnas costeo (derecha)
-  const costColumns = [
-    { label: "Nombre", id: "nombre", width: 140 },
-    { label: "Tipo", id: "tipo", width: 88, render: (r) => (r.tipo === "material" ? "Material" : "Insumo") },
-    { label: "Precio Neto", id: "precioNeto", width: 110, render: (r) => r?.precioNeto != null ? Number(r.precioNeto).toFixed(2) : "" },
-    { label: "Peso/Unid Empaque", id: "pesoNeto", width: 130, render: (r) => r?.pesoNeto ?? "" },
-    {
-      label: "Uso en receta",
-      id: "uso",
-      width: 120,
-      render: (r) => (r.tipo === "material" ? r?.cantidadUsada ?? "" : r?.pesoEnMasa ?? ""),
-    },
-    {
-      label: "Precio Unit Base",
-      id: "precioUnitBase",
-      width: 140,
-      render: (r) => r?.precioUnitBase != null ? Number(r.precioUnitBase).toFixed(6) : "",
-    },
-    { label: "Valor", id: "valor", width: 100, render: (r) => r?.valor != null ? Number(r.valor).toFixed(2) : "" },
-  ];
-
   // helpers para mostrar números seguros
   const fmt = (n, d = 2) => (typeof n === "number" && !isNaN(n) ? n.toFixed(d) : "0.00");
   const t = costSummary?.totales || {};
@@ -196,8 +218,7 @@ function RecipePage() {
   useEffect(() => {
     if (!selectedProduct) return;
     fetchRecipe(selectedProduct);
-    fetchCosting(selectedProduct);
-    fetchCostingTree(selectedProduct);
+    fetchCostingData(selectedProduct);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct, uiParams.extrasPercent, uiParams.laborPercent, uiParams.producedQty]);
 
@@ -222,8 +243,7 @@ function RecipePage() {
           onClose={() => {
             handleDialogUser();
             fetchRecipe(selectedProduct);
-            fetchCosting(selectedProduct);
-            fetchCostingTree(selectedProduct);
+            fetchCostingData(selectedProduct);
           }}
           isEditing={isEditing}
           datos={datos}
@@ -233,22 +253,17 @@ function RecipePage() {
       </SimpleDialog>
 
       <Grid container spacing={2}>
-        {/* Fila 1: Select de producto final */}
         <Grid item xs={12} mt={2}>
-        <SearchableSelect
+          <SearchableSelect
             label="Seleccionar Elemento"
             items={products}
             value={selectedProduct}
-            onChange={(val) => {
-              // asume que val es ID
-              setSelectedProduct(val);
-            }}
+            onChange={(val) => setSelectedProduct(val)}
           />
         </Grid>
 
-        {/* Fila 2: dos columnas */}
-        <Grid item xs={12} md={12}>
-          {/* Botón + tabla receta */}
+        {/* Izquierda: solo receta */}
+        <Grid item xs={12} md={6}>
           <Button
             variant="text"
             endIcon={<RestaurantMenu />}
@@ -267,16 +282,28 @@ function RecipePage() {
             rows={recipe}
             columns={columns}
             defaultRowsPerPage={10}
-            title="Receta"
-            tableMaxHeight={360}
+            title="Receta (insumos)"
+            tableMaxHeight={320}
             showIndex={true}
           />
         </Grid>
 
-        <Grid item xs={12} md={12}>
-          {/* Controles + cálculo */}
-          <Box sx={{ p: 1, borderRadius: 2 }}>
-            <Stack direction="row" spacing={1} sx={{ mb: 1, flexWrap: "wrap", rowGap: 1 }}>
+        {/* Derecha: parámetros, resumen único, yield */}
+        <Grid item xs={12} md={6}>
+          <Paper
+            elevation={0}
+            variant="outlined"
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              position: { md: "sticky" },
+              top: { md: 16 },
+            }}
+          >
+            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+              Parámetros de costeo
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: "wrap", rowGap: 1 }}>
               <TextField
                 label="Extras %"
                 type="number"
@@ -285,10 +312,9 @@ function RecipePage() {
                 onChange={(e) =>
                   setUiParams((p) => ({ ...p, extrasPercent: Number(e.target.value || 0) }))
                 }
-                sx={{ width: 120 }}
+                sx={{ width: 112 }}
                 inputProps={{ min: 0, step: 1 }}
               />
-
               <TextField
                 label="Mano de obra %"
                 type="number"
@@ -297,10 +323,9 @@ function RecipePage() {
                 onChange={(e) =>
                   setUiParams((p) => ({ ...p, laborPercent: Number(e.target.value || 0) }))
                 }
-                sx={{ width: 140 }}
+                sx={{ width: 132 }}
                 inputProps={{ min: 0, step: 1 }}
               />
-
               <TextField
                 label="Cant. producida"
                 type="number"
@@ -309,95 +334,110 @@ function RecipePage() {
                 onChange={(e) =>
                   setUiParams((p) => ({ ...p, producedQty: Number(e.target.value || 0) }))
                 }
-                sx={{ width: 160 }}
+                sx={{ width: 128 }}
                 inputProps={{ min: 0, step: 1 }}
               />
-
               <Button
                 variant="contained"
-                onClick={() => {
-                  // ✅ 3) Dispara ambos cálculos
-                  fetchCosting(selectedProduct);
-                  fetchCostingTree(selectedProduct);
-                }}
+                size="small"
+                onClick={() => fetchCostingData(selectedProduct)}
                 disabled={!selectedProduct || loadingCost}
               >
-                {loadingCost ? "Calculando..." : "Calcular"}
+                {loadingCost ? "…" : "Calcular"}
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                onClick={() => logRecipeAnalysis()}
+                disabled={!selectedProduct}
+              >
+                Debug
               </Button>
             </Stack>
 
-            {/* Resumen (plano) */}
             {costSummary && (
-  <Box sx={{ mt: 1 }}>
-    <Typography variant="subtitle2">Resumen</Typography>
-    <Grid container spacing={1}>
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body2">
-          Subtotal de insumos (valor): <b>{fmt(t.subtotalInsumos)}</b>
-        </Typography>
-        <Typography variant="body2">
-          Subtotal en gramos (insumos): <b>{fmt(acc.totalPesoEnMasaGr, 2)} g</b>
-        </Typography>
-      </Grid>
+              <>
+                <Divider sx={{ my: 1.5 }} />
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Resumen de costos
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 0.75,
+                    columnGap: 2,
+                  }}
+                >
+                  <Typography variant="body2">
+                    Insumos: <b>{fmt(t.subtotalInsumos)}</b>
+                  </Typography>
+                  <Typography variant="body2">
+                    Materiales: <b>{fmt(t.subtotalMateriales)}</b>
+                  </Typography>
+                  <Typography variant="body2">
+                    Subtotal: <b>{fmt(t.subtotal)}</b>
+                  </Typography>
+                  <Typography variant="body2">
+                    Gramos (ins.): <b>{fmt(acc.totalPesoEnMasaGr, 2)} g</b>
+                  </Typography>
+                  <Typography variant="body2">
+                    Extras ({t.extrasPercentInt ?? 0}%): <b>{fmt(t.extras)}</b>
+                  </Typography>
+                  <Typography variant="body2">
+                    Mano obra ({t.laborPercentInt ?? 0}%): <b>{fmt(t.labor)}</b>
+                  </Typography>
+                  <Typography variant="body2" sx={{ gridColumn: "1 / -1" }}>
+                    Total lote: <b>{fmt(t.totalLote)}</b>
+                  </Typography>
+                  <Typography variant="body2" sx={{ gridColumn: "1 / -1" }}>
+                    Costo unit. (÷{t.producedQty ?? 0}): <b>{fmt(t.costoUnitario, 4)}</b>
+                  </Typography>
+                </Box>
 
-      <Grid item xs={12} sm={6}>
-        <Typography variant="body2">
-          Extras ({t.extrasPercentInt ?? 0}%): <b>{fmt(t.extras)}</b>
-        </Typography>
-        <Typography variant="body2">
-          Mano de obra ({t.laborPercentInt ?? 0}%): <b>{fmt(t.labor)}</b>
-        </Typography>
-        <Typography variant="body2">
-          Total del lote: <b>{fmt(t.totalLote)}</b>
-        </Typography>
-        <Typography variant="body2">
-          Costo unitario (/{t.producedQty ?? 0}):{" "}
-          <b>{fmt(t.costoUnitario, 4)}</b>
-        </Typography>
-      </Grid>
-    </Grid>
+                {Array.isArray(costSummary.yieldInfo) && costSummary.yieldInfo.length > 0 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
+                      Con este lote puedes producir
+                    </Typography>
+                    {costSummary.yieldInfo.map((y) => (
+                      <Typography key={y.parentId} variant="body2" sx={{ mb: 0.25 }}>
+                        •{" "}
+                        <b>
+                          {y.unidad === "unidad"
+                            ? y.unidadesPosiblesParent.toFixed(2)
+                            : `${y.unidadesPosiblesParent.toFixed(2)} g`}
+                        </b>{" "}
+                        — {y.parentName}
+                      </Typography>
+                    ))}
+                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+                      Base: {costSummary.yieldInfo[0].totalGramosDisponibles.toFixed(2)} g del producto
+                      seleccionado.
+                    </Typography>
+                  </Box>
+                )}
 
-    {/* 🔹 NUEVA SECCIÓN: con esta cantidad, ¿qué puedo producir? */}
-    {Array.isArray(costSummary.yieldInfo) &&
-      costSummary.yieldInfo.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle2">
-            Con este lote puedes producir:
+                {costSummary.notas && (
+                  <>
+                    <Divider sx={{ my: 1.5 }} />
+                    <Typography variant="caption" color="text.secondary">
+                      {costSummary.notas}
+                    </Typography>
+                  </>
+                )}
+              </>
+            )}
+          </Paper>
+        </Grid>
+
+        {/* Árbol de costos: ancho completo debajo */}
+        <Grid item xs={12}>
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Árbol de costos
           </Typography>
-
-          {costSummary.yieldInfo.map((y) => (
-            <Typography key={y.parentId} variant="body2">
-              •{" "}
-              <b>
-                {y.unidad === "unidad"
-                  ? // redondeo a 2 decimales; si quieres solo enteros usa Math.floor
-                    y.unidadesPosiblesParent.toFixed(2)
-                  : `${y.unidadesPosiblesParent.toFixed(2)} g`}
-              </b>{" "}
-              de {y.parentName}
-            </Typography>
-          ))}
-
-          {/* Si quieres mostrar también los gramos de este producto base que se usaron */}
-          <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
-            Basado en {costSummary.yieldInfo[0].totalGramosDisponibles.toFixed(2)} g del
-            producto actual.
-          </Typography>
-        </Box>
-      )}
-  </Box>
-)}
-
-
-
-            {/* Árbol de costos con acordeones */}
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                Árbol de Costos (intermedios → insumos/materiales)
-              </Typography>
-              {costTreeData && <CostingAccordionTable data={costTreeData} />}
-            </Box>
-          </Box>
+          {costTreeData && <CostingAccordionTable data={costTreeData} />}
         </Grid>
       </Grid>
     </Container>

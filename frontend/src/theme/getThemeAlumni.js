@@ -1,5 +1,6 @@
-// src/theme/getTheme.js
+// src/theme/getThemeAlumni.js
 import { createTheme } from "@mui/material/styles";
+import { getChartsPalette } from "./chartPalette";
 
 const commonColors = {
   red: "#FF6F61",
@@ -21,6 +22,7 @@ export function getTheme(mode = "light") {
     return createTheme({
       palette: {
         mode: "dark",
+        customMode: "dark",
         background: {
           default: "#0b0f14",
           paper: "#11161d",
@@ -28,6 +30,7 @@ export function getTheme(mode = "light") {
         primary: { light: "#6ca0dc", main: "#4a90e2", dark: "#2a5f9e", contrastText: "#fff" },
         secondary: { light: "#ffd86b", main: "#f1c40f", dark: "#b58d00", contrastText: "#000" },
         colors: commonColors,
+        charts: getChartsPalette("dark"),
       },
       shape: { borderRadius: 14 },
       components: {
@@ -46,6 +49,7 @@ export function getTheme(mode = "light") {
     return createTheme({
       palette: {
         mode: "dark",
+        customMode: "neon",
         background: {
           default: "#05070b",
           paper: "#080b12",
@@ -58,6 +62,7 @@ export function getTheme(mode = "light") {
           neonGold: "#ffd166",
           neonViolet: "#8a2be2",
         },
+        charts: getChartsPalette("neon"),
       },
       shape: { borderRadius: 18 },
       shadows: [
@@ -122,6 +127,7 @@ export function getTheme(mode = "light") {
   return createTheme({
     palette: {
       mode: "light",
+      customMode: "light",
       background: {
         default: "#fafafa",
         paper: "#ffffff",
@@ -129,6 +135,7 @@ export function getTheme(mode = "light") {
       primary: { light: "#6084a9", main: "#4a6682", dark: "#2C3E50", contrastText: "#fff" },
       secondary: { light: "#ffe88a", main: "#F1C40F", dark: "#e1b711", contrastText: "#000" },
       colors: commonColors,
+      charts: getChartsPalette("light"),
     },
     shape: { borderRadius: 12 },
     components: {

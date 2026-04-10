@@ -1,6 +1,7 @@
 // src/theme/getTheme.js
 import { createTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material/styles";
+import { getChartsPalette } from "./chartPalette";
 
 const brand = {
   crema:    "#FFF3D9",
@@ -187,6 +188,7 @@ export function getTheme(mode = "light") {
         },
         divider: alpha("#F7EADA", 0.12),
         colors: commonColors,
+        charts: getChartsPalette("dark"),
       },
       shape: { borderRadius: 14 },
       typography: {
@@ -239,6 +241,7 @@ export function getTheme(mode = "light") {
         },
         divider: alpha("#FFD166", 0.22),
         colors: { ...commonColors, neonGold: "#FFD166", neonCyan: "#19D3FF" },
+        charts: getChartsPalette("neon"),
       },
       shape: { borderRadius: 18 },
       shadows: [
@@ -315,9 +318,7 @@ export function getTheme(mode = "light") {
       },
       divider: alpha("#3E2C00", 0.12),
       colors: commonColors,
-      
-      
-
+      charts: getChartsPalette("light"),
     },
     
     shape: { borderRadius: 12 },

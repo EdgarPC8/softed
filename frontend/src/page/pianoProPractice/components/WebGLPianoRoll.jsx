@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
+import * as Tone from 'tone';
 import { VISIBLE_RANGE, HAND_COLORS } from '../../piano/constants';
 import {
   timeStrToBeats,
@@ -40,36 +41,58 @@ function hexToRgba(hex) {
   ];
 }
 
+/** Posición del playhead en pulsos leyendo Tone (sin depender de props que cambian cada frame). */
+function getTransportPlayheadBeats() {
+  try {
+    const st = Tone.Transport.state;
+    if (st === 'stopped') return null;
+    if (st === 'started' || st === 'paused') {
+      const pos = Tone.Transport.position;
+      const posStr = typeof pos === 'string' ? pos : String(pos);
+      const beats = timeStrToBeats(posStr);
+      return Number.isNaN(beats) ? null : beats;
+    }
+  } catch {
+    /* tone no listo */
+  }
+  return null;
+}
+
 /** Convierte un rect [x, y, w, h] en 6 vértices (2 triángulos) para WebGL. */
 function quadToVertices(x, y, w, h, out, offset) {
   const x2 = x + w;
   const y2 = y + h;
-  // Triángulo 1: (x,y), (x2,y), (x,y2)
-  out[offset + 0] = x; out[offset + 1] = y;
-  out[offset + 2] = x2; out[offset + 3] = y;
-  out[offset + 4] = x; out[offset + 5] = y2;
-  // Triángulo 2: (x,y2), (x2,y), (x2,y2)
-  out[offset + 6] = x; out[offset + 7] = y2;
-  out[offset + 8] = x2; out[offset + 9] = y;
-  out[offset + 10] = x2; out[offset + 11] = y2;
+  out[offset + 0] = x;
+  out[offset + 1] = y;
+  out[offset + 2] = x2;
+  out[offset + 3] = y;
+  out[offset + 4] = x;
+  out[offset + 5] = y2;
+  out[offset + 6] = x;
+  out[offset + 7] = y2;
+  out[offset + 8] = x2;
+  out[offset + 9] = y;
+  out[offset + 10] = x2;
+  out[offset + 11] = y2;
 }
 
 /**
- * WebGLPianoRoll
- * Rollo de piano dibujado con WebGL: misma disposición que el canvas (rejilla,
- * franja de teclas, notas por mano, playhead).
- * Props: notes, bpm, playheadBeats, width, height, chordsByBar.
+ * WebGLPianoRoll — props estables (memo): no pasar playhead desde React.
+ * `isPlaying` activa el bucle requestAnimationFrame; el playhead se lee de Tone.Transport.
  */
-export default function WebGLPianoRoll({
+function WebGLPianoRoll({
   notes = [],
-  bpm = 120,
-  playheadBeats = null,
+  bpm: _bpm = 120,
+  isPlaying = false,
   width = 1000,
   height = 420,
   chordsByBar = [],
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const renderRef = useRef(() => {});
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
 
   const noteToRow = useMemo(() => {
     const m = {};
@@ -105,8 +128,13 @@ export default function WebGLPianoRoll({
       const noteHeight = rh - 2;
       rects.push({
         index,
-        x, y, w: noteWidth, h: noteHeight,
-        startBeats, durBeats, hand: n.hand === 'L' ? 'L' : 'R',
+        x,
+        y,
+        w: noteWidth,
+        h: noteHeight,
+        startBeats,
+        durBeats,
+        hand: n.hand === 'L' ? 'L' : 'R',
       });
     });
 
@@ -164,38 +192,59 @@ export default function WebGLPianoRoll({
     function drawQuads(vertices, color) {
       if (vertices.length === 0) return;
       gl.uniform4fv(colorLoc, color);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-      gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
+      const buf = vertices instanceof Float32Array ? vertices : new Float32Array(vertices);
+      gl.bufferData(gl.ARRAY_BUFFER, buf, gl.DYNAMIC_DRAW);
+      gl.drawArrays(gl.TRIANGLES, 0, buf.length / 2);
     }
 
-    let animationId = 0;
+    const numBarsGrid = Math.ceil(totalBeats / BEATS_PER_BAR);
+    const gridVertCount = (numBarsGrid + 1) * 12;
+    const gridVerts = new Float32Array(gridVertCount);
+    const tmpQuad = new Array(12);
+    for (let bar = 0; bar <= numBarsGrid; bar++) {
+      const x = KEY_STRIP_WIDTH + bar * BEATS_PER_BAR * PX_PER_BEAT;
+      const lineW = bar % 4 === 0 ? 1.5 : 1;
+      quadToVertices(x, 0, lineW, height, tmpQuad, 0);
+      const o = bar * 12;
+      for (let i = 0; i < 12; i++) gridVerts[o + i] = tmpQuad[i];
+    }
+
+    const hGridVertCount = (rowCount + 1) * 12;
+    const hGridVerts = new Float32Array(hGridVertCount);
+    for (let r = 0; r <= rowCount; r++) {
+      const y = r * rowHeight;
+      quadToVertices(KEY_STRIP_WIDTH, y, fullWidth - KEY_STRIP_WIDTH, 1, tmpQuad, 0);
+      const o = r * 12;
+      for (let i = 0; i < 12; i++) hGridVerts[o + i] = tmpQuad[i];
+    }
+
     let lastPlayheadX = null;
+    let lastDpr = 0;
 
     function render() {
+      const playheadBeats = getTransportPlayheadBeats();
+
       const dpr = window.devicePixelRatio || 1;
       const w = Math.round(fullWidth * dpr);
       const h = Math.round(height * dpr);
-      if (canvas.width !== w || canvas.height !== h) {
+      if (canvas.width !== w || canvas.height !== h || lastDpr !== dpr) {
         canvas.width = w;
         canvas.height = h;
         canvas.style.width = `${fullWidth}px`;
         canvas.style.height = `${height}px`;
         gl.viewport(0, 0, w, h);
+        lastDpr = dpr;
       }
 
       gl.clearColor(0.07, 0.07, 0.1, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       gl.useProgram(program);
-      // Resolución en píxeles lógicos para que las posiciones (fullWidth x height) mapeen bien a NDC
       gl.uniform2f(resolutionLoc, fullWidth, height);
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.enableVertexAttribArray(positionLoc);
       gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
 
-      const tmpQuad = new Array(12);
-
-      // 1) Franja de teclas (una fila por nota)
       for (let i = 0; i < rowCount; i++) {
         const y = i * rowHeight;
         const noteName = VISIBLE_RANGE[rowCount - 1 - i];
@@ -207,41 +256,23 @@ export default function WebGLPianoRoll({
         drawQuads(tmpQuad, [r, g, b, 1]);
       }
 
-      // 2) Rejilla vertical (líneas por compás; cada 4 más gruesa)
-      const numBars = Math.ceil(totalBeats / BEATS_PER_BAR);
-      const gridVerts = [];
-      for (let bar = 0; bar <= numBars; bar++) {
-        const x = KEY_STRIP_WIDTH + bar * BEATS_PER_BAR * PX_PER_BEAT;
-        const lineW = bar % 4 === 0 ? 1.5 : 1;
-        quadToVertices(x, 0, lineW, height, tmpQuad, 0);
-        for (let i = 0; i < 12; i++) gridVerts.push(tmpQuad[i]);
-      }
       if (gridVerts.length > 0) {
         gl.uniform4fv(colorLoc, [0.27, 0.27, 0.27, 1]);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(gridVerts), gl.DYNAMIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, gridVerts, gl.DYNAMIC_DRAW);
         gl.drawArrays(gl.TRIANGLES, 0, gridVerts.length / 2);
       }
 
-      // Rejilla horizontal
-      const hGridVerts = [];
-      for (let r = 0; r <= rowCount; r++) {
-        const y = r * rowHeight;
-        quadToVertices(KEY_STRIP_WIDTH, y, fullWidth - KEY_STRIP_WIDTH, 1, tmpQuad, 0);
-        for (let i = 0; i < 12; i++) hGridVerts.push(tmpQuad[i]);
-      }
       if (hGridVerts.length > 0) {
         gl.uniform4fv(colorLoc, [0.165, 0.165, 0.165, 1]);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(hGridVerts), gl.DYNAMIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, hGridVerts, gl.DYNAMIC_DRAW);
         gl.drawArrays(gl.TRIANGLES, 0, hGridVerts.length / 2);
       }
 
-      // 3) Notas (por color: L, R, activa bajo playhead)
       const viewLeft = container ? container.scrollLeft : 0;
       const viewRight = container ? container.scrollLeft + container.clientWidth : fullWidth;
       const marginPx = 32;
       const colorL = hexToRgba(HAND_COLORS.L);
       const colorR = hexToRgba(HAND_COLORS.R);
-      // Notas en lotes separados: interior y \"borde brillo\" por mano
       const batchLInner = [];
       const batchRInner = [];
       const batchLGlow = [];
@@ -252,13 +283,10 @@ export default function WebGLPianoRoll({
           playheadBeats != null &&
           playheadBeats >= rect.startBeats &&
           playheadBeats <= rect.startBeats + rect.durBeats;
-        // Rectángulo interior (nota normal)
         quadToVertices(rect.x, rect.y, rect.w, rect.h, tmpQuad, 0);
         if (rect.hand === 'L') for (let i = 0; i < 12; i++) batchLInner.push(tmpQuad[i]);
         else for (let i = 0; i < 12; i++) batchRInner.push(tmpQuad[i]);
 
-        // Si está activa bajo el playhead, dibujamos un rect ligeramente más grande
-        // del mismo color para simular un brillo en el borde.
         if (isActive) {
           const glowX = rect.x - 1;
           const glowY = rect.y - 1;
@@ -269,7 +297,6 @@ export default function WebGLPianoRoll({
           else for (let i = 0; i < 12; i++) batchRGlow.push(tmpQuad[i]);
         }
       });
-      // Primero el brillo (más grande), luego la nota interior, así se ve un borde
       if (batchLGlow.length > 0) {
         gl.uniform4fv(colorLoc, colorL);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(batchLGlow), gl.DYNAMIC_DRAW);
@@ -291,60 +318,65 @@ export default function WebGLPianoRoll({
         gl.drawArrays(gl.TRIANGLES, 0, batchRInner.length / 2);
       }
 
-      // 4) Playhead
       if (playheadBeats != null && playheadBeats >= 0) {
         const targetX = KEY_STRIP_WIDTH + playheadBeats * PX_PER_BEAT;
         if (lastPlayheadX == null) {
           lastPlayheadX = targetX;
         } else {
-          // Interpolación suave hacia la posición objetivo (suaviza los \"saltos\")
           const alpha = 0.35;
           lastPlayheadX = lastPlayheadX + (targetX - lastPlayheadX) * alpha;
         }
         const drawX = lastPlayheadX;
         if (drawX >= viewLeft && drawX <= viewRight) {
           quadToVertices(drawX, 0, 2, height, tmpQuad, 0);
-          gl.uniform4fv(colorLoc, [0, 1, 0.533, 1]); // #00ff88
+          gl.uniform4fv(colorLoc, [0, 1, 0.533, 1]);
           gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(tmpQuad), gl.DYNAMIC_DRAW);
           gl.drawArrays(gl.TRIANGLES, 0, 6);
         }
       } else {
-        // Si no hay playhead activo, reseteamos la posición suavizada
         lastPlayheadX = null;
       }
     }
 
-    const loop = () => {
-      render();
-      animationId = requestAnimationFrame(loop);
+    renderRef.current = render;
+    render();
+
+    const onScroll = () => {
+      renderRef.current();
     };
-    loop();
-    const onScroll = () => { render(); };
     if (container) container.addEventListener('scroll', onScroll);
 
     const resizeObserver =
       typeof ResizeObserver !== 'undefined'
-        ? new ResizeObserver(() => { render(); })
+        ? new ResizeObserver(() => {
+            renderRef.current();
+          })
         : null;
     if (resizeObserver && container) resizeObserver.observe(container);
 
     return () => {
       if (container) container.removeEventListener('scroll', onScroll);
       resizeObserver?.disconnect();
-      cancelAnimationFrame(animationId);
+      renderRef.current = () => {};
     };
-  }, [
-    notes,
-    bpm,
-    playheadBeats,
-    totalBeats,
-    rollWidth,
-    rowCount,
-    rowHeight,
-    noteRects,
-    fullWidth,
-    height,
-  ]);
+  }, [totalBeats, rollWidth, rowCount, rowHeight, noteRects, fullWidth, height]);
+
+  useEffect(() => {
+    let animationId = 0;
+    const tick = () => {
+      renderRef.current();
+      if (isPlayingRef.current) {
+        animationId = requestAnimationFrame(tick);
+      }
+    };
+    if (isPlaying) {
+      tick();
+    }
+    return () => {
+      cancelAnimationFrame(animationId);
+      renderRef.current();
+    };
+  }, [isPlaying]);
 
   return (
     <div ref={containerRef} style={{ overflow: 'auto', maxWidth: '100%' }}>
@@ -382,10 +414,7 @@ export default function WebGLPianoRoll({
             {Array.from({ length: numBars }).map((_, barIdx) => {
               const label = chordsByBar[barIdx];
               if (!label) return null;
-              const x =
-                KEY_STRIP_WIDTH +
-                barIdx * BEATS_PER_BAR * PX_PER_BEAT +
-                4;
+              const x = KEY_STRIP_WIDTH + barIdx * BEATS_PER_BAR * PX_PER_BEAT + 4;
               return (
                 <div
                   key={barIdx}
@@ -407,3 +436,12 @@ export default function WebGLPianoRoll({
     </div>
   );
 }
+
+export default React.memo(WebGLPianoRoll, (a, b) =>
+  a.notes === b.notes &&
+  a.bpm === b.bpm &&
+  a.isPlaying === b.isPlaying &&
+  a.width === b.width &&
+  a.height === b.height &&
+  a.chordsByBar === b.chordsByBar
+);

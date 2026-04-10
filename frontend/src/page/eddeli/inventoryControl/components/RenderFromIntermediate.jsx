@@ -19,12 +19,12 @@ import {
   Collapse,
   Paper,
   Button,
-  CircularProgress,
   Drawer,
   Fab,
   Badge,
-  MenuItem
+  LinearProgress,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
 import AddIcon from "@mui/icons-material/Add";
@@ -34,13 +34,10 @@ import CloseIcon from "@mui/icons-material/Close";
 
 
 import {
-  getAllProducts,
   simulateFromIntermediate,
-  simulateProduction,
   registerProductionIntermediateFromPayload,
 } from "../../../../api/eddeli/inventoryControlRequest";
 import { useAuth } from "../../../../context/AuthContext";
-import SearchableSelect from "../../../../Components/SearchableSelect";
 
 /* --- Utils --- */
 const numberOrZero = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
@@ -130,8 +127,12 @@ function CartSummary({
             mb: 1,
             p: 1.2,
             borderRadius: 1,
-            bgcolor: "grey.50",
-            border: "1px dashed #e0e0e0",
+            border: "1px dashed",
+            borderColor: "divider",
+            bgcolor: (theme) =>
+              theme.palette.mode === "dark"
+                ? alpha(theme.palette.common.white, 0.06)
+                : theme.palette.grey[50],
           }}
         >
           <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>
@@ -150,7 +151,10 @@ function CartSummary({
           </Typography>
         )}
         {cart.map((it) => (
-          <ListItem key={it._key || it.id} sx={{ borderBottom: "1px dashed #e0e0e0" }}>
+          <ListItem
+            key={it._key || it.id}
+            sx={{ borderBottom: "1px dashed", borderColor: "divider" }}
+          >
             <ListItemText
               primary={
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: "wrap" }}>
@@ -209,7 +213,19 @@ function InsumosConsumidos({ insumosAggMap }) {
   const insumos = Object.values(insumosAggMap || {});
   if (!insumos.length) {
     return (
-      <Paper elevation={0} sx={{ mt: 1.5, p: 1.5, border: "1px dashed #e0e0e0", bgcolor: "grey.50" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          mt: 1.5,
+          p: 1.5,
+          border: "1px dashed",
+          borderColor: "divider",
+          bgcolor: (theme) =>
+            theme.palette.mode === "dark"
+              ? alpha(theme.palette.common.white, 0.06)
+              : theme.palette.grey[50],
+        }}
+      >
         <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
           Insumos consumidos de la receta
         </Typography>
@@ -223,7 +239,19 @@ function InsumosConsumidos({ insumosAggMap }) {
   const totalUn = insumos.reduce((s, it) => s + (numberOrZero(it.unidades) || 0), 0);
 
   return (
-    <Paper elevation={0} sx={{ mt: 1.5, p: 1.5, border: "1px dashed #e0e0e0", bgcolor: "grey.50" }}>
+    <Paper
+      elevation={0}
+      sx={{
+        mt: 1.5,
+        p: 1.5,
+        border: "1px dashed",
+        borderColor: "divider",
+        bgcolor: (theme) =>
+          theme.palette.mode === "dark"
+            ? alpha(theme.palette.common.white, 0.06)
+            : theme.palette.grey[50],
+      }}
+    >
       <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
         Insumos consumidos de la receta
       </Typography>
@@ -260,10 +288,7 @@ function InsumosConsumidos({ insumosAggMap }) {
 }
 
 /* =================== COMPONENTE INDEPENDIENTE =================== */
-export default function RenderFromIntermediate({fetchData}) {
-  // Productos (solo intermedios para el selector)
-  const [products, setProducts] = React.useState([]);
-  const [intermediateId, setIntermediateId] = React.useState("");
+export default function RenderFromIntermediate({ productId, fetchData }) {
   const [loadingIntermediate, setLoadingIntermediate] = React.useState(false);
 
   // Resultado de simulación del intermedio (masa total y derivados)
@@ -282,6 +307,8 @@ export default function RenderFromIntermediate({fetchData}) {
 
   // Drawer móvil para carrito
   const [cartOpen, setCartOpen] = React.useState(false);
+  const [cantidades, setCantidades] = React.useState({});
+  const [openMap, setOpenMap] = React.useState({});
   const { toast: toastAuth } = useAuth();
 
   // refs para inputs de cantidad
@@ -295,22 +322,6 @@ export default function RenderFromIntermediate({fetchData}) {
       qtyRefs.current[key]?.current?.focus?.();
     });
   };
-
-  /* ---------- Init: cargar intermedios ---------- */
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const res = await getAllProducts();
-        const list = res?.data?.data ?? res?.data ?? [];
-        const arr = Array.isArray(list) ? list : [];
-        const inters = arr.filter((p) => p.type === "intermediate" || p.esIntermedio);
-        setProducts(inters);
-        if (inters.length) setIntermediateId(String(inters[0].id));
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      }
-    })();
-  }, []);
 
   /* ---------- Helpers de insumos (formato backend-compatible) ---------- */
   const mergeInsumo = React.useCallback((map, node, factor = 1) => {
@@ -359,14 +370,16 @@ export default function RenderFromIntermediate({fetchData}) {
     [mergeInsumo]
   );
 
-  /* ---------- Simular desde intermedio ---------- */
-  const handleSimulateFromIntermediate = async () => {
-    if (!intermediateId) return;
+  /* ---------- Simular al elegir producto (intermedio) ---------- */
+  React.useEffect(() => {
+    if (!productId) return;
+    let cancelled = false;
     setLoadingIntermediate(true);
-    try {
-      const res = await simulateFromIntermediate(Number(intermediateId));
-      const r = res?.data ?? null;
-      if (r) {
+    (async () => {
+      try {
+        const res = await simulateFromIntermediate(Number(productId));
+        const r = res?.data ?? null;
+        if (cancelled || !r) return;
         const formatted = {
           ...r,
           cantidadDeseada: numberOrZero(r.producedGrams ?? r.cantidadDeseada),
@@ -380,21 +393,30 @@ export default function RenderFromIntermediate({fetchData}) {
         setTotalMasaProducida(baseG);
         setMasaRestante(baseG);
 
-        // Insumos del intermedio por 1 lote (NO intermedios)
         const baseMap = {};
         walkRequiere(r?.requiere, 1, baseMap);
         setInsumosIntermedioBase(baseMap);
 
-        // reset
         setCart([]);
-        setInsumosAggMap(baseMap); // por defecto 1 lote
+        setCantidades({});
+        setOpenMap({});
+        setInsumosAggMap(baseMap);
+      } catch (err) {
+        console.error("Simulación intermedio error:", err);
+        if (!cancelled) {
+          setResultado(null);
+          setCart([]);
+          setInsumosAggMap({});
+          setInsumosIntermedioBase({});
+        }
+      } finally {
+        if (!cancelled) setLoadingIntermediate(false);
       }
-    } catch (err) {
-      console.error("Simulación intermedio error:", err);
-    } finally {
-      setLoadingIntermediate(false);
-    }
-  };
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [productId, walkRequiere]);
 
   /* ---------- Lotes (paso 0.5) ---------- */
   const trySetLotes = (val) => {
@@ -595,29 +617,7 @@ export default function RenderFromIntermediate({fetchData}) {
     setMasaRestante(0);
   };
 
-  const handleProcess = async () => {
-    const payload = buildBackendPayload({
-      resultadoEditable: resultado,
-      cart,
-      insumosAggregatedMap: insumosAggMap, // <-- sólo intermedio × lotes
-    });
-    // console.log("payload enviado:", payload);
-    toastAuth({
-      promise: registerProductionIntermediateFromPayload(payload),
-      onSuccess: () => {
-        fetchData?.();
-        return {
-          title: "Producción",
-          description: "Producción Intermedia registrada correctamente",
-        };
-      },
-    });
-  };
-
   /* ----------------- UI: Tarjetas y derivados (recursivo) ----------------- */
-  const [cantidades, setCantidades] = React.useState({});
-  const [openMap, setOpenMap] = React.useState({});
-
   const getCantidadInt = React.useCallback(
     (k) => {
       const v = Number(cantidades[k] ?? 1);
@@ -627,6 +627,35 @@ export default function RenderFromIntermediate({fetchData}) {
     [cantidades]
   );
   const toggleOpen = (k) => setOpenMap((p) => ({ ...p, [k]: !p[k] }));
+
+  const resetAfterSuccessfulProcess = React.useCallback(() => {
+    setCart([]);
+    setCantidades({});
+    setOpenMap({});
+    setCartOpen(false);
+    const totalMasa = numberOrZero(baseProducedGrams) * numberOrZero(lotes);
+    setMasaRestante(totalMasa);
+    setTotalMasaProducida(totalMasa);
+  }, [baseProducedGrams, lotes]);
+
+  const handleProcess = async () => {
+    const payload = buildBackendPayload({
+      resultadoEditable: resultado,
+      cart,
+      insumosAggregatedMap: insumosAggMap,
+    });
+    toastAuth({
+      promise: registerProductionIntermediateFromPayload(payload),
+      onSuccess: () => {
+        fetchData?.();
+        resetAfterSuccessfulProcess();
+        return {
+          title: "Producción",
+          description: "Producción Intermedia registrada correctamente",
+        };
+      },
+    });
+  };
 
   const RowDerivado = ({ item, parent, depth = 0, consumoAcumuladoPadre = null, pathKey = "" }) => {
     const isTransform = !!parent;
@@ -756,6 +785,7 @@ export default function RenderFromIntermediate({fetchData}) {
                 <TextField
                   type="number"
                   size="small"
+                  variant="outlined"
                   label="Cantidad"
                   value={cantidades[k] ?? 1}
                   onChange={(e) => {
@@ -839,6 +869,7 @@ export default function RenderFromIntermediate({fetchData}) {
                   <TextField
                     type="number"
                     size="small"
+                    variant="outlined"
                     label="Cantidad"
                     value={cantidades[keyTop] ?? 1}
                     onChange={(e) => {
@@ -923,80 +954,46 @@ export default function RenderFromIntermediate({fetchData}) {
   /* -------------------- Render principal -------------------- */
   return (
     <Box>
-      {/* Controles */}
-      <Paper sx={{ p: 2, mb: 2 }}>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-end">
-          {/* <TextField
-            label="Intermedio"
-            select
-            fullWidth
-            variant="standard"
-            value={intermediateId}
-            onChange={(e) => setIntermediateId(String(e.target.value))}
-          >
-            {products.map((p) => (
-              <MenuItem key={p.id} value={String(p.id)}>
-                {p.name}
-              </MenuItem>
-            ))}
-          </TextField> */}
+      {loadingIntermediate && <LinearProgress sx={{ mb: 2 }} />}
 
-          <SearchableSelect
-  label="Seleccionar Producto Intermedio"
-  items={products}
-  value={intermediateId}
-  onChange={(e) => setIntermediateId(String(e))}
-/>
-
-          <Button
-            variant="contained"
-            onClick={handleSimulateFromIntermediate}
-            disabled={!intermediateId || loadingIntermediate}
-            startIcon={<PlaylistAddCheckIcon />}
-          >
-            {loadingIntermediate ? <CircularProgress size={20} /> : "Simular"}
-          </Button>
-        </Stack>
-
-        {/* Control de lotes */}
-        {resultado && (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-              Lotes de masa (pasos de 0.5)
-            </Typography>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: "wrap" }}>
-              <Tooltip title="− 0.5 lote">
-                <span>
-                  <IconButton size="small" onClick={() => trySetLotes(lotes - 0.5)}>
-                    <RemoveCircleOutlineIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <TextField
-                type="number"
-                size="small"
-                value={lotes}
-                onChange={(e) => trySetLotes(e.target.value)}
-                inputProps={{ step: 0.5, min: 0.5 }}
-                sx={{ width: 120 }}
-                onWheel={(e)=>e.target.blur()}
-              />
-              <Tooltip title="+ 0.5 lote">
-                <span>
-                  <IconButton size="small" onClick={() => trySetLotes(lotes + 0.5)}>
-                    <AddIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <Chip
-                size="small"
-                color="primary"
-                label={`Producido: ${(numberOrZero(baseProducedGrams) * numberOrZero(lotes)).toFixed(2)} g`}
-              />
-            </Stack>
-          </Box>
-        )}
-      </Paper>
+      {resultado && (
+        <Paper sx={{ p: 2, mb: 2 }}>
+          <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+            Lotes de masa (pasos de 0.5)
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: "wrap" }}>
+            <Tooltip title="− 0.5 lote">
+              <span>
+                <IconButton size="small" onClick={() => trySetLotes(lotes - 0.5)}>
+                  <RemoveCircleOutlineIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <TextField
+              type="number"
+              size="small"
+              variant="outlined"
+              value={lotes}
+              onChange={(e) => trySetLotes(e.target.value)}
+              inputProps={{ step: 0.5, min: 0.5 }}
+              sx={{ width: 120 }}
+              onWheel={(e) => e.target.blur()}
+            />
+            <Tooltip title="+ 0.5 lote">
+              <span>
+                <IconButton size="small" onClick={() => trySetLotes(lotes + 0.5)}>
+                  <AddIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Chip
+              size="small"
+              color="primary"
+              label={`Producido: ${(numberOrZero(baseProducedGrams) * numberOrZero(lotes)).toFixed(2)} g`}
+            />
+          </Stack>
+        </Paper>
+      )}
 
       {/* Resultado */}
       {resultado && (
@@ -1052,27 +1049,74 @@ export default function RenderFromIntermediate({fetchData}) {
             </Badge>
           </Box>
 
-          <Drawer anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
-            <Box sx={{ width: 340, p: 2 }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Carrito
-                </Typography>
-                <IconButton onClick={() => setCartOpen(false)}>
-                  <CloseIcon />
-                </IconButton>
-              </Stack>
-              <CartSummary
-                cart={cart}
-                masaRestante={masaRestante}
-                resultadoEditable={resultado}
-                insumosAggMap={insumosAggMap}
-                onRemove={handleRemoveFromCart}
-                onDistribute={handleDistributeRemainingMass}
-                onProcess={handleProcess}
-              />
-              {/* Insumos debajo del carrito (móvil) */}
-              <InsumosConsumidos insumosAggMap={insumosAggMap} />
+          <Drawer
+            anchor="right"
+            open={cartOpen}
+            onClose={() => setCartOpen(false)}
+            PaperProps={{
+              sx: {
+                bgcolor: "background.paper",
+                width: { xs: "100%", sm: 380 },
+                maxWidth: "100vw",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Box
+                sx={{
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 2,
+                  px: 2,
+                  py: 1.5,
+                  bgcolor: "background.paper",
+                  borderBottom: 1,
+                  borderColor: "divider",
+                }}
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    Carrito
+                  </Typography>
+                  <IconButton
+                    aria-label="Cerrar carrito"
+                    size="large"
+                    edge="end"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Stack>
+              </Box>
+              <Box sx={{ flex: 1, overflow: "auto", px: 2, py: 2 }}>
+                <CartSummary
+                  cart={cart}
+                  masaRestante={masaRestante}
+                  resultadoEditable={resultado}
+                  insumosAggMap={insumosAggMap}
+                  onRemove={handleRemoveFromCart}
+                  onDistribute={handleDistributeRemainingMass}
+                  onProcess={handleProcess}
+                />
+                <InsumosConsumidos insumosAggMap={insumosAggMap} />
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  size="large"
+                  startIcon={<CloseIcon />}
+                  sx={{ mt: 2 }}
+                  onClick={() => setCartOpen(false)}
+                >
+                  Cerrar
+                </Button>
+              </Box>
             </Box>
           </Drawer>
         </>

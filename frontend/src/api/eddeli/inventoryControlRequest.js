@@ -169,11 +169,11 @@ export const getRecipeByProduct = async (productFinalId) =>
 // api/inventoryControlRequest.js
 export const getRecipeCosting = (
   productFinalId,
-  { extrasPercent = 0, laborPercent = 0, producedQty = 0 } = {}
+  { extrasPercent = 0, laborPercent = 0, producedQty = 0, debug = 0 } = {}
 ) => {
   return axios.get(`/inventory/recipes/getRecipeCosting/${productFinalId}`, {
     headers: { Authorization: jwt() },
-    params: { extrasPercent, laborPercent, producedQty }, // ← aquí van los query params
+    params: { extrasPercent, laborPercent, producedQty, debug },
   });
 };
 
@@ -293,6 +293,12 @@ export const getStoreProductsRequest = (storeId, params) =>
   axios.get(`/inventory/stores/${storeId}/products`, {
     params, // { activeOnly, q }
     headers: { Authorization: jwt() },
+  });
+
+/** Productos ofrecidos en un local — sin cabecera de auth (vista pública de locales, ej. /punto_venta). */
+export const getStoreProductsPublicRequest = (storeId, params = {}) =>
+  axios.get(`/inventory/stores/${storeId}/products`, {
+    params: { activeOnly: true, ...params },
   });
 
 export const addProductsToStoreRequest = (storeId, productIds) =>

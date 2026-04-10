@@ -35,6 +35,7 @@ import BarChartOp from "./components/Charts/BarChartOp";
 import ChartCalendaryInfo from "./components/Charts/ChartCalendaryInfo";
 import ExpenseByDateLine from "./components/Charts/ExpenseByDateLine";
 import ExpensePurchaseStats from "./components/Charts/ExpensePurchaseStats";
+import ChartBlockHeader from "../../../Components/Charts/ChartBlockHeader";
 
 
 
@@ -109,7 +110,7 @@ export const DashBoardPage = () => {
                 setSummary(resSummary.data);
                 setOverView(resOverViews.data);
                 setWeeklySales(resWeeklySales.data);
-                setTopProductsDailySales(resTopProductsDailySales.data);
+                setTopProductsDailySales(resTopProductsDailySales.data ?? {});
                 setProductRotationAnalysis(resProductRotationAnalysis.data)
                 setIncomeExpenseBreakdown(resIncomeExpenseBreakdown.data)
                 setOrdersForCharts(resOrdersForCharts.data)
@@ -238,6 +239,12 @@ export const DashBoardPage = () => {
                     <Grid container xs={12} md={4}>
                         <Grid item xs={12} md={12}>
                             <Paper style={paperStyle}>
+                                <Box sx={{ textAlign: 'left', px: 0.5 }}>
+                                    <ChartBlockHeader
+                                        title="Resumen de estados de pedido"
+                                        subtitle="Conteos según si los ítems están pagados y/o entregados (vista global de todas las órdenes)."
+                                    />
+                                </Box>
                                 <TablePro
                                     columns={AnaliticsColumns}
                                     rows={overView}
@@ -250,8 +257,9 @@ export const DashBoardPage = () => {
                         </Grid>
                         <Grid item xs={12} md={12}>
                             <Paper style={paperStyle}>
-                                Ganacias diarias
-                                <BarChartDays dataDays={weeklySales.labels} dataValues={weeklySales.values} />
+                                <Box sx={{ textAlign: 'left', px: 0.5 }}>
+                                    <BarChartDays dataDays={weeklySales.labels} dataValues={weeklySales.values} />
+                                </Box>
                             </Paper>
                         </Grid>
                     </Grid>
@@ -288,7 +296,7 @@ export const DashBoardPage = () => {
                         <Grid container xs={12} md={12}>
                     <Grid item xs={12} md={7}>
                         <Paper style={paperStyle}>
-                            <LineChartMonth data={topProductsDailySales.dataset} seriesName={topProductsDailySales.products} />
+                            <LineChartMonth bundle={topProductsDailySales} />
 
                         </Paper>
 
@@ -317,7 +325,12 @@ export const DashBoardPage = () => {
                    <Grid container xs={12} md={12}>
                     <Grid item xs={12} md={12}>
                         <Paper style={paperStyle}>
-                        Tabla de clientes y sus pedidos y ganancias
+                        <Box sx={{ textAlign: 'left', px: 0.5, pt: 0.5 }}>
+                            <ChartBlockHeader
+                                title="Clientes, pedidos y saldos"
+                                subtitle="Por cliente: pedidos, totales, deuda pendiente y detalle por producto. Datos desde el resumen de ventas del API."
+                            />
+                        </Box>
                         <CustomersAccordionTable/>
                         </Paper>
 

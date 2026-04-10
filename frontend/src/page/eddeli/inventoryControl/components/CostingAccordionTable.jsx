@@ -11,7 +11,6 @@ import {
   TableRow,
   Typography,
   Chip,
-  Divider,
 } from "@mui/material";
 import { useState, memo } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -169,35 +168,10 @@ function CollapsibleRow({ node, level = 0 }) {
 
 export default function CostingAccordionTable({ data }) {
   if (!data || !data.tree) return null;
-  const { tree, summary } = data;
+  const { tree } = data;
 
   return (
     <Box>
-      {summary && (
-        <Paper sx={{ p: 2, mb: 2 }}>
-          <Typography variant="subtitle1" fontWeight={700} gutterBottom>
-            Resumen de Costos
-          </Typography>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 1.2 }}>
-            <Typography variant="body2">Subtotal Insumos: <b>${fmt(summary.totales?.subtotalInsumos)}</b></Typography>
-            <Typography variant="body2">Subtotal Materiales: <b>${fmt(summary.totales?.subtotalMateriales)}</b></Typography>
-            <Typography variant="body2">Subtotal: <b>${fmt(summary.totales?.subtotal)}</b></Typography>
-            <Typography variant="body2">Extras ({summary.totales?.extrasPercentInt ?? 0}%): <b>${fmt(summary.totales?.extras)}</b></Typography>
-            <Typography variant="body2">Mano de obra ({summary.totales?.laborPercentInt ?? 0}%): <b>${fmt(summary.totales?.labor)}</b></Typography>
-            <Typography variant="body2">Total del lote: <b>${fmt(summary.totales?.totalLote)}</b></Typography>
-            <Typography variant="body2">Peso total (g): <b>{fmt(summary.acumulados?.totalPesoEnMasaGr, 2)} g</b></Typography>
-            <Typography variant="body2">Unidades material: <b>{fmt(summary.acumulados?.totalUnidadesMaterial, 2)}</b></Typography>
-            <Typography variant="body2">Costo unitario (/{summary.totales?.producedQty ?? 0}): <b>${fmt(summary.totales?.costoUnitario, 4)}</b></Typography>
-          </Box>
-          {summary?.notas && (
-            <>
-              <Divider sx={{ my: 1.5 }} />
-              <Typography variant="caption" color="text.secondary">{summary.notas}</Typography>
-            </>
-          )}
-        </Paper>
-      )}
-
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>

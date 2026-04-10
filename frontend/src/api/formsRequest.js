@@ -1,4 +1,4 @@
-import axios, { jwt } from "./axios.js";
+import { axiosForSoftedModules as axios, jwt } from "./axios.js";
 
 // Obtener todas las encuestas
 export const getForms = async () => 

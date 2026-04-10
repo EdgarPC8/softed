@@ -2,23 +2,41 @@ import React, { useState } from 'react';
 import { Box, Typography, Card, CardActionArea, CardContent } from '@mui/material';
 import ModeProCreate from './modes/ModeProCreate';
 import ModeProPractice from './modes/ModeProPractice';
+import ModeProDev from './modes/ModeProDev';
+import { usePianoAreaHeight } from '../../hooks/usePianoAreaHeight';
 
 const MODES = [
   { id: 'crear', label: 'Piano Pro · Crear', desc: 'Editor avanzado con WebGL y acordes por compás', icon: '✏️' },
   { id: 'practica', label: 'Piano Pro · Práctica', desc: 'Practica canciones de la BD con vista Pro', icon: '👆' },
+  {
+    id: 'desarrollador',
+    label: 'Piano Pro · Desarrollador',
+    desc: 'Demo pesada (arrayMusic) para probar el canvas WebGL con fluidez',
+    icon: '🛠️',
+  },
 ];
 
 export default function PianoProPracticePage() {
   const [mode, setMode] = useState(null);
+  const active = mode !== null;
+  const areaHeight = usePianoAreaHeight(true);
 
   return (
     <Box
       sx={{
-        p: 3,
-        flex: 1,
-        minHeight: 0,
+        width: '100%',
+        minHeight: areaHeight,
+        bgcolor: 'background.default',
+        ...(active && {
+          height: areaHeight,
+          maxHeight: areaHeight,
+          overflow: 'hidden',
+        }),
         display: 'flex',
         flexDirection: 'column',
+        boxSizing: 'border-box',
+        p: active ? 0 : 3,
+        overflow: active ? 'hidden' : 'auto',
       }}
     >
       {mode === null ? (
@@ -28,6 +46,7 @@ export default function PianoProPracticePage() {
             mx: 'auto',
             pt: 4,
             flex: 1,
+            width: '100%',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -57,12 +76,21 @@ export default function PianoProPracticePage() {
           </Box>
         </Box>
       ) : (
-        <>
+        <Box
+          sx={{
+            height: '100%',
+            width: '100%',
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
           {mode === 'crear' && <ModeProCreate onBack={() => setMode(null)} />}
           {mode === 'practica' && <ModeProPractice onBack={() => setMode(null)} />}
-        </>
+          {mode === 'desarrollador' && <ModeProDev onBack={() => setMode(null)} />}
+        </Box>
       )}
     </Box>
   );
 }
-

@@ -1,429 +1,411 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
-  Box, Button, Typography, Grid, Paper, Stack, Chip,
+  Box,
+  Button,
+  Typography,
+  Grid,
+  Paper,
+  Stack,
+  Chip,
+  LinearProgress,
 } from '@mui/material';
+import { useTheme, alpha } from '@mui/material/styles';
 import {
-  format, addMonths, startOfMonth, endOfMonth,
-  eachDayOfInterval, startOfWeek, endOfWeek,
-  isSameDay, parse, isSameMonth,
+  format,
+  addMonths,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  startOfWeek,
+  endOfWeek,
+  isSameDay,
+  parse,
+  isSameMonth,
 } from 'date-fns';
 import { es } from 'date-fns/locale';
+import ChartBlockHeader from '../../../../../Components/Charts/ChartBlockHeader';
+import { getChartSeriesColors, CHART_SEMANTIC_INDEX } from '../../../../../theme/chartPalette';
 
-
-
-
-/* ========= Paleta ========= */
-const COLORS = {
-  ordersCount:     '#5A9BD5', // azul suave
-  deliveredCount:  '#A56CC1', // lila medio
-  deliveredAmount: '#6BBF59', // verde menta
-  ordersAmount:    '#F4C95D', // dorado pastel
-};
-
-/* ========= Mock (reemplaza con tus datos) ========= */
-const mockOrders = [
-  { id: 101, date: '07/10/2025 10:30:00', ERP_customer: { name: 'Cliente A' },
-    ERP_order_items: [
-      { id: 1, quantity: 2, price: 15, paidAt: '07/10/2025 11:00:00', deliveredAt: '07/10/2025 15:00:00' },
-      { id: 2, quantity: 1, price: 20, paidAt: '07/10/2025 11:00:00', deliveredAt: '07/10/2025 15:10:00' },
-    ],
-  },
-  { id: 102, date: '12/10/2025 18:15:00', ERP_customer: { name: 'Cliente B' },
-    ERP_order_items: [
-      { id: 3, quantity: 3, price: 12, paidAt: null, deliveredAt: '12/10/2025 20:00:00' },
-    ],
-  },
-  { id: 103, date: '18/10/2025 20:05:00', ERP_customer: { name: 'Cliente C' },
-    ERP_order_items: [
-      { id: 4, quantity: 1, price: 100, paidAt: null, deliveredAt: null },
-      { id: 5, quantity: 2, price: 35,  paidAt: null, deliveredAt: null },
-    ],
-  },
-  { id: 104, date: '19/10/2025 09:00:00', ERP_customer: { name: 'Cliente D' },
-    ERP_order_items: [
-      { id: 6, quantity: 4, price: 8, paidAt: '19/10/2025 09:30:00', deliveredAt: '19/10/2025 12:00:00' },
-    ],
-  },
-];
-
-/* ========= Utils ========= */
 function chunkArray(arr, size) {
   const r = [];
   for (let i = 0; i < arr.length; i += size) r.push(arr.slice(i, i + size));
   return r;
 }
 
-/** Métricas por día */
 function calcDayMetrics(orders) {
   const ordersCount = orders.length;
-  let deliveredCount = 0;
+  let deliveredUnits = 0;
   let ordersAmount = 0;
-  let deliveredAmount = 0;
+  let paidAmount = 0;
 
   orders.forEach((o) => {
-    o.ERP_order_items.forEach((it) => {
+    (o.ERP_order_items || []).forEach((it) => {
       const q = Number(it.quantity ?? 0);
       const sub = q * Number(it.price ?? 0);
       ordersAmount += sub;
-      if (it.deliveredAt) deliveredCount += q;
-      if (it.paidAt) deliveredAmount += sub;
+      if (it.deliveredAt) deliveredUnits += q;
+      if (it.paidAt) paidAmount += sub;
     });
   });
 
-  return { ordersCount, deliveredCount, ordersAmount, deliveredAmount };
+  return { ordersCount, deliveredUnits, ordersAmount, paidAmount };
 }
 
-/* ========= Helpers SVG ========= */
-function ringArcPath(cx, cy, rOuter, rInner, a0, a1) {
-  const x0o = cx + rOuter * Math.cos(a0);
-  const y0o = cy + rOuter * Math.sin(a0);
-  const x1o = cx + rOuter * Math.cos(a1);
-  const y1o = cy + rOuter * Math.sin(a1);
-
-  const x1i = cx + rInner * Math.cos(a1);
-  const y1i = cy + rInner * Math.sin(a1);
-  const x0i = cx + rInner * Math.cos(a0);
-  const y0i = cy + rInner * Math.sin(a0);
-
-  const large = a1 - a0 > Math.PI ? 1 : 0;
-
-  return `
-    M ${x0o} ${y0o}
-    A ${rOuter} ${rOuter} 0 ${large} 1 ${x1o} ${y1o}
-    L ${x1i} ${y1i}
-    A ${rInner} ${rInner} 0 ${large} 0 ${x0i} ${y0i}
-    Z
-  `;
+function pct(value, max) {
+  if (!max || max <= 0) return 0;
+  return Math.min(100, (Number(value) / max) * 100);
 }
 
-/* ========= Donut concéntrico más grueso ========= */
-function SquareDonutBackground({
-  borderRadius = 14,
-  ringCounts = [], // [{label, value, color}]
-  ringMoney = [],  // [{label, value, color}]
-  labelFormatter = (v) =>
-    typeof v === 'number' ? (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(v)) : String(v ?? ''),
+/** Solo color (borde + fondo) + valor + barra fina */
+function DayValueStrip({
+  valueText,
+  barPercent,
+  accentBorder,
+  accentValue,
+  track,
+  theme,
 }) {
-  const clipId = React.useId();
-  const cx = 50, cy = 50;
-
-  // Anchos más gruesos
-  const outerR = 48, outerRInner = 26; // grosor 22
-  const innerR = 22, innerRInner = 6;  // grosor 16
-
-  const buildSegs = (segments) => {
-    const total = Math.max(0.0001, segments.reduce((a, s) => a + (s.value || 0), 0));
-    let acc = 0;
-    return segments.map((s) => {
-      const a0 = (acc / total) * 2 * Math.PI;
-      acc += (s.value || 0);
-      const a1 = (acc / total) * 2 * Math.PI;
-      return { ...s, a0, a1, amid: (a0 + a1) / 2 };
-    });
-  };
-
-  const segCounts = buildSegs(ringCounts);
-  const segMoney  = buildSegs(ringMoney);
-
+  const fill = accentValue ?? accentBorder;
   return (
-    <Box sx={{ position: 'absolute', inset: 0, borderRadius, overflow: 'hidden' }}>
-      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <clipPath id={clipId}>
-            <rect x="0" y="0" width="100" height="100" rx={borderRadius} ry={borderRadius} />
-          </clipPath>
-        </defs>
-        <g clipPath={`url(#${clipId})`}>
-          <rect x="0" y="0" width="100" height="100" fill="#ffffff" />
-
-          {/* Anillo exterior: dinero */}
-          {segMoney.map((s, i) => (
-            <path
-              key={`m-${i}`}
-              d={ringArcPath(cx, cy, outerR, outerRInner, s.a0, s.a1)}
-              fill={s.color}
-              stroke="rgba(0,0,0,0.20)"
-              strokeWidth="0.45"
-            />
-          ))}
-
-          {/* Anillo interior: conteos */}
-          {segCounts.map((s, i) => (
-            <path
-              key={`c-${i}`}
-              d={ringArcPath(cx, cy, innerR, innerRInner, s.a0, s.a1)}
-              fill={s.color}
-              stroke="rgba(0,0,0,0.18)"
-              strokeWidth="0.4"
-            />
-          ))}
-
-          {/* Labels exteriores (dinero) */}
-          {segMoney.map((s, i) => {
-            const rText = (outerR + outerRInner) / 2;
-            const x = cx + rText * Math.cos(s.amid);
-            const y = cy + rText * Math.sin(s.amid);
-            const v = Number(s.value || 0);
-            if (v <= 0) return null;
-            return (
-              <text key={`tm-${i}`} x={x} y={y + 2} fontSize="8" textAnchor="middle"
-                    fill="#fcfcfc" fontWeight="700" stroke="#000" strokeWidth="0.22">
-                {labelFormatter(v)}
-              </text>
-            );
-          })}
-
-          {/* Labels interiores (conteos) */}
-          {segCounts.map((s, i) => {
-            const rText = (innerR + innerRInner) / 2;
-            const x = cx + rText * Math.cos(s.amid);
-            const y = cy + rText * Math.sin(s.amid);
-            const v = Number(s.value || 0);
-            if (v <= 0) return null;
-            return (
-              <text key={`tc-${i}`} x={x} y={y + 2} fontSize="8" textAnchor="middle"
-                    fill="#fcfcfc" fontWeight="700" stroke="#000" strokeWidth="0.22">
-                {labelFormatter(v)}
-              </text>
-            );
-          })}
-        </g>
-      </svg>
+    <Box
+      sx={{
+        borderLeft: 3,
+        borderColor: accentBorder,
+        pl: 0.65,
+        pr: 0.35,
+        py: 0.35,
+        borderRadius: '0 8px 8px 0',
+        bgcolor: alpha(accentBorder, theme.palette.mode === 'dark' ? 0.12 : 0.07),
+      }}
+    >
+      <Typography
+        variant="body2"
+        sx={{
+          fontWeight: 800,
+          fontSize: '0.7rem',
+          lineHeight: 1.15,
+          color: fill,
+          textAlign: 'center',
+        }}
+      >
+        {valueText}
+      </Typography>
+      <LinearProgress
+        variant="determinate"
+        value={barPercent}
+        sx={{
+          mt: 0.35,
+          height: 3,
+          borderRadius: 1,
+          bgcolor: track,
+          '& .MuiLinearProgress-bar': {
+            borderRadius: 1,
+            bgcolor: fill,
+          },
+        }}
+      />
     </Box>
   );
 }
 
-/* ========= Componente visual ========= */
 export default function ChartCalendaryInfo({
   initialDate = new Date(),
-  cellMinHeight = 86, // un poco más alto por el donut más grueso
-  orders = mockOrders,
+  cellMinHeight = 86,
+  orders = [],
 }) {
+  const theme = useTheme();
   const [currentDate, setCurrentDate] = useState(initialDate);
 
-  // Fechas del mes visible
+  const chartColors = useMemo(() => {
+    const p = theme.palette;
+    const s = getChartSeriesColors(theme);
+    return {
+      orders: s[CHART_SEMANTIC_INDEX.primary],
+      orderMoney: s[CHART_SEMANTIC_INDEX.money],
+      delivery: s[CHART_SEMANTIC_INDEX.secondary],
+      paid: s[CHART_SEMANTIC_INDEX.positive],
+      track: alpha(p.text.primary, theme.palette.mode === 'dark' ? 0.2 : 0.12),
+    };
+  }, [theme]);
+
   const startDay = startOfMonth(currentDate);
   const endDay = endOfMonth(currentDate);
-  const startWeek = startOfWeek(startDay, { weekStartsOn: 1 }); // lunes
+  const startWeek = startOfWeek(startDay, { weekStartsOn: 1 });
   const endWeek = endOfWeek(endDay, { weekStartsOn: 1 });
   const daysToShow = eachDayOfInterval({ start: startWeek, end: endWeek });
   const weeks = useMemo(() => chunkArray(daysToShow, 7), [daysToShow]);
 
-  // Helpers
-  const moneyFmt = (v) =>
-    new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v ?? 0);
+  const moneyFmt = useCallback(
+    (v) =>
+      new Intl.NumberFormat('es-EC', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2,
+      }).format(v ?? 0),
+    []
+  );
 
-  // Total mensual ($ Entregado) — solo días del mes actual
-  const monthDeliveredTotal = useMemo(() => {
+  const monthPaidTotal = useMemo(() => {
     let total = 0;
     daysToShow.forEach((date) => {
       if (!isSameMonth(date, currentDate)) return;
       const dayOrders = orders.filter((o) =>
-        isSameDay(parse(o.date, 'dd/MM/yyyy HH:mm:ss', new Date()), date),
+        isSameDay(parse(o.date, 'dd/MM/yyyy HH:mm:ss', new Date()), date)
       );
-      const { deliveredAmount } = calcDayMetrics(dayOrders);
-      total += deliveredAmount;
+      total += calcDayMetrics(dayOrders).paidAmount;
     });
     return total;
   }, [daysToShow, currentDate, orders]);
 
+  const outsideMonthBg = alpha(
+    theme.palette.action.disabledBackground,
+    theme.palette.mode === 'dark' ? 0.35 : 0.5
+  );
+
   return (
     <Box sx={{ p: 2 }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, gap: 1, flexWrap: 'wrap' }}>
-        <Button size="small" variant="outlined" onClick={() => setCurrentDate(addMonths(currentDate, -1))}>
+      <ChartBlockHeader
+        title="Calendario de pedidos y cobros"
+        subtitle="Por día: franja superior = $ total de líneas del pedido; inferior = $ pagado (ítems con pago). Columna L–D resume la semana. Colores coinciden con la leyenda."
+        sx={{ mb: 0.5 }}
+      />
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 1,
+          gap: 1,
+          flexWrap: 'wrap',
+        }}
+      >
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => setCurrentDate(addMonths(currentDate, -1))}
+        >
           Mes Anterior
         </Button>
-
-        <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
+        <Typography variant="subtitle1" sx={{ flex: 1, textAlign: 'center', fontWeight: 700 }}>
           {format(currentDate, 'MMMM yyyy', { locale: es })}
         </Typography>
-
-        <Button size="small" variant="outlined" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => setCurrentDate(addMonths(currentDate, 1))}
+        >
           Mes Siguiente
         </Button>
       </Box>
 
-      {/* Leyenda */}
       <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1, flexWrap: 'wrap', rowGap: 0.5 }}>
-        {/* Conteos */}
-        <Chip size="small" label="Pedidos"    sx={{ bgcolor: COLORS.ordersCount,     color: '#fff' }} />
-        <Chip size="small" label="Entregados" sx={{ bgcolor: COLORS.deliveredCount,  color: '#fff' }} />
-        {/* Dinero */}
-        <Chip size="small" label="$ Pedidos"  sx={{ bgcolor: COLORS.ordersAmount,    color: '#5B4636', fontWeight: 600 }} />
-        <Chip size="small" label="$ Cobrado"  sx={{ bgcolor: COLORS.deliveredAmount, color: '#fff' }} />
+        <Chip
+          size="small"
+          label="$ pedido"
+          sx={{
+            bgcolor: chartColors.orderMoney,
+            color: theme.palette.getContrastText(chartColors.orderMoney),
+          }}
+        />
+        <Chip
+          size="small"
+          label="$ pagado"
+          sx={{
+            bgcolor: chartColors.paid,
+            color: theme.palette.getContrastText(chartColors.paid),
+          }}
+        />
       </Stack>
 
-      {/* Cabecera de días (8 columnas: 7 días + L–D) */}
       <Grid container spacing={0.5} columns={8} sx={{ mb: 0.5 }}>
         {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((d) => (
           <Grid item xs={1} key={d}>
-            <Typography variant="caption" align="center" sx={{ display: 'block', color: 'text.secondary' }}>
+            <Typography
+              variant="caption"
+              align="center"
+              sx={{ display: 'block', color: 'text.secondary' }}
+            >
               {d}
             </Typography>
           </Grid>
         ))}
         <Grid item xs={1}>
-          <Typography variant="caption" align="center" sx={{ display: 'block', color: 'text.secondary', fontWeight: 700 }}>
+          <Typography
+            variant="caption"
+            align="center"
+            sx={{ display: 'block', color: 'text.secondary', fontWeight: 700 }}
+          >
             L–D
           </Typography>
         </Grid>
       </Grid>
 
-      {/* Grilla por semanas (8 columnas) */}
       {weeks.map((week, idx) => {
-        // Totales semanales (solo días del mes actual)
-        let weekOrdersCount = 0;
-        let weekDeliveredAmount = 0;
+        const monthDays = week.filter((d) => isSameMonth(d, currentDate));
+        const metricsList = monthDays.map((date) => {
+          const dayOrders = orders.filter((o) =>
+            isSameDay(parse(o.date, 'dd/MM/yyyy HH:mm:ss', new Date()), date)
+          );
+          return { date, ...calcDayMetrics(dayOrders) };
+        });
+
+        const maxOA = Math.max(1, ...metricsList.map((m) => m.ordersAmount));
+        const maxPA = Math.max(1, ...metricsList.map((m) => m.paidAmount));
+
+        let weekOrdersAmount = 0;
+        let weekPaidAmount = 0;
 
         return (
           <Grid container spacing={0.5} columns={8} key={idx} alignItems="stretch">
             {week.map((date) => {
               const dayOrders = orders.filter((o) =>
-                isSameDay(parse(o.date, 'dd/MM/yyyy HH:mm:ss', new Date()), date),
+                isSameDay(parse(o.date, 'dd/MM/yyyy HH:mm:ss', new Date()), date)
               );
-              const { ordersCount, deliveredCount, ordersAmount, deliveredAmount } = calcDayMetrics(dayOrders);
-
+              const m = calcDayMetrics(dayOrders);
               const isCurrentMonth = isSameMonth(date, currentDate);
               if (isCurrentMonth) {
-                // Sumamos pedidos (cantidad de pedidos) y $ cobrado de L–D (toda la semana)
-                weekOrdersCount += ordersCount;
-                weekDeliveredAmount += deliveredAmount;
+                weekOrdersAmount += m.ordersAmount;
+                weekPaidAmount += m.paidAmount;
               }
 
               const hasData = isCurrentMonth && dayOrders.length > 0;
 
-              const ringCounts = hasData
-                ? [
-                    { label: 'Pedidos',    value: ordersCount,    color: COLORS.ordersCount },
-                    { label: 'Entregados', value: deliveredCount, color: COLORS.deliveredCount },
-                  ]
-                : [];
-
-              const ringMoney = hasData
-                ? [
-                    { label: '$ Pedidos',   value: Math.round(ordersAmount),    color: COLORS.ordersAmount },
-                    { label: '$ Cobrado',   value: Math.round(deliveredAmount), color: COLORS.deliveredAmount },
-                  ]
-                : [];
-
               const tip =
-                `Día: ${format(date, 'dd/MM/yyyy')}\n` +
-                `Pedidos: ${ordersCount}\nEntregados(ítems): ${deliveredCount}\n` +
-                `$ Pedidos: ${moneyFmt(ordersAmount)}\n$ Cobrado: ${moneyFmt(deliveredAmount)}`;
+                `${format(date, 'dd/MM/yyyy')}\n` +
+                `${m.ordersCount} ped. · ${moneyFmt(m.ordersAmount)}\n` +
+                `${m.deliveredUnits} u. entreg. · ${moneyFmt(m.paidAmount)}`;
 
               return (
                 <Grid item xs={1} key={date.toISOString()}>
                   <Paper
-                    elevation={3}
+                    elevation={hasData ? 1 : 0}
+                    title={tip}
                     sx={{
                       position: 'relative',
-                      p: 0,
+                      p: 0.5,
+                      pt: 1.85,
                       minHeight: cellMinHeight,
-                      cursor: 'default',
-                      borderRadius: 3,
-                      overflow: 'hidden',
-                      bgcolor: isCurrentMonth ? 'transparent' : '#f5f5f5',
+                      borderRadius: 2,
+                      bgcolor: isCurrentMonth ? 'background.paper' : outsideMonthBg,
+                      border: '1px solid',
+                      borderColor: 'divider',
                     }}
-                    title={tip}
                   >
-                    {/* Donut solo si hay datos */}
-                    {hasData && (
-                      <SquareDonutBackground
-                        borderRadius={14}
-                        ringCounts={ringCounts}
-                        ringMoney={ringMoney}
-                        labelFormatter={(v) => (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v)}
-                      />
-                    )}
-
-                    {/* Número de día centrado */}
                     <Box
                       sx={{
                         position: 'absolute',
-                        inset: 0,
+                        top: 4,
+                        left: 5,
+                        minWidth: 20,
+                        height: 20,
+                        borderRadius: '6px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        zIndex: 1,
+                        bgcolor: alpha(theme.palette.text.primary, 0.06),
+                        border: '1px solid',
+                        borderColor: 'divider',
                       }}
                     >
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          color: '#2b2b2b',
-                          fontWeight: 800,
-                          textShadow: '0 1px 2px rgba(255,255,255,0.7)',
-                        }}
-                      >
+                      <Typography variant="caption" sx={{ fontWeight: 800, fontSize: '0.7rem', lineHeight: 1 }}>
                         {format(date, 'd')}
                       </Typography>
                     </Box>
+
+                    {hasData ? (
+                      <Stack spacing={0.5} sx={{ mt: 0.1 }}>
+                        <DayValueStrip
+                          valueText={moneyFmt(m.ordersAmount)}
+                          barPercent={pct(m.ordersAmount, maxOA)}
+                          accentBorder={chartColors.orders}
+                          accentValue={chartColors.orderMoney}
+                          track={chartColors.track}
+                          theme={theme}
+                        />
+                        <DayValueStrip
+                          valueText={moneyFmt(m.paidAmount)}
+                          barPercent={pct(m.paidAmount, maxPA)}
+                          accentBorder={chartColors.delivery}
+                          accentValue={chartColors.paid}
+                          track={chartColors.track}
+                          theme={theme}
+                        />
+                      </Stack>
+                    ) : isCurrentMonth ? (
+                      <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Typography variant="caption" color="text.disabled" sx={{ opacity: 0.5 }}>
+                          —
+                        </Typography>
+                      </Box>
+                    ) : null}
                   </Paper>
                 </Grid>
               );
             })}
 
-            {/* Columna extra tipo "día": total L–D de la semana */}
             <Grid item xs={1}>
               <Paper
-                elevation={3}
+                elevation={0}
+                title={`${moneyFmt(weekOrdersAmount)} / ${moneyFmt(weekPaidAmount)}`}
                 sx={{
-                  position: 'relative',
-                  p: 0,
+                  p: 0.5,
                   minHeight: cellMinHeight,
-                  borderRadius: 3,
-                  overflow: 'hidden',
-                  bgcolor: '#ffffff',
-                  border: '1px solid #e3e3e3',
+                  borderRadius: 2,
+                  bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.08 : 0.04),
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 0.5,
                 }}
-                title={`Semana (L–D)\nPedidos: ${weekOrdersCount}\n$ Cobrado: ${moneyFmt(weekDeliveredAmount)}`}
               >
-                {/* Centro con etiqueta y totales */}
-                <Box
+                <Typography
+                  variant="body2"
                   sx={{
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 0.25,
-                    textAlign: 'center',
-                    px: 0.5,
+                    fontWeight: 800,
+                    fontSize: '0.72rem',
+                    color: chartColors.orderMoney,
+                    lineHeight: 1.2,
                   }}
                 >
-                  <Typography variant="caption" sx={{ fontWeight: 900, color: '#4a4a4a', letterSpacing: 0.4 }}>
-                    L–D
-                  </Typography>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#2b2b2b', lineHeight: 1.1 }}>
-                    Pedidos: {weekOrdersCount}
-                  </Typography>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#2b2b2b', lineHeight: 1.1 }}>
-                    {moneyFmt(weekDeliveredAmount)}
-                  </Typography>
-                </Box>
+                  {moneyFmt(weekOrdersAmount)}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 800,
+                    fontSize: '0.72rem',
+                    color: chartColors.paid,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {moneyFmt(weekPaidAmount)}
+                </Typography>
               </Paper>
             </Grid>
           </Grid>
         );
       })}
 
-      {/* Total mensual abajo a la derecha */}
       <Box sx={{ mt: 1, display: 'flex', justifyContent: 'flex-end' }}>
-        <Box
+        <Paper
+          elevation={0}
           sx={{
             px: 1.5,
             py: 0.75,
             borderRadius: 1.5,
-            bgcolor: '#ffffff',
-            border: '1px solid #e3e3e3',
-            fontSize: 13,
-            fontWeight: 800,
+            bgcolor: alpha(chartColors.paid, theme.palette.mode === 'dark' ? 0.15 : 0.08),
+            border: '1px solid',
+            borderColor: alpha(chartColors.paid, 0.35),
           }}
         >
-          Total del mes · $ Cobrado: {moneyFmt(monthDeliveredTotal)}
-        </Box>
+          <Typography variant="body2" sx={{ fontWeight: 800, color: chartColors.paid }}>
+            {moneyFmt(monthPaidTotal)}
+          </Typography>
+        </Paper>
       </Box>
     </Box>
   );

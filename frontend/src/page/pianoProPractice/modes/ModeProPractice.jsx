@@ -102,16 +102,25 @@ export default function ModeProPractice({ onBack }) {
   );
 
   return (
-    <>
+    <Box
+      sx={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+      }}
+    >
       <Box
         sx={{
           p: 2,
           width: '100%',
-          flex: 1,
-          minHeight: 0,
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
+          boxSizing: 'border-box',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -163,7 +172,7 @@ export default function ModeProPractice({ onBack }) {
               }}
             >
               <Typography variant="body2">
-                Pulsa “Elegir canción” para seleccionar una partitura y practicarla con tu teclado o dispositivo MIDI.
+                Pulsa «Elegir canción» para cargar una partitura guardada en la BD y practicarla con teclado o MIDI.
               </Typography>
             </Box>
           ) : (
@@ -242,7 +251,7 @@ export default function ModeProPractice({ onBack }) {
           <Button onClick={() => setSongsDialogOpen(false)}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 }
 

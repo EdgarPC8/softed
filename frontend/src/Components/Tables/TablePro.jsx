@@ -101,13 +101,15 @@ const TablePro = ({
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                {showIndex && <TableCell sx={{ width: 56 }}>{indexHeader}</TableCell>}
+                {showIndex && (
+                  <TableCell sx={{ width: 56, bgcolor: 'background.paper' }}>{indexHeader}</TableCell>
+                )}
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
                     sortDirection={orderBy === column.id ? orderDirection : false}
                     onClick={() => handleSort(column.id)}
-                    sx={{ cursor: 'pointer', userSelect: 'none' }}
+                    sx={{ cursor: 'pointer', userSelect: 'none', bgcolor: 'background.paper' }}
                   >
                     <TableSortLabel
                       active={orderBy === column.id}

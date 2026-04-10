@@ -113,10 +113,7 @@ export default function Comandos() {
                 settitleDialog("Vista del Backup");
                 setOpenDialog(true);
               } catch (err) {
-                // 👇 ahora usando el mismo toast del contexto
-                toast.error("Archivo inválido o corrupto", {
-                  position: "top-right",
-                });
+                toast({ message: "Archivo inválido o corrupto", variant: "error" });
               }
             };
             reader.readAsText(file);
@@ -146,9 +143,7 @@ export default function Comandos() {
                 settitleDialog("Vista del Backup Estudiantes");
                 setOpenStudentsDialog(true);
               } catch (err) {
-                toast.error("Archivo inválido o corrupto", {
-                  position: "top-right",
-                });
+                toast({ message: "Archivo inválido o corrupto", variant: "error" });
               }
             };
             reader.readAsText(file);

@@ -58,7 +58,11 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
   const selectedReason = watch("reason");
   const pricingRuleMode = watch("pricingRuleMode"); // auto | invert
 
-  const quantityValue = Number(watch("quantity") || 0);
+  const isAjuste = selectedType === "ajuste";
+
+  const quantityRaw = watch("quantity");
+  const quantityValue = Number(quantityRaw || 0);
+  const quantityIsEmpty = quantityRaw === "" || quantityRaw == null;
   const priceInputValue = watch("price") === "" ? null : Number(watch("price"));
 
   const productById = useMemo(() => {
@@ -81,7 +85,13 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
     selectedProduct?.ERP_inventory_unit?.abbreviation ||
     "";
 
-  const quantityLabel = unitAbbr ? `Cantidad (${unitAbbr})` : "Cantidad";
+  const quantityLabel = isAjuste
+    ? unitAbbr
+      ? `Nuevo stock (${unitAbbr})`
+      : "Nuevo stock"
+    : unitAbbr
+      ? `Cantidad (${unitAbbr})`
+      : "Cantidad";
 
   const reasonOptionsByType = {
     entrada: [
@@ -110,15 +120,13 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
     }
   }, [productOptions, setValue]);
 
-  // ✅ si cambia tipo y reason está vacío, poner uno por defecto
+  // Motivo por defecto según tipo (ajuste siempre AJUSTE_INVENTARIO aunque no se muestre el campo)
   useEffect(() => {
-    if (!selectedReason) {
-      if (selectedType === "entrada") setValue("reason", "ENTRADA_COMPRA");
-      if (selectedType === "salida") setValue("reason", "SALIDA_CONSUMO");
-      if (selectedType === "ajuste") setValue("reason", "AJUSTE_INVENTARIO");
-      if (selectedType === "produccion") setValue("reason", "PRODUCCION_FINAL");
-    }
-  }, [selectedType, selectedReason, setValue]);
+    if (selectedType === "entrada") setValue("reason", "ENTRADA_COMPRA", { shouldDirty: false });
+    else if (selectedType === "salida") setValue("reason", "SALIDA_CONSUMO", { shouldDirty: false });
+    else if (selectedType === "ajuste") setValue("reason", "AJUSTE_INVENTARIO", { shouldDirty: false });
+    else if (selectedType === "produccion") setValue("reason", "PRODUCCION_FINAL", { shouldDirty: false });
+  }, [selectedType, setValue]);
 
   // ✅ si cambia tipo/producto/cantidad, resetea simulación cuando no aplique
   useEffect(() => {
@@ -130,6 +138,13 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
       setSimulatedData(null);
     }
   }, [selectedType, selectedProductId, quantityValue]);
+
+  useEffect(() => {
+    if (selectedType === "ajuste") {
+      setValue("price", "", { shouldDirty: false });
+      setValue("pricingRuleMode", "auto", { shouldDirty: false });
+    }
+  }, [selectedType, setValue]);
 
   /**
    * ✅ REGLA CORREGIDA:
@@ -222,17 +237,20 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
       }
     }
     
-    // ✅ Siempre guardamos "price" como TOTAL calculado/confirmado
-    // (así tus finanzas y movimientos quedan consistentes)
     const dataToSend = {
       productId: Number(formData.productId),
       type: formData.type,
-      reason: formData.reason,
+      reason: formData.type === "ajuste" ? "AJUSTE_INVENTARIO" : formData.reason,
       quantity: Number(formData.quantity),
       description: description,
 
-      // ✅ TOTAL confirmado
-      price: totalToSave == null ? null : Number(totalToSave),
+      // Ajuste: sin precio (solo fija stock). Resto: total calculado si aplica.
+      price:
+        formData.type === "ajuste"
+          ? null
+          : totalToSave == null
+            ? null
+            : Number(totalToSave),
 
       referenceType: formData.referenceType || null,
       referenceId: formData.referenceId ? Number(formData.referenceId) : null,
@@ -291,56 +309,106 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
           </TextField>
         </Grid>
 
-        {/* ✅ Reason */}
-        <Grid item xs={12}>
-          <TextField
-            label="Motivo (reason)"
-            select
-            fullWidth
-            variant="standard"
-            value={selectedReason || ""}
-            {...register("reason", { required: true })}
-            onChange={(e) => setValue("reason", e.target.value, { shouldDirty: true })}
-          >
-            {(reasonOptionsByType[selectedType] || []).map((opt) => (
-              <MenuItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-
-        {/* ✅ Radio: Precio Total / Precio Unitario */}
-        <Grid item xs={12}>
-          <FormControl>
-            <FormLabel>¿Cómo ingresarás el precio?</FormLabel>
-            <RadioGroup
-              row
-              value={pricingRuleMode}
-              onChange={(e) =>
-                setValue("pricingRuleMode", e.target.value, { shouldDirty: true })
-              }
+        {isAjuste && selectedProduct && (
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 1,
+                bgcolor: "action.hover",
+                border: "1px solid",
+                borderColor: "divider",
+              }}
             >
-              <FormControlLabel
-                value="auto"
-                control={<Radio />}
-                label="Precio Total (lo que pagaste)"
-              />
-              <FormControlLabel
-                value="invert"
-                control={<Radio />}
-                label="Precio Unitario (por cada unidad)"
-              />
-            </RadioGroup>
+              <Typography variant="body2">
+                <strong>Stock actual en sistema:</strong>{" "}
+                {Number(selectedProduct.stock ?? 0).toLocaleString("es-EC", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 4,
+                })}
+                {unitAbbr ? ` ${unitAbbr}` : ""}
+              </Typography>
+              {!quantityIsEmpty && Number.isFinite(quantityValue) && (
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  component="div"
+                  sx={{ mt: 0.75 }}
+                >
+                  Con el valor que ingresaste, el stock quedaría en{" "}
+                  <strong>
+                    {quantityValue.toLocaleString("es-EC", { maximumFractionDigits: 4 })}
+                  </strong>
+                  {unitAbbr ? ` ${unitAbbr}` : ""}
+                  {" · "}
+                  Variación:{" "}
+                  <strong>
+                    {(() => {
+                      const diff = quantityValue - Number(selectedProduct.stock ?? 0);
+                      return `${diff >= 0 ? "+" : ""}${diff.toLocaleString("es-EC", {
+                        maximumFractionDigits: 4,
+                      })}`;
+                    })()}
+                  </strong>
+                  {unitAbbr ? ` ${unitAbbr}` : ""}
+                </Typography>
+              )}
+            </Box>
+          </Grid>
+        )}
 
-            <Typography variant="body2" sx={{ mt: 0.5, color: "text.secondary" }}>
-              {ruleText}
-            </Typography>
-          </FormControl>
-        </Grid>
+        {!isAjuste && (
+          <Grid item xs={12}>
+            <TextField
+              label="Motivo (reason)"
+              select
+              fullWidth
+              variant="standard"
+              value={selectedReason || ""}
+              {...register("reason", { required: true })}
+              onChange={(e) => setValue("reason", e.target.value, { shouldDirty: true })}
+            >
+              {(reasonOptionsByType[selectedType] || []).map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        )}
 
-        {/* Cantidad y Precio */}
-        <Grid item xs={6}>
+        {/* Precio: solo entrada/salida/producción (no ajuste) */}
+        {!isAjuste && (
+          <Grid item xs={12}>
+            <FormControl>
+              <FormLabel>¿Cómo ingresarás el precio?</FormLabel>
+              <RadioGroup
+                row
+                value={pricingRuleMode}
+                onChange={(e) =>
+                  setValue("pricingRuleMode", e.target.value, { shouldDirty: true })
+                }
+              >
+                <FormControlLabel
+                  value="auto"
+                  control={<Radio />}
+                  label="Precio Total (lo que pagaste)"
+                />
+                <FormControlLabel
+                  value="invert"
+                  control={<Radio />}
+                  label="Precio Unitario (por cada unidad)"
+                />
+              </RadioGroup>
+
+              <Typography variant="body2" sx={{ mt: 0.5, color: "text.secondary" }}>
+                {ruleText}
+              </Typography>
+            </FormControl>
+          </Grid>
+        )}
+
+        <Grid item xs={12} md={isAjuste ? 12 : 6}>
           <TextField
             label={quantityLabel}
             type="number"
@@ -351,32 +419,35 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
             {...register("quantity", { required: true })}
             onChange={(e) => setValue("quantity", e.target.value, { shouldDirty: true })}
             helperText={
-              unitAbbr
-                ? `Ingresa la cantidad en ${unitAbbr}.`
-                : "Ingresa la cantidad según la unidad del producto."
+              isAjuste
+                ? `Nuevo stock físico (${unitAbbr || "unidad del producto"}). Reemplaza el stock actual.`
+                : unitAbbr
+                  ? `Ingresa la cantidad en ${unitAbbr}.`
+                  : "Ingresa la cantidad según la unidad del producto."
             }
           />
         </Grid>
 
-        <Grid item xs={6}>
-          <TextField
-            label={priceLabel}
-            type="number"
-            fullWidth
-            variant="standard"
-            inputProps={{ step: "any", min: 0 }}
-            value={watch("price") || ""}
-            {...register("price")}
-            onChange={(e) => setValue("price", e.target.value, { shouldDirty: true })}
-            helperText={
-              shouldMultiply
-                ? "Ingresa el precio por cada unidad. Se multiplicará por la cantidad."
-                : "Ingresa el precio total que pagaste. No se multiplicará."
-            }
-          />
-        </Grid>
+        {!isAjuste && (
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={priceLabel}
+              type="number"
+              fullWidth
+              variant="standard"
+              inputProps={{ step: "any", min: 0 }}
+              value={watch("price") || ""}
+              {...register("price")}
+              onChange={(e) => setValue("price", e.target.value, { shouldDirty: true })}
+              helperText={
+                shouldMultiply
+                  ? "Ingresa el precio por cada unidad. Se multiplicará por la cantidad."
+                  : "Ingresa el precio total que pagaste. No se multiplicará."
+              }
+            />
+          </Grid>
+        )}
 
-        {/* ✅ Confirmación del TOTAL a guardar */}
         <Grid item xs={12}>
           <Divider sx={{ my: 1 }} />
           <Box sx={{ p: 1.2, borderRadius: 1, bgcolor: "action.hover" }}>
@@ -386,18 +457,41 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
             <Typography variant="body2" sx={{ mt: 0.5 }}>
               <b>Unidad:</b> {unitAbbr || "—"}{" "}
               <b style={{ marginLeft: 12 }}>Cantidad:</b>{" "}
-              {quantityValue ? quantityValue : "—"}
+              {!quantityIsEmpty && Number.isFinite(quantityValue) ? quantityValue : "—"}
             </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>
-              <b>Precio ingresado:</b>{" "}
-              {priceInputValue == null || Number.isNaN(priceInputValue) ? "—" : priceInputValue}
-            </Typography>
-            <Typography variant="body1" sx={{ mt: 0.8 }}>
-              <b>TOTAL a guardar:</b>{" "}
-              {totalToSave == null || Number.isNaN(totalToSave)
-                ? "—"
-                : totalToSave.toFixed(2)}
-            </Typography>
+            {isAjuste ? (
+              <Typography variant="body2" sx={{ mt: 0.8 }}>
+                {selectedProduct && (
+                  <>
+                    <b>Stock actual:</b>{" "}
+                    {Number(selectedProduct.stock ?? 0).toLocaleString("es-EC", {
+                      maximumFractionDigits: 4,
+                    })}
+                    {unitAbbr ? ` ${unitAbbr}` : ""}
+                    <br />
+                  </>
+                )}
+                <b>Stock quedará en:</b>{" "}
+                {!quantityIsEmpty && Number.isFinite(quantityValue) ? quantityValue : "—"}{" "}
+                {unitAbbr || ""}
+                <Typography component="span" variant="caption" display="block" color="text.secondary">
+                  Sin precio en ajuste.
+                </Typography>
+              </Typography>
+            ) : (
+              <>
+                <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  <b>Precio ingresado:</b>{" "}
+                  {priceInputValue == null || Number.isNaN(priceInputValue) ? "—" : priceInputValue}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 0.8 }}>
+                  <b>TOTAL a guardar:</b>{" "}
+                  {totalToSave == null || Number.isNaN(totalToSave)
+                    ? "—"
+                    : totalToSave.toFixed(2)}
+                </Typography>
+              </>
+            )}
           </Box>
         </Grid>
 
@@ -419,8 +513,8 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
           quantityValue > 0 && (
             <Grid item xs={12}>
               <SimulateProductionComponent
-                productId={Number(selectedProductId)}
-                quantity={quantityValue}
+                embedProductId={Number(selectedProductId)}
+                embedQuantity={quantityValue}
                 onSimulated={(data) => setSimulatedData(data)}
               />
             </Grid>
@@ -434,9 +528,13 @@ function MovementForm({ onClose, productOptions = [], onSaved }) {
             disabled={
               !selectedProductId ||
               !selectedType ||
-              !selectedReason ||
-              !quantityValue ||
-              totalToSave == null
+              (!isAjuste && !selectedReason) ||
+              quantityIsEmpty ||
+              (isAjuste
+                ? !Number.isFinite(Number(quantityRaw))
+                : !Number.isFinite(quantityValue) ||
+                  quantityValue <= 0 ||
+                  totalToSave == null)
             }
           >
             Registrar Movimiento
